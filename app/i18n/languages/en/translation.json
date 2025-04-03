@@ -1,0 +1,11 @@
+{
+  "common": {},
+  "index": {
+    "title": "Learn about Dubai's top blogs and discover the best content on the web."
+  },
+  "not-found": {
+    "title": "Page Not Found",
+    "description": "The page you are looking for does not exist or has been moved.",
+    "link": "Back to Home"
+  }
+}

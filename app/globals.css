@@ -1,0 +1,340 @@
+@import "tailwindcss";
+
+@theme {
+  --font-custom-sans: "Fellix", "Helvetica Neue", "IBM Plex Sans", "sans-serif";
+
+  /* primary-600 */
+  --color-primary: oklch(55.5% 0.799 29.24);
+  /* zinc-800 */
+  --color-color-font: oklch(21% 0.006 285.885);
+  /* primary colors */
+  --color-primary-50: oklch(96.2% 0.05 13.779);
+  --color-primary-100: oklch(92% 0.11 14.77);
+  --color-primary-200: oklch(85.2% 0.212 16.861);
+  --color-primary-300: oklch(75.8% 0.375 18.901);
+  --color-primary-400: oklch(64% 0.616 23.266);
+  --color-primary-500: oklch(46% 0.824 34.204);
+  --color-primary-600: oklch(55.5% 0.799 29.24);
+  --color-primary-700: oklch(41.1% 0.765 34.502);
+  --color-primary-800: oklch(34% 0.637 32.911);
+  --color-primary-900: oklch(28.5% 0.517 30.076);
+  --color-primary-950: oklch(12.9% 0.338 28.282);
+}
+
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  * {
+    @apply font-custom-sans text-color-font;
+  }
+}
+
+@layer components {
+  .prose {
+    /* Başlıklar */
+    & h1 {
+      @apply mb-2 scroll-m-20 text-4xl font-bold tracking-tight lg:text-5xl;
+    }
+    & h2 {
+      @apply mt-10 mb-1.5 scroll-m-20 border-b pb-1.5 text-3xl font-semibold tracking-tight transition-colors first:mt-0;
+    }
+    & h3 {
+      @apply mt-8 scroll-m-20 text-2xl font-semibold tracking-tight;
+    }
+    & h4 {
+      @apply mt-6 scroll-m-20 text-xl font-semibold tracking-tight;
+    }
+    & h5 {
+      @apply mt-4 scroll-m-20 text-lg font-semibold tracking-tight;
+    }
+    & h6 {
+      @apply mt-4 scroll-m-20 text-base font-semibold tracking-tight;
+    }
+
+    /* Paragraflar */
+    & p {
+      @apply my-4 leading-7 first:mt-0;
+    }
+    & p + p {
+      @apply mt-6;
+    }
+
+    /* Linkler */
+    & a {
+      @apply text-primary font-medium underline underline-offset-4 transition-opacity duration-300 hover:opacity-75;
+    }
+
+    /* Blok alıntılar */
+    & blockquote {
+      @apply mt-6 mb-6 border-l-2 bg-zinc-100 pl-6 italic;
+    }
+    & blockquote p {
+      @apply my-2;
+    }
+
+    /* Listeler */
+    & ul {
+      @apply my-6 ml-6 list-disc;
+    }
+    & ul li {
+      @apply my-2;
+    }
+    & ul li p {
+      @apply my-1;
+    }
+    & ul ul {
+      @apply my-2 ml-6;
+    }
+    & ol {
+      @apply my-6 ml-6 list-decimal;
+    }
+    & ol li {
+      @apply my-2;
+    }
+    & ol li p {
+      @apply my-1;
+    }
+    & ol ol {
+      @apply my-2 ml-6;
+    }
+
+    /* İç içe liste davranışları */
+    & ul li ul,
+    & ol li ol,
+    & ol li ul,
+    & ul li ol {
+      @apply my-2;
+    }
+
+    /* Üç veya daha fazla seviye listeler için iyileştirmeler */
+    & ul ul ul,
+    & ol ol ol,
+    & ul ol ul,
+    & ol ul ol,
+    & ul ul ol,
+    & ol ol ul {
+      margin-left: 1.5rem;
+      margin-top: 0.25rem;
+      margin-bottom: 0.25rem;
+    }
+
+    /* Liste öğelerinin içinde farklı elementler varsa boşluklandırma */
+    & li > *:first-child {
+      margin-top: 0;
+    }
+    & li > *:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Tablolar */
+    & table {
+      @apply my-6 w-full border-collapse overflow-y-auto;
+    }
+    & thead tr {
+      @apply m-0 border-t p-0;
+    }
+    & th {
+      @apply border px-4 py-2 text-left font-bold;
+    }
+    & tbody tr {
+      @apply m-0 border-t p-0;
+    }
+    & td {
+      @apply border px-4 py-2 text-left;
+    }
+
+    /* Kod blokları */
+    & pre {
+      @apply my-6 overflow-x-auto rounded-lg bg-gray-100 p-4;
+    }
+    & code {
+      @apply relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm;
+    }
+    & pre > code {
+      @apply bg-transparent p-0;
+    }
+
+    /* Yatay çizgi */
+    & hr {
+      @apply my-8 border-t;
+    }
+
+    /* Görseller */
+    & img {
+      @apply mx-auto my-6 h-auto max-w-full rounded-lg;
+    }
+
+    & figure {
+      @apply my-8;
+    }
+    & figcaption {
+      @apply mt-0 text-center text-xs opacity-75;
+    }
+
+    /* İçerik aralama davranışları - vanilla CSS ile */
+    & > :first-child {
+      margin-top: 0;
+    }
+    & > :last-child {
+      margin-bottom: 0;
+    }
+    & h2 + p,
+    & h3 + p,
+    & h4 + p {
+      margin-top: 0.5rem;
+    }
+    & h2 + ul,
+    & h3 + ul,
+    & h4 + ul,
+    & h2 + ol,
+    & h3 + ol,
+    & h4 + ol {
+      margin-top: 0.5rem;
+    }
+
+    /* Başlıklar arasındaki boşluklar */
+    & h1 + h2 {
+      margin-top: 1.5rem;
+    }
+    & h2 + h3 {
+      margin-top: 1rem;
+    }
+    & h3 + h4,
+    & h4 + h5,
+    & h5 + h6 {
+      margin-top: 0.75rem;
+    }
+
+    /* Diğer elementler */
+    & strong {
+      @apply font-bold;
+    }
+    & em {
+      @apply italic;
+    }
+    & del {
+      @apply line-through;
+    }
+    & sup {
+      @apply align-super text-xs;
+    }
+    & sub {
+      @apply align-sub text-xs;
+    }
+    & mark {
+      @apply bg-yellow-200 px-1 py-0.5;
+    }
+    & abbr {
+      @apply cursor-help underline underline-offset-2;
+    }
+    & kbd {
+      @apply rounded-md border px-1.5 py-0.5 text-xs font-semibold;
+    }
+
+    /* Callout/Not kutuları */
+    & .note,
+    & .warning,
+    & .tip,
+    & .info {
+      @apply my-6 rounded-lg border p-4;
+    }
+    & .note {
+      @apply border-blue-200 bg-blue-50;
+    }
+    & .warning {
+      @apply border-amber-200 bg-amber-50;
+    }
+    & .tip {
+      @apply border-green-200 bg-green-50;
+    }
+    & .info {
+      @apply border-gray-200 bg-gray-50;
+    }
+
+    /* Not kutuları içeriği */
+    & .note > *:first-child,
+    & .warning > *:first-child,
+    & .tip > *:first-child,
+    & .info > *:first-child {
+      margin-top: 0;
+    }
+    & .note > *:last-child,
+    & .warning > *:last-child,
+    & .tip > *:last-child,
+    & .info > *:last-child {
+      margin-bottom: 0;
+    }
+
+    /* İç içe geçmiş içerikler için geliştirilmiş boşluklandırma */
+    & blockquote ul,
+    & blockquote ol {
+      margin-top: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    /* İnteraktif elementler */
+    & details {
+      @apply my-6 rounded-lg border;
+    }
+    & summary {
+      @apply cursor-pointer p-4 font-semibold;
+    }
+
+    & details > pre {
+      @apply !my-0 !bg-transparent !p-0 !px-4 !text-pretty;
+    }
+
+    /* Responsive davranışlar için vanilla CSS */
+    @media (max-width: 640px) {
+      & table {
+        display: block;
+        overflow-x: auto;
+      }
+      & img {
+        max-width: 100%;
+      }
+      & h1 {
+        font-size: 2rem; /* text-3xl */
+      }
+      & h2 {
+        font-size: 1.5rem; /* text-2xl */
+      }
+      & h3 {
+        font-size: 1.25rem; /* text-xl */
+      }
+      & h4 {
+        font-size: 1.125rem; /* text-lg */
+      }
+      & h5,
+      & h6 {
+        font-size: 1rem; /* text-base */
+      }
+      & pre {
+        padding: 0.75rem;
+      }
+      & blockquote {
+        padding-left: 1rem;
+      }
+      & .note,
+      & .warning,
+      & .tip,
+      & .info,
+      & details {
+        padding: 0.75rem;
+      }
+    }
+
+    /* Tablet ve orta büyüklükteki ekranlar için */
+    @media (min-width: 641px) and (max-width: 1024px) {
+      & img.large {
+        max-width: 100%;
+      }
+      & blockquote {
+        margin-left: 0.5rem;
+      }
+    }
+  }
+}

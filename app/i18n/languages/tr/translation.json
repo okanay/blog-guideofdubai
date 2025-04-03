@@ -1,0 +1,11 @@
+{
+  "common": {},
+  "index": {
+    "title": "Dubai'nin en iyi bloglarını öğrenin ve web'deki en iyi içeriği keşfedin."
+  },
+  "not-found": {
+    "title": "Sayfa Bulunamadı",
+    "description": "Aradığınız sayfa mevcut değil veya taşınmış olabilir.",
+    "link": "Ana Sayfaya Dön"
+  }
+}

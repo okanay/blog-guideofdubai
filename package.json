@@ -1,0 +1,43 @@
+{
+  "name": "tanstack-start",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "bunx --bun vinxi dev",
+    "build": "vinxi build",
+    "start": "bunx --bun vinxi start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.0.17",
+    "@tailwindcss/vite": "^4.0.17",
+    "@tanstack/react-router": "^1.114.27",
+    "@tanstack/react-start": "^1.114.27",
+    "@types/js-cookie": "^3.0.6",
+    "dotenv": "^16.4.7",
+    "i18next": "^24.2.3",
+    "js-cookie": "^3.0.5",
+    "postcss": "^8.5.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-i18next": "^15.4.1",
+    "tailwind-merge": "^3.1.0",
+    "tailwindcss": "^4.1.2",
+    "vinxi": "^0.5.3",
+    "zod": "^3.24.2",
+    "zustand": "^5.0.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.12",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "typescript": "^5.8.2",
+    "vite-tsconfig-paths": "^5.1.4"
+  }
+}
