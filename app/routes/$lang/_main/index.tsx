@@ -47,12 +47,19 @@ function HeroSection() {
 function HeroSearchForm() {
   return (
     <form className="group flex w-full rounded-full border border-gray-200 ring ring-zinc-200 ring-offset-2 focus-within:!border-zinc-200 focus-within:!ring-zinc-400">
-      <select className="w-24 appearance-none border-r border-zinc-200 px-2 py-3 text-center text-xs focus:outline-none">
+      <label className="sr-only" htmlFor="category-select">
+        Category
+      </label>
+      <select
+        id="category-select"
+        className="w-24 appearance-none border-r border-zinc-200 px-2 py-3 text-center text-xs focus:outline-none"
+      >
         <option value="all">Look All</option>
         <option value="clothing">Restaurant</option>
         <option value="accessories">Hotels</option>
         <option value="shoes">Rent A Car</option>
       </select>
+
       <input
         type="text"
         placeholder="Best Dubai Restaurant.."
@@ -213,19 +220,22 @@ function PopularBlogSection() {
   }, []);
 
   return (
-    <section id="popular-card" className="relative py-12 pr-4 pl-2 sm:py-20">
+    <section id="popular-card" className="relative my-28 pr-4 pl-2 sm:my-20">
       <button
         ref={btnLeftRef}
-        onClick={() => handleButtonClick("Left")}
         aria-disabled="true"
-        className="border-primary-cover bg-primary absolute top-[50%] left-2 z-20 size-10 translate-y-[-50%] rounded-full border p-1 shadow-md transition-opacity duration-300 aria-disabled:cursor-not-allowed aria-disabled:opacity-25"
+        aria-label="Left Scroll"
+        onClick={() => handleButtonClick("Left")}
+        className="border-primary-cover bg-primary absolute -top-10 left-4 z-20 size-10 translate-y-[-50%] rounded-full border p-1 shadow-md transition-opacity duration-300 aria-disabled:cursor-not-allowed aria-disabled:opacity-25 sm:top-[50%] sm:left-2"
       >
         <ChevronLeft className="text-color-primary size-full" />
       </button>
       <button
         ref={btnRightRef}
+        aria-disabled={false}
+        aria-label="Right Scroll"
         onClick={() => handleButtonClick("Right")}
-        className="border-primary-cover bg-primary absolute top-[50%] right-2 z-20 size-10 translate-y-[-50%] rounded-full border p-1 shadow-md transition-opacity duration-300 aria-disabled:cursor-not-allowed aria-disabled:opacity-25"
+        className="border-primary-cover bg-primary absolute -top-10 right-4 z-20 size-10 translate-y-[-50%] rounded-full border p-1 shadow-md transition-opacity duration-300 aria-disabled:cursor-not-allowed aria-disabled:opacity-25 sm:top-[50%] sm:right-2"
       >
         <ChevronRight className="text-color-primary size-full" />
       </button>
@@ -266,13 +276,13 @@ function BlogCard({ imageUrl, category, title, author, date, likes, index }) {
         <div className="absolute right-0 bottom-0 left-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent"></div>
 
         {/* Title */}
-        <div className="absolute bottom-16 left-0 w-full px-4">
+        <div className="absolute bottom-20 left-0 w-full px-4 sm:bottom-16">
           <h3 className="line-clamp-2 text-xl font-bold text-white">{title}</h3>
         </div>
 
         {/* Author and Metadata */}
-        <div className="absolute bottom-4 left-0 flex w-full items-center justify-between px-4">
-          <div className="flex items-center gap-2">
+        <div className="absolute bottom-4 left-0 flex w-full flex-col gap-x-2 gap-y-1 px-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="order-1 flex items-center gap-2 sm:order-1">
             <div className="size-8 overflow-hidden rounded-full bg-gray-300">
               <img
                 src={`https://i.pravatar.cc/64?u=${index}`}
@@ -282,19 +292,18 @@ function BlogCard({ imageUrl, category, title, author, date, likes, index }) {
                 className="h-full w-full object-cover"
               />
             </div>
-            <span className="max-w-24 truncate text-sm text-white">
+            <span className="max-w-40 truncate text-sm text-white sm:max-w-24">
               {author}
             </span>
           </div>
-
-          <div className="flex items-center gap-4">
+          <div className="order-2 flex items-center gap-4 sm:order-2">
             <div className="flex items-center gap-1">
-              <span className="text-sm text-white">{date}</span>
-              <CalendarDays className="text-color-font-invert size-3" />
+              <span className="line-clamp-1 text-sm text-white">{date}</span>
+              <CalendarDays className="text-color-font-invert size-3 flex-shrink-0" />
             </div>
             <div className="flex items-center gap-1">
-              <span className="text-sm text-white">{likes}</span>
-              <Heart className="text-color-font-invert size-3" />
+              <span className="line-clamp-1 text-sm text-white">{likes}</span>
+              <Heart className="text-color-font-invert size-3 flex-shrink-0" />
             </div>
           </div>
         </div>
