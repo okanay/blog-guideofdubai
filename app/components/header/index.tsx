@@ -59,7 +59,7 @@ export const RootHeader = () => {
 
   return (
     <header
-      className="md:border-primary-light fixed w-full bg-gradient-to-tr from-zinc-100/20 to-zinc-400/10 backdrop-blur-sm md:border-b"
+      className="md:border-primary-light w-full bg-gradient-to-tr from-zinc-100/20 to-zinc-400/10 backdrop-blur-sm md:border-b"
       role="banner"
     >
       <div className="border-b border-zinc-100">

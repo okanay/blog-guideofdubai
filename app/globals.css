@@ -41,6 +41,8 @@
 
 @layer components {
   .prose {
+    @apply text-color-font;
+
     /* Başlıklar */
     & h1 {
       @apply mb-2 scroll-m-20 text-4xl font-bold tracking-tight lg:text-5xl;

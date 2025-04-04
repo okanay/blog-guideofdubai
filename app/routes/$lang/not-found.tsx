@@ -1,7 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  useLocation,
+  useNavigate,
+} from "@tanstack/react-router";
 import { seoTranslations } from "@/i18n/languages";
 import { useTranslation } from "react-i18next";
 import { Link } from "@/i18n/link";
+import { useEffect } from "react";
+import { useLanguage } from "@/i18n/use-language";
 
 export const Route = createFileRoute("/$lang/not-found")({
   loader: async ({ params }) => {
@@ -26,7 +32,16 @@ export const Route = createFileRoute("/$lang/not-found")({
 });
 
 export function DefaultNotFound() {
+  const { language } = useLanguage();
   const { t } = useTranslation();
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (pathname.split("/")[1] !== "not-found") {
+      navigate({ to: "/" + language + "/not-found", replace: true });
+    }
+  }, []);
 
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
