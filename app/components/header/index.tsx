@@ -58,7 +58,10 @@ export const RootHeader = () => {
   };
 
   return (
-    <header className="w-full bg-zinc-50" role="banner">
+    <header
+      className="relative z-20 w-full border-b border-zinc-200 py-1 md:border-b-0 md:bg-zinc-50 md:pb-0"
+      role="banner"
+    >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-1.5">
         <Link to="/" aria-label="Guide of Dubai - Return to homepage">
           <img

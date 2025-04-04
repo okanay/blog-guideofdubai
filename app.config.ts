@@ -1,6 +1,7 @@
 import { defineConfig } from "@tanstack/react-start/config";
 import tsConfigPaths from "vite-tsconfig-paths";
 import tailwindcss from "@tailwindcss/vite";
+import vsharp from "vite-plugin-vsharp";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -30,6 +31,10 @@ export default defineConfig({
       tailwindcss(),
       tsConfigPaths({
         projects: ["./tsconfig.json"],
+      }),
+      vsharp({
+        exclude: ["images/brand.svg"],
+        excludePublic: ["images/metadata"],
       }),
     ],
   },

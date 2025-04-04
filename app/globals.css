@@ -1,8 +1,6 @@
 @import "tailwindcss";
 
 @theme {
-  --font-custom-sans: "Fellix", "Helvetica Neue", "IBM Plex Sans", "sans-serif";
-
   /* primary colors */
   --color-primary-50: oklch(0.97 0.0152 12.42);
   --color-primary-100: oklch(0.93 0.0332 15.47);
@@ -29,6 +27,19 @@
   --color-color-font-dark: var(--color-zinc-800);
 
   --color-color-font-invert: var(--color-zinc-100);
+
+  --font-custom-sans: "Fellix", "Helvetica Neue", "IBM Plex Sans", "sans-serif";
+
+  --animate-infinite-scroll: infinite-scroll 25s linear infinite;
+
+  @keyframes infinite-scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
 }
 
 @layer base {
