@@ -30,10 +30,10 @@ function HeroSection() {
             <span>Read Latest Blogs</span>
             <BookOpenText className="text-primary-dark size-3 translate-y-[0.5px]" />
           </button>
-          <h1 className="font-serif text-6xl">
+          <h1 className="font-serif text-5xl sm:text-6xl">
             Find Your Perfect Dubai Experience
           </h1>
-          <p className="text-lg">
+          <p className="text-base sm:text-lg">
             Get honest reviews, real photos, and community insights about Dubai
             attractions. Search by location or activity to start exploring.
           </p>
