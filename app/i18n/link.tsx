@@ -5,16 +5,24 @@ import { useLanguage } from "./use-language";
 interface Props extends Omit<LinkProps, "to"> {
   to: string;
   className?: string;
+  role?: string;
+  "aria-current"?:
+    | boolean
+    | "date"
+    | "time"
+    | "true"
+    | "false"
+    | "page"
+    | "step"
+    | "location";
 }
 
 export const Link: React.FC<Props> = ({ to, children, ...rest }) => {
   const { language } = useLanguage();
-
   const localizedPath =
     to === "/"
       ? `/${language}`
       : `/${language}${to.startsWith("/") ? to : `/${to}`}`;
-
   return (
     <ReactLink to={localizedPath} {...rest}>
       {children}

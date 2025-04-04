@@ -91,9 +91,8 @@ export const RootHeader = () => {
                 <Link
                   to={item.to}
                   className="text-xs"
-                  aria-current={
-                    location?.pathname === item.to ? "page" : undefined
-                  }
+                  role="menuitem"
+                  aria-current={location?.pathname === item.to ? "page" : false}
                 >
                   {item.name}
                 </Link>
@@ -128,7 +127,11 @@ export const RootHeader = () => {
                 role="none"
                 className="text-color-primary before:bg-color-font relative font-medium tracking-wide transition-[opacity] duration-500 ease-in-out hover:opacity-90"
               >
-                <Link to={item.to} className="text-[0.6rem] uppercase">
+                <Link
+                  to={item.to}
+                  className="text-[0.6rem] uppercase"
+                  role="menuitem"
+                >
                   {item.name}
                 </Link>
               </li>

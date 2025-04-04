@@ -1,13 +1,7 @@
+import { ChevronLeft, BookOpenText, Search, ChevronRight, Heart, CalendarDays} from "lucide-react"; // prettier-ignore
 import { createFileRoute } from "@tanstack/react-router";
-import {
-  ChevronLeft,
-  BookOpenText,
-  Search,
-  ChevronRight,
-  Heart,
-  CalendarDays,
-} from "lucide-react";
 import { useEffect, useRef } from "react";
+
 export const Route = createFileRoute("/$lang/_main/")({
   component: RouteComponent,
 });
@@ -262,24 +256,22 @@ function BlogCard({ imageUrl, category, title, author, date, likes, index }) {
         <img
           src={imageUrl}
           alt={title}
+          loading="lazy"
+          fetchPriority="low"
           className="h-full w-full object-cover"
         />
-
         {/* Category Badge */}
         <span
           className={`bg-primary border-primary-cover absolute top-4 left-4 rounded-full border px-3 py-1 text-xs font-medium text-white`}
         >
           {category}
         </span>
-
         {/* Gradient Overlay for Text Readability */}
         <div className="absolute right-0 bottom-0 left-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent"></div>
-
         {/* Title */}
         <div className="absolute bottom-20 left-0 w-full px-4 sm:bottom-16">
-          <h3 className="line-clamp-2 text-xl font-bold text-white">{title}</h3>
+          <h2 className="line-clamp-2 text-xl font-bold text-white">{title}</h2>
         </div>
-
         {/* Author and Metadata */}
         <div className="absolute bottom-4 left-0 flex w-full flex-col gap-x-2 gap-y-1 px-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="order-1 flex items-center gap-2 sm:order-1">
