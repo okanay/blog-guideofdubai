@@ -93,6 +93,11 @@ export const Route = createRootRoute({
           href: `/api/sitemap`,
         },
         {
+          rel: "preload",
+          as: "image",
+          href: `/images/brand.svg`,
+        },
+        {
           rel: "preload stylesheet",
           as: "style",
           href: `/fonts/custom-sans/font.css`,
