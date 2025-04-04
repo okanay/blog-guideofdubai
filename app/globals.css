@@ -24,7 +24,10 @@
   --color-color-primary: var(--color-zinc-50);
 
   /* text-color-font && text-color-font-invert */
+  --color-color-font-light: var(--color-zinc-600);
   --color-color-font: var(--color-zinc-700);
+  --color-color-font-dark: var(--color-zinc-800);
+
   --color-color-font-invert: var(--color-zinc-100);
 }
 
@@ -41,14 +44,14 @@
 
 @layer components {
   .prose {
-    @apply text-color-font;
+    @apply text-color-font-dark;
 
     /* Başlıklar */
     & h1 {
-      @apply mb-2 scroll-m-20 text-4xl font-bold tracking-tight lg:text-5xl;
+      @apply mb-2 scroll-m-20 text-center text-4xl font-bold tracking-tight lg:text-5xl;
     }
     & h2 {
-      @apply mt-10 mb-1.5 scroll-m-20 border-b pb-1.5 text-3xl font-semibold tracking-tight transition-colors first:mt-0;
+      @apply mt-10 mb-1.5 scroll-m-20 border-b border-zinc-200 pb-1.5 text-3xl font-semibold tracking-tight transition-colors first:mt-0;
     }
     & h3 {
       @apply mt-8 scroll-m-20 text-2xl font-semibold tracking-tight;
@@ -64,8 +67,12 @@
     }
 
     /* Paragraflar */
+    & h1:first-of-type + p {
+      @apply !text-center;
+    }
+
     & p {
-      @apply my-4 leading-7 first:mt-0;
+      @apply text-color-font-light my-4 leading-7 first:mt-0;
     }
     & p + p {
       @apply mt-6;
@@ -143,16 +150,16 @@
       @apply my-6 w-full border-collapse overflow-y-auto;
     }
     & thead tr {
-      @apply m-0 border-t p-0;
+      @apply m-0 border-t border-gray-200 p-0;
     }
     & th {
-      @apply border px-4 py-2 text-left font-bold;
+      @apply border border-gray-200 px-4 py-2 text-left font-bold;
     }
     & tbody tr {
-      @apply m-0 border-t p-0;
+      @apply m-0 border-t border-gray-200 p-0;
     }
     & td {
-      @apply border px-4 py-2 text-left;
+      @apply border border-gray-200 px-4 py-2 text-left;
     }
 
     /* Kod blokları */
@@ -168,12 +175,12 @@
 
     /* Yatay çizgi */
     & hr {
-      @apply my-8 border-t;
+      @apply my-8 border-t border-zinc-200;
     }
 
     /* Görseller */
     & img {
-      @apply mx-auto my-6 h-auto max-w-full rounded-lg;
+      @apply mx-auto my-6 aspect-video h-auto max-w-full rounded-lg object-cover;
     }
 
     & figure {
@@ -286,7 +293,7 @@
 
     /* İnteraktif elementler */
     & details {
-      @apply my-6 rounded-lg border;
+      @apply my-6 rounded-lg border border-zinc-200;
     }
     & summary {
       @apply cursor-pointer p-4 font-semibold;

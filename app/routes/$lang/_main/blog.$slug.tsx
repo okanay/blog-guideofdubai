@@ -5,9 +5,6 @@ export const Route = createFileRoute("/$lang/_main/blog/$slug")({
     const slug = params.slug;
     const lang = params.lang;
 
-    console.log("slug", slug);
-    console.log("lang", lang);
-
     if (slug === "0") {
       throw redirect({ replace: true, to: `/${lang}/not-found` });
     }

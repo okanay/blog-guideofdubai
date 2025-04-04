@@ -6,7 +6,7 @@ export const Route = createFileRoute("/$lang/_main/blog/")({
 
 function RouteComponent() {
   return (
-    <main className="prose mx-auto max-w-5xl p-6">
+    <main className="prose mx-auto max-w-5xl px-3.5 py-4 md:pt-10 md:pb-8">
       <h1>Modern Web Geliştirme Yaklaşımları</h1>
       <p>
         Günümüzde web geliştirme dünyası hızla değişiyor ve gelişiyor. React,
@@ -14,6 +14,11 @@ function RouteComponent() {
         çözümler sunuyor. Bu makalede, modern web geliştirme araçlarını ve
         yöntemlerini derinlemesine inceleyeceğiz.
       </p>
+      <img
+        src="https://images.project-test.info/1.webp"
+        alt="Modern Web Geliştirme Teknolojileri"
+      />
+      <figcaption>Modern web geliştirme araçları ve teknolojileri</figcaption>
 
       <h2>Komponent-Bazlı Geliştirme Stratejileri</h2>
       <p>
@@ -30,12 +35,6 @@ function RouteComponent() {
         </p>
         <p>— Kent C. Dodds, Frontend Uzmanı ve Eğitmen</p>
       </blockquote>
-
-      <img
-        src="https://images.project-test.info/1.webp"
-        alt="Modern Web Geliştirme Teknolojileri"
-      />
-      <figcaption>Modern web geliştirme araçları ve teknolojileri</figcaption>
 
       <h3>Neden TypeScript Kullanmalıyız?</h3>
       <p>
@@ -216,12 +215,6 @@ function RouteComponent() {
         <li>Teknoloji çeşitliliği</li>
         <li>Takım ölçeklenebilirliği</li>
       </ul>
-
-      <img
-        src="https://images.project-test.info/1.webp"
-        alt="Mikro-Frontend Mimarisi"
-      />
-      <figcaption>Mikro-Frontend mimarisi örneği</figcaption>
 
       <h2>En İyi Uygulamalar</h2>
       <p>
