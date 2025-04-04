@@ -3,22 +3,29 @@
 @theme {
   --font-custom-sans: "Fellix", "Helvetica Neue", "IBM Plex Sans", "sans-serif";
 
-  /* primary-600 */
-  --color-primary: oklch(55.5% 0.799 29.24);
-  /* zinc-800 */
-  --color-color-font: oklch(21% 0.006 285.885);
   /* primary colors */
-  --color-primary-50: oklch(96.2% 0.05 13.779);
-  --color-primary-100: oklch(92% 0.11 14.77);
-  --color-primary-200: oklch(85.2% 0.212 16.861);
-  --color-primary-300: oklch(75.8% 0.375 18.901);
-  --color-primary-400: oklch(64% 0.616 23.266);
-  --color-primary-500: oklch(46% 0.824 34.204);
-  --color-primary-600: oklch(55.5% 0.799 29.24);
-  --color-primary-700: oklch(41.1% 0.765 34.502);
-  --color-primary-800: oklch(34% 0.637 32.911);
-  --color-primary-900: oklch(28.5% 0.517 30.076);
-  --color-primary-950: oklch(12.9% 0.338 28.282);
+  --color-primary-50: oklch(0.97 0.0152 12.42);
+  --color-primary-100: oklch(0.93 0.0332 15.47);
+  --color-primary-200: oklch(0.88 0.0628 14.76);
+  --color-primary-300: oklch(0.8 0.112 17.1);
+  --color-primary-400: oklch(0.71 0.1795 20.01);
+  --color-primary-500: oklch(0.64 0.22 23.7);
+  --color-primary-600: oklch(0.56 0.2171 26.49);
+  --color-primary-700: oklch(0.52 0.2 26.63);
+  --color-primary-800: oklch(0.45 0.1691 25.84);
+  --color-primary-900: oklch(0.4 0.1406 24.26);
+  --color-primary-950: oklch(0.26 0.0948 24.79);
+
+  /* bg-primary && border-primary-cover */
+  --color-primary-light: var(--color-primary-500);
+  --color-primary: var(--color-primary-600);
+  --color-primary-dark: var(--color-primary-800);
+  --color-primary-cover: var(--color-primary-700);
+  --color-color-primary: var(--color-zinc-50);
+
+  /* text-color-font && text-color-font-invert */
+  --color-color-font: var(--color-zinc-700);
+  --color-color-font-invert: var(--color-zinc-100);
 }
 
 @layer base {
@@ -28,7 +35,7 @@
   }
 
   * {
-    @apply font-custom-sans text-color-font;
+    @apply font-custom-sans;
   }
 }
 

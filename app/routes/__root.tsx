@@ -22,7 +22,7 @@ export const Route = createRootRoute({
       // Kök dizin ise dil yönlendirmesi yap
       if (ctx.location.pathname === "/") {
         throw redirect({
-          to: `/${detectedLanguage}`,
+          to: `/${detectedLanguage}/(m)/`,
         });
       }
 
@@ -31,7 +31,7 @@ export const Route = createRootRoute({
       if (!isValidLangParam && pathSegments.length > 1) {
         const restOfPath = pathSegments.slice(1).join("/");
         throw redirect({
-          to: `/${detectedLanguage}/${restOfPath}`,
+          to: `/${detectedLanguage}/(m)/${restOfPath}`,
         });
       }
       return {
