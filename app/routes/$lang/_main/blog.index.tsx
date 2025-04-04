@@ -6,7 +6,7 @@ export const Route = createFileRoute("/$lang/_main/blog/")({
 
 function RouteComponent() {
   return (
-    <main className="prose mx-auto max-w-5xl px-3.5 py-4 md:pt-10 md:pb-8">
+    <main className="prose mx-auto max-w-5xl px-3.5 pt-10 pb-8">
       <h1>Modern Web Geliştirme Yaklaşımları</h1>
       <p>
         Günümüzde web geliştirme dünyası hızla değişiyor ve gelişiyor. React,
