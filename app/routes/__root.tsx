@@ -116,6 +116,13 @@ export const Route = createRootRoute({
           as: "font",
           type: "font/woff2",
           crossOrigin: "anonymous",
+          href: `/fonts/custom-sans/semibold.woff2`,
+        },
+        {
+          rel: "preload",
+          as: "font",
+          type: "font/woff2",
+          crossOrigin: "anonymous",
           href: `/fonts/custom-sans/bold.woff2`,
         },
       ],
