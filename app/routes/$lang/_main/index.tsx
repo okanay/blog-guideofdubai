@@ -10,12 +10,19 @@ export const Route = createFileRoute("/$lang/_main/")({
 function RouteComponent() {
   return (
     <main className="py-8 sm:py-12">
+      <BackgroudGradient />
       <HeroSection />
       <div className="not-sr-only my-24 sm:my-20" aria-hidden />
       <PopularBlogSection />
       <div className="not-sr-only my-6 sm:my-12" aria-hidden />
       <BlogPostLayout />
     </main>
+  );
+}
+
+function BackgroudGradient() {
+  return (
+    <div className="to-primary-50/70 fixed top-0 left-0 -z-10 h-[125vh] w-full bg-gradient-to-t from-sky-50 via-zinc-50" />
   );
 }
 
@@ -71,77 +78,116 @@ function HeroSearchForm() {
   );
 }
 
-function PopularBlogSection() {
-  const btnLeftRef = useRef(null);
-  const btnRightRef = useRef(null);
-  const container = useRef(null);
+const blogs = [
+  {
+    imageUrl: "https://images.project-test.info/1.webp",
+    category: "Hotels",
+    title: "Top 10 Luxury Hotels in Dubai That Will Take Your Breath Away",
+    author: "Ahmed Al Mansouri",
+    date: "March 15, 2025",
+    likes: "458",
+  },
+  {
+    imageUrl: "https://images.project-test.info/2.webp",
+    category: "Desert Safari",
+    title:
+      "Experience the Magic of Arabian Nights: Ultimate Desert Safari Guide",
+    author: "Sarah Johnson",
+    date: "February 28, 2025",
+    likes: "327",
+  },
+  {
+    imageUrl: "https://images.project-test.info/3.webp",
+    category: "City Tours",
+    title: "Discover Dubai's Hidden Gems: Off-the-Beaten-Path City Tour Spots",
+    author: "Mohammed Al Qasimi",
+    date: "March 10, 2025",
+    likes: "276",
+  },
+  {
+    imageUrl: "https://images.project-test.info/4.webp",
+    category: "Activities",
+    title: "Adrenaline Junkies Guide: 7 Extreme Sports You Must Try in Dubai",
+    author: "Jessica Williams",
+    date: "January 22, 2025",
+    likes: "389",
+  },
+];
 
-  const blogs = [
-    {
-      imageUrl: "https://images.project-test.info/1.webp",
-      category: "Hotels",
-      title: "Top 10 Luxury Hotels in Dubai That Will Take Your Breath Away",
-      author: "Ahmed Al Mansouri",
-      date: "March 15, 2025",
-      likes: "458",
-    },
-    {
-      imageUrl: "https://images.project-test.info/2.webp",
-      category: "Desert Safari",
-      title:
-        "Experience the Magic of Arabian Nights: Ultimate Desert Safari Guide",
-      author: "Sarah Johnson",
-      date: "February 28, 2025",
-      likes: "327",
-    },
-    {
-      imageUrl: "https://images.project-test.info/3.webp",
-      category: "City Tours",
-      title:
-        "Discover Dubai's Hidden Gems: Off-the-Beaten-Path City Tour Spots",
-      author: "Mohammed Al Qasimi",
-      date: "March 10, 2025",
-      likes: "276",
-    },
-    {
-      imageUrl: "https://images.project-test.info/4.webp",
-      category: "Activities",
-      title: "Adrenaline Junkies Guide: 7 Extreme Sports You Must Try in Dubai",
-      author: "Jessica Williams",
-      date: "January 22, 2025",
-      likes: "389",
-    },
-  ];
+function PopularBlogSection() {
+  const btnLeftRef = useRef<HTMLButtonElement>(null);
+  const btnRightRef = useRef<HTMLButtonElement>(null);
+  const container = useRef<HTMLUListElement>(null);
+  const cardRefs = useRef<HTMLLIElement[]>([]);
 
   const handleButtonClick = (direction: "Left" | "Right") => {
-    if (!container.current) return;
-    const cardWidth = 288;
-    const scrollAmount = cardWidth + 16;
+    if (!container.current || cardRefs.current.length === 0) return;
+
+    // İlk kartın genişliğini ve margin değerini al
+    const firstCard = cardRefs.current[0];
+    if (!firstCard) return;
+
+    const cardWidth = firstCard.getBoundingClientRect().width;
+    const cardMargin = 12; // gap-3 className'inden gelen değer
+    const scrollAmount = cardWidth + cardMargin;
+
     const scrollOffset = direction === "Left" ? -scrollAmount : scrollAmount;
-    container.current.scrollBy({
-      left: scrollOffset,
+    const currentScroll = container.current.scrollLeft;
+
+    // Scroll sınırlarını kontrol et
+    const maxScroll =
+      container.current.scrollWidth - container.current.clientWidth;
+    const targetScroll = currentScroll + scrollOffset;
+
+    // Scroll değerini sınırlar içinde tut
+    const boundedScroll = Math.max(0, Math.min(targetScroll, maxScroll));
+
+    container.current.scrollTo({
+      left: boundedScroll,
       behavior: "smooth",
     });
+
     updateButtonState();
   };
 
   const updateButtonState = () => {
     if (!container.current || !btnLeftRef.current || !btnRightRef.current)
       return;
+
     const { scrollLeft, scrollWidth, clientWidth } = container.current;
-    btnLeftRef.current.ariaDisabled = (scrollLeft <= 0).toString();
-    btnRightRef.current.ariaDisabled = (
-      scrollLeft + clientWidth >=
-      scrollWidth - 10
-    ).toString();
+    const isAtStart = scrollLeft <= 0;
+    const isAtEnd = Math.ceil(scrollLeft + clientWidth) >= scrollWidth;
+
+    btnLeftRef.current.ariaDisabled = isAtStart.toString();
+    btnRightRef.current.ariaDisabled = isAtEnd.toString();
   };
 
   useEffect(() => {
-    updateButtonState();
     const currentContainer = container.current;
-    currentContainer?.addEventListener("scroll", updateButtonState);
+    if (!currentContainer) return;
+
+    const handleScroll = () => {
+      updateButtonState();
+    };
+
+    // Scroll event listener
+    currentContainer.addEventListener("scroll", handleScroll);
+    // Resize event listener için debounce fonksiyonu
+    let resizeTimer: NodeJS.Timeout;
+    const handleResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        updateButtonState();
+      }, 100);
+    };
+
+    window.addEventListener("resize", handleResize);
+    updateButtonState();
+
     return () => {
-      currentContainer?.removeEventListener("scroll", updateButtonState);
+      currentContainer.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(resizeTimer);
     };
   }, []);
 
@@ -171,7 +217,15 @@ function PopularBlogSection() {
         className="flex snap-x snap-mandatory flex-nowrap items-center justify-start gap-3 overflow-x-auto overscroll-x-contain pb-4"
       >
         {blogs.map((blog, index) => (
-          <li key={index} className="shrink-0 snap-center">
+          <li
+            key={index}
+            ref={(el) => {
+              if (el) {
+                cardRefs.current[index] = el;
+              }
+            }}
+            className="shrink-0 snap-center"
+          >
             <BlogCard {...blog} index={index} />
           </li>
         ))}
@@ -179,6 +233,8 @@ function PopularBlogSection() {
     </section>
   );
 }
+
+export default PopularBlogSection;
 
 function BlogCard({ imageUrl, category, title, author, date, likes, index }) {
   return (
