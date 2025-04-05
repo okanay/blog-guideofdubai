@@ -47,9 +47,9 @@ function HeroSearchForm() {
     <form className="group flex w-full rounded-full ring ring-zinc-200 ring-offset-2 focus-within:!border-zinc-200 focus-within:!ring-zinc-400">
       <button
         type="button"
-        className="relative flex w-24 flex-shrink-0 items-center justify-center gap-2 rounded-l-full border border-zinc-200 bg-zinc-100 px-2 transition-[opacity_colors] duration-300 hover:cursor-pointer hover:border-zinc-300 hover:bg-zinc-200 focus:opacity-75 focus:outline-none"
+        className="relative flex flex-shrink-0 items-center justify-center gap-2 rounded-l-full border border-zinc-200 bg-zinc-100 px-4 transition-[opacity_colors] duration-300 hover:cursor-pointer hover:border-zinc-300 hover:bg-zinc-200 focus:opacity-75 focus:outline-none sm:w-24 sm:px-2"
       >
-        <span>Filter</span>
+        <span className="hidden sm:block">Filter</span>
         <SlidersHorizontal className="size-4" />
       </button>
 
@@ -65,7 +65,7 @@ function HeroSearchForm() {
         className="bg-primary flex items-center gap-1.5 rounded-r-full px-4 py-2 font-medium tracking-wide text-white transition-[opacity] duration-500 ease-in-out hover:opacity-75 focus:outline-none"
       >
         <span className="hidden sm:block">Search</span>
-        <Search className="size-4" />
+        <Search className="size-4 translate-x-[-10%] sm:translate-x-0" />
       </button>
     </form>
   );
@@ -283,7 +283,7 @@ function SelectedFeaturePost() {
           >
             Business
           </span>
-          <h1 className="line-clamp-2 text-2xl font-bold text-balance text-white md:text-3xl">
+          <h1 className="line-clamp-2 text-xl font-bold text-balance text-white md:text-3xl">
             Unlocking Business Efficiency with SaaS Solutions
           </h1>
         </div>

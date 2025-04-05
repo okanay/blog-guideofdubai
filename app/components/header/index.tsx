@@ -62,7 +62,11 @@ export const RootHeader = () => {
       role="banner"
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-1.5">
-        <Link to="/" aria-label="Guide of Dubai - Return to homepage">
+        <Link
+          to="/"
+          aria-label="Guide of Dubai - Return to homepage"
+          className="transition-opacity duration-300 focus:opacity-75 focus:outline-none"
+        >
           <img
             src="/images/brand.svg"
             alt="Guide of Dubai Brand Logo"
@@ -85,11 +89,11 @@ export const RootHeader = () => {
               <li
                 key={"main-nav-group-" + item.name}
                 role="none"
-                className="text-primary before:bg-primary relative font-medium tracking-wide transition-[width_opacity] duration-500 ease-in-out hover:opacity-90"
+                className="text-primary before:bg-primary relative font-medium tracking-wide"
               >
                 <Link
                   to={item.to}
-                  className="text-xs"
+                  className="text-xs transition-opacity duration-300 ease-in-out hover:opacity-90 focus:opacity-75 focus:outline-none"
                   role="menuitem"
                   aria-current={location?.pathname === item.to ? "page" : false}
                 >
@@ -102,7 +106,7 @@ export const RootHeader = () => {
 
         <a
           href="https://guideofdubai.com/"
-          className="text-color-primary border-primary-cover bg-primary flex h-11 items-center justify-center rounded-xs border px-6 text-center text-sm font-bold tracking-wide transition-[opacity] duration-500 ease-in-out hover:opacity-75"
+          className="text-color-primary border-primary-cover bg-primary flex h-11 items-center justify-center rounded-xs border px-6 text-center text-sm font-bold tracking-wide transition-opacity duration-300 ease-in-out hover:opacity-75 focus:opacity-75 focus:outline-none"
           aria-label="Visit Guide of Dubai main website"
           rel="noopener noreferrer"
           target="_blank"
@@ -124,11 +128,11 @@ export const RootHeader = () => {
               <li
                 key={"sub-nav-group-" + item.name}
                 role="none"
-                className="text-color-primary before:bg-color-font relative font-medium tracking-wide transition-[opacity] duration-500 ease-in-out hover:opacity-90"
+                className="text-color-primary before:bg-color-font relative font-medium tracking-wide"
               >
                 <Link
                   to={item.to}
-                  className="text-[0.6rem] uppercase"
+                  className="text-[0.6rem] uppercase transition-opacity duration-300 ease-in-out hover:opacity-90 focus:opacity-75 focus:outline-none"
                   role="menuitem"
                 >
                   {item.name}
