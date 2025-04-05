@@ -1,22 +1,9 @@
 /* prettier-ignore */
 import { Compass, Phone, Bed, Car, ShipWheel, Heart, BookOpen, Building2, TabletSmartphone, Instagram, Palmtree } from "lucide-react";
-import {
-  VisaSVG,
-  SafariSVG,
-  DubaiCityTourSVG,
-  JetskiSVG,
-  BurjSVG,
-  AbuDhabiCityTourSVG,
-  MuseumSVG,
-  MiracleGardenSVG,
-  HelicipterSVG,
-  AppleSVG,
-  AndroidSVG,
-  WhatsAppSVG,
-} from "./icons/";
+/* prettier-ignore */
+import { VisaSVG, SafariSVG, DubaiCityTourSVG, JetskiSVG, BurjSVG, AbuDhabiCityTourSVG, MuseumSVG, MiracleGardenSVG, HelicipterSVG, AppleSVG, AndroidSVG, WhatsAppSVG } from "./icons/";
 
 export const RootFooter = () => {
-  // Data için arrays oluşturma
   const otherServices = [
     {
       title: "Hotel Accommodation",
@@ -114,7 +101,6 @@ export const RootFooter = () => {
     { title: "FAQ", link: "https://guideofdubai.com/faq" },
   ];
 
-  // Common component for service/activity card
   const ServiceCard = ({ title, description, icon, link }) => (
     <a
       href={link}
@@ -136,14 +122,12 @@ export const RootFooter = () => {
     </a>
   );
 
-  // Common component for simple links
   const SimpleLink = ({ title, link }) => (
     <a href={link} className="block py-1 hover:underline">
       {title}
     </a>
   );
 
-  // Common section header component
   const SectionHeader = ({ icon, title }) => (
     <h3 className="mb-6 flex items-center gap-2 border-b border-zinc-200 pb-2 text-lg font-semibold">
       {icon}
@@ -162,7 +146,7 @@ export const RootFooter = () => {
               <h2 className="mb-4 text-3xl font-bold">
                 Experience the Best of Dubai!
               </h2>
-              <p className="mx-auto mb-6 px-2 text-lg text-zinc-800 sm:px-0">
+              <p className="mx-auto mb-6 px-4 text-base text-zinc-800 sm:px-0 sm:text-lg">
                 Turn your Dubai trip into an unforgettable adventure! Explore
                 exclusive activities, luxury yacht tours, desert safaris, and
                 more. Book now and make your dream vacation a reality.
@@ -229,7 +213,7 @@ export const RootFooter = () => {
                 title="Other Services"
               />
 
-              <div className="col-span-1 -mt-3 grid grid-cols-1 gap-x-8 gap-y-4 sm:mt-0 sm:grid-cols-2 lg:grid-cols-1">
+              <div className="col-span-1 -mt-2 grid grid-cols-1 gap-x-8 gap-y-4 sm:mt-0 sm:grid-cols-2 lg:grid-cols-1">
                 {otherServices.map((service, index) => (
                   <ServiceCard
                     key={index}
@@ -248,7 +232,7 @@ export const RootFooter = () => {
                 icon={<Palmtree className="size-5" />}
                 title="Popular Activities"
               />
-              <div className="-mt-3 grid grid-cols-1 gap-x-8 gap-y-4 sm:mt-0 sm:grid-cols-2">
+              <div className="-mt-2 grid grid-cols-1 gap-x-8 gap-y-4 sm:mt-0 sm:grid-cols-2">
                 {popularActivities.map((activity, index) => (
                   <ServiceCard
                     key={index}
@@ -267,7 +251,7 @@ export const RootFooter = () => {
                 icon={<BookOpen className="size-5" />}
                 title="Contracts & Policies"
               />
-              <div className="-mt-3 space-y-3 sm:mt-0">
+              <div className="-mt-2 space-y-3 sm:mt-0">
                 {contractsLinks.map((link, index) => (
                   <SimpleLink key={index} title={link.title} link={link.link} />
                 ))}
