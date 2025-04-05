@@ -58,7 +58,7 @@ export const RootHeader = () => {
 
   return (
     <header
-      className="relative z-20 w-full border-b border-zinc-200 bg-white py-1 sm:bg-transparent md:border-b-0 md:pb-0"
+      className="relative z-20 w-full border-b border-zinc-200 bg-white py-1 md:border-b-0 md:pb-0"
       role="banner"
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-1.5">
