@@ -28,6 +28,7 @@ function RouteComponent() {
   return (
     <Fragment>
       <RootHeader />
+      <div className="to-primary-50/70 fixed top-0 left-0 -z-10 h-svh w-full bg-gradient-to-t from-sky-50 via-zinc-50" />
       <Outlet />
       <RootFooter />
     </Fragment>

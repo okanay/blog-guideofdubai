@@ -17,14 +17,14 @@ interface Props extends Omit<LinkProps, "to"> {
     | "location";
 }
 
-export const Link: React.FC<Props> = ({ to, children, ...rest }) => {
+export const Link: React.FC<Props> = ({ to, children, className, ...rest }) => {
   const { language } = useLanguage();
   const localizedPath =
     to === "/"
       ? `/${language}`
       : `/${language}${to.startsWith("/") ? to : `/${to}`}`;
   return (
-    <ReactLink to={localizedPath} {...rest}>
+    <ReactLink to={localizedPath} className={className} {...rest}>
       {children}
     </ReactLink>
   );

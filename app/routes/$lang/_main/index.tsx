@@ -1,6 +1,7 @@
-import { ChevronLeft, BookOpenText, Search, ChevronRight, Heart, CalendarDays} from "lucide-react"; // prettier-ignore
+import { ChevronLeft, BookOpenText, Search, ChevronRight, Heart, CalendarDays, Clock, SlidersHorizontal} from "lucide-react"; // prettier-ignore
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Link } from "@/i18n/link";
 
 export const Route = createFileRoute("/$lang/_main/")({
   component: RouteComponent,
@@ -8,19 +9,22 @@ export const Route = createFileRoute("/$lang/_main/")({
 
 function RouteComponent() {
   return (
-    <main>
+    <main className="py-8 sm:py-12">
       <HeroSection />
+      <div className="not-sr-only my-24 sm:my-20" aria-hidden />
       <PopularBlogSection />
+      <div className="not-sr-only my-6 sm:my-12" aria-hidden />
+      <BlogPostLayout />
     </main>
   );
 }
 
 function HeroSection() {
   return (
-    <section id="#hero" className="pt-8 sm:pt-20">
+    <section id="#hero">
       <div className="relative z-21 mx-auto max-w-7xl px-4">
         <div className="mx-auto flex w-full max-w-xl flex-col gap-6 md:items-center md:justify-center md:text-center">
-          <button className="-mb-3 flex w-fit items-center gap-1.5 rounded-full border border-zinc-200 bg-zinc-100 px-4 py-1 text-xs font-medium shadow-inner ring shadow-zinc-200/5 ring-zinc-200 ring-offset-2">
+          <button className="-mb-3 flex w-fit items-center gap-1.5 rounded-full border border-zinc-200 bg-zinc-50 px-4 py-1 text-xs font-medium tracking-wide shadow-inner ring shadow-zinc-200/5 ring-zinc-200 ring-offset-2 transition-[opacity] duration-500 ease-in-out hover:opacity-75 focus:opacity-75 focus:outline-none">
             <span>Read Latest Blogs</span>
             <BookOpenText className="text-primary-dark size-3 translate-y-[0.5px]" />
           </button>
@@ -40,28 +44,25 @@ function HeroSection() {
 
 function HeroSearchForm() {
   return (
-    <form className="group flex w-full rounded-full border border-gray-200 ring ring-zinc-200 ring-offset-2 focus-within:!border-zinc-200 focus-within:!ring-zinc-400">
-      <label className="sr-only" htmlFor="category-select">
-        Category
-      </label>
-      <select
-        id="category-select"
-        className="w-24 appearance-none border-r border-zinc-200 px-2 py-3 text-center text-xs focus:outline-none"
+    <form className="group flex w-full rounded-full ring ring-zinc-200 ring-offset-2 focus-within:!border-zinc-200 focus-within:!ring-zinc-400">
+      <button
+        type="button"
+        className="relative flex w-24 flex-shrink-0 items-center justify-center gap-2 rounded-l-full border border-zinc-200 bg-zinc-100 px-2 transition-[opacity_colors] duration-300 hover:cursor-pointer hover:border-zinc-300 hover:bg-zinc-200 focus:opacity-75 focus:outline-none"
       >
-        <option value="all">Look All</option>
-        <option value="clothing">Restaurant</option>
-        <option value="accessories">Hotels</option>
-        <option value="shoes">Rent A Car</option>
-      </select>
+        <span>Filter</span>
+        <SlidersHorizontal className="size-4" />
+      </button>
 
       <input
         type="text"
+        id="search-input"
+        name="search-param"
         placeholder="Best Dubai Restaurant.."
-        className="w-full flex-grow px-4 py-3 focus:outline-none"
+        className="w-full flex-grow border-y border-r border-zinc-200 bg-white px-4 py-3 focus:outline-none"
       />
       <button
         type="submit"
-        className="bg-primary border-zinc-200] flex items-center gap-1.5 rounded-r-full border px-4 py-2 text-white focus:outline-none"
+        className="bg-primary flex items-center gap-1.5 rounded-r-full px-4 py-2 font-medium tracking-wide text-white transition-[opacity] duration-500 ease-in-out hover:opacity-75 focus:outline-none"
       >
         <span className="hidden sm:block">Search</span>
         <Search className="size-4" />
@@ -110,75 +111,6 @@ function PopularBlogSection() {
       date: "January 22, 2025",
       likes: "389",
     },
-    {
-      imageUrl: "https://images.project-test.info/5.webp",
-      category: "Rent a Car",
-      title:
-        "Luxury on Wheels: The Ultimate Guide to Renting Exotic Cars in Dubai",
-      author: "Daniel Smith",
-      date: "March 05, 2025",
-      likes: "312",
-    },
-    {
-      imageUrl: "https://images.project-test.info/6.webp",
-      category: "Dubai Visa",
-      title: "Everything You Need to Know About Dubai Tourist Visa in 2025",
-      author: "Aisha Al Falasi",
-      date: "February 12, 2025",
-      likes: "531",
-    },
-    {
-      imageUrl: "https://images.project-test.info/7.webp",
-      category: "Museum of the Future",
-      title: "Inside Dubai's Museum of the Future: A Glimpse into Tomorrow",
-      author: "Omar Hassan",
-      date: "March 18, 2025",
-      likes: "476",
-    },
-    {
-      imageUrl: "https://images.project-test.info/8.webp",
-      category: "Burj Khalifa",
-      title:
-        "Sunset at 828m: The Ultimate Burj Khalifa Experience You Shouldn't Miss",
-      author: "Emma Roberts",
-      date: "January 30, 2025",
-      likes: "602",
-    },
-    {
-      imageUrl: "https://images.project-test.info/9.webp",
-      category: "Dubai Frame",
-      title:
-        "The Golden Frame: Capturing Dubai's Past and Future at the Dubai Frame",
-      author: "Khalid Al Maktoum",
-      date: "February 20, 2025",
-      likes: "347",
-    },
-    {
-      imageUrl: "https://images.project-test.info/10.webp",
-      category: "Dubai City Tour",
-      title:
-        "From Old Town to Marina: The Perfect 3-Day Dubai City Tour Itinerary",
-      author: "Sophia Chen",
-      date: "March 01, 2025",
-      likes: "419",
-    },
-    {
-      imageUrl: "https://images.project-test.info/11.webp",
-      category: "Rent a Yacht",
-      title: "Sailing the Arabian Gulf: Luxury Yacht Experiences in Dubai",
-      author: "James Wilson",
-      date: "February 05, 2025",
-      likes: "384",
-    },
-    {
-      imageUrl: "https://images.project-test.info/12.webp",
-      category: "Restaurants",
-      title:
-        "Culinary Delights: Top 12 Fine Dining Restaurants in Dubai for 2025",
-      author: "Fatima Al Hashimi",
-      date: "March 22, 2025",
-      likes: "495",
-    },
   ];
 
   const handleButtonClick = (direction: "Left" | "Right") => {
@@ -214,13 +146,13 @@ function PopularBlogSection() {
   }, []);
 
   return (
-    <section id="popular-card" className="relative my-28 pr-4 pl-2 sm:my-20">
+    <section id="popular-card" className="relative px-4">
       <button
         ref={btnLeftRef}
         aria-disabled="true"
         aria-label="Left Scroll"
         onClick={() => handleButtonClick("Left")}
-        className="border-primary-cover bg-primary absolute -top-10 left-4 z-20 size-10 translate-y-[-50%] rounded-full border p-1 shadow-md transition-opacity duration-300 aria-disabled:cursor-not-allowed aria-disabled:opacity-25 sm:top-[50%] sm:left-2"
+        className="border-primary-cover bg-primary absolute -top-9 left-5 z-20 size-10 translate-y-[-50%] rounded-xs border p-1 shadow-md transition-opacity duration-300 focus:opacity-75 focus:outline-none aria-disabled:cursor-not-allowed aria-disabled:opacity-25 sm:top-[50%] sm:left-2 sm:rounded-full"
       >
         <ChevronLeft className="text-color-primary size-full" />
       </button>
@@ -229,14 +161,14 @@ function PopularBlogSection() {
         aria-disabled={false}
         aria-label="Right Scroll"
         onClick={() => handleButtonClick("Right")}
-        className="border-primary-cover bg-primary absolute -top-10 right-4 z-20 size-10 translate-y-[-50%] rounded-full border p-1 shadow-md transition-opacity duration-300 aria-disabled:cursor-not-allowed aria-disabled:opacity-25 sm:top-[50%] sm:right-2"
+        className="border-primary-cover bg-primary absolute -top-9 right-5 z-20 size-10 translate-y-[-50%] rounded-xs border p-1 shadow-md transition-opacity duration-300 focus:opacity-75 focus:outline-none aria-disabled:cursor-not-allowed aria-disabled:opacity-25 sm:top-[50%] sm:right-2 sm:rounded-full"
       >
         <ChevronRight className="text-color-primary size-full" />
       </button>
       <ul
         ref={container}
         style={{ scrollbarWidth: "none" }}
-        className="flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-4"
+        className="flex snap-x snap-mandatory flex-nowrap items-center justify-start gap-3 overflow-x-auto overscroll-x-contain pb-4"
       >
         {blogs.map((blog, index) => (
           <li key={index} className="shrink-0 snap-center">
@@ -250,55 +182,272 @@ function PopularBlogSection() {
 
 function BlogCard({ imageUrl, category, title, author, date, likes, index }) {
   return (
-    <div className="relative w-72 overflow-hidden rounded-xs shadow-md sm:w-96">
-      {/* Card Image */}
-      <div className="relative h-72 w-full sm:h-96">
-        <img
-          src={imageUrl}
-          alt={title}
-          loading="lazy"
-          fetchPriority="low"
-          className="h-full w-full object-cover"
-        />
-        {/* Category Badge */}
-        <span
-          className={`bg-primary border-primary-cover absolute top-4 left-4 rounded-full border px-3 py-1 text-xs font-medium text-white`}
-        >
-          {category}
-        </span>
-        {/* Gradient Overlay for Text Readability */}
-        <div className="absolute right-0 bottom-0 left-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent"></div>
-        {/* Title */}
-        <div className="absolute bottom-20 left-0 w-full px-4 sm:bottom-16">
-          <h2 className="line-clamp-2 text-xl font-bold text-white">{title}</h2>
+    <div className="group relative w-72 cursor-pointer overflow-hidden rounded-lg border border-zinc-300 sm:w-96 xl:w-[25vw]">
+      <Link to={"/blog"}>
+        {/* Card Image */}
+        <div className="relative h-72 w-full sm:h-96">
+          <img
+            src={imageUrl}
+            alt={title}
+            loading="lazy"
+            fetchPriority="low"
+            className="h-full w-full object-cover transition-opacity duration-500 ease-in-out group-hover:opacity-75"
+          />
+          {/* Category Badge */}
+          <span
+            className={`absolute top-4 left-4 rounded-full border border-zinc-900 bg-zinc-950 px-2 py-1 text-[0.6rem] font-medium text-zinc-100`}
+          >
+            {category}
+          </span>
+          {/* Gradient Overlay for Text Readability */}
+          <div className="absolute right-0 bottom-0 left-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent"></div>
+          {/* Title */}
+          <div className="absolute bottom-20 left-0 w-full px-4 sm:bottom-16">
+            <h2 className="line-clamp-2 text-xl font-bold text-white">
+              {title}
+            </h2>
+          </div>
+          {/* Author and Metadata */}
+          <div className="absolute bottom-4 left-0 flex w-full flex-col gap-x-2 gap-y-1 px-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="order-1 flex items-center gap-2 sm:order-1">
+              <div className="size-8 overflow-hidden rounded-full bg-zinc-300">
+                <img
+                  src={`https://i.pravatar.cc/64?u=${index}`}
+                  alt={author}
+                  loading="lazy"
+                  fetchPriority="low"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <span className="max-w-40 truncate text-sm text-white sm:max-w-24">
+                {author}
+              </span>
+            </div>
+            <div className="order-2 flex items-center gap-4 sm:order-2">
+              <div className="flex items-center gap-1">
+                <span className="line-clamp-1 text-sm text-white">{date}</span>
+                <CalendarDays className="text-color-font-invert size-3 flex-shrink-0" />
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="line-clamp-1 text-sm text-white">{likes}</span>
+                <Heart className="text-color-font-invert size-3 flex-shrink-0" />
+              </div>
+            </div>
+          </div>
         </div>
-        {/* Author and Metadata */}
-        <div className="absolute bottom-4 left-0 flex w-full flex-col gap-x-2 gap-y-1 px-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="order-1 flex items-center gap-2 sm:order-1">
-            <div className="size-8 overflow-hidden rounded-full bg-gray-300">
+      </Link>
+    </div>
+  );
+}
+
+function BlogPostLayout() {
+  return (
+    <div className="mx-auto max-w-7xl px-4">
+      <div className="flex flex-col gap-6">
+        {/* Top Row: Featured Posts */}
+        <div className="flex flex-col gap-8 md:flex-row">
+          {/* Selected Feature Post (Left side) */}
+          <div className="flex-1">
+            <SelectedFeaturePost />
+          </div>
+
+          {/* Other Featured Posts (Right side) */}
+          <div className="md:w-80 lg:w-96">
+            <OtherFeaturedPosts />
+          </div>
+        </div>
+
+        {/* Bottom Row: Recent Posts */}
+        <div>
+          <RecentPosts />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SelectedFeaturePost() {
+  return (
+    <div className="group relative h-72 w-full overflow-hidden rounded-lg sm:h-[23.1rem]">
+      <Link to={"/blog"}>
+        <img
+          src="https://images.project-test.info/1.webp"
+          alt="Office workspace with computers"
+          className="h-full w-full rounded-lg object-cover transition-opacity duration-500 ease-in-out group-hover:opacity-75"
+        />
+
+        {/* Content Overlay */}
+        <div className="absolute right-0 bottom-0 left-0 flex flex-col gap-2 border-t border-zinc-100 bg-gradient-to-t from-zinc-950/40 to-zinc-100/40 px-4 py-4 backdrop-blur-xs">
+          <span
+            className={`w-fit rounded-full border border-zinc-900 bg-zinc-950 px-2 py-1 text-[0.6rem] font-medium text-zinc-100`}
+          >
+            Business
+          </span>
+          <h1 className="line-clamp-2 text-2xl font-bold text-balance text-white md:text-3xl">
+            Unlocking Business Efficiency with SaaS Solutions
+          </h1>
+        </div>
+      </Link>
+    </div>
+  );
+}
+
+function OtherFeaturedPosts() {
+  const featuredPosts = [
+    {
+      id: 1,
+      imageUrl: "https://images.project-test.info/2.webp",
+      title: "Revolutionizing industries through SaaS implementation",
+    },
+    {
+      id: 2,
+      imageUrl: "https://images.project-test.info/3.webp",
+      title: "Synergizing saas and UX design for elevating digital experiences",
+    },
+    {
+      id: 3,
+      imageUrl: "https://images.project-test.info/4.webp",
+      title: "Navigating saas waters with intuitive UI and UX",
+    },
+    {
+      id: 4,
+      imageUrl: "https://images.project-test.info/1.webp",
+      title: "Sculpting saas success - the art of UI and UX design",
+    },
+  ];
+
+  return (
+    <div>
+      <h2 className="border-l-primary-cover mb-4 rounded border border-l-2 border-zinc-100 bg-zinc-100 py-1 pl-2 text-2xl font-semibold">
+        Other featured posts
+      </h2>
+
+      <div className="flex flex-col gap-4">
+        {featuredPosts.map((post) => (
+          <Link
+            to={"/blog"}
+            key={post.id}
+            className="flex gap-4 rounded border border-transparent bg-zinc-50 ring ring-zinc-50 transition-all duration-300 ease-in-out hover:bg-zinc-100 hover:ring-zinc-300 hover:ring-offset-2 focus:bg-zinc-100 focus:ring-zinc-300 focus:ring-offset-2 focus:outline-none"
+          >
+            {/* Thumbnail */}
+            <div className="h-16 w-16 shrink-0 overflow-hidden rounded-md">
               <img
-                src={`https://i.pravatar.cc/64?u=${index}`}
-                alt={author}
-                loading="lazy"
-                fetchPriority="low"
+                src={post.imageUrl}
+                alt={post.title}
                 className="h-full w-full object-cover"
               />
             </div>
-            <span className="max-w-40 truncate text-sm text-white sm:max-w-24">
-              {author}
-            </span>
-          </div>
-          <div className="order-2 flex items-center gap-4 sm:order-2">
-            <div className="flex items-center gap-1">
-              <span className="line-clamp-1 text-sm text-white">{date}</span>
-              <CalendarDays className="text-color-font-invert size-3 flex-shrink-0" />
+
+            {/* Content */}
+            <div className="flex flex-1 flex-col justify-center">
+              <h3 className="text-sm font-medium">{post.title}</h3>
             </div>
-            <div className="flex items-center gap-1">
-              <span className="line-clamp-1 text-sm text-white">{likes}</span>
-              <Heart className="text-color-font-invert size-3 flex-shrink-0" />
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function RecentPosts() {
+  const recentPosts = [
+    {
+      id: 1,
+      imageUrl: "https://images.project-test.info/3.webp",
+      title: "Mastering UI Elements: A Practical Guide for Designers",
+      excerpt:
+        "Dive into the world of user interfaces with our expert guides, latest trends, and practical tips.",
+      author: "Jennifer Taylor",
+      readTime: "3 min read",
+      authorImg: "https://i.pravatar.cc/64?u=1",
+    },
+    {
+      id: 2,
+      imageUrl: "https://images.project-test.info/4.webp",
+      title: "Crafting Seamless Experiences: The Art of Intuitive UI Design",
+      excerpt:
+        "Explore the principles and techniques that drive user-centric UI design, ensuring a seamless and intuitive experience.",
+      author: "Jennifer Taylor",
+      readTime: "5 min read",
+      authorImg: "https://i.pravatar.cc/64?u=1",
+    },
+    {
+      id: 3,
+      imageUrl: "https://images.project-test.info/1.webp",
+      title: "Beyond Aesthetics: The Power of Emotional UX Design",
+      excerpt:
+        "Delve into the realm of emotional design and discover how incorporating empathy and psychology elevates user experiences.",
+      author: "Ryan A.",
+      readTime: "2 min read",
+      authorImg: "https://i.pravatar.cc/64?u=3",
+    },
+    {
+      id: 4,
+      imageUrl: "https://images.project-test.info/2.webp",
+      title: "The Future of UX: Trends to Watch in 2025",
+      excerpt:
+        "Explore the upcoming trends in UX design that are set to shape the future of digital experiences.",
+      author: "Emily B.",
+      readTime: "4 min read",
+      authorImg: "https://i.pravatar.cc/64?u=4",
+    },
+  ];
+
+  return (
+    <div>
+      <div className="border-l-primary-cover mb-6 flex items-center justify-between rounded border border-l-2 border-zinc-100 bg-zinc-100 px-2 py-1">
+        <h2 className="text-2xl font-semibold">Recent Posts</h2>
+        <Link
+          to="/blog"
+          className="text-color-primary border-primary-cover bg-primary flex h-11 items-center justify-center rounded-xs border px-6 text-center text-sm font-bold tracking-wide transition-[opacity] duration-500 ease-in-out hover:opacity-75 focus:opacity-75 focus:outline-none"
+        >
+          All Posts
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {recentPosts.map((post) => (
+          <Link
+            to={"/blog"}
+            key={post.id}
+            className="group flex flex-col overflow-hidden rounded-lg border border-zinc-200 bg-zinc-50 ring ring-zinc-50 transition-all hover:ring-zinc-300 hover:ring-offset-2 focus:ring-zinc-300 focus:ring-offset-2 focus:outline-none"
+          >
+            {/* Image */}
+            <div className="relative h-48 w-full overflow-hidden">
+              <img
+                src={post.imageUrl}
+                alt={post.title}
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
             </div>
-          </div>
-        </div>
+
+            {/* Content */}
+            <div className="flex flex-1 flex-col p-5">
+              <h3 className="mb-3 line-clamp-2 text-xl font-semibold">
+                {post.title}
+              </h3>
+              <p className="mb-5 flex-1 text-sm text-zinc-600">
+                {post.excerpt}
+              </p>
+
+              {/* Author */}
+              <div className="flex items-center">
+                <div className="mr-3 h-8 w-8 overflow-hidden rounded-full">
+                  <img
+                    src={post.authorImg}
+                    alt={post.author}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <span className="mr-3 text-sm font-medium">{post.author}</span>
+                <span className="text-xs text-zinc-500">•</span>
+                <span className="ml-3 text-xs text-zinc-500">
+                  {post.readTime}
+                </span>
+              </div>
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
   );
