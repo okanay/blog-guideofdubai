@@ -1,9 +1,12 @@
 import { useEditor } from "./config";
 import { EditorContent } from "@tiptap/react";
 import { EditorRichMenu } from "./menu";
+import { InfoNodeEditorRender } from "@/components/editor/info-node";
+import React from "react";
+import { RenderJSON } from "./renderer";
 
 export const EditorPage = () => {
-  const initialContent = "<p>Hello, world!</p>";
+  const initialContent = `Merhaba...`;
   const editor = useEditor(initialContent);
 
   return (
@@ -11,6 +14,9 @@ export const EditorPage = () => {
       <EditorRichMenu editor={editor} />
       <div className="prose rounded border border-zinc-400 p-2">
         <EditorContent editor={editor} />
+      </div>
+      <div className="prose">
+        <RenderJSON json={editor.getJSON()} />
       </div>
     </div>
   );

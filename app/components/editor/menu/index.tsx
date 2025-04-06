@@ -1,12 +1,12 @@
 import { Editor } from "@tiptap/react";
-import { List, Quote, SeparatorHorizontal, Superscript, Subscript } from "lucide-react"; // prettier-ignore
-import Divider from "./ui/divider-x";
-import MenuButton from "./ui/button";
+import { Info, List, Quote, SeparatorHorizontal, Subscript, Superscript, TypeIcon } from "lucide-react"; // prettier-ignore
 import HeaderButtons from "./headers";
 import { ImageButton } from "./image";
-import MarksButtons from "./marks";
 import { LinkButton } from "./link";
+import MarksButtons from "./marks";
 import TextAlignButtons from "./text-aligns";
+import MenuButton from "./ui/button";
+import Divider from "./ui/divider-x";
 
 type Props = {
   editor: Editor;
@@ -64,6 +64,36 @@ export const EditorRichMenu = ({ editor }: Props) => {
         label="Üst"
       >
         <Superscript size={16} />
+      </MenuButton>
+      <MenuButton
+        onClick={() =>
+          editor.commands.setNode("infoNode", {
+            type: "information",
+            title: "test",
+          })
+        }
+        isActive={editor.isActive("infoNode")}
+        label="Bilgi"
+      >
+        <Info size={16} />
+      </MenuButton>
+      <MenuButton
+        onClick={() => {
+          const isActive = editor.isActive("fontWeight");
+          if (isActive) {
+            editor.chain().focus().unsetMark("fontWeight").run();
+          } else {
+            editor
+              .chain()
+              .focus()
+              .toggleMark("fontWeight", { family: "font-bold", index: 6 })
+              .run();
+          }
+        }}
+        isActive={editor.isActive("fontWeight")}
+        label="fontWeight"
+      >
+        <TypeIcon size={16} />
       </MenuButton>
     </div>
   );
