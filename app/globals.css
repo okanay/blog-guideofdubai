@@ -49,44 +49,40 @@
   }
 
   * {
-    @apply font-custom-sans focus:ring focus:ring-zinc-200 focus:ring-offset-2 focus:outline-none;
+    @apply font-custom-sans focus:outline-none;
   }
 }
 
 @layer components {
+  .tiptap-editor-initial {
+    @apply min-h-32 focus:border-transparent focus:ring-0 focus:outline-none;
+  }
+
   .prose {
     @apply text-color-font-dark;
 
     /* Başlıklar */
     & h1 {
-      @apply mb-2 scroll-m-20 text-center text-4xl font-bold tracking-tight lg:text-5xl;
+      @apply scroll-m-20 text-4xl font-bold tracking-tight lg:text-5xl;
     }
     & h2 {
-      @apply mt-10 mb-1.5 scroll-m-20 border-b border-zinc-200 pb-1.5 text-3xl font-semibold tracking-tight transition-colors first:mt-0;
+      @apply scroll-m-20 border-b border-zinc-200 pb-1.5 text-3xl font-semibold tracking-tight transition-colors first:mt-0;
     }
     & h3 {
-      @apply mt-8 scroll-m-20 text-2xl font-semibold tracking-tight;
+      @apply scroll-m-20 text-2xl font-semibold tracking-tight;
     }
     & h4 {
-      @apply mt-6 scroll-m-20 text-xl font-semibold tracking-tight;
+      @apply scroll-m-20 text-xl font-semibold tracking-tight;
     }
     & h5 {
-      @apply mt-4 scroll-m-20 text-lg font-semibold tracking-tight;
+      @apply scroll-m-20 text-lg font-semibold tracking-tight;
     }
     & h6 {
-      @apply mt-4 scroll-m-20 text-base font-semibold tracking-tight;
-    }
-
-    /* Paragraflar */
-    & h1:first-of-type + p {
-      @apply !text-center;
+      @apply scroll-m-20 text-base font-semibold tracking-tight;
     }
 
     & p {
-      @apply text-color-font-light my-4 leading-7 first:mt-0;
-    }
-    & p + p {
-      @apply mt-6;
+      @apply text-color-font-light leading-7;
     }
 
     /* Linkler */
@@ -96,15 +92,12 @@
 
     /* Blok alıntılar */
     & blockquote {
-      @apply mt-6 mb-6 border-l-2 bg-zinc-100 pl-6 italic;
-    }
-    & blockquote p {
-      @apply my-2;
+      @apply border-l-2 bg-zinc-100 pl-6 italic;
     }
 
     /* Listeler */
     & ul {
-      @apply my-6 ml-6 list-disc;
+      @apply list-disc;
     }
     & ul li {
       @apply my-2;
@@ -156,42 +149,14 @@
       margin-bottom: 0;
     }
 
-    /* Tablolar */
-    & table {
-      @apply my-6 w-full border-collapse overflow-y-auto;
-    }
-    & thead tr {
-      @apply m-0 border-t border-gray-200 p-0;
-    }
-    & th {
-      @apply border border-gray-200 px-4 py-2 text-left font-bold;
-    }
-    & tbody tr {
-      @apply m-0 border-t border-gray-200 p-0;
-    }
-    & td {
-      @apply border border-gray-200 px-4 py-2 text-left;
-    }
-
-    /* Kod blokları */
-    & pre {
-      @apply my-6 overflow-x-auto rounded-lg bg-gray-100 p-4;
-    }
-    & code {
-      @apply relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm;
-    }
-    & pre > code {
-      @apply bg-transparent p-0;
-    }
-
     /* Yatay çizgi */
     & hr {
-      @apply my-8 border-t border-zinc-200;
+      @apply border-t border-zinc-200;
     }
 
     /* Görseller */
     & img {
-      @apply mx-auto my-6 aspect-video h-auto max-w-full rounded-lg object-cover;
+      @apply mx-auto aspect-video h-auto max-w-full rounded-lg object-cover;
     }
 
     & figure {
@@ -201,43 +166,8 @@
       @apply mt-0 text-center text-xs opacity-75;
     }
 
-    /* İçerik aralama davranışları - vanilla CSS ile */
-    & > :first-child {
-      margin-top: 0;
-    }
-    & > :last-child {
-      margin-bottom: 0;
-    }
-    & h2 + p,
-    & h3 + p,
-    & h4 + p {
-      margin-top: 0.5rem;
-    }
-    & h2 + ul,
-    & h3 + ul,
-    & h4 + ul,
-    & h2 + ol,
-    & h3 + ol,
-    & h4 + ol {
-      margin-top: 0.5rem;
-    }
-
-    /* Başlıklar arasındaki boşluklar */
-    & h1 + h2 {
-      margin-top: 1.5rem;
-    }
-    & h2 + h3 {
-      margin-top: 1rem;
-    }
-    & h3 + h4,
-    & h4 + h5,
-    & h5 + h6 {
-      margin-top: 0.75rem;
-    }
-
-    /* Diğer elementler */
     & strong {
-      @apply font-bold;
+      @apply font-semibold;
     }
     & em {
       @apply italic;
@@ -259,99 +189,6 @@
     }
     & kbd {
       @apply rounded-md border px-1.5 py-0.5 text-xs font-semibold;
-    }
-
-    /* Callout/Not kutuları */
-    & .note,
-    & .warning,
-    & .tip,
-    & .info {
-      @apply my-6 rounded-lg border p-4;
-    }
-    & .note {
-      @apply border-blue-200 bg-blue-50;
-    }
-    & .warning {
-      @apply border-amber-200 bg-amber-50;
-    }
-    & .tip {
-      @apply border-green-200 bg-green-50;
-    }
-    & .info {
-      @apply border-gray-200 bg-gray-50;
-    }
-
-    /* Not kutuları içeriği */
-    & .note > *:first-child,
-    & .warning > *:first-child,
-    & .tip > *:first-child,
-    & .info > *:first-child {
-      margin-top: 0;
-    }
-    & .note > *:last-child,
-    & .warning > *:last-child,
-    & .tip > *:last-child,
-    & .info > *:last-child {
-      margin-bottom: 0;
-    }
-
-    /* İç içe geçmiş içerikler için geliştirilmiş boşluklandırma */
-    & blockquote ul,
-    & blockquote ol {
-      margin-top: 0.75rem;
-      margin-bottom: 0.75rem;
-    }
-
-    /* İnteraktif elementler */
-    & details {
-      @apply my-6 rounded-lg border border-zinc-200;
-    }
-    & summary {
-      @apply cursor-pointer p-4 font-semibold;
-    }
-
-    & details > pre {
-      @apply !my-0 !bg-transparent !p-0 !px-4 !text-pretty;
-    }
-
-    /* Responsive davranışlar için vanilla CSS */
-    @media (max-width: 640px) {
-      & table {
-        display: block;
-        overflow-x: auto;
-      }
-      & img {
-        max-width: 100%;
-      }
-      & h1 {
-        font-size: 2rem; /* text-3xl */
-      }
-      & h2 {
-        font-size: 1.5rem; /* text-2xl */
-      }
-      & h3 {
-        font-size: 1.25rem; /* text-xl */
-      }
-      & h4 {
-        font-size: 1.125rem; /* text-lg */
-      }
-      & h5,
-      & h6 {
-        font-size: 1rem; /* text-base */
-      }
-      & pre {
-        padding: 0.75rem;
-      }
-      & blockquote {
-        padding-left: 1rem;
-      }
-      & .note,
-      & .warning,
-      & .tip,
-      & .info,
-      & details {
-        padding: 0.75rem;
-      }
     }
 
     /* Tablet ve orta büyüklükteki ekranlar için */

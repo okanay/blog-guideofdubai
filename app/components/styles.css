@@ -1,0 +1,46 @@
+:root {
+  --drag: rgba(0, 0, 0, 0);
+  --drag-hover: rgba(0, 0, 0, 0.05);
+  --drag-active: rgba(40, 40, 40, 0.5);
+  --drag-icon: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" /></svg>');
+}
+
+.drag-handle {
+  position: fixed;
+  opacity: 1;
+  transition: opacity ease-in 0.2s;
+  border-radius: 0.25rem;
+  background-image: var(--drag-icon);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  width: 1.5rem;
+  height: 1.5rem;
+  z-index: 50;
+  cursor: grab;
+
+  &:hover {
+    background-color: var(--drag-hover);
+    transition: background-color 0.2s;
+  }
+
+  &:active {
+    background-color: var(--drag-active);
+    transition: background-color 0.2s;
+    cursor: grabbing;
+  }
+
+  &.hide {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  @media screen and (max-width: 600px) {
+    display: none;
+    pointer-events: none;
+  }
+}
+
+.dark .drag-handle {
+  background-color: red;
+}
