@@ -2,82 +2,19 @@ import React from "react";
 import { NodeViewWrapper, ReactNodeViewRenderer } from "@tiptap/react";
 import { mergeAttributes, Node, NodeViewProps } from "@tiptap/core";
 
-// Görsel boyut tipleri
+// Görsel boyut ve hizalama tipleri
 type ImageSize = "small" | "medium" | "large";
-
-// Görsel hizalama tipleri
 type ImageAlignment = "left" | "center" | "right";
-
-// EnhancedImage özellikleri
-type EnhancedImageProps = {
-  src: string;
-  alt: string;
-  title?: string;
-  size: ImageSize;
-  alignment: ImageAlignment;
-  caption?: string;
-};
-
-/**
- * Gelişmiş Görsel Bileşeni
- * Görsel, boyut, hizalama ve alt yazı özelliklerini içerir
- */
-const EnhancedImage: React.FC<EnhancedImageProps> = ({
-  src,
-  alt,
-  title,
-  size,
-  alignment,
-  caption,
-}) => {
-  // Görsel boyutuna göre sınıfları belirle - responsive değerler
-  const sizeClasses = {
-    small: "w-full sm:w-2/3 md:w-1/2 lg:w-2/5", // Daha küçük
-    medium: "w-full sm:w-3/4 md:w-2/3 lg:w-3/5", // Orta boyut
-    large: "w-full md:w-5/6 lg:w-4/5", // Büyük boyut
-  };
-
-  // Görsel hizalamaya göre sınıfları belirle - mobil uyumlu
-  const alignmentClasses = {
-    left: "md:float-left md:mr-4 md:mb-2 mb-4", // Sadece orta ve büyük ekranlarda float
-    center: "mx-auto", // Merkez - tüm ekranlarda
-    right: "md:float-right md:ml-4 md:mb-2 mb-4", // Sadece orta ve büyük ekranlarda float
-  };
-
-  // Görsel container için stil sınıfları
-  const containerClasses = `my-4 ${alignmentClasses[alignment]}`;
-
-  // Küçük ekranlarda görsel her zaman tam genişlikte olsun
-  const imgClasses = `
-    rounded-lg aspect-video object-cover
-    ${sizeClasses[size]}
-    ${alignment === "center" ? "mx-auto" : ""}
-  `;
-
-  return (
-    <figure className={containerClasses}>
-      <div className="overflow-hidden">
-        <img src={src} alt={alt} title={title} className={imgClasses} />
-      </div>
-      {caption && (
-        <figcaption className="mt-2 text-center text-sm text-zinc-500">
-          {caption}
-        </figcaption>
-      )}
-    </figure>
-  );
-};
 
 /**
  * TipTap EnhancedImage Extension
- * Editörde gelişmiş görsel özellikleri eklemeyi sağlar
+ * Gelişmiş görsel eklemeyi sağlar (boyut, hizalama ve alt yazı özellikleriyle)
  */
-export const EnhancedImageExtension = Node.create({
+export const EnhancedImage = Node.create({
   name: "enhancedImage",
   group: "block",
-  selectable: true,
+  atom: true,
   draggable: true,
-  atom: true, // Atomik node (içerik olarak değiştirilemez)
 
   addAttributes() {
     return {
@@ -85,7 +22,7 @@ export const EnhancedImageExtension = Node.create({
         default: null,
       },
       alt: {
-        default: "",
+        default: null,
       },
       title: {
         default: null,
@@ -105,63 +42,77 @@ export const EnhancedImageExtension = Node.create({
   parseHTML() {
     return [
       {
-        tag: "figure[data-enhanced-image]",
+        tag: "figure.enhanced-image",
       },
     ];
   },
 
   renderHTML({ HTMLAttributes }) {
-    // Burada HTML çıktısını yapılandırıyoruz
-    const { caption, ...attrs } = HTMLAttributes;
-
     return [
       "figure",
-      mergeAttributes(
-        { "data-enhanced-image": "" },
-        {
-          class: `enhanced-image enhanced-image-${attrs.alignment || "center"} enhanced-image-${attrs.size || "medium"}`,
-        },
-      ),
+      mergeAttributes({ class: "enhanced-image" }, HTMLAttributes),
       [
-        "div",
-        { class: "enhanced-image-container" },
-        [
-          "img",
-          {
-            src: attrs.src,
-            alt: attrs.alt,
-            title: attrs.title,
-            class: "enhanced-image-img",
-          },
-        ],
+        "img",
+        {
+          src: HTMLAttributes.src,
+          alt: HTMLAttributes.alt,
+          title: HTMLAttributes.title,
+        },
       ],
-      caption
-        ? ["figcaption", { class: "enhanced-image-caption" }, caption]
-        : "",
+      ["figcaption", {}, HTMLAttributes.caption],
     ];
   },
 
   addNodeView() {
-    return ReactNodeViewRenderer(EnhancedImageEditorView);
+    return ReactNodeViewRenderer(EnhancedImageView);
   },
 });
 
 /**
  * Editör içinde görüntüleme için NodeView bileşeni
  */
-const EnhancedImageEditorView: React.FC<NodeViewProps> = ({ node }) => {
+const EnhancedImageView: React.FC<NodeViewProps> = ({ node }) => {
   const { src, alt, title, size, alignment, caption } = node.attrs;
+
+  // Boyut sınıfları
+  const sizeClasses = {
+    small: "w-1/2",
+    medium: "w-2/3",
+    large: "w-5/6",
+  };
+
+  // Mobil için merkez hizalama, masaüstü için seçilen hizalama
+  const alignmentClasses = {
+    left: "md:float-left md:mr-4",
+    center: "mx-auto",
+    right: "md:float-right md:ml-4",
+  };
 
   return (
     <NodeViewWrapper>
-      <EnhancedImage
-        src={src}
-        alt={alt}
-        title={title}
-        size={size}
-        alignment={alignment}
-        caption={caption}
-      />
+      <figure
+        className={`md:clearfix relative my-6 block ${
+          alignment === "center" ? "flex justify-center" : ""
+        }`}
+      >
+        <div
+          className={`${sizeClasses[size as ImageSize]} ${
+            alignmentClasses[alignment as ImageAlignment]
+          } md:${alignment === "center" ? "mx-auto" : ""}`}
+        >
+          <img
+            src={src}
+            alt={alt || ""}
+            title={title || undefined}
+            className="w-full rounded-md object-cover"
+          />
+          {caption && (
+            <figcaption className="mt-2 text-center text-sm text-zinc-500">
+              {caption}
+            </figcaption>
+          )}
+        </div>
+      </figure>
     </NodeViewWrapper>
   );
 };
@@ -172,14 +123,43 @@ const EnhancedImageEditorView: React.FC<NodeViewProps> = ({ node }) => {
 export const EnhancedImageRenderer = ({ node }: { node: any }) => {
   const { src, alt, title, size, alignment, caption } = node.attrs;
 
+  // Boyut sınıfları
+  const sizeClasses = {
+    small: "w-1/2",
+    medium: "w-2/3",
+    large: "w-5/6",
+  };
+
+  // Mobil için merkez hizalama, masaüstü için seçilen hizalama
+  const alignmentClasses = {
+    left: "md:float-left md:mr-4",
+    center: "mx-auto",
+    right: "md:float-right md:ml-4",
+  };
+
   return (
-    <EnhancedImage
-      src={src}
-      alt={alt}
-      title={title}
-      size={size}
-      alignment={alignment}
-      caption={caption}
-    />
+    <figure
+      className={`md:clearfix relative my-6 block ${
+        alignment === "center" ? "flex justify-center" : ""
+      }`}
+    >
+      <div
+        className={`${sizeClasses[size as ImageSize]} ${
+          alignmentClasses[alignment as ImageAlignment]
+        } md:${alignment === "center" ? "mx-auto" : ""}`}
+      >
+        <img
+          src={src}
+          alt={alt || ""}
+          title={title || undefined}
+          className="w-full rounded-md object-cover"
+        />
+        {caption && (
+          <figcaption className="mt-2 text-center text-sm text-zinc-500">
+            {caption}
+          </figcaption>
+        )}
+      </div>
+    </figure>
   );
 };

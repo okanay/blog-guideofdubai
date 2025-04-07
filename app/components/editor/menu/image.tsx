@@ -173,7 +173,6 @@ const EnhancedImageButton = ({ editor }: EnhancedImageButtonProps) => {
               <p className="mt-1 text-sm text-red-600">{validationError}</p>
             )}
           </div>
-
           {/* Alt Text ve Başlık */}
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -207,7 +206,6 @@ const EnhancedImageButton = ({ editor }: EnhancedImageButtonProps) => {
               <p className="mt-1 text-xs text-zinc-500">Opsiyonel</p>
             </div>
           </div>
-
           {/* Boyut Seçimi */}
           <div>
             <h3 className="mb-2 text-sm font-medium text-zinc-700">Boyut</h3>
@@ -231,7 +229,6 @@ const EnhancedImageButton = ({ editor }: EnhancedImageButtonProps) => {
               ))}
             </div>
           </div>
-
           {/* Hizalama Seçimi */}
           <div>
             <h3 className="mb-2 text-sm font-medium text-zinc-700">Hizalama</h3>
@@ -255,7 +252,6 @@ const EnhancedImageButton = ({ editor }: EnhancedImageButtonProps) => {
               })}
             </div>
           </div>
-
           {/* Alt Yazı */}
           <div>
             <h3 className="mb-1.5 text-sm font-medium text-zinc-700">
@@ -271,35 +267,93 @@ const EnhancedImageButton = ({ editor }: EnhancedImageButtonProps) => {
             />
           </div>
 
-          {/* Önizleme */}
+          {/* Önizleme - Sadece URL geçerliyse göster */}
           {imageUrl && !validationError && (
             <div className="mt-2">
               <h3 className="mb-1.5 text-sm font-medium text-zinc-700">
                 Önizleme
               </h3>
               <div className="overflow-hidden rounded-md border border-zinc-200 bg-zinc-50 p-4">
-                <figure
-                  className={`mx-auto ${alignment === "left" ? "float-left mr-4" : ""} ${alignment === "right" ? "float-right ml-4" : ""}`}
-                  style={{
-                    maxWidth: SIZE_OPTIONS.find((s) => s.value === size)?.width,
-                  }}
-                >
-                  <img
-                    src={imageUrl}
-                    alt={altText || "Önizleme"}
-                    className="rounded-md"
-                  />
-                  {caption && (
-                    <figcaption className="mt-2 text-center text-sm text-zinc-500">
-                      {caption}
-                    </figcaption>
-                  )}
-                </figure>
-                <div className="clear-both"></div>
+                <div className="max-w-full overflow-hidden">
+                  {/* Mobil önizleme (merkez hizalı) */}
+                  <div className="block md:hidden">
+                    <div className="flex justify-center">
+                      <div
+                        className={`relative ${
+                          size === "small"
+                            ? "w-1/2"
+                            : size === "large"
+                              ? "w-5/6"
+                              : "w-2/3"
+                        } `}
+                      >
+                        <figure>
+                          <img
+                            src={imageUrl}
+                            alt={altText || "Önizleme"}
+                            className="w-full rounded-md object-cover"
+                          />
+                          {caption && (
+                            <figcaption className="mt-2 text-center text-sm text-zinc-500">
+                              {caption}
+                            </figcaption>
+                          )}
+                        </figure>
+                      </div>
+                    </div>
+                    <div className="mt-2 text-center text-xs text-zinc-500">
+                      Not: Mobil görünümde tüm görseller otomatik olarak
+                      ortalanır
+                    </div>
+                  </div>
+
+                  {/* Masaüstü önizleme (seçili hizalama) */}
+                  <div className="hidden md:block">
+                    <div className="relative mb-8">
+                      <div
+                        className={` ${alignment === "center" ? "flex justify-center" : ""} ${alignment === "right" ? "flex justify-end" : ""} clearfix`}
+                      >
+                        <div
+                          className={`relative ${alignment !== "center" ? "float-" + alignment : ""} ${alignment === "left" ? "mr-4" : ""} ${alignment === "right" ? "ml-4" : ""} ${
+                            size === "small"
+                              ? "w-1/2"
+                              : size === "large"
+                                ? "w-5/6"
+                                : "w-2/3"
+                          } ${alignment === "center" ? "mx-auto" : ""} `}
+                        >
+                          <figure>
+                            <img
+                              src={imageUrl}
+                              alt={altText || "Önizleme"}
+                              className="w-full rounded-md object-cover"
+                            />
+                            {caption && (
+                              <figcaption className="mt-2 text-center text-sm text-zinc-500">
+                                {caption}
+                              </figcaption>
+                            )}
+                          </figure>
+                        </div>
+                      </div>
+                      <div
+                        className={`${alignment !== "center" ? "clear-both" : ""}`}
+                      ></div>
+                    </div>
+                    <div className="text-center text-xs text-zinc-500">
+                      Masaüstü önizleme (
+                      {alignment === "left"
+                        ? "sola"
+                        : alignment === "right"
+                          ? "sağa"
+                          : "merkeze"}{" "}
+                      hizalı)
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           )}
-
           {/* Alt butonlar */}
           <div className="flex justify-end border-t border-zinc-100 pt-3">
             <div className="flex gap-2">

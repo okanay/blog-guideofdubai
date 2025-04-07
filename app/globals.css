@@ -186,6 +186,49 @@
       @apply rounded-md border px-1.5 py-0.5 text-xs font-semibold;
     }
 
+    /* Eklentiyi globals.css dosyasına ekleyin */
+
+    /* Gelişmiş Görsel Stilleri */
+    .enhanced-image {
+      @apply mx-auto my-4 w-full;
+    }
+
+    .enhanced-image-container {
+      @apply overflow-hidden;
+    }
+
+    .enhanced-image-img {
+      @apply mx-auto aspect-video w-full rounded-lg object-cover;
+    }
+
+    .enhanced-image-caption {
+      @apply mt-2 text-center text-sm text-zinc-500;
+    }
+
+    /* Boyut sınıfları - mobile first yaklaşımı */
+    .enhanced-image-small .enhanced-image-img {
+      @apply w-full md:w-1/2 lg:w-2/5;
+    }
+
+    .enhanced-image-medium .enhanced-image-img {
+      @apply w-full md:w-2/3 lg:w-3/5;
+    }
+
+    .enhanced-image-large .enhanced-image-img {
+      @apply w-full md:w-5/6 lg:w-4/5;
+    }
+
+    /* Masaüstünde hizalama (md ve üzeri) */
+    @media (min-width: 768px) {
+      .enhanced-image-left {
+        @apply float-left mr-6 mb-4;
+      }
+
+      .enhanced-image-right {
+        @apply float-right mb-4 ml-6;
+      }
+    }
+
     /* Tablet ve orta büyüklükteki ekranlar için */
     @media (min-width: 641px) and (max-width: 1024px) {
       & img.large {

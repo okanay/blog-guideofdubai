@@ -89,15 +89,11 @@ export const AlerBox = Node.create({
     return {
       type: {
         default: "information",
-        renderHTML: (attributes) => ({
-          "data-type": attributes.type,
-        }),
+        // Doğrudan HTML özniteliklerine aktarmak yerine, renderHTML'e bırak
       },
       title: {
         default: "",
-        renderHTML: (attributes) => ({
-          "data-title": attributes.title,
-        }),
+        // Doğrudan HTML özniteliklerine aktarmak yerine, renderHTML'e bırak
       },
     };
   },
@@ -106,15 +102,35 @@ export const AlerBox = Node.create({
     return [
       {
         tag: "div[data-alert-box]",
+        getAttrs: (node) => {
+          if (!(node instanceof HTMLElement)) return {};
+
+          // HTML'den data özelliklerini alıp doğru şekilde çözümle
+          return {
+            type: node.getAttribute("data-type") || "information",
+            title: node.getAttribute("data-title") || "",
+          };
+        },
       },
     ];
   },
 
   renderHTML({ HTMLAttributes }) {
+    // Önce kendi özel data özelliklerimizi hazırlayalım
+    const customAttrs = {
+      "data-alert-box": "",
+      "data-type": HTMLAttributes.type || "information",
+      "data-title": HTMLAttributes.title || "",
+    };
+
+    // Şimdi bu özel özellikleri tüm HTML özellikleriyle birleştirelim
+    // Ancak type ve title'ı çift eklemekten kaçınalım
+    const { type, title, ...rest } = HTMLAttributes;
+
     return [
       "div",
-      mergeAttributes({ "data-alert-box": "" }, HTMLAttributes),
-      0,
+      mergeAttributes(customAttrs, rest),
+      0, // İçerik
     ];
   },
 
