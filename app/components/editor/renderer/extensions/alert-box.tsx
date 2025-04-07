@@ -48,15 +48,30 @@ const AlertBox: React.FC<AlertBoxProps & { type: AlertType }> = ({
   const Icon = config.icon;
   const color = config.colorClass;
 
+  // Başlık varsa klasik görünüm
+  if (title && title.trim()) {
+    return (
+      <div
+        className={`mb-4 rounded-md border-l-4 border-${color}-500 bg-${color}-50 p-4 shadow-sm`}
+      >
+        <div className="mb-2 flex items-center">
+          <Icon className={`mr-2 text-${color}-500`} size={20} />
+          <h3 className={`font-semibold text-${color}-700`}>{title}</h3>
+        </div>
+        <div className={`text-${color}-700 text-sm`}>{children}</div>
+      </div>
+    );
+  }
+
+  // Başlık yoksa kompakt görünüm
   return (
     <div
       className={`mb-4 rounded-md border-l-4 border-${color}-500 bg-${color}-50 p-4 shadow-sm`}
     >
-      <div className="mb-2 flex items-center">
-        <Icon className={`mr-2 text-${color}-500`} size={20} />
-        <h3 className={`font-semibold text-${color}-700`}>{title}</h3>
+      <div className="flex items-center gap-2">
+        <Icon className={`text-${color}-500 flex-shrink-0`} size={18} />
+        <div className={`text-${color}-700 text-sm`}>{children}</div>
       </div>
-      <div className={`text-${color}-700 text-sm`}>{children}</div>
     </div>
   );
 };
@@ -79,7 +94,7 @@ export const AlerBox = Node.create({
         }),
       },
       title: {
-        default: "Bilgi",
+        default: "",
         renderHTML: (attributes) => ({
           "data-title": attributes.title,
         }),
@@ -113,7 +128,7 @@ export const AlerBox = Node.create({
  */
 const AlertBoxEditorView: React.FC<NodeViewProps> = ({ node }) => {
   const type = node.attrs.type || "information";
-  const title = node.attrs.title || "Bilgi";
+  const title = node.attrs.title || "";
 
   return (
     <NodeViewWrapper>
@@ -135,7 +150,7 @@ export const AlertBoxRenderer = ({
   children: React.ReactNode;
 }) => {
   const type = node.attrs.type || "information";
-  const title = node.attrs.title || "Bilgi";
+  const title = node.attrs.title || "";
 
   return (
     <AlertBox type={type as AlertType} title={title}>

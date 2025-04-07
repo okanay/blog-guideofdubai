@@ -12,16 +12,13 @@ import {
   Heading4,
   Heading5,
   Heading6,
-  Info,
   Italic,
   List,
   Pickaxe,
   Quote,
   SeparatorHorizontal,
-  Strikethrough,
   Subscript,
   Superscript,
-  Underline,
 } from "lucide-react";
 import { ColorButton } from "./color";
 import { FontFamilyButton } from "./font-family";
@@ -33,6 +30,7 @@ import { twMerge } from "tailwind-merge";
 import { useIsActive } from "@/hooks/use-isActive";
 import { FontSizeButton } from "./font-size";
 import { TextDecorationButton } from "./text-decoration";
+import { AlertBoxButton } from "./alert-box";
 
 type Props = {
   editor: Editor;
@@ -53,7 +51,7 @@ export const EditorRichMenu = ({ editor }: Props) => {
 
   return (
     <div className="pointer-events-none fixed inset-0 z-1000">
-      <div className="pointer-events-auto absolute bottom-12 left-0 w-full bg-white">
+      <div className="pointer-events-auto absolute bottom-0 left-0 w-full bg-white py-4">
         <div className="mx-auto flex w-full max-w-lg flex-col border border-zinc-200 bg-white sm:rounded-lg">
           <div className="text-color-primary pointer-events-auto flex items-center justify-between bg-zinc-700 px-2 py-2 sm:rounded-t-lg">
             <h1 className="text-xs font-semibold">Metin Editörü</h1>
@@ -256,18 +254,7 @@ export const EditorRichMenu = ({ editor }: Props) => {
               className="relative grid w-full grid-rows-[1fr] bg-zinc-50 px-1 py-1 transition-all duration-300 aria-hidden:grid-rows-[0fr] aria-hidden:overflow-hidden aria-hidden:py-0"
             >
               <div className="flex min-h-0 w-full items-center gap-1 overflow-hidden">
-                <MenuButton
-                  onClick={() =>
-                    editor.commands.setNode("alertBox", {
-                      type: "information",
-                      title: "test",
-                    })
-                  }
-                  isActive={editor.isActive("alertBox")}
-                  label="Bilgi"
-                >
-                  <Info size={16} />
-                </MenuButton>
+                <AlertBoxButton editor={editor} />
                 <MenuButton
                   onClick={() =>
                     editor.chain().focus().setHorizontalRule().run()

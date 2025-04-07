@@ -18,6 +18,7 @@ import { TextDecoration } from "./renderer/extensions/text-decoration";
 
 export const useEditor = (initialContent: string = "") => {
   const editor = useTiptapEditor({
+    content: initialContent,
     extensions: [
       StarterKit.configure({
         heading: { levels: [1, 2, 3, 4, 5, 6] },
@@ -56,7 +57,6 @@ export const useEditor = (initialContent: string = "") => {
       FontFamily,
       AlerBox,
     ],
-    content: initialContent,
     editorProps: {
       attributes: {
         class: "tiptap-editor-initial",

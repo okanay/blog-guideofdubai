@@ -3,19 +3,17 @@ import { useEditor } from "./config";
 import { EditorContent } from "@tiptap/react";
 import { EditorRichMenu } from "./menu";
 import { RenderJSON } from "./renderer";
-import { Code, Eye, FileJson, Pencil } from "lucide-react";
+import { Code, Eye, FileJson, FileText, Pencil } from "lucide-react";
+import DummyBlog from "./dummy";
 
 export const EditorPage = () => {
-  const initialContent = `Merhaba...`;
-  const editor = useEditor(initialContent);
-  const [editorMode, setEditorMode] = useState<"editor" | "preview" | "json">(
-    "editor",
-  );
+  const editor = useEditor(DummyBlog);
+  const [editorMode, setEditorMode] = useState<
+    "editor" | "preview" | "json" | "html"
+  >("editor");
 
   return (
     <div className="relative py-4">
-      <EditorRichMenu editor={editor} />
-
       {/* Toggle butonları */}
       <div className="absolute top-4 right-4 flex items-center gap-2 rounded-lg border border-zinc-200 bg-white p-1 px-4">
         <div className="mr-2 text-sm font-medium text-zinc-700">Görünüm:</div>
@@ -58,6 +56,19 @@ export const EditorPage = () => {
           <Code size={14} />
           <span>JSON</span>
         </button>
+
+        <button
+          onClick={() => setEditorMode("html")}
+          className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+            editorMode === "html"
+              ? "bg-primary text-color-primary"
+              : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
+          }`}
+          title="JSON Görünümü"
+        >
+          <FileText size={14} />
+          <span>HTML</span>
+        </button>
       </div>
 
       <div className="mx-auto my-8 flex max-w-5xl flex-col gap-4 px-4 py-6">
@@ -80,9 +91,12 @@ export const EditorPage = () => {
         <div className="rounded-sm">
           {/* Düzenleme modu */}
           {editorMode === "editor" && (
-            <div className="prose border border-zinc-200 bg-white p-4 focus-within:!border-zinc-300">
-              <EditorContent editor={editor} />
-            </div>
+            <>
+              <EditorRichMenu editor={editor} />
+              <div className="prose border border-zinc-200 bg-white p-4 focus-within:!border-zinc-300">
+                <EditorContent editor={editor} />
+              </div>
+            </>
           )}
 
           {/* Önizleme modu */}
@@ -94,10 +108,17 @@ export const EditorPage = () => {
 
           {/* JSON modu */}
           {editorMode === "json" && (
-            <div className="max-h-72 overflow-auto overflow-y-auto rounded-lg bg-zinc-900 p-4 text-sm text-white">
+            <div className="max-h-screen overflow-auto overflow-y-auto rounded-lg bg-zinc-900 p-4 text-sm text-white">
               <pre className="font-mono">
                 {JSON.stringify(editor.getJSON(), null, 2)}
               </pre>
+            </div>
+          )}
+
+          {/* HTML modu */}
+          {editorMode === "html" && (
+            <div className="max-h-screen overflow-auto overflow-y-auto rounded-lg bg-zinc-900 p-4 text-sm text-white">
+              {JSON.stringify(editor.getHTML(), null, 2)}
             </div>
           )}
         </div>
