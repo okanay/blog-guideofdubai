@@ -9,7 +9,7 @@ import { ImageNode } from "./image";
 import { ListItemNode } from "./list-item";
 import { OrderedListNode } from "./ordered-list";
 import { ParagraphNode } from "./paragraph";
-import { InfoNodeEditorRender } from "../extensions/info";
+import { AlertBoxRenderer } from "../extensions/alert-box";
 
 export const RenderNode: React.FC<{ node: any; children: React.ReactNode }> = ({
   node,
@@ -36,10 +36,8 @@ export const RenderNode: React.FC<{ node: any; children: React.ReactNode }> = ({
       return <HardBreakNode />;
     case "image":
       return <ImageNode node={node} />;
-    case "infoNode":
-      return (
-        <InfoNodeEditorRender node={node}>{children}</InfoNodeEditorRender>
-      );
+    case "alertBox":
+      return <AlertBoxRenderer node={node}>{children}</AlertBoxRenderer>;
     default:
       return null;
   }

@@ -21,7 +21,6 @@ import {
   Strikethrough,
   Subscript,
   Superscript,
-  Type,
   Underline,
 } from "lucide-react";
 import { ColorButton } from "./color";
@@ -32,6 +31,8 @@ import { LinkButton } from "./link";
 import MenuButton from "./ui/button";
 import { twMerge } from "tailwind-merge";
 import { useIsActive } from "@/hooks/use-isActive";
+import { FontSizeButton } from "./font-size";
+import { TextDecorationButton } from "./text-decoration";
 
 type Props = {
   editor: Editor;
@@ -52,7 +53,7 @@ export const EditorRichMenu = ({ editor }: Props) => {
 
   return (
     <div className="pointer-events-none fixed inset-0 z-1000">
-      <div className="pointer-events-auto absolute bottom-0 left-0 w-full bg-white">
+      <div className="pointer-events-auto absolute bottom-12 left-0 w-full bg-white">
         <div className="mx-auto flex w-full max-w-lg flex-col border border-zinc-200 bg-white sm:rounded-lg">
           <div className="text-color-primary pointer-events-auto flex items-center justify-between bg-zinc-700 px-2 py-2 sm:rounded-t-lg">
             <h1 className="text-xs font-semibold">Metin Editörü</h1>
@@ -192,6 +193,7 @@ export const EditorRichMenu = ({ editor }: Props) => {
             >
               <div className="flex min-h-0 w-full items-center gap-1 overflow-hidden">
                 <FontWeightButton editor={editor} />
+                <FontSizeButton editor={editor} />
                 <MenuButton
                   onClick={() => editor.chain().focus().toggleItalic().run()}
                   isActive={editor.isActive("italic")}
@@ -199,20 +201,7 @@ export const EditorRichMenu = ({ editor }: Props) => {
                 >
                   <Italic size={16} />
                 </MenuButton>
-                <MenuButton
-                  onClick={() => editor.chain().focus().toggleUnderline().run()}
-                  isActive={editor.isActive("underline")}
-                  label="Altı Çizili"
-                >
-                  <Underline size={16} />
-                </MenuButton>
-                <MenuButton
-                  onClick={() => editor.chain().focus().toggleStrike().run()}
-                  isActive={editor.isActive("strike")}
-                  label="Üst Çizili"
-                >
-                  <Strikethrough size={16} />
-                </MenuButton>
+                <TextDecorationButton editor={editor} />{" "}
                 <FontFamilyButton editor={editor} />
                 <ColorButton editor={editor} />
               </div>
@@ -269,12 +258,12 @@ export const EditorRichMenu = ({ editor }: Props) => {
               <div className="flex min-h-0 w-full items-center gap-1 overflow-hidden">
                 <MenuButton
                   onClick={() =>
-                    editor.commands.setNode("infoNode", {
+                    editor.commands.setNode("alertBox", {
                       type: "information",
                       title: "test",
                     })
                   }
-                  isActive={editor.isActive("infoNode")}
+                  isActive={editor.isActive("alertBox")}
                   label="Bilgi"
                 >
                   <Info size={16} />

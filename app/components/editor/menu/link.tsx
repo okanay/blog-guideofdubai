@@ -168,7 +168,7 @@ const LinkButton = ({ editor }: LinkButtonProps) => {
                 value={linkUrl}
                 onChange={(e) => setLinkUrl(e.target.value)}
                 placeholder="https://example.com"
-                className="w-full rounded-md border border-zinc-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-zinc-300 px-3 py-2 focus:ring-1 focus:outline-none"
                 autoFocus
               />
               {validationError && (
@@ -191,7 +191,7 @@ const LinkButton = ({ editor }: LinkButtonProps) => {
                 value={linkText}
                 onChange={(e) => setLinkText(e.target.value)}
                 placeholder="Bağlantı için görünen metin"
-                className="w-full rounded-md border border-zinc-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-zinc-300 px-3 py-2 focus:ring-1 focus:outline-none"
               />
             </div>
           )}
@@ -208,7 +208,7 @@ const LinkButton = ({ editor }: LinkButtonProps) => {
                   type="checkbox"
                   checked={openInNewTab}
                   onChange={(e) => setOpenInNewTab(e.target.checked)}
-                  className="h-4 w-4 rounded border-zinc-300 text-blue-500 focus:ring-blue-500"
+                  className="text-primary-500 focus:ring-primary-500 h-4 w-4 rounded border-zinc-300"
                 />
                 <label
                   htmlFor="open-new-tab"
@@ -242,7 +242,7 @@ const LinkButton = ({ editor }: LinkButtonProps) => {
               </button>
               <button
                 onClick={handleInsertLink}
-                className="focus:ring-primary-400 w-fit rounded-full border border-blue-500 bg-blue-500 px-6 py-2 text-sm font-medium text-white transition-all hover:bg-blue-600 focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                className="focus:ring-primary-400 border-primary-500 bg-primary-500 hover:bg-primary-600 w-fit rounded-full border px-6 py-2 text-sm font-medium text-white transition-all focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={!linkUrl.trim() || !!validationError}
               >
                 {isActive ? "Güncelle" : "Ekle"}

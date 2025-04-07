@@ -85,11 +85,6 @@
       @apply text-color-font-light leading-7;
     }
 
-    /* Linkler */
-    & a {
-      @apply text-primary font-medium underline underline-offset-4 transition-opacity duration-300 hover:opacity-75;
-    }
-
     /* Blok alıntılar */
     & blockquote {
       @apply border-l-2 bg-zinc-100 pl-6 italic;

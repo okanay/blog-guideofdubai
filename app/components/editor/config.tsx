@@ -12,7 +12,9 @@ import TextStyle from "@tiptap/extension-text-style";
 import FontFamily from "@tiptap/extension-font-family";
 import TextAlign from "@tiptap/extension-text-align";
 import { FontWeight } from "./renderer/extensions/font-weight";
-import { InfoNode } from "./renderer/extensions/info";
+import { AlerBox } from "./renderer/extensions/alert-box";
+import { FontSize } from "./renderer/extensions/font-size";
+import { TextDecoration } from "./renderer/extensions/text-decoration";
 
 export const useEditor = (initialContent: string = "") => {
   const editor = useTiptapEditor({
@@ -35,6 +37,15 @@ export const useEditor = (initialContent: string = "") => {
       TextAlign.configure({
         types: ["heading", "paragraph"],
       }),
+      FontWeight.configure({
+        types: ["textStyle"],
+      }),
+      FontSize.configure({
+        types: ["textStyle"],
+      }),
+      TextDecoration.configure({
+        types: ["textStyle"],
+      }),
       Image,
       Underline,
       Subscript,
@@ -43,10 +54,7 @@ export const useEditor = (initialContent: string = "") => {
       TextStyle,
       Color,
       FontFamily,
-      FontWeight.configure({
-        types: ["textStyle"],
-      }),
-      InfoNode,
+      AlerBox,
     ],
     content: initialContent,
     editorProps: {

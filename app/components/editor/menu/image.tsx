@@ -111,7 +111,7 @@ const ImageButton = ({ editor }: ImageButtonProps) => {
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
               placeholder="https://example.com/image.jpg"
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+              className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-zinc-300 px-3 py-2 focus:ring-1 focus:outline-none"
               autoFocus
             />
             {validationError && (
@@ -132,7 +132,7 @@ const ImageButton = ({ editor }: ImageButtonProps) => {
               value={altText}
               onChange={(e) => setAltText(e.target.value)}
               placeholder="Resim açıklaması (erişilebilirlik için)"
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+              className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-zinc-300 px-3 py-2 focus:ring-1 focus:outline-none"
             />
             <p className="mt-1 text-xs text-zinc-500">
               Görsel yüklenemediğinde gösterilecek ve ekran okuyucular
@@ -154,7 +154,7 @@ const ImageButton = ({ editor }: ImageButtonProps) => {
               </button>
               <button
                 onClick={handleInsertImage}
-                className="focus:ring-primary-400 w-fit rounded-full border border-blue-500 bg-blue-500 px-6 py-2 text-sm font-medium text-white transition-all hover:bg-blue-600 focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                className="focus:ring-primary-400 border-primary-500 bg-primary-500 hover:bg-primary-600 w-fit rounded-full border px-6 py-2 text-sm font-medium text-white transition-all focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={!imageUrl.trim() || !!validationError}
               >
                 Ekle
