@@ -16,7 +16,7 @@ export const EditorPage = () => {
     <div className="relative py-4">
       <EditorRichMenu editor={editor} />
       {/* Toggle butonları */}
-      <div className="mx-auto mt-22 flex max-w-5xl flex-col gap-4 px-4 py-6 sm:mt-14">
+      <div className="mx-auto mt-16 flex max-w-5xl flex-col gap-4 px-4 py-6">
         {/* Görünüm */}
         <div className="flex items-center gap-2 overflow-x-auto bg-white">
           <div className="mr-2 text-sm font-medium text-zinc-700">Görünüm:</div>
@@ -104,7 +104,7 @@ export const EditorPage = () => {
 
           {/* Önizleme modu */}
           {editorMode === "preview" && (
-            <div className="prose max-w-none p-4">
+            <div className="prose max-w-none py-4">
               <RenderJSON json={editor.getJSON()} />
             </div>
           )}

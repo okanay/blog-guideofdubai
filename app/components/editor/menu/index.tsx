@@ -62,7 +62,7 @@ export const EditorRichMenu = ({ editor }: Props) => {
     <div className="pointer-events-none fixed top-0 right-0 left-0 z-1000">
       <div className="pointer-events-auto w-full border-b border-zinc-200 bg-zinc-100 transition-all duration-300 ease-in-out">
         <div className="mx-auto w-full">
-          <div className="flex items-center justify-between px-4 py-1">
+          <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-1 sm:px-12">
             <h1 className="text-color-font text-xs font-semibold">
               Metin Editörü
             </h1>
@@ -89,7 +89,7 @@ export const EditorRichMenu = ({ editor }: Props) => {
                 </div>
               ))}
 
-              <div className="group invisible relative ml-1">
+              <div className="group relative ml-1 hidden">
                 <button
                   aria-hidden={isMenuVisible}
                   className="rounded-md bg-red-500 px-2 py-1 text-xs font-semibold text-white hover:bg-red-600"
@@ -114,9 +114,12 @@ export const EditorRichMenu = ({ editor }: Props) => {
           >
             <div
               aria-hidden={!isMenuVisible}
-              className="min-h-0 overflow-hidden border-t border-zinc-200 bg-white px-1 py-2 transition-all duration-300 aria-hidden:py-0"
+              className="min-h-0 overflow-hidden border-t border-zinc-200 bg-white px-4 py-2 transition-all duration-300 aria-hidden:py-0 sm:px-12"
             >
-              <div className="flex flex-wrap items-center gap-1 overflow-x-auto">
+              <div
+                style={{ scrollbarWidth: "thin" }}
+                className="mx-auto flex max-w-7xl items-center gap-1 overflow-x-auto"
+              >
                 {/* Başlık Butonları - types kategorisine ait */}
                 <div
                   className={`flex items-center gap-x-2 ${isHidden("types") ? "hidden" : ""}`}
