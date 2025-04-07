@@ -39,13 +39,6 @@ type Props = {
 };
 
 export const EditorRichMenu = ({ editor }: Props) => {
-  const [isMenuVisible, setIsMenuVisible] = useState(true);
-
-  // Menüyü göster/gizle
-  const toggleMenuVisibility = () => {
-    setIsMenuVisible(!isMenuVisible);
-  };
-
   const Categories = [
     { label: "Hepsini Göster", value: "all", icon: SeparatorHorizontal },
     { label: "Tip", value: "types", icon: Heading },
@@ -62,7 +55,7 @@ export const EditorRichMenu = ({ editor }: Props) => {
     <div className="pointer-events-none fixed top-0 right-0 left-0 z-1000">
       <div className="pointer-events-auto w-full border-b border-zinc-200 bg-zinc-100 transition-all duration-300 ease-in-out">
         <div className="mx-auto w-full">
-          <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-1 sm:px-12">
+          <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-1 lg:px-12">
             <h1 className="text-color-font text-xs font-semibold">
               Metin Editörü
             </h1>
@@ -88,37 +81,14 @@ export const EditorRichMenu = ({ editor }: Props) => {
                   </div>
                 </div>
               ))}
-
-              <div className="group relative ml-1 hidden">
-                <button
-                  aria-hidden={isMenuVisible}
-                  className="rounded-md bg-red-500 px-2 py-1 text-xs font-semibold text-white hover:bg-red-600"
-                  onClick={toggleMenuVisibility}
-                >
-                  <ChevronDown
-                    className={`size-3.5 transition-all duration-300 ${isMenuVisible ? "rotate-180" : ""}`}
-                  />
-                </button>
-
-                {/* Hover ile görünen tooltip */}
-                <div className="pointer-events-none absolute top-8 left-1/2 z-20 -translate-x-1/2 rounded bg-zinc-800 px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                  {isMenuVisible ? "Gizle" : "Göster"}
-                </div>
-              </div>
             </div>
           </div>
 
-          <div
-            aria-hidden={!isMenuVisible}
-            className="grid grid-rows-[1fr] transition-all duration-300 aria-hidden:grid-rows-[0fr] aria-hidden:overflow-hidden"
-          >
-            <div
-              aria-hidden={!isMenuVisible}
-              className="min-h-0 overflow-hidden border-t border-zinc-200 bg-white px-4 py-2 transition-all duration-300 aria-hidden:py-0 sm:px-12"
-            >
+          <div className="grid grid-rows-[1fr] transition-all duration-300 aria-hidden:grid-rows-[0fr] aria-hidden:overflow-hidden">
+            <div className="min-h-0 overflow-hidden border-t border-zinc-200 bg-white py-2 transition-all duration-300 aria-hidden:py-0">
               <div
                 style={{ scrollbarWidth: "thin" }}
-                className="mx-auto flex max-w-7xl items-center gap-1 overflow-x-auto"
+                className="mx-auto flex max-w-7xl items-center gap-1 overflow-x-auto px-4 lg:px-12"
               >
                 {/* Başlık Butonları - types kategorisine ait */}
                 <div
