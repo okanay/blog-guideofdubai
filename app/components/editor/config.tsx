@@ -11,8 +11,8 @@ import Color from "@tiptap/extension-color";
 import TextStyle from "@tiptap/extension-text-style";
 import FontFamily from "@tiptap/extension-font-family";
 import TextAlign from "@tiptap/extension-text-align";
-import { InfoNode } from "./info-node";
-import { FontWeightMark } from "./font-weight";
+import { FontWeightMark } from "./renderer/texts/font-weight";
+import { InfoNode } from "./renderer/nodes/[custom]-info";
 
 export const useEditor = (initialContent: string = "") => {
   const editor = useTiptapEditor({
@@ -43,8 +43,8 @@ export const useEditor = (initialContent: string = "") => {
       TextStyle,
       Color,
       FontFamily,
-      InfoNode,
       FontWeightMark,
+      InfoNode,
     ],
     content: initialContent,
     editorProps: {
@@ -52,9 +52,7 @@ export const useEditor = (initialContent: string = "") => {
         class: "tiptap-editor-initial",
       },
     },
-    onUpdate: ({ editor }) => {
-      console.log(editor.getJSON());
-    },
+    onUpdate: ({ editor }) => {},
   });
 
   return editor;

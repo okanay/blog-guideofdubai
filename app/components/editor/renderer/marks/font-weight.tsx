@@ -1,5 +1,5 @@
 import React from "react";
-import { fontWeightOptions } from "../../font-weight";
+import { fontWeightOptions } from "../texts/font-weight";
 
 interface Props {
   mark: {

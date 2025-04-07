@@ -2,7 +2,7 @@ import { Editor } from "@tiptap/react";
 import { Bold } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SelectButton } from "./ui/select";
-import { fontWeightOptions } from "../font-weight";
+import { fontWeightOptions } from "../renderer/texts/font-weight";
 
 type Props = {
   editor: Editor;
@@ -29,11 +29,15 @@ const FontWeightButton: React.FC<Props> = ({ editor }) => {
   }, [editor]);
 
   const handleFontChange = (fontValue: string | number) => {
+    console.log("Font changed to:", fontValue);
     if (fontValue || fontValue !== 0) {
       editor
         .chain()
         .focus()
-        .toggleMark("fontWeight", { family: fontValue, index: fontValue })
+        .toggleMark("fontWeight", {
+          weight: fontWeightOptions[fontValue].label,
+          index: fontValue,
+        })
         .run();
     } else {
       editor.chain().focus().unsetMark("fontWeight").run();
