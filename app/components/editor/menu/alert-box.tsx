@@ -8,7 +8,7 @@ import RichButtonModal from "./ui/modal";
 const ALERT_CONFIG = {
   information: {
     icon: Info,
-    colorClass: "blue",
+    colorClass: "sky",
     label: "Bilgi",
     description: "Kullanıcıya bilgi vermek için",
   },
@@ -20,7 +20,7 @@ const ALERT_CONFIG = {
   },
   danger: {
     icon: AlertCircle,
-    colorClass: "red",
+    colorClass: "rose",
     label: "Tehlike",
     description: "Önemli hata veya risk bildirmek için",
   },
