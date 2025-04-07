@@ -24,7 +24,6 @@ import {
 import { ColorButton } from "./color";
 import { FontFamilyButton } from "./font-family";
 import { FontWeightButton } from "./font-weight";
-import { ImageButton } from "./image";
 import { LinkButton } from "./link";
 import MenuButton from "./ui/button";
 import { twMerge } from "tailwind-merge";
@@ -33,6 +32,7 @@ import { FontSizeButton } from "./font-size";
 import { TextDecorationButton } from "./text-decoration";
 import { AlertBoxButton } from "./alert-box";
 import { useState } from "react";
+import { EnhancedImageButton } from "./image";
 
 type Props = {
   editor: Editor;
@@ -159,7 +159,7 @@ export const EditorRichMenu = ({ editor }: Props) => {
                 <div
                   className={`flex items-center gap-x-2 ${isHidden("types") ? "hidden" : ""}`}
                 >
-                  <ImageButton editor={editor} />
+                  <EnhancedImageButton editor={editor} />
                   <LinkButton editor={editor} />
                   <MenuButton
                     onClick={() =>

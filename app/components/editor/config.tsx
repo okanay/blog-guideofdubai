@@ -15,6 +15,7 @@ import { FontWeight } from "./renderer/extensions/font-weight";
 import { AlerBox } from "./renderer/extensions/alert-box";
 import { FontSize } from "./renderer/extensions/font-size";
 import { TextDecoration } from "./renderer/extensions/text-decoration";
+import { EnhancedImageExtension } from "./renderer/extensions/image";
 
 export const useEditor = (initialContent: string = "") => {
   const editor = useTiptapEditor({
@@ -48,6 +49,7 @@ export const useEditor = (initialContent: string = "") => {
         types: ["textStyle"],
       }),
       Image,
+      EnhancedImageExtension,
       Underline,
       Subscript,
       Superscript,

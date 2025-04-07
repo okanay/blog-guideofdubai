@@ -10,6 +10,7 @@ import { ListItemNode } from "./list-item";
 import { OrderedListNode } from "./ordered-list";
 import { ParagraphNode } from "./paragraph";
 import { AlertBoxRenderer } from "../extensions/alert-box";
+import { EnhancedImageRenderer } from "../extensions/image";
 
 export const RenderNode: React.FC<{ node: any; children: React.ReactNode }> = ({
   node,
@@ -38,6 +39,8 @@ export const RenderNode: React.FC<{ node: any; children: React.ReactNode }> = ({
       return <ImageNode node={node} />;
     case "alertBox":
       return <AlertBoxRenderer node={node}>{children}</AlertBoxRenderer>;
+    case "enhancedImage":
+      return <EnhancedImageRenderer node={node} />;
     default:
       return null;
   }

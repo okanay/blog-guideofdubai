@@ -1,17 +1,40 @@
+// app/components/editor/menu/enhanced-image.tsx
 import { useState } from "react";
 import { Editor } from "@tiptap/react";
-import { Image } from "lucide-react";
+import { Image, AlignLeft, AlignCenter, AlignRight } from "lucide-react";
 import RichButtonModal from "./ui/modal";
 
-// Custom Image Button component
-type ImageButtonProps = {
+// Görsel boyut ve hizalama tipleri
+type ImageSize = "small" | "medium" | "large";
+type ImageAlignment = "left" | "center" | "right";
+
+// Boyut seçenekleri
+const SIZE_OPTIONS = [
+  { value: "small", label: "Küçük", width: "40%" },
+  { value: "medium", label: "Orta", width: "70%" },
+  { value: "large", label: "Büyük", width: "100%" },
+];
+
+// Hizalama seçenekleri
+const ALIGNMENT_OPTIONS = [
+  { value: "left", label: "Sol", icon: AlignLeft },
+  { value: "center", label: "Merkez", icon: AlignCenter },
+  { value: "right", label: "Sağ", icon: AlignRight },
+];
+
+// Gelişmiş Görsel Butonu özellikleri
+type EnhancedImageButtonProps = {
   editor: Editor;
 };
 
-const ImageButton = ({ editor }: ImageButtonProps) => {
+const EnhancedImageButton = ({ editor }: EnhancedImageButtonProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [altText, setAltText] = useState("");
+  const [title, setTitle] = useState("");
+  const [size, setSize] = useState<ImageSize>("medium");
+  const [alignment, setAlignment] = useState<ImageAlignment>("center");
+  const [caption, setCaption] = useState("");
   const [validationError, setValidationError] = useState("");
 
   // URL güvenlik kontrolü
@@ -26,7 +49,7 @@ const ImageButton = ({ editor }: ImageButtonProps) => {
         return false;
       }
 
-      // Resim uzantısı kontrolü (opsiyonel)
+      // Resim uzantısı kontrolü
       const validExtensions = [
         ".jpg",
         ".jpeg",
@@ -54,19 +77,44 @@ const ImageButton = ({ editor }: ImageButtonProps) => {
     }
   };
 
+  // Modal açılınca eğer zaten bir enhancedImage içindeysek, mevcut bilgileri al
+  const handleOpenModal = () => {
+    if (editor.isActive("enhancedImage")) {
+      const attrs = editor.getAttributes("enhancedImage");
+      setImageUrl(attrs.src || "");
+      setAltText(attrs.alt || "");
+      setTitle(attrs.title || "");
+      setSize(attrs.size || "medium");
+      setAlignment(attrs.alignment || "center");
+      setCaption(attrs.caption || "");
+    } else {
+      // Varsayılan değerleri ayarla
+      resetForm();
+    }
+
+    setIsModalOpen(true);
+  };
+
+  // Gelişmiş görsel ekle
   const handleInsertImage = () => {
     if (!imageUrl.trim()) return;
 
     // URL kontrolü
     if (!isValidUrl(imageUrl.trim())) return;
 
-    // Resmi ekle
     editor
       .chain()
       .focus()
-      .setImage({
-        src: imageUrl,
-        alt: altText || "Resim",
+      .insertContent({
+        type: "enhancedImage",
+        attrs: {
+          src: imageUrl,
+          alt: altText || "Görsel",
+          title: title || null,
+          size: size,
+          alignment: alignment,
+          caption: caption || "",
+        },
       })
       .run();
 
@@ -75,32 +123,39 @@ const ImageButton = ({ editor }: ImageButtonProps) => {
     setIsModalOpen(false);
   };
 
+  // Form sıfırlama
   const resetForm = () => {
     setImageUrl("");
     setAltText("");
+    setTitle("");
+    setSize("medium");
+    setAlignment("center");
+    setCaption("");
     setValidationError("");
   };
+
+  // Editörde enhancedImage aktif mi kontrolü
+  const isActive = editor.isActive("enhancedImage");
 
   return (
     <>
       <button
-        onClick={() => setIsModalOpen(true)}
-        aria-label="Resim Ekle"
-        className="flex size-8 items-center justify-center rounded-md border border-transparent p-1 text-zinc-700 transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-100 aria-pressed:border-zinc-300 aria-pressed:bg-zinc-100"
+        onClick={handleOpenModal}
+        aria-pressed={isActive}
+        className={`aria-pressed:text-primary flex size-8 items-center justify-center rounded-md border border-transparent p-1 text-zinc-700 transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-100 aria-pressed:border-zinc-200 aria-pressed:bg-zinc-100`}
+        title="Gelişmiş Görsel Ekle"
       >
         <Image size={16} />
       </button>
 
       <RichButtonModal
         isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          resetForm();
-        }}
-        title="Resim Ekle"
+        onClose={() => setIsModalOpen(false)}
+        title="Gelişmiş Görsel"
+        maxWidth="max-w-xl"
       >
         <div className="flex flex-col gap-4 p-1">
-          {/* Resim URL'i */}
+          {/* Görsel URL'i */}
           <div>
             <h3 className="mb-1.5 text-sm font-medium text-zinc-700">
               Görsel URL'i
@@ -115,49 +170,151 @@ const ImageButton = ({ editor }: ImageButtonProps) => {
               autoFocus
             />
             {validationError && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                {validationError}
-              </p>
+              <p className="mt-1 text-sm text-red-600">{validationError}</p>
             )}
           </div>
 
-          {/* Alt Text */}
-          <div>
-            <h3 className="mb-1.5 text-sm font-medium text-zinc-700">
-              Alternatif Metin (Alt)
-            </h3>
-            <input
-              id="alt-text"
-              type="text"
-              value={altText}
-              onChange={(e) => setAltText(e.target.value)}
-              placeholder="Resim açıklaması (erişilebilirlik için)"
-              className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-zinc-300 px-3 py-2 focus:ring-1 focus:outline-none"
-            />
-            <p className="mt-1 text-xs text-zinc-500">
-              Görsel yüklenemediğinde gösterilecek ve ekran okuyucular
-              tarafından okunacak metin
-            </p>
+          {/* Alt Text ve Başlık */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <h3 className="mb-1.5 text-sm font-medium text-zinc-700">
+                Alternatif Metin (Alt)
+              </h3>
+              <input
+                id="alt-text"
+                type="text"
+                value={altText}
+                onChange={(e) => setAltText(e.target.value)}
+                placeholder="Görsel açıklaması"
+                className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-zinc-300 px-3 py-2 focus:ring-1 focus:outline-none"
+              />
+              <p className="mt-1 text-xs text-zinc-500">
+                Erişilebilirlik için gerekli
+              </p>
+            </div>
+            <div>
+              <h3 className="mb-1.5 text-sm font-medium text-zinc-700">
+                Başlık (Title)
+              </h3>
+              <input
+                id="title"
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Fare üzerine gelince görünen metin"
+                className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-zinc-300 px-3 py-2 focus:ring-1 focus:outline-none"
+              />
+              <p className="mt-1 text-xs text-zinc-500">Opsiyonel</p>
+            </div>
           </div>
 
+          {/* Boyut Seçimi */}
+          <div>
+            <h3 className="mb-2 text-sm font-medium text-zinc-700">Boyut</h3>
+            <div className="grid grid-cols-3 gap-3">
+              {SIZE_OPTIONS.map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => setSize(option.value as ImageSize)}
+                  className={`flex flex-col items-center gap-2 rounded-md border p-3 transition-all ${
+                    size === option.value
+                      ? `border-primary-500 bg-primary-50`
+                      : "border-zinc-200 bg-zinc-50 hover:border-zinc-300"
+                  }`}
+                >
+                  <div
+                    className="h-6 w-full rounded bg-zinc-200"
+                    style={{ width: `${parseInt(option.width) / 2}%` }}
+                  ></div>
+                  <span className="text-xs font-medium">{option.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Hizalama Seçimi */}
+          <div>
+            <h3 className="mb-2 text-sm font-medium text-zinc-700">Hizalama</h3>
+            <div className="grid grid-cols-3 gap-3">
+              {ALIGNMENT_OPTIONS.map((option) => {
+                const AlignIcon = option.icon;
+                return (
+                  <button
+                    key={option.value}
+                    onClick={() => setAlignment(option.value as ImageAlignment)}
+                    className={`flex flex-col items-center gap-2 rounded-md border p-3 transition-all ${
+                      alignment === option.value
+                        ? `border-primary-500 bg-primary-50`
+                        : "border-zinc-200 bg-zinc-50 hover:border-zinc-300"
+                    }`}
+                  >
+                    <AlignIcon size={18} />
+                    <span className="text-xs font-medium">{option.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Alt Yazı */}
+          <div>
+            <h3 className="mb-1.5 text-sm font-medium text-zinc-700">
+              Alt Yazı (Caption)
+            </h3>
+            <textarea
+              id="caption"
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
+              placeholder="Görsel için açıklayıcı alt yazı (opsiyonel)"
+              className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-zinc-300 px-3 py-2 focus:ring-1 focus:outline-none"
+              rows={2}
+            />
+          </div>
+
+          {/* Önizleme */}
+          {imageUrl && !validationError && (
+            <div className="mt-2">
+              <h3 className="mb-1.5 text-sm font-medium text-zinc-700">
+                Önizleme
+              </h3>
+              <div className="overflow-hidden rounded-md border border-zinc-200 bg-zinc-50 p-4">
+                <figure
+                  className={`mx-auto ${alignment === "left" ? "float-left mr-4" : ""} ${alignment === "right" ? "float-right ml-4" : ""}`}
+                  style={{
+                    maxWidth: SIZE_OPTIONS.find((s) => s.value === size)?.width,
+                  }}
+                >
+                  <img
+                    src={imageUrl}
+                    alt={altText || "Önizleme"}
+                    className="rounded-md"
+                  />
+                  {caption && (
+                    <figcaption className="mt-2 text-center text-sm text-zinc-500">
+                      {caption}
+                    </figcaption>
+                  )}
+                </figure>
+                <div className="clear-both"></div>
+              </div>
+            </div>
+          )}
+
           {/* Alt butonlar */}
-          <div className="flex justify-between border-t border-zinc-100 pt-4">
+          <div className="flex justify-end border-t border-zinc-100 pt-3">
             <div className="flex gap-2">
               <button
-                onClick={() => {
-                  setIsModalOpen(false);
-                  resetForm();
-                }}
-                className="focus:ring-primary-400 w-fit rounded-full border border-zinc-200 bg-zinc-50 px-6 py-2 text-sm font-medium text-zinc-800 transition-all hover:bg-zinc-100 focus:ring-1 focus:outline-none"
+                onClick={() => setIsModalOpen(false)}
+                className="focus:ring-primary-400 rounded-md border border-zinc-200 bg-zinc-50 px-6 py-1.5 text-sm font-medium text-zinc-800 transition-all hover:bg-zinc-100 focus:ring-1 focus:outline-none"
               >
                 İptal
               </button>
               <button
                 onClick={handleInsertImage}
-                className="focus:ring-primary-400 border-primary-500 bg-primary-500 hover:bg-primary-600 w-fit rounded-full border px-6 py-2 text-sm font-medium text-white transition-all focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                className="focus:ring-primary-400 border-primary-500 bg-primary-500 hover:bg-primary-600 rounded-md border px-6 py-1.5 text-sm font-medium text-white transition-all focus:ring-1 focus:outline-none"
                 disabled={!imageUrl.trim() || !!validationError}
               >
-                Ekle
+                {isActive ? "Güncelle" : "Ekle"}
               </button>
             </div>
           </div>
@@ -167,4 +324,4 @@ const ImageButton = ({ editor }: ImageButtonProps) => {
   );
 };
 
-export { ImageButton };
+export { EnhancedImageButton };

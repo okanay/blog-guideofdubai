@@ -226,7 +226,7 @@ const LinkButton = ({ editor }: LinkButtonProps) => {
             {isActive && (
               <button
                 onClick={handleUnlink}
-                className="flex items-center gap-1 rounded-full border border-red-400 bg-red-500 px-3 py-1.5 text-sm font-medium text-white transition-all hover:bg-red-600 focus:ring-1 focus:ring-red-400 focus:outline-none"
+                className="flex items-center gap-1 rounded border border-red-400 bg-red-500 px-3 py-1.5 text-sm font-medium text-white transition-all hover:bg-red-600 focus:ring-1 focus:ring-red-400 focus:outline-none"
               >
                 <X size={14} />
                 <span>Kaldır</span>
@@ -236,13 +236,13 @@ const LinkButton = ({ editor }: LinkButtonProps) => {
             <div className="flex gap-2">
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="focus:ring-primary-400 w-fit rounded-full border border-zinc-200 bg-zinc-50 px-6 py-2 text-sm font-medium text-zinc-800 transition-all hover:bg-zinc-100 focus:ring-1 focus:outline-none"
+                className="focus:ring-primary-400 w-fit rounded border border-zinc-200 bg-zinc-50 px-6 py-1.5 text-sm font-medium text-zinc-800 transition-all hover:bg-zinc-100 focus:ring-1 focus:outline-none"
               >
                 İptal
               </button>
               <button
                 onClick={handleInsertLink}
-                className="focus:ring-primary-400 border-primary-500 bg-primary-500 hover:bg-primary-600 w-fit rounded-full border px-6 py-2 text-sm font-medium text-white transition-all focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                className="focus:ring-primary-400 border-primary-500 bg-primary-500 hover:bg-primary-600 w-fit rounded border px-6 py-1.5 text-sm font-medium text-white transition-all focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={!linkUrl.trim() || !!validationError}
               >
                 {isActive ? "Güncelle" : "Ekle"}

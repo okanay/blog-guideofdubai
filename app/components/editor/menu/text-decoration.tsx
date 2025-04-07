@@ -438,20 +438,20 @@ export function TextDecorationButton({ editor }: { editor: Editor }) {
           <div className="flex justify-between border-t border-zinc-100 pt-4">
             <button
               onClick={removeDecoration}
-              className="flex items-center gap-1 rounded-full border border-red-400 bg-red-500 px-3 py-1.5 text-sm font-medium text-white transition-all hover:bg-red-600"
+              className="flex items-center gap-1 rounded border border-red-400 bg-red-500 px-3 py-1.5 text-sm font-medium text-white transition-all hover:bg-red-600"
             >
               Kaldır
             </button>
             <div className="flex gap-2">
               <button
                 onClick={() => setIsOpen(false)}
-                className="w-fit rounded-full border border-zinc-200 bg-zinc-50 px-6 py-2 text-sm font-medium text-zinc-800 transition-all hover:bg-zinc-100"
+                className="w-fit rounded border border-zinc-200 bg-zinc-50 px-6 py-1.5 text-sm font-medium text-zinc-800 transition-all hover:bg-zinc-100"
               >
                 İptal
               </button>
               <button
                 onClick={applyDecoration}
-                className="border-primary-500 bg-primary-500 hover:bg-primary-600 w-fit rounded-full border px-6 py-2 text-sm font-medium text-white transition-all"
+                className="border-primary-500 bg-primary-500 hover:bg-primary-600 w-fit rounded border px-6 py-1.5 text-sm font-medium text-white transition-all"
               >
                 Uygula
               </button>
