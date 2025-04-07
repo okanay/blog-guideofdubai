@@ -1,7 +1,7 @@
-border-amber-500 border-blue-500 border-red-500
-bg-amber-50 bg-blue-50 bg-red-50
-text-amber-500 text-blue-500 text-red-500
-text-amber-700 text-blue-700 text-red-700
+border-amber-500 border-sky-500 border-rose-500
+bg-amber-50 bg-sky-50 bg-rose-50
+text-amber-500 text-sky-500 text-rose-500
+text-amber-700 text-sky-700 text-rose-700
 
 float-left float-right
 md:float-left md:float-right
