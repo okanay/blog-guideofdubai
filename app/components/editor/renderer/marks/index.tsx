@@ -7,7 +7,7 @@ import { SubscriptMark } from "./subscript";
 import { SuperscriptMark } from "./superscript";
 import { LinkMark } from "./link";
 import { TextStyleMark } from "./text-style";
-import { StrikethroughMark } from "./strike-through";
+import { StrikeThroughMark } from "./strike-through";
 
 export const RenderMarks = (
   node: any,
@@ -21,10 +21,6 @@ export const RenderMarks = (
         return <BoldMark>{result}</BoldMark>;
       case "italic":
         return <ItalicMark>{result}</ItalicMark>;
-      case "underline":
-        return <UnderlineMark>{result}</UnderlineMark>;
-      case "strike":
-        return <StrikethroughMark>{result}</StrikethroughMark>;
       case "subscript":
         return <SubscriptMark>{result}</SubscriptMark>;
       case "superscript":
@@ -36,7 +32,7 @@ export const RenderMarks = (
       case "underline":
         return <UnderlineMark node={mark}>{result}</UnderlineMark>;
       case "strikethrough":
-        return <StrikethroughMark node={mark}>{result}</StrikethroughMark>;
+        return <StrikeThroughMark node={mark}>{result}</StrikeThroughMark>;
       default:
         return result;
     }

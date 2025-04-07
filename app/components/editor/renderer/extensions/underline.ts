@@ -1,6 +1,4 @@
-// app/components/editor/renderer/extensions/-underline.ts
-// Bu uzantı, normal Underline uzantısını değiştirir ve HTML semantiğini korurken
-// gelişmiş stil özellikleri ekler (renk, kalınlık, stil, offset)
+// app/components/editor/renderer/extensions/underline.ts
 import { Mark, mergeAttributes } from "@tiptap/core";
 
 export interface UnderlineOptions {
@@ -19,7 +17,7 @@ declare module "@tiptap/core" {
        */
       setUnderline: (attributes?: {
         color?: string;
-        style?: string;
+        underlineStyle?: string;
         thickness?: string;
         offset?: string;
       }) => ReturnType;
@@ -41,7 +39,7 @@ declare module "@tiptap/core" {
  *  Underline extension that supports custom styling
  */
 export const Underline = Mark.create<UnderlineOptions>({
-  name: "Underline",
+  name: "underline",
 
   addOptions() {
     return {
@@ -53,64 +51,45 @@ export const Underline = Mark.create<UnderlineOptions>({
     return {
       color: {
         default: null,
-        parseHTML: (element) => {
-          return element.getAttribute("data-underline-color");
+        parseHTML: (element: HTMLElement) => {
+          return element.style.textDecorationColor;
         },
-        renderHTML: (attributes) => {
-          if (!attributes.color) {
-            return {};
-          }
-
+        renderHTML: (attributes: { color: string }) => {
           return {
-            "data-underline-color": attributes.color,
+            style: `text-decoration-color: ${attributes.color}`,
           };
         },
       },
-
-      style: {
-        default: "solid",
-        parseHTML: (element) => {
-          return element.getAttribute("data-underline-style") || "solid";
+      underlineStyle: {
+        default: null,
+        parseHTML: (element: HTMLElement) => {
+          return element.style.textDecorationStyle;
         },
-        renderHTML: (attributes) => {
-          if (!attributes.style || attributes.style === "solid") {
-            return {};
-          }
-
+        renderHTML: (attributes: { underlineStyle: string }) => {
           return {
-            "data-underline-style": attributes.style,
+            style: `text-decoration-style: ${attributes.underlineStyle}`,
           };
         },
       },
-
       thickness: {
         default: null,
-        parseHTML: (element) => {
-          return element.getAttribute("data-underline-thickness");
+        parseHTML: (element: HTMLElement) => {
+          return element.style.textDecorationThickness;
         },
-        renderHTML: (attributes) => {
-          if (!attributes.thickness) {
-            return {};
-          }
-
+        renderHTML: (attributes: { thickness: string }) => {
           return {
-            "data-underline-thickness": attributes.thickness,
+            style: `text-decoration-thickness: ${attributes.thickness}`,
           };
         },
       },
-
       offset: {
         default: null,
-        parseHTML: (element) => {
-          return element.getAttribute("data-underline-offset");
+        parseHTML: (element: HTMLElement) => {
+          return element.style.textUnderlineOffset;
         },
-        renderHTML: (attributes) => {
-          if (!attributes.offset) {
-            return {};
-          }
-
+        renderHTML: (attributes: { offset: string }) => {
           return {
-            "data-underline-offset": attributes.offset,
+            style: `text-underline-offset: ${attributes.offset}`,
           };
         },
       },
@@ -120,67 +99,17 @@ export const Underline = Mark.create<UnderlineOptions>({
   parseHTML() {
     return [
       {
-        tag: "u[data-underline-color], u[data-underline-style], u[data-underline-thickness], u[data-underline-offset]",
-      },
-      {
         tag: "u",
-      },
-      {
-        style: "text-decoration",
-        consuming: false,
-        getAttrs: (style) => {
-          return (style as string).includes("underline") ? {} : false;
-        },
-      },
-      {
-        style: "text-decoration-line",
-        consuming: false,
-        getAttrs: (style) => {
-          return (style as string).includes("underline") ? {} : false;
-        },
       },
     ];
   },
 
   renderHTML({ HTMLAttributes }) {
-    // Stil özelliğini oluştur
-    const styles: string[] = [];
-
-    // Her zaman underline ekle
-    styles.push("text-decoration-line: underline");
-
-    if (HTMLAttributes.color) {
-      styles.push(`text-decoration-color: ${HTMLAttributes.color}`);
-    }
-
-    if (HTMLAttributes.style && HTMLAttributes.style !== "solid") {
-      styles.push(`text-decoration-style: ${HTMLAttributes.style}`);
-    }
-
-    if (HTMLAttributes.thickness) {
-      styles.push(`text-decoration-thickness: ${HTMLAttributes.thickness}`);
-    }
-
-    if (HTMLAttributes.offset) {
-      styles.push(`text-underline-offset: ${HTMLAttributes.offset}`);
-    }
-
-    // data-* özelliklerini ve style özelliğini birleştir
-    const styleObj = styles.length ? { style: styles.join("; ") } : {};
-
     return [
       "u",
-      mergeAttributes(
-        this.options.HTMLAttributes,
-        {
-          "data-underline-color": HTMLAttributes.color,
-          "data-underline-style":
-            HTMLAttributes.style !== "solid" ? HTMLAttributes.style : null,
-          "data-underline-thickness": HTMLAttributes.thickness,
-          "data-underline-offset": HTMLAttributes.offset,
-        },
-        styleObj,
-      ),
+      mergeAttributes(this.options.HTMLAttributes, {
+        style: HTMLAttributes.style,
+      }),
       0,
     ];
   },
@@ -204,13 +133,6 @@ export const Underline = Mark.create<UnderlineOptions>({
         ({ commands }) => {
           return commands.unsetMark(this.name);
         },
-    };
-  },
-
-  addKeyboardShortcuts() {
-    return {
-      "Mod-u": () => this.editor.commands.toggleUnderline(),
-      "Mod-U": () => this.editor.commands.toggleUnderline(),
     };
   },
 });

@@ -16,7 +16,7 @@ import { AlerBox } from "./renderer/extensions/alert-box";
 import { FontSize } from "./renderer/extensions/font-size";
 import { EnhancedImage } from "./renderer/extensions/image";
 import { Underline } from "./renderer/extensions/underline";
-import { Strikethrough } from "./renderer/extensions/strike-through";
+import { StrikeThrough } from "./renderer/extensions/strike-through";
 
 export const useEditor = (initialContent: string = "") => {
   const editor = useTiptapEditor({
@@ -49,7 +49,7 @@ export const useEditor = (initialContent: string = "") => {
         types: ["textStyle"],
       }),
       Underline,
-      Strikethrough,
+      StrikeThrough,
       Image,
       Subscript,
       Superscript,

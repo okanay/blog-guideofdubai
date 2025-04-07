@@ -28,6 +28,9 @@ const OFFSET_VALUES = [
   { value: "5px", label: "Uzak" },
 ];
 
+// currentColor için özel bir değer kullanıyoruz (null ya da özel bir string)
+const CURRENT_COLOR_VALUE = "current";
+
 // Buton bileşeni
 export function UnderlineButton({ editor }: { editor: Editor }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,9 +38,9 @@ export function UnderlineButton({ editor }: { editor: Editor }) {
 
   // Dekorasyon state'i
   const [decoration, setDecoration] = useState({
-    style: "solid",
+    underlineStyle: "solid",
     thickness: "2px",
-    color: "#000",
+    color: CURRENT_COLOR_VALUE, // varsayılan olarak currentColor
     offset: "3px",
     isActive: false,
   });
@@ -63,11 +66,11 @@ export function UnderlineButton({ editor }: { editor: Editor }) {
       // Attributes'ları al
       const attrs = editor.getAttributes("underline");
 
-      // State'i güncelle
+      // State'i güncelle - renk null ise currentColor olarak ayarla
       updateDecoration({
-        style: attrs.style || "solid",
+        underlineStyle: attrs.underlineStyle || "solid",
         thickness: attrs.thickness || "2px",
-        color: attrs.color || "#000",
+        color: attrs.color || CURRENT_COLOR_VALUE,
         offset: attrs.offset || "3px",
         isActive: true,
       });
@@ -93,9 +96,11 @@ export function UnderlineButton({ editor }: { editor: Editor }) {
       .chain()
       .focus()
       .setUnderline({
-        style: decoration.style,
+        underlineStyle: decoration.underlineStyle,
         thickness: decoration.thickness,
-        color: decoration.color !== "#000" ? decoration.color : null,
+        // Eğer currentColor değeri ise null gönder, değilse seçilen rengi gönder
+        color:
+          decoration.color !== CURRENT_COLOR_VALUE ? decoration.color : null,
         offset: decoration.offset,
       })
       .run();
@@ -116,6 +121,11 @@ export function UnderlineButton({ editor }: { editor: Editor }) {
 
     // Modalı kapat
     setIsOpen(false);
+  };
+
+  // Geçerli renk gösterimini belirle
+  const getDisplayColor = (colorValue: string) => {
+    return colorValue === CURRENT_COLOR_VALUE ? "currentColor" : colorValue;
   };
 
   return (
@@ -149,10 +159,12 @@ export function UnderlineButton({ editor }: { editor: Editor }) {
                 {LINE_STYLES.map((style) => (
                   <button
                     key={style.value}
-                    onClick={() => updateDecoration({ style: style.value })}
+                    onClick={() =>
+                      updateDecoration({ underlineStyle: style.value })
+                    }
                     className={twMerge(
                       "relative flex h-10 items-center justify-center rounded border px-2 py-1.5 transition-all",
-                      decoration.style === style.value
+                      decoration.underlineStyle === style.value
                         ? "border-primary-500 bg-primary-50"
                         : "border-zinc-200 bg-zinc-100 hover:border-zinc-300",
                     )}
@@ -160,13 +172,9 @@ export function UnderlineButton({ editor }: { editor: Editor }) {
                     <p
                       className="w-full text-center"
                       style={{
-                        color: "transparent",
                         textDecorationLine: "underline",
                         textDecorationThickness: decoration.thickness,
-                        textDecorationColor:
-                          decoration.color !== "#000"
-                            ? decoration.color
-                            : "currentColor",
+                        textDecorationColor: getDisplayColor(decoration.color),
                         textDecorationStyle: style.value as any,
                         textUnderlineOffset: "2px",
                       }}
@@ -203,14 +211,10 @@ export function UnderlineButton({ editor }: { editor: Editor }) {
                     <p
                       className="w-full text-center"
                       style={{
-                        color: "transparent",
                         textDecorationLine: "underline",
                         textDecorationThickness: thickness.value,
-                        textDecorationColor:
-                          decoration.color !== "#000"
-                            ? decoration.color
-                            : "currentColor",
-                        textDecorationStyle: decoration.style as any,
+                        textDecorationColor: getDisplayColor(decoration.color),
+                        textDecorationStyle: decoration.underlineStyle as any,
                         textUnderlineOffset: "3px",
                       }}
                     >
@@ -246,11 +250,8 @@ export function UnderlineButton({ editor }: { editor: Editor }) {
                       style={{
                         textDecorationLine: "underline",
                         textDecorationThickness: decoration.thickness,
-                        textDecorationColor:
-                          decoration.color !== "#000"
-                            ? decoration.color
-                            : "currentColor",
-                        textDecorationStyle: decoration.style as any,
+                        textDecorationColor: getDisplayColor(decoration.color),
+                        textDecorationStyle: decoration.underlineStyle as any,
                         textUnderlineOffset: offset.value,
                       }}
                     >
@@ -283,12 +284,14 @@ export function UnderlineButton({ editor }: { editor: Editor }) {
                   />
                 ))}
 
-                {/* Varsayılan renk */}
+                {/* Varsayılan renk (currentColor) */}
                 <button
-                  onClick={() => updateDecoration({ color: "#000" })}
+                  onClick={() =>
+                    updateDecoration({ color: CURRENT_COLOR_VALUE })
+                  }
                   className={twMerge(
                     "relative flex size-8 items-center justify-center rounded-full border",
-                    decoration.color === "#000"
+                    decoration.color === CURRENT_COLOR_VALUE
                       ? "border-primary-500 ring-primary-300 ring-2"
                       : "border-zinc-300",
                   )}
@@ -310,7 +313,11 @@ export function UnderlineButton({ editor }: { editor: Editor }) {
                   <input
                     ref={colorPickerRef}
                     type="color"
-                    value={decoration.color}
+                    value={
+                      decoration.color === CURRENT_COLOR_VALUE
+                        ? "#000000"
+                        : decoration.color
+                    }
                     onChange={(e) =>
                       updateDecoration({ color: e.target.value })
                     }
@@ -329,9 +336,9 @@ export function UnderlineButton({ editor }: { editor: Editor }) {
                 className="text-center text-lg text-zinc-800"
                 style={{
                   textDecorationLine: "underline",
-                  textDecorationStyle: decoration.style as any,
+                  textDecorationStyle: decoration.underlineStyle as any,
                   textDecorationThickness: decoration.thickness,
-                  textDecorationColor: decoration.color,
+                  textDecorationColor: getDisplayColor(decoration.color),
                   textUnderlineOffset: decoration.offset,
                 }}
               >

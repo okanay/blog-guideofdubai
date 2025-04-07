@@ -31,7 +31,7 @@ import { FontSizeButton } from "./font-size";
 import { AlertBoxButton } from "./alert-box";
 import { EnhancedImageButton } from "./image";
 import { UnderlineButton } from "./underline";
-import { StrikethroughButton } from "./strike-through";
+import { StrikeThroughButton } from "./strike-through";
 
 type Props = {
   editor: Editor;
@@ -217,7 +217,7 @@ export const EditorRichMenu = ({ editor }: Props) => {
                   <FontWeightButton editor={editor} />
                   <FontSizeButton editor={editor} />
                   <UnderlineButton editor={editor} />
-                  <StrikethroughButton editor={editor} />
+                  <StrikeThroughButton editor={editor} />
                   <FontFamilyButton editor={editor} />
                   <ColorButton editor={editor} />
                 </div>

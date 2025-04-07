@@ -21,16 +21,19 @@ const LINE_THICKNESS = [
   { value: "3px", label: "Kalın" },
 ];
 
+// currentColor için özel bir değer kullanıyoruz
+const CURRENT_COLOR_VALUE = "current";
+
 // Buton bileşeni
-export function StrikethroughButton({ editor }: { editor: Editor }) {
+export function StrikeThroughButton({ editor }: { editor: Editor }) {
   const [isOpen, setIsOpen] = useState(false);
   const colorPickerRef = useRef<HTMLInputElement>(null);
 
   // Dekorasyon state'i
   const [decoration, setDecoration] = useState({
-    style: "solid",
+    strikeStyle: "solid",
     thickness: "2px",
-    color: "#000",
+    color: CURRENT_COLOR_VALUE, // varsayılan olarak currentColor
     isActive: false,
   });
 
@@ -44,7 +47,7 @@ export function StrikethroughButton({ editor }: { editor: Editor }) {
     if (!editor) return;
 
     const updateFromEditor = () => {
-      // Tiptap Strikethrough mark'ını kontrol et
+      // Tiptap strikethrough mark'ını kontrol et
       const isStrikethrough = editor.isActive("strikethrough");
 
       if (!isStrikethrough) {
@@ -55,11 +58,11 @@ export function StrikethroughButton({ editor }: { editor: Editor }) {
       // Attributes'ları al
       const attrs = editor.getAttributes("strikethrough");
 
-      // State'i güncelle
+      // State'i güncelle - renk null ise currentColor olarak ayarla
       updateDecoration({
-        style: attrs.style || "solid",
+        strikeStyle: attrs.strikeStyle || "solid",
         thickness: attrs.thickness || "2px",
-        color: attrs.color || "#000",
+        color: attrs.color || CURRENT_COLOR_VALUE,
         isActive: true,
       });
     };
@@ -83,10 +86,12 @@ export function StrikethroughButton({ editor }: { editor: Editor }) {
     editor
       .chain()
       .focus()
-      .setStrikethrough({
-        style: decoration.style,
+      .setStrikeThrough({
+        strikeStyle: decoration.strikeStyle,
         thickness: decoration.thickness,
-        color: decoration.color !== "#000" ? decoration.color : null,
+        // Eğer currentColor değeri ise null gönder, değilse seçilen rengi gönder
+        color:
+          decoration.color !== CURRENT_COLOR_VALUE ? decoration.color : null,
       })
       .run();
 
@@ -99,13 +104,18 @@ export function StrikethroughButton({ editor }: { editor: Editor }) {
 
   // Strikethrough'u kaldır
   const removeStrikethrough = () => {
-    editor.chain().focus().unsetStrikethrough().run();
+    editor.chain().focus().unsetStrikeThrough().run();
 
     // Aktif durumunu güncelle
     updateDecoration({ isActive: false });
 
     // Modalı kapat
     setIsOpen(false);
+  };
+
+  // Geçerli renk gösterimini belirle
+  const getDisplayColor = (colorValue: string) => {
+    return colorValue === CURRENT_COLOR_VALUE ? "currentColor" : colorValue;
   };
 
   return (
@@ -139,24 +149,22 @@ export function StrikethroughButton({ editor }: { editor: Editor }) {
                 {LINE_STYLES.map((style) => (
                   <button
                     key={style.value}
-                    onClick={() => updateDecoration({ style: style.value })}
+                    onClick={() =>
+                      updateDecoration({ strikeStyle: style.value })
+                    }
                     className={twMerge(
                       "relative flex h-10 items-center justify-center rounded border px-2 py-1.5 transition-all",
-                      decoration.style === style.value
+                      decoration.strikeStyle === style.value
                         ? "border-primary-500 bg-primary-50"
                         : "border-zinc-200 bg-zinc-100 hover:border-zinc-300",
                     )}
                   >
                     <p
-                      className="w-full text-center"
+                      className="w-full text-center text-zinc-800"
                       style={{
-                        color: "transparent",
                         textDecorationLine: "line-through",
                         textDecorationThickness: decoration.thickness,
-                        textDecorationColor:
-                          decoration.color !== "#000"
-                            ? decoration.color
-                            : "currentColor",
+                        textDecorationColor: getDisplayColor(decoration.color),
                         textDecorationStyle: style.value as any,
                       }}
                     >
@@ -190,16 +198,12 @@ export function StrikethroughButton({ editor }: { editor: Editor }) {
                     )}
                   >
                     <p
-                      className="w-full text-center"
+                      className="w-full text-center text-zinc-800"
                       style={{
-                        color: "transparent",
                         textDecorationLine: "line-through",
                         textDecorationThickness: thickness.value,
-                        textDecorationColor:
-                          decoration.color !== "#000"
-                            ? decoration.color
-                            : "currentColor",
-                        textDecorationStyle: decoration.style as any,
+                        textDecorationColor: getDisplayColor(decoration.color),
+                        textDecorationStyle: decoration.strikeStyle as any,
                       }}
                     >
                       abc
@@ -231,12 +235,14 @@ export function StrikethroughButton({ editor }: { editor: Editor }) {
                   />
                 ))}
 
-                {/* Varsayılan renk */}
+                {/* Varsayılan renk (currentColor) */}
                 <button
-                  onClick={() => updateDecoration({ color: "#000" })}
+                  onClick={() =>
+                    updateDecoration({ color: CURRENT_COLOR_VALUE })
+                  }
                   className={twMerge(
                     "relative flex size-8 items-center justify-center rounded-full border",
-                    decoration.color === "#000"
+                    decoration.color === CURRENT_COLOR_VALUE
                       ? "border-primary-500 ring-primary-300 ring-2"
                       : "border-zinc-300",
                   )}
@@ -258,7 +264,11 @@ export function StrikethroughButton({ editor }: { editor: Editor }) {
                   <input
                     ref={colorPickerRef}
                     type="color"
-                    value={decoration.color}
+                    value={
+                      decoration.color === CURRENT_COLOR_VALUE
+                        ? "#000000"
+                        : decoration.color
+                    }
                     onChange={(e) =>
                       updateDecoration({ color: e.target.value })
                     }
@@ -277,9 +287,9 @@ export function StrikethroughButton({ editor }: { editor: Editor }) {
                 className="text-center text-lg text-zinc-800"
                 style={{
                   textDecorationLine: "line-through",
-                  textDecorationStyle: decoration.style as any,
+                  textDecorationStyle: decoration.strikeStyle as any,
                   textDecorationThickness: decoration.thickness,
-                  textDecorationColor: decoration.color,
+                  textDecorationColor: getDisplayColor(decoration.color),
                 }}
               >
                 Örnek Metin
