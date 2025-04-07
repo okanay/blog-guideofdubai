@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Editor } from "@tiptap/react";
-import { Image, X } from "lucide-react";
+import { Image } from "lucide-react";
 import RichButtonModal from "./ui/modal";
 
 // Custom Image Button component

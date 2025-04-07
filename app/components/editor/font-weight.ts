@@ -1,42 +1,31 @@
 import { Mark, mergeAttributes } from "@tiptap/core";
 
-type Options = { className: string; name: string };
+type Options = { className: string; name: string; label: string };
 export const fontWeightOptions: Record<number, Options> = {
   0: {
-    className: "font-thin",
-    name: "100",
-  },
-  1: {
-    className: "font-extralight",
-    name: "200",
-  },
-  2: {
-    className: "font-light",
-    name: "300",
-  },
-  3: {
     className: "font-normal",
     name: "400",
+    label: "Normal",
   },
-  4: {
+  1: {
     className: "font-medium",
     name: "500",
+    label: "Medium",
   },
-  5: {
+  2: {
     className: "font-semibold",
     name: "600",
+    label: "Semi Bold",
   },
-  6: {
+  3: {
     className: "font-bold",
     name: "700",
+    label: "Bold",
   },
-  7: {
+  4: {
     className: "font-extrabold",
     name: "800",
-  },
-  8: {
-    className: "font-black",
-    name: "900",
+    label: "Extra Bold",
   },
 };
 

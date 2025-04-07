@@ -55,7 +55,7 @@
 
 @layer components {
   .tiptap-editor-initial {
-    @apply min-h-32 focus:border-transparent focus:ring-0 focus:outline-none;
+    @apply !relative !z-20 min-h-32 focus:border-transparent focus:ring-0 focus:outline-none;
   }
 
   .prose {
