@@ -46,7 +46,7 @@ const getImageClasses = ({
 
   return {
     figure: twMerge(
-      "group relative block",
+      "group relative block mb-4",
       size !== "fullscreen" && "rounded-lg",
       finalAlignment === "center" && "flex justify-center",
     ),
