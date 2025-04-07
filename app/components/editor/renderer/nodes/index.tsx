@@ -9,7 +9,7 @@ import { ImageNode } from "./image";
 import { ListItemNode } from "./list-item";
 import { OrderedListNode } from "./ordered-list";
 import { ParagraphNode } from "./paragraph";
-import { InfoNodeEditorRender } from "./[custom]-info";
+import { InfoNodeEditorRender } from "../extensions/info";
 
 export const RenderNode: React.FC<{ node: any; children: React.ReactNode }> = ({
   node,

@@ -7,7 +7,6 @@ import { SubscriptMark } from "./subscript";
 import { SuperscriptMark } from "./superscript";
 import { LinkMark } from "./link";
 import { TextStyleMark } from "./text-style";
-import { FontWeightMark } from "./font-weight";
 
 export const RenderMarks = (
   node: any,
@@ -33,8 +32,6 @@ export const RenderMarks = (
         return <LinkMark mark={mark}>{result}</LinkMark>;
       case "textStyle":
         return TextStyleMark(mark, result);
-      case "fontWeight":
-        return <FontWeightMark mark={mark}>{result}</FontWeightMark>;
       default:
         return result;
     }

@@ -1,12 +1,21 @@
 import React from "react";
 
 export const TextStyleMark = (
-  mark: any,
+  mark: { attrs?: Record<string, any> },
   children: React.ReactNode,
 ): React.ReactNode => {
-  const style: React.CSSProperties = {};
-  if (mark.attrs?.color) style.color = mark.attrs.color;
-  if (mark.attrs?.fontFamily) style.fontFamily = mark.attrs.fontFamily;
+  if (!mark.attrs) return children;
+
+  const style: React.CSSProperties = Object.entries(mark.attrs)
+    .filter(([_, value]) => value !== null && value !== undefined)
+    .reduce((acc, [key, value]) => {
+      acc[key as keyof React.CSSProperties] = value;
+      return acc;
+    }, {} as React.CSSProperties);
+
+  if (Object.keys(style).length === 0) {
+    return children;
+  }
 
   return <span style={style}>{children}</span>;
 };

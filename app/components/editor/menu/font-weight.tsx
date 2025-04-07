@@ -1,8 +1,31 @@
+// app/components/editor/menu/font-weight.tsx
 import { Editor } from "@tiptap/react";
 import { Bold } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SelectButton } from "./ui/select";
-import { fontWeightOptions } from "../renderer/texts/font-weight";
+
+const fontWeightOptions = {
+  0: {
+    value: "400",
+    label: "Normal",
+  },
+  1: {
+    value: "500",
+    label: "Medium",
+  },
+  2: {
+    value: "600",
+    label: "Semi Bold",
+  },
+  3: {
+    value: "700",
+    label: "Bold",
+  },
+  4: {
+    value: "800",
+    label: "Extra Bold",
+  },
+};
 
 type Props = {
   editor: Editor;
@@ -15,8 +38,16 @@ const FontWeightButton: React.FC<Props> = ({ editor }) => {
     if (!editor) return;
 
     const updateSelectedFont = () => {
-      const currentFont = editor.getAttributes("textStyle").fontFamily || "";
-      setSelectedFont(currentFont);
+      const fontWeight = editor.getAttributes("textStyle").fontWeight;
+      // Ağırlık değerini index'e çeviriyoruz
+      if (fontWeight) {
+        const index = Object.values(fontWeightOptions).findIndex(
+          (option) => option.value === fontWeight,
+        );
+        setSelectedFont(index >= 0 ? index : "");
+      } else {
+        setSelectedFont("");
+      }
     };
 
     editor.on("selectionUpdate", updateSelectedFont);
@@ -29,18 +60,17 @@ const FontWeightButton: React.FC<Props> = ({ editor }) => {
   }, [editor]);
 
   const handleFontChange = (fontValue: string | number) => {
-    console.log("Font changed to:", fontValue);
-    if (fontValue || fontValue !== 0) {
-      editor
-        .chain()
-        .focus()
-        .toggleMark("fontWeight", {
-          weight: fontWeightOptions[fontValue].label,
-          index: fontValue,
-        })
-        .run();
+    if (fontValue || fontValue === 0) {
+      const index =
+        typeof fontValue === "number"
+          ? fontValue
+          : parseInt(fontValue as string);
+      const weight = fontWeightOptions[index].value;
+
+      // Artık setFontWeight komutunu kullanıyoruz
+      editor.chain().focus().setFontWeight(weight).run();
     } else {
-      editor.chain().focus().unsetMark("fontWeight").run();
+      editor.chain().focus().unsetFontWeight().run();
     }
 
     setSelectedFont(fontValue);
