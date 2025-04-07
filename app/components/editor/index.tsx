@@ -77,17 +77,17 @@ export const EditorPage = () => {
         </div>
 
         {/* İçerik alanı */}
-        <div className="rounded-sm border border-zinc-200 bg-white focus-within:!border-zinc-300">
+        <div className="rounded-sm">
           {/* Düzenleme modu */}
           {editorMode === "editor" && (
-            <div className="p-4">
+            <div className="prose border border-zinc-200 bg-white p-4 focus-within:!border-zinc-300">
               <EditorContent editor={editor} />
             </div>
           )}
 
           {/* Önizleme modu */}
           {editorMode === "preview" && (
-            <div className="prose max-w-none p-6">
+            <div className="prose max-w-none p-4">
               <RenderJSON json={editor.getJSON()} />
             </div>
           )}

@@ -40,10 +40,10 @@ type Props = {
 
 export const EditorRichMenu = ({ editor }: Props) => {
   const Categories = [
-    { label: "All", value: "all", icon: SeparatorHorizontal },
-    { label: "Types", value: "types", icon: Heading },
-    { label: "Format", value: "format", icon: Bold },
-    { label: "Special", value: "special", icon: Pickaxe },
+    { label: "Hepsini Göster", value: "all", icon: SeparatorHorizontal },
+    { label: "Tip", value: "types", icon: Heading },
+    { label: "Biçim", value: "format", icon: Bold },
+    { label: "Özel Modüller", value: "special", icon: Pickaxe },
   ];
 
   const { isHidden, isCategoryActive, toggleCategory } = useIsActive(
