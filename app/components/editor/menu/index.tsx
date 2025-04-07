@@ -6,7 +6,6 @@ import {
   AlignRight,
   Bold,
   ChevronDown,
-  ChevronUp,
   Heading,
   Heading1,
   Heading2,
@@ -40,7 +39,7 @@ type Props = {
 };
 
 export const EditorRichMenu = ({ editor }: Props) => {
-  const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const [isMenuVisible, setIsMenuVisible] = useState(true);
 
   // Menüyü göster/gizle
   const toggleMenuVisibility = () => {
@@ -60,20 +59,23 @@ export const EditorRichMenu = ({ editor }: Props) => {
   );
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-1000">
-      <div className="pointer-events-auto absolute bottom-0 left-0 w-full bg-white py-4">
-        <div className="mx-auto flex w-full max-w-lg flex-col border border-zinc-200 bg-white sm:rounded-lg">
-          <div className="text-color-primary pointer-events-auto flex items-center justify-between bg-zinc-700 px-2 py-2 sm:rounded-t-lg">
-            <h1 className="text-xs font-semibold">Metin Editörü</h1>
-            <div className="flex items-center justify-end gap-3">
+    <div className="pointer-events-none fixed top-0 right-0 left-0 z-1000">
+      <div className="pointer-events-auto w-full border-b border-zinc-200 bg-zinc-100 transition-all duration-300 ease-in-out">
+        <div className="mx-auto w-full">
+          <div className="flex items-center justify-between px-4 py-1">
+            <h1 className="text-color-font text-xs font-semibold">
+              Metin Editörü
+            </h1>
+
+            <div className="flex items-center space-x-1">
               {Categories.map((category) => (
                 <div key={category.value} className="group relative">
                   <button
                     className={twMerge(
                       `rounded-md px-2 py-1 text-xs font-semibold`,
                       isCategoryActive(category)
-                        ? "text-color-font bg-zinc-50"
-                        : "text-color-font-invert bg-zinc-600",
+                        ? "bg-white text-zinc-800"
+                        : "bg-zinc-700 text-white",
                     )}
                     onClick={() => toggleCategory(category)}
                   >
@@ -81,41 +83,41 @@ export const EditorRichMenu = ({ editor }: Props) => {
                   </button>
 
                   {/* Hover ile görünen tooltip */}
-                  <div className="pointer-events-none absolute -bottom-8 left-1/2 z-20 -translate-x-1/2 rounded bg-zinc-800 px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                  <div className="pointer-events-none absolute top-8 left-1/2 z-20 -translate-x-1/2 rounded bg-zinc-800 px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                     {category.label}
                   </div>
                 </div>
               ))}
 
-              <div className="group relative">
+              <div className="group relative ml-1">
                 <button
                   aria-hidden={isMenuVisible}
-                  className="bg-primary rounded-md px-2 py-1 text-xs font-semibold"
+                  className="rounded-md bg-red-500 px-2 py-1 text-xs font-semibold text-white hover:bg-red-600"
                   onClick={toggleMenuVisibility}
                 >
                   <ChevronDown
-                    className="size-3.5 transition-all duration-300 aria-hidden:rotate-180"
-                    aria-hidden={isMenuVisible}
+                    className={`size-3.5 transition-all duration-300 ${isMenuVisible ? "rotate-180" : ""}`}
                   />
                 </button>
 
                 {/* Hover ile görünen tooltip */}
-                <div className="pointer-events-none absolute -bottom-8 left-1/2 z-20 -translate-x-1/2 rounded bg-zinc-800 px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                <div className="pointer-events-none absolute top-8 left-1/2 z-20 -translate-x-1/2 rounded bg-zinc-800 px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                   {isMenuVisible ? "Gizle" : "Göster"}
                 </div>
               </div>
             </div>
           </div>
+
           <div
-            aria-hidden={isMenuVisible}
-            className="grid grid-rows-[1fr] transition-all aria-hidden:grid-rows-[0fr] aria-hidden:overflow-hidden aria-hidden:py-0 sm:[&>div]:last:rounded-b-lg"
+            aria-hidden={!isMenuVisible}
+            className="grid grid-rows-[1fr] transition-all duration-300 aria-hidden:grid-rows-[0fr] aria-hidden:overflow-hidden"
           >
-            <div className="flex min-h-0 w-full flex-col items-center gap-1 overflow-hidden">
-              <div
-                aria-hidden={isHidden("types")}
-                className="relative grid w-full grid-rows-[1fr] bg-zinc-50 px-1 py-1 transition-all duration-300 aria-hidden:grid-rows-[0fr] aria-hidden:overflow-hidden aria-hidden:py-0"
-              >
-                <div className="flex min-h-0 w-full items-center gap-1 overflow-hidden">
+            <div className="min-h-0 overflow-hidden border-t border-zinc-200 bg-white px-1 py-2">
+              <div className="flex flex-wrap items-center gap-1 overflow-x-auto">
+                {/* Başlık Butonları - types kategorisine ait */}
+                <div
+                  className={`flex items-center ${isHidden("types") ? "hidden" : ""}`}
+                >
                   <MenuButton
                     onClick={() =>
                       editor.chain().focus().toggleHeading({ level: 1 }).run()
@@ -171,13 +173,16 @@ export const EditorRichMenu = ({ editor }: Props) => {
                     <Heading6 size={16} />
                   </MenuButton>
                 </div>
-              </div>
 
-              <div
-                aria-hidden={isHidden("types")}
-                className="relative grid w-full grid-rows-[1fr] overflow-hidden p-1 transition-all duration-300 aria-hidden:grid-rows-[0fr]"
-              >
-                <div className="flex min-h-0 w-full items-center gap-1 overflow-hidden">
+                {/* Ayırıcı çizgi */}
+                <div
+                  className={`mx-1 h-6 border-l border-zinc-300 ${isHidden("types") ? "hidden" : ""}`}
+                ></div>
+
+                {/* İçerik Tipi Butonları - types kategorisine ait */}
+                <div
+                  className={`flex items-center ${isHidden("types") ? "hidden" : ""}`}
+                >
                   <ImageButton editor={editor} />
                   <LinkButton editor={editor} />
                   <MenuButton
@@ -217,15 +222,23 @@ export const EditorRichMenu = ({ editor }: Props) => {
                     <Superscript size={16} />
                   </MenuButton>
                 </div>
-              </div>
 
-              <div
-                aria-hidden={isHidden("format")}
-                className="relative grid w-full grid-rows-[1fr] bg-zinc-50 px-1 py-1 transition-all duration-300 aria-hidden:grid-rows-[0fr] aria-hidden:overflow-hidden aria-hidden:py-0"
-              >
-                <div className="flex min-h-0 w-full items-center gap-1 overflow-hidden">
-                  <FontWeightButton editor={editor} />
-                  <FontSizeButton editor={editor} />
+                {/* Ayırıcı çizgi */}
+                <div
+                  className={`mx-1 h-6 border-l border-zinc-300 ${isHidden("types") || isHidden("format") ? "hidden" : ""}`}
+                ></div>
+
+                {/* Biçimlendirme Butonları - format kategorisine ait */}
+                <div
+                  className={`flex items-center ${isHidden("format") ? "hidden" : ""}`}
+                >
+                  <MenuButton
+                    onClick={() => editor.chain().focus().toggleBold().run()}
+                    isActive={editor.isActive("bold")}
+                    label="Kalın"
+                  >
+                    <Bold size={16} />
+                  </MenuButton>
                   <MenuButton
                     onClick={() => editor.chain().focus().toggleItalic().run()}
                     isActive={editor.isActive("italic")}
@@ -233,17 +246,22 @@ export const EditorRichMenu = ({ editor }: Props) => {
                   >
                     <Italic size={16} />
                   </MenuButton>
-                  <TextDecorationButton editor={editor} />{" "}
+                  <FontWeightButton editor={editor} />
+                  <FontSizeButton editor={editor} />
+                  <TextDecorationButton editor={editor} />
                   <FontFamilyButton editor={editor} />
                   <ColorButton editor={editor} />
                 </div>
-              </div>
 
-              <div
-                aria-hidden={isHidden("format")}
-                className="relative grid w-full grid-rows-[1fr] overflow-hidden p-1 transition-all duration-300 aria-hidden:grid-rows-[0fr]"
-              >
-                <div className="flex min-h-0 w-full items-center gap-1 overflow-hidden">
+                {/* Ayırıcı çizgi */}
+                <div
+                  className={`mx-1 h-6 border-l border-zinc-300 ${isHidden("format") || isHidden("all") ? "hidden" : ""}`}
+                ></div>
+
+                {/* Hizalama Butonları - format kategorisinin bir parçası */}
+                <div
+                  className={`flex items-center ${isHidden("format") ? "hidden" : ""}`}
+                >
                   <MenuButton
                     onClick={() =>
                       editor.chain().focus().setTextAlign("left").run()
@@ -281,13 +299,16 @@ export const EditorRichMenu = ({ editor }: Props) => {
                     <AlignJustify size={16} />
                   </MenuButton>
                 </div>
-              </div>
 
-              <div
-                aria-hidden={isHidden("special")}
-                className="relative grid w-full grid-rows-[1fr] bg-zinc-50 px-1 py-1 transition-all duration-300 aria-hidden:grid-rows-[0fr] aria-hidden:overflow-hidden aria-hidden:py-0"
-              >
-                <div className="flex min-h-0 w-full items-center gap-1 overflow-hidden">
+                {/* Ayırıcı çizgi */}
+                <div
+                  className={`mx-1 h-6 border-l border-zinc-300 ${isHidden("format") || isHidden("special") ? "hidden" : ""}`}
+                ></div>
+
+                {/* Özel Modüller - special kategorisine ait */}
+                <div
+                  className={`flex items-center ${isHidden("special") ? "hidden" : ""}`}
+                >
                   <AlertBoxButton editor={editor} />
                   <MenuButton
                     onClick={() =>

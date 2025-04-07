@@ -15,62 +15,62 @@ export const EditorPage = () => {
   return (
     <div className="relative py-4">
       {/* Toggle butonları */}
-      <div className="flex items-center gap-2 overflow-x-auto border-y border-zinc-200 bg-white p-1 px-4 sm:absolute sm:top-4 sm:right-4 sm:rounded-lg sm:border-x">
-        <div className="mr-2 text-sm font-medium text-zinc-700">Görünüm:</div>
-        <button
-          onClick={() => setEditorMode("editor")}
-          className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-            editorMode === "editor"
-              ? "bg-primary text-color-primary"
-              : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
-          }`}
-          title="Düzenleme Modu"
-        >
-          <Pencil size={14} />
-          <span>Düzenle</span>
-        </button>
+      <div className="mx-auto mt-22 flex max-w-5xl flex-col gap-4 px-4 py-6 sm:mt-14">
+        <div className="flex items-center gap-2 overflow-x-auto bg-white">
+          <div className="mr-2 text-sm font-medium text-zinc-700">Görünüm:</div>
+          <button
+            onClick={() => setEditorMode("editor")}
+            className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+              editorMode === "editor"
+                ? "bg-primary text-color-primary"
+                : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
+            }`}
+            title="Düzenleme Modu"
+          >
+            <Pencil size={14} />
+            <span>Düzenle</span>
+          </button>
 
-        <button
-          onClick={() => setEditorMode("preview")}
-          className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-            editorMode === "preview"
-              ? "bg-primary text-color-primary"
-              : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
-          }`}
-          title="Ön İzleme Modu"
-        >
-          <Eye size={14} />
-          <span>Önizleme</span>
-        </button>
+          <button
+            onClick={() => setEditorMode("preview")}
+            className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+              editorMode === "preview"
+                ? "bg-primary text-color-primary"
+                : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
+            }`}
+            title="Ön İzleme Modu"
+          >
+            <Eye size={14} />
+            <span>Önizleme</span>
+          </button>
 
-        <button
-          onClick={() => setEditorMode("json")}
-          className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-            editorMode === "json"
-              ? "bg-primary text-color-primary"
-              : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
-          }`}
-          title="JSON Görünümü"
-        >
-          <Code size={14} />
-          <span>JSON</span>
-        </button>
+          <button
+            onClick={() => setEditorMode("json")}
+            className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+              editorMode === "json"
+                ? "bg-primary text-color-primary"
+                : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
+            }`}
+            title="JSON Görünümü"
+          >
+            <Code size={14} />
+            <span>JSON</span>
+          </button>
 
-        <button
-          onClick={() => setEditorMode("html")}
-          className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-            editorMode === "html"
-              ? "bg-primary text-color-primary"
-              : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
-          }`}
-          title="JSON Görünümü"
-        >
-          <FileText size={14} />
-          <span>HTML</span>
-        </button>
-      </div>
+          <button
+            onClick={() => setEditorMode("html")}
+            className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+              editorMode === "html"
+                ? "bg-primary text-color-primary"
+                : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
+            }`}
+            title="JSON Görünümü"
+          >
+            <FileText size={14} />
+            <span>HTML</span>
+          </button>
+        </div>
 
-      <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-6 sm:my-8">
         {/* Editör başlığı */}
         <div className="mb-2">
           <h1 className="text-xl font-bold text-zinc-800">
@@ -87,14 +87,14 @@ export const EditorPage = () => {
         </div>
 
         {/* İçerik alanı */}
-        <div className="rounded-sm">
+        <div>
           {/* Düzenleme modu */}
           {editorMode === "editor" && (
             <>
               <EditorRichMenu editor={editor} />
               <div
                 style={{ scrollbarWidth: "none" }}
-                className="prose max-h-[64vh] overflow-y-auto border border-zinc-200 bg-white p-4 focus-within:!border-zinc-300"
+                className="prose mt-2 overflow-y-auto border border-zinc-200 bg-white p-4 focus-within:!border-zinc-300"
               >
                 <EditorContent editor={editor} />
               </div>
