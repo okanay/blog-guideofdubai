@@ -92,7 +92,10 @@ export const EditorPage = () => {
           {editorMode === "editor" && (
             <>
               <EditorRichMenu editor={editor} />
-              <div className="prose border border-zinc-200 bg-white p-4 focus-within:!border-zinc-300">
+              <div
+                style={{ scrollbarWidth: "none" }}
+                className="prose max-h-[64vh] overflow-y-auto border border-zinc-200 bg-white p-4 focus-within:!border-zinc-300"
+              >
                 <EditorContent editor={editor} />
               </div>
             </>
