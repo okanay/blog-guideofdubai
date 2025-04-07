@@ -7,23 +7,23 @@ import { SelectButton } from "./ui/select";
 const fontWeightOptions = {
   0: {
     value: "400",
-    label: "Normal",
+    label: "Varsayılan",
   },
   1: {
     value: "500",
-    label: "Medium",
+    label: "Orta",
   },
   2: {
     value: "600",
-    label: "Semi Bold",
+    label: "Yarı Kalın",
   },
   3: {
     value: "700",
-    label: "Bold",
+    label: "Kalın",
   },
   4: {
     value: "800",
-    label: "Extra Bold",
+    label: "Çok Kalın",
   },
 };
 

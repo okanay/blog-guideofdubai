@@ -119,7 +119,7 @@ export const EditorRichMenu = ({ editor }: Props) => {
               <div className="flex flex-wrap items-center gap-1 overflow-x-auto">
                 {/* Başlık Butonları - types kategorisine ait */}
                 <div
-                  className={`flex items-center ${isHidden("types") ? "hidden" : ""}`}
+                  className={`flex items-center gap-x-2 ${isHidden("types") ? "hidden" : ""}`}
                 >
                   <MenuButton
                     onClick={() =>
@@ -184,7 +184,7 @@ export const EditorRichMenu = ({ editor }: Props) => {
 
                 {/* İçerik Tipi Butonları - types kategorisine ait */}
                 <div
-                  className={`flex items-center ${isHidden("types") ? "hidden" : ""}`}
+                  className={`flex items-center gap-x-2 ${isHidden("types") ? "hidden" : ""}`}
                 >
                   <ImageButton editor={editor} />
                   <LinkButton editor={editor} />
@@ -233,7 +233,7 @@ export const EditorRichMenu = ({ editor }: Props) => {
 
                 {/* Biçimlendirme Butonları - format kategorisine ait */}
                 <div
-                  className={`flex items-center ${isHidden("format") ? "hidden" : ""}`}
+                  className={`flex items-center gap-x-2 ${isHidden("format") ? "hidden" : ""}`}
                 >
                   <MenuButton
                     onClick={() => editor.chain().focus().toggleItalic().run()}
@@ -256,7 +256,7 @@ export const EditorRichMenu = ({ editor }: Props) => {
 
                 {/* Hizalama Butonları - format kategorisinin bir parçası */}
                 <div
-                  className={`flex items-center ${isHidden("format") ? "hidden" : ""}`}
+                  className={`flex items-center gap-x-2 ${isHidden("format") ? "hidden" : ""}`}
                 >
                   <MenuButton
                     onClick={() =>
@@ -303,7 +303,7 @@ export const EditorRichMenu = ({ editor }: Props) => {
 
                 {/* Özel Modüller - special kategorisine ait */}
                 <div
-                  className={`flex items-center ${isHidden("special") ? "hidden" : ""}`}
+                  className={`flex items-center gap-x-2 ${isHidden("special") ? "hidden" : ""}`}
                 >
                   <AlertBoxButton editor={editor} />
                   <MenuButton
