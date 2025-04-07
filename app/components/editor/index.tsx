@@ -14,8 +14,10 @@ export const EditorPage = () => {
 
   return (
     <div className="relative py-4">
+      <EditorRichMenu editor={editor} />
       {/* Toggle butonları */}
       <div className="mx-auto mt-22 flex max-w-5xl flex-col gap-4 px-4 py-6 sm:mt-14">
+        {/* Görünüm */}
         <div className="flex items-center gap-2 overflow-x-auto bg-white">
           <div className="mr-2 text-sm font-medium text-zinc-700">Görünüm:</div>
           <button
@@ -91,7 +93,6 @@ export const EditorPage = () => {
           {/* Düzenleme modu */}
           {editorMode === "editor" && (
             <>
-              <EditorRichMenu editor={editor} />
               <div
                 style={{ scrollbarWidth: "none" }}
                 className="prose mt-2 overflow-y-auto border border-zinc-200 bg-white p-4 focus-within:!border-zinc-300"
@@ -110,7 +111,7 @@ export const EditorPage = () => {
 
           {/* JSON modu */}
           {editorMode === "json" && (
-            <div className="max-h-screen overflow-auto overflow-y-auto rounded-lg bg-zinc-900 p-4 text-sm text-white">
+            <div className="overflow-auto overflow-y-auto rounded-lg bg-zinc-900 p-4 text-sm text-white">
               <pre className="font-mono">
                 {JSON.stringify(editor.getJSON(), null, 2)}
               </pre>
@@ -119,7 +120,7 @@ export const EditorPage = () => {
 
           {/* HTML modu */}
           {editorMode === "html" && (
-            <div className="max-h-screen overflow-auto overflow-y-auto rounded-lg bg-zinc-900 p-4 text-sm text-white">
+            <div className="overflow-auto overflow-y-auto rounded-lg bg-zinc-900 p-4 text-sm text-white">
               {JSON.stringify(editor.getHTML(), null, 2)}
             </div>
           )}
