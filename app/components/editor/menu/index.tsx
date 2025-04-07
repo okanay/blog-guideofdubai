@@ -74,8 +74,8 @@ export const EditorRichMenu = ({ editor }: Props) => {
                     className={twMerge(
                       `rounded-md px-2 py-1 text-xs font-semibold`,
                       isCategoryActive(category)
-                        ? "bg-white text-zinc-800"
-                        : "bg-zinc-700 text-white",
+                        ? "bg-zinc-800 text-zinc-50"
+                        : "text-color-font border border-zinc-200 bg-zinc-50",
                     )}
                     onClick={() => toggleCategory(category)}
                   >
@@ -89,7 +89,7 @@ export const EditorRichMenu = ({ editor }: Props) => {
                 </div>
               ))}
 
-              <div className="group relative ml-1">
+              <div className="group invisible relative ml-1">
                 <button
                   aria-hidden={isMenuVisible}
                   className="rounded-md bg-red-500 px-2 py-1 text-xs font-semibold text-white hover:bg-red-600"
@@ -112,7 +112,10 @@ export const EditorRichMenu = ({ editor }: Props) => {
             aria-hidden={!isMenuVisible}
             className="grid grid-rows-[1fr] transition-all duration-300 aria-hidden:grid-rows-[0fr] aria-hidden:overflow-hidden"
           >
-            <div className="min-h-0 overflow-hidden border-t border-zinc-200 bg-white px-1 py-2">
+            <div
+              aria-hidden={!isMenuVisible}
+              className="min-h-0 overflow-hidden border-t border-zinc-200 bg-white px-1 py-2 transition-all duration-300 aria-hidden:py-0"
+            >
               <div className="flex flex-wrap items-center gap-1 overflow-x-auto">
                 {/* Başlık Butonları - types kategorisine ait */}
                 <div
@@ -232,13 +235,6 @@ export const EditorRichMenu = ({ editor }: Props) => {
                 <div
                   className={`flex items-center ${isHidden("format") ? "hidden" : ""}`}
                 >
-                  <MenuButton
-                    onClick={() => editor.chain().focus().toggleBold().run()}
-                    isActive={editor.isActive("bold")}
-                    label="Kalın"
-                  >
-                    <Bold size={16} />
-                  </MenuButton>
                   <MenuButton
                     onClick={() => editor.chain().focus().toggleItalic().run()}
                     isActive={editor.isActive("italic")}
