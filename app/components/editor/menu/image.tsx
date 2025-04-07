@@ -1,18 +1,25 @@
-// app/components/editor/menu/enhanced-image.tsx
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Editor } from "@tiptap/react";
-import { Image, AlignLeft, AlignCenter, AlignRight } from "lucide-react";
+import {
+  Image,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  LayoutGrid,
+} from "lucide-react";
 import RichButtonModal from "./ui/modal";
 
 // Görsel boyut ve hizalama tipleri
-type ImageSize = "small" | "medium" | "large";
+type ImageSize = "small" | "medium" | "large" | "fullscreen";
 type ImageAlignment = "left" | "center" | "right";
+type ImageFit = "cover" | "contain" | "fill" | "none";
 
 // Boyut seçenekleri
 const SIZE_OPTIONS = [
   { value: "small", label: "Küçük", width: "40%" },
   { value: "medium", label: "Orta", width: "70%" },
   { value: "large", label: "Büyük", width: "100%" },
+  { value: "fullscreen", label: "Tam Ekran", width: "120%" },
 ];
 
 // Hizalama seçenekleri
@@ -20,6 +27,26 @@ const ALIGNMENT_OPTIONS = [
   { value: "left", label: "Sol", icon: AlignLeft },
   { value: "center", label: "Merkez", icon: AlignCenter },
   { value: "right", label: "Sağ", icon: AlignRight },
+];
+
+// Object-fit seçenekleri
+const OBJECT_FIT_OPTIONS = [
+  {
+    value: "cover",
+    label: "Kapla",
+    description: "Görsel alanı tamamen kaplar",
+  },
+  {
+    value: "contain",
+    label: "Sığdır",
+    description: "Görsel tam olarak sığdırılır",
+  },
+  {
+    value: "fill",
+    label: "Doldur",
+    description: "Görsel alana zorla doldurulur",
+  },
+  { value: "none", label: "Orjinal", description: "Orjinal boyutunda kalır" },
 ];
 
 // Gelişmiş Görsel Butonu özellikleri
@@ -34,22 +61,20 @@ const EnhancedImageButton = ({ editor }: EnhancedImageButtonProps) => {
   const [title, setTitle] = useState("");
   const [size, setSize] = useState<ImageSize>("medium");
   const [alignment, setAlignment] = useState<ImageAlignment>("center");
+  const [objectFit, setObjectFit] = useState<ImageFit>("cover");
   const [caption, setCaption] = useState("");
   const [validationError, setValidationError] = useState("");
 
   // URL güvenlik kontrolü
   const isValidUrl = (url: string): boolean => {
     try {
-      // URL oluştur
       const parsedUrl = new URL(url);
 
-      // Sadece https protokolü kontrolü
       if (parsedUrl.protocol !== "https:") {
         setValidationError("Sadece https protokolü desteklenmektedir");
         return false;
       }
 
-      // Resim uzantısı kontrolü
       const validExtensions = [
         ".jpg",
         ".jpeg",
@@ -86,9 +111,9 @@ const EnhancedImageButton = ({ editor }: EnhancedImageButtonProps) => {
       setTitle(attrs.title || "");
       setSize(attrs.size || "medium");
       setAlignment(attrs.alignment || "center");
+      setObjectFit(attrs.objectFit || "cover");
       setCaption(attrs.caption || "");
     } else {
-      // Varsayılan değerleri ayarla
       resetForm();
     }
 
@@ -113,12 +138,12 @@ const EnhancedImageButton = ({ editor }: EnhancedImageButtonProps) => {
           title: title || null,
           size: size,
           alignment: alignment,
+          objectFit: objectFit,
           caption: caption || "",
         },
       })
       .run();
 
-    // Formu sıfırla ve modalı kapat
     resetForm();
     setIsModalOpen(false);
   };
@@ -130,11 +155,11 @@ const EnhancedImageButton = ({ editor }: EnhancedImageButtonProps) => {
     setTitle("");
     setSize("medium");
     setAlignment("center");
+    setObjectFit("cover");
     setCaption("");
     setValidationError("");
   };
 
-  // Editörde enhancedImage aktif mi kontrolü
   const isActive = editor.isActive("enhancedImage");
 
   return (
@@ -161,7 +186,6 @@ const EnhancedImageButton = ({ editor }: EnhancedImageButtonProps) => {
               Görsel URL'i
             </h3>
             <input
-              id="image-url"
               type="text"
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
@@ -173,43 +197,41 @@ const EnhancedImageButton = ({ editor }: EnhancedImageButtonProps) => {
               <p className="mt-1 text-sm text-red-600">{validationError}</p>
             )}
           </div>
+
           {/* Alt Text ve Başlık */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col gap-4 p-1">
             <div>
               <h3 className="mb-1.5 text-sm font-medium text-zinc-700">
-                Alternatif Metin (Alt)
+                Başlık (Opsiyonel)
               </h3>
               <input
-                id="alt-text"
-                type="text"
-                value={altText}
-                onChange={(e) => setAltText(e.target.value)}
-                placeholder="Görsel açıklaması"
-                className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-zinc-300 px-3 py-2 focus:ring-1 focus:outline-none"
-              />
-              <p className="mt-1 text-xs text-zinc-500">
-                Erişilebilirlik için gerekli
-              </p>
-            </div>
-            <div>
-              <h3 className="mb-1.5 text-sm font-medium text-zinc-700">
-                Başlık (Title)
-              </h3>
-              <input
-                id="title"
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Fare üzerine gelince görünen metin"
                 className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-zinc-300 px-3 py-2 focus:ring-1 focus:outline-none"
               />
-              <p className="mt-1 text-xs text-zinc-500">Opsiyonel</p>
             </div>
           </div>
+
+          {/* Alt Yazı */}
+          <div>
+            <h3 className="mb-1.5 text-sm font-medium text-zinc-700">
+              Alt Yazı (Caption)
+            </h3>
+            <textarea
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
+              placeholder="Görsel için açıklayıcı alt yazı (opsiyonel)"
+              className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-zinc-300 px-3 py-2 focus:ring-1 focus:outline-none"
+              rows={2}
+            />
+          </div>
+
           {/* Boyut Seçimi */}
           <div>
             <h3 className="mb-2 text-sm font-medium text-zinc-700">Boyut</h3>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-4 gap-3">
               {SIZE_OPTIONS.map((option) => (
                 <button
                   key={option.value}
@@ -222,13 +244,14 @@ const EnhancedImageButton = ({ editor }: EnhancedImageButtonProps) => {
                 >
                   <div
                     className="h-6 w-full rounded bg-zinc-200"
-                    style={{ width: `${parseInt(option.width) / 2}%` }}
+                    style={{ width: option.width }}
                   ></div>
                   <span className="text-xs font-medium">{option.label}</span>
                 </button>
               ))}
             </div>
           </div>
+
           {/* Hizalama Seçimi */}
           <div>
             <h3 className="mb-2 text-sm font-medium text-zinc-700">Hizalama</h3>
@@ -252,108 +275,37 @@ const EnhancedImageButton = ({ editor }: EnhancedImageButtonProps) => {
               })}
             </div>
           </div>
-          {/* Alt Yazı */}
+
+          {/* Object-fit Seçimi */}
           <div>
-            <h3 className="mb-1.5 text-sm font-medium text-zinc-700">
-              Alt Yazı (Caption)
+            <h3 className="mb-2 text-sm font-medium text-zinc-700">
+              Görsel Sığdırma
             </h3>
-            <textarea
-              id="caption"
-              value={caption}
-              onChange={(e) => setCaption(e.target.value)}
-              placeholder="Görsel için açıklayıcı alt yazı (opsiyonel)"
-              className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-zinc-300 px-3 py-2 focus:ring-1 focus:outline-none"
-              rows={2}
-            />
+            <div className="grid grid-cols-2 gap-3">
+              {OBJECT_FIT_OPTIONS.map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => setObjectFit(option.value as ImageFit)}
+                  className={`flex flex-col items-center gap-2 rounded-md border p-3 transition-all ${
+                    objectFit === option.value
+                      ? `border-primary-500 bg-primary-50`
+                      : "border-zinc-200 bg-zinc-50 hover:border-zinc-300"
+                  }`}
+                >
+                  <LayoutGrid size={18} />
+                  <div className="text-center">
+                    <span className="block text-xs font-medium">
+                      {option.label}
+                    </span>
+                    <span className="mt-1 block text-[10px] text-zinc-500">
+                      {option.description}
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Önizleme - Sadece URL geçerliyse göster */}
-          {imageUrl && !validationError && (
-            <div className="mt-2">
-              <h3 className="mb-1.5 text-sm font-medium text-zinc-700">
-                Önizleme
-              </h3>
-              <div className="overflow-hidden rounded-md border border-zinc-200 bg-zinc-50 p-4">
-                <div className="max-w-full overflow-hidden">
-                  {/* Mobil önizleme (merkez hizalı) */}
-                  <div className="block md:hidden">
-                    <div className="flex justify-center">
-                      <div
-                        className={`relative ${
-                          size === "small"
-                            ? "w-1/2"
-                            : size === "large"
-                              ? "w-5/6"
-                              : "w-2/3"
-                        } `}
-                      >
-                        <figure>
-                          <img
-                            src={imageUrl}
-                            alt={altText || "Önizleme"}
-                            className="w-full rounded-md object-cover"
-                          />
-                          {caption && (
-                            <figcaption className="mt-2 text-center text-sm text-zinc-500">
-                              {caption}
-                            </figcaption>
-                          )}
-                        </figure>
-                      </div>
-                    </div>
-                    <div className="mt-2 text-center text-xs text-zinc-500">
-                      Not: Mobil görünümde tüm görseller otomatik olarak
-                      ortalanır
-                    </div>
-                  </div>
-
-                  {/* Masaüstü önizleme (seçili hizalama) */}
-                  <div className="hidden md:block">
-                    <div className="relative mb-8">
-                      <div
-                        className={` ${alignment === "center" ? "flex justify-center" : ""} ${alignment === "right" ? "flex justify-end" : ""} clearfix`}
-                      >
-                        <div
-                          className={`relative ${alignment !== "center" ? "float-" + alignment : ""} ${alignment === "left" ? "mr-4" : ""} ${alignment === "right" ? "ml-4" : ""} ${
-                            size === "small"
-                              ? "w-1/2"
-                              : size === "large"
-                                ? "w-5/6"
-                                : "w-2/3"
-                          } ${alignment === "center" ? "mx-auto" : ""} `}
-                        >
-                          <figure>
-                            <img
-                              src={imageUrl}
-                              alt={altText || "Önizleme"}
-                              className="w-full rounded-md object-cover"
-                            />
-                            {caption && (
-                              <figcaption className="mt-2 text-center text-sm text-zinc-500">
-                                {caption}
-                              </figcaption>
-                            )}
-                          </figure>
-                        </div>
-                      </div>
-                      <div
-                        className={`${alignment !== "center" ? "clear-both" : ""}`}
-                      ></div>
-                    </div>
-                    <div className="text-center text-xs text-zinc-500">
-                      Masaüstü önizleme (
-                      {alignment === "left"
-                        ? "sola"
-                        : alignment === "right"
-                          ? "sağa"
-                          : "merkeze"}{" "}
-                      hizalı)
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
           {/* Alt butonlar */}
           <div className="flex justify-end border-t border-zinc-100 pt-3">
             <div className="flex gap-2">

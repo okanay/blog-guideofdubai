@@ -55,144 +55,150 @@
 
 @layer components {
   .tiptap-editor-initial {
-    @apply !relative !z-20 min-h-32 focus:border-transparent focus:ring-0 focus:outline-none;
+    @apply !relative !z-20 min-h-32;
   }
 
-  .prose {
-    @apply text-color-font-dark;
+  @layer components {
+    .prose {
+      @apply text-color-font-dark;
 
-    /* Başlıklar */
-    & h1 {
-      @apply scroll-m-20 text-4xl font-bold tracking-tight lg:text-5xl;
-    }
-    & h2 {
-      @apply scroll-m-20 border-b border-zinc-200 pb-1.5 text-3xl font-semibold tracking-tight transition-colors first:mt-0;
-    }
-    & h3 {
-      @apply scroll-m-20 text-2xl font-semibold tracking-tight;
-    }
-    & h4 {
-      @apply scroll-m-20 text-xl font-semibold tracking-tight;
-    }
-    & h5 {
-      @apply scroll-m-20 text-lg font-semibold tracking-tight;
-    }
-    & h6 {
-      @apply scroll-m-20 text-base font-semibold tracking-tight;
-    }
-
-    & p {
-      @apply text-color-font-light leading-7;
-    }
-
-    /* Blok alıntılar */
-    & blockquote {
-      @apply border-l-2 bg-zinc-100 pl-6 italic;
-    }
-
-    /* Listeler */
-    & ul {
-      @apply list-disc;
-    }
-    & ul li {
-      @apply my-2;
-    }
-    & ul li p {
-      @apply my-1;
-    }
-    & ul ul {
-      @apply my-2 ml-6;
-    }
-    & ol {
-      @apply my-6 ml-6 list-decimal;
-    }
-    & ol li {
-      @apply my-2;
-    }
-    & ol li p {
-      @apply my-1;
-    }
-    & ol ol {
-      @apply my-2 ml-6;
-    }
-
-    /* İç içe liste davranışları */
-    & ul li ul,
-    & ol li ol,
-    & ol li ul,
-    & ul li ol {
-      @apply my-2;
-    }
-
-    /* Üç veya daha fazla seviye listeler için iyileştirmeler */
-    & ul ul ul,
-    & ol ol ol,
-    & ul ol ul,
-    & ol ul ol,
-    & ul ul ol,
-    & ol ol ul {
-      margin-left: 1.5rem;
-      margin-top: 0.25rem;
-      margin-bottom: 0.25rem;
-    }
-
-    /* Liste öğelerinin içinde farklı elementler varsa boşluklandırma */
-    & li > *:first-child {
-      margin-top: 0;
-    }
-    & li > *:last-child {
-      margin-bottom: 0;
-    }
-
-    /* Yatay çizgi */
-    & hr {
-      @apply border-t border-zinc-200;
-    }
-
-    /* Görseller */
-    & img {
-      @apply mx-auto aspect-video h-auto max-w-full rounded-lg object-cover;
-    }
-
-    & figure {
-      @apply my-8;
-    }
-    & figcaption {
-      @apply mt-0 text-center text-xs opacity-75;
-    }
-
-    & strong {
-      @apply font-semibold;
-    }
-    & em {
-      @apply italic;
-    }
-    & del {
-      @apply line-through;
-    }
-    & sup {
-      @apply align-super text-xs;
-    }
-    & sub {
-      @apply align-sub text-xs;
-    }
-    & mark {
-      @apply bg-yellow-200 px-1 py-0.5;
-    }
-    & abbr {
-      @apply cursor-help underline underline-offset-2;
-    }
-    & kbd {
-      @apply rounded-md border px-1.5 py-0.5 text-xs font-semibold;
-    }
-
-    /* Tablet ve orta büyüklükteki ekranlar için */
-    @media (min-width: 641px) and (max-width: 1024px) {
-      & img.large {
-        max-width: 100%;
+      /* Headings with improved spacing and responsive sizes */
+      & h1,
+      & h2,
+      & h3,
+      & h4,
+      & h5,
+      & h6 {
+        @apply text-color-font-dark font-semibold tracking-tight;
+        @apply scroll-m-20; /* For better anchor link scrolling */
       }
+
+      & h1 {
+        @apply mb-6 text-3xl md:text-4xl lg:text-5xl;
+      }
+
+      & h2 {
+        @apply mb-4 border-b border-zinc-200 pb-2 text-2xl md:text-3xl;
+      }
+
+      & h3 {
+        @apply mb-2 text-xl md:text-2xl;
+      }
+
+      & h4 {
+        @apply mb-2 text-lg md:text-xl;
+      }
+
+      & h5 {
+        @apply mb-2 text-base md:text-lg;
+      }
+
+      & h6 {
+        @apply mb-2 text-sm md:text-base;
+      }
+
+      /* Paragraphs with better readability */
+      & p {
+        @apply text-color-font-light mb-4 leading-7;
+      }
+
+      /* Lists with improved spacing */
+      & ul,
+      & ol {
+        @apply my-4 ml-6;
+      }
+
+      & ul {
+        @apply list-disc;
+      }
+
+      & ol {
+        @apply list-decimal;
+      }
+
+      & li {
+        @apply my-1;
+        & p {
+          @apply my-1;
+        }
+      }
+
+      /* Blockquotes */
       & blockquote {
-        margin-left: 0.5rem;
+        @apply text-color-font my-6 border-l-4 border-zinc-200 pl-4 italic;
+      }
+
+      /* Horizontal rule */
+      & hr {
+        @apply my-8 border-t border-zinc-200;
+      }
+
+      /* Text formatting */
+      & mark {
+        @apply bg-yellow-100 px-1;
+      }
+
+      & sub,
+      & sup {
+        @apply text-xs;
+      }
+
+      & sub {
+        @apply align-sub;
+      }
+
+      & sup {
+        @apply align-super;
+      }
+
+      /* Links */
+      & a {
+        @apply text-primary-600 hover:text-primary-700 font-medium transition-colors;
+      }
+
+      /* Enhanced Image styles */
+      & figure {
+        @apply relative my-8;
+
+        &.enhanced-image {
+          @apply w-full;
+
+          & img {
+            @apply h-auto w-full rounded-lg object-cover;
+          }
+
+          & figcaption {
+            @apply mt-2 text-center text-sm text-zinc-500;
+          }
+        }
+      }
+
+      /* Alert box styles */
+      & div[data-alert-box] {
+        @apply my-6 rounded-lg p-4;
+
+        &[data-type="information"] {
+          @apply border-l-4 border-blue-500 bg-blue-50;
+        }
+
+        &[data-type="warning"] {
+          @apply border-l-4 border-amber-500 bg-amber-50;
+        }
+
+        &[data-type="danger"] {
+          @apply border-l-4 border-red-500 bg-red-50;
+        }
+      }
+
+      /* Text alignment */
+      & [style*="text-align: center"] {
+        @apply text-center;
+      }
+      & [style*="text-align: right"] {
+        @apply text-right;
+      }
+      & [style*="text-align: justify"] {
+        @apply text-justify;
       }
     }
   }

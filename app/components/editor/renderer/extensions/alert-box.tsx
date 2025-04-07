@@ -52,11 +52,13 @@ const AlertBox: React.FC<AlertBoxProps & { type: AlertType }> = ({
   if (title && title.trim()) {
     return (
       <div
-        className={`mb-4 rounded-md border-l-4 border-${color}-500 bg-${color}-50 p-4 shadow-sm`}
+        className={`rounded-md border-l-4 border-${color}-500 bg-${color}-50 p-4 shadow-sm`}
       >
         <div className="mb-2 flex items-center">
           <Icon className={`mr-2 text-${color}-500`} size={20} />
-          <h3 className={`font-semibold text-${color}-700`}>{title}</h3>
+          <h3 className={`text-base font-semibold text-${color}-700`}>
+            {title}
+          </h3>
         </div>
         <div className={`text-${color}-700 text-sm`}>{children}</div>
       </div>
@@ -66,9 +68,9 @@ const AlertBox: React.FC<AlertBoxProps & { type: AlertType }> = ({
   // Başlık yoksa kompakt görünüm
   return (
     <div
-      className={`mb-4 rounded-md border-l-4 border-${color}-500 bg-${color}-50 p-4 shadow-sm`}
+      className={`rounded-md border-l-4 border-${color}-500 bg-${color}-50 p-4 shadow-sm`}
     >
-      <div className="flex items-center gap-2">
+      <div className="flex items-start gap-2">
         <Icon className={`text-${color}-500 flex-shrink-0`} size={18} />
         <div className={`text-${color}-700 text-sm`}>{children}</div>
       </div>

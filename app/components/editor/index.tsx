@@ -95,7 +95,7 @@ export const EditorPage = () => {
             <>
               <div
                 style={{ scrollbarWidth: "none" }}
-                className="prose mt-2 overflow-y-auto border border-zinc-200 bg-white p-4 focus-within:!border-zinc-300"
+                className="prose border border-zinc-200 bg-white p-4 focus-within:!border-zinc-300"
               >
                 <EditorContent editor={editor} />
               </div>
@@ -104,7 +104,7 @@ export const EditorPage = () => {
 
           {/* Önizleme modu */}
           {editorMode === "preview" && (
-            <div className="prose max-w-none py-4">
+            <div className="prose border border-zinc-200 bg-white px-4 py-4">
               <RenderJSON json={editor.getJSON()} />
             </div>
           )}
