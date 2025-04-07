@@ -1,17 +1,12 @@
+// app/components/editor/menu/strikethrough.tsx
 import { useState, useRef, useEffect } from "react";
 import { Editor } from "@tiptap/react";
-import { Underline, Type, PaintBucket, Circle } from "lucide-react";
+import { Strikethrough, PaintBucket, Circle } from "lucide-react";
 import RichButtonModal from "./ui/modal";
 import { COMMON_COLORS } from "./constants";
 import { twMerge } from "tailwind-merge";
 
-// Dekorasyon tipleri ve stil seçenekleri
-const DECORATION_TYPES = [
-  { value: "underline", label: "Alta Çizgi", icon: Underline },
-  { value: "overline", label: "Üste Çizgi", icon: Underline, rotate: true },
-  { value: "line-through", label: "Üstü Çizili", icon: Type },
-];
-
+// Dekorasyon stilleri ve seçenekleri
 const LINE_STYLES = [
   { value: "solid", label: "Düz" },
   { value: "dashed", label: "Kesik" },
@@ -26,40 +21,21 @@ const LINE_THICKNESS = [
   { value: "3px", label: "Kalın" },
 ];
 
-// Offset değerleri (sadece underline için)
-const OFFSET_VALUES = [
-  { value: "1px", label: "Yakın" },
-  { value: "3px", label: "Orta" },
-  { value: "5px", label: "Uzak" },
-];
-
-// Dekorasyon state tipi tanımı
-interface DecorationState {
-  type: string;
-  style: string;
-  thickness: string;
-  color: string;
-  offset: string;
-  isActive: boolean;
-}
-
 // Buton bileşeni
-export function TextDecorationButton({ editor }: { editor: Editor }) {
+export function StrikethroughButton({ editor }: { editor: Editor }) {
   const [isOpen, setIsOpen] = useState(false);
   const colorPickerRef = useRef<HTMLInputElement>(null);
 
   // Dekorasyon state'i
-  const [decoration, setDecoration] = useState<DecorationState>({
-    type: "underline",
+  const [decoration, setDecoration] = useState({
     style: "solid",
     thickness: "2px",
     color: "#000",
-    offset: "3px",
     isActive: false,
   });
 
   // State güncelleme yardımcı fonksiyonu
-  const updateDecoration = (updates: Partial<DecorationState>) => {
+  const updateDecoration = (updates: Partial<typeof decoration>) => {
     setDecoration((prev) => ({ ...prev, ...updates }));
   };
 
@@ -68,37 +44,22 @@ export function TextDecorationButton({ editor }: { editor: Editor }) {
     if (!editor) return;
 
     const updateFromEditor = () => {
-      // Tiptap altı çizili mark'ını kontrol et
-      const isUnderline = editor.isActive("underline");
+      // Tiptap Strikethrough mark'ını kontrol et
+      const isStrikethrough = editor.isActive("strikethrough");
 
-      // TextStyle içindeki dekorasyon durumunu kontrol et
-      const textStyle = editor.getAttributes("textStyle");
-      const textDecoration = textStyle.textDecoration;
-
-      // Aktif dekorasyon
-      const isActive = isUnderline || !!textDecoration;
-
-      // Hiçbir dekorasyon yoksa, sadece aktif durumu güncelle
-      if (!isActive) {
+      if (!isStrikethrough) {
         updateDecoration({ isActive: false });
         return;
       }
 
-      // Dekorasyon tipini belirle
-      let type = "underline";
-      if (textDecoration) {
-        if (textDecoration.includes("underline")) type = "underline";
-        else if (textDecoration.includes("overline")) type = "overline";
-        else if (textDecoration.includes("line-through")) type = "line-through";
-      }
+      // Attributes'ları al
+      const attrs = editor.getAttributes("strikethrough");
 
-      // Diğer özellikleri güncelle
+      // State'i güncelle
       updateDecoration({
-        type,
-        style: textStyle.textDecorationStyle || "solid",
-        thickness: textStyle.textDecorationThickness || "2px",
-        color: textStyle.textDecorationColor || "currentColor",
-        offset: textStyle.textUnderlineOffset || "3px",
+        style: attrs.style || "solid",
+        thickness: attrs.thickness || "2px",
+        color: attrs.color || "#000",
         isActive: true,
       });
     };
@@ -117,23 +78,17 @@ export function TextDecorationButton({ editor }: { editor: Editor }) {
     };
   }, [editor]);
 
-  // Editörde dekorasyonu uygula
-  const applyDecoration = () => {
-    // Stil özellikleri
-    const styleProps = {
-      textDecoration: decoration.type,
-      textDecorationStyle: decoration.style,
-      textDecorationThickness: decoration.thickness,
-      textDecorationColor: decoration.color,
-    };
-
-    // Underline için offset ekle
-    if (decoration.type === "underline") {
-      styleProps["textUnderlineOffset"] = decoration.offset;
-    }
-
-    // TextStyle mark'ını uygula
-    editor.chain().focus().setMark("textStyle", styleProps).run();
+  // Editörde strikethrough uygula
+  const applyStrikethrough = () => {
+    editor
+      .chain()
+      .focus()
+      .setStrikethrough({
+        style: decoration.style,
+        thickness: decoration.thickness,
+        color: decoration.color !== "#000" ? decoration.color : null,
+      })
+      .run();
 
     // Aktif olarak işaretle
     updateDecoration({ isActive: true });
@@ -142,25 +97,9 @@ export function TextDecorationButton({ editor }: { editor: Editor }) {
     setIsOpen(false);
   };
 
-  // Dekorasyonu kaldır
-  const removeDecoration = () => {
-    // Altı çiziliyi kaldır
-    if (editor.isActive("underline")) {
-      editor.chain().focus().unsetMark("underline").run();
-    }
-
-    // TextStyle özelliklerini temizle
-    editor
-      .chain()
-      .focus()
-      .setMark("textStyle", {
-        textDecoration: null,
-        textDecorationStyle: null,
-        textDecorationThickness: null,
-        textDecorationColor: null,
-        textUnderlineOffset: null,
-      })
-      .run();
+  // Strikethrough'u kaldır
+  const removeStrikethrough = () => {
+    editor.chain().focus().unsetStrikethrough().run();
 
     // Aktif durumunu güncelle
     updateDecoration({ isActive: false });
@@ -169,59 +108,28 @@ export function TextDecorationButton({ editor }: { editor: Editor }) {
     setIsOpen(false);
   };
 
-  // Aktif dekorasyon göstergesi
-  const isDecorationActive = decoration.isActive;
-
   return (
     <>
       <button
         onClick={() => setIsOpen(true)}
         className={twMerge(
           "flex size-8 items-center justify-center rounded-md border p-1 text-zinc-700 transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-100",
-          isDecorationActive
+          decoration.isActive
             ? "border-primary-300 bg-primary-50"
             : "border-transparent",
         )}
+        title="Üstü Çizili"
       >
-        <Underline size={16} />
+        <Strikethrough size={16} />
       </button>
 
       <RichButtonModal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        title="Metin Dekorasyonu"
+        title="Üstü Çizili Biçimlendirme"
       >
         <div className="flex flex-col gap-4 overflow-y-auto">
           <div className="flex flex-col gap-6">
-            {/* Dekorasyon Tipi */}
-            <div>
-              <h3 className="mb-2 text-sm font-medium text-zinc-700">
-                Dekorasyon Tipi
-              </h3>
-              <div className="grid grid-cols-3 gap-2">
-                {DECORATION_TYPES.map((type) => (
-                  <button
-                    key={type.value}
-                    onClick={() => updateDecoration({ type: type.value })}
-                    className={twMerge(
-                      "flex flex-col items-center justify-center gap-2 rounded-md border p-3 transition-all",
-                      decoration.type === type.value
-                        ? "border-primary-500 bg-primary-50"
-                        : "border-zinc-200 bg-zinc-100 hover:border-zinc-300",
-                    )}
-                  >
-                    <div className="relative flex h-8 w-8 items-center justify-center rounded-full bg-white">
-                      <type.icon
-                        size={18}
-                        className={type.rotate ? "rotate-180 transform" : ""}
-                      />
-                    </div>
-                    <span className="text-xs font-medium">{type.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
             {/* Çizgi Stili */}
             <div>
               <h3 className="mb-2 text-sm font-medium text-zinc-700">
@@ -243,15 +151,13 @@ export function TextDecorationButton({ editor }: { editor: Editor }) {
                       className="w-full text-center"
                       style={{
                         color: "transparent",
-                        textDecorationLine: "underline",
-
+                        textDecorationLine: "line-through",
                         textDecorationThickness: decoration.thickness,
                         textDecorationColor:
-                          decoration.color !== "currentColor"
+                          decoration.color !== "#000"
                             ? decoration.color
-                            : "#000",
+                            : "currentColor",
                         textDecorationStyle: style.value as any,
-                        textUnderlineOffset: "2px",
                       }}
                     >
                       abc
@@ -287,14 +193,13 @@ export function TextDecorationButton({ editor }: { editor: Editor }) {
                       className="w-full text-center"
                       style={{
                         color: "transparent",
-                        textDecorationLine: "underline",
+                        textDecorationLine: "line-through",
                         textDecorationThickness: thickness.value,
                         textDecorationColor:
-                          decoration.color !== "currentColor"
+                          decoration.color !== "#000"
                             ? decoration.color
-                            : "#000",
+                            : "currentColor",
                         textDecorationStyle: decoration.style as any,
-                        textUnderlineOffset: "3px",
                       }}
                     >
                       abc
@@ -306,48 +211,6 @@ export function TextDecorationButton({ editor }: { editor: Editor }) {
                 ))}
               </div>
             </div>
-
-            {/* Offset - Sadece underline için */}
-            {decoration.type === "underline" && (
-              <div>
-                <h3 className="mb-2 text-sm font-medium text-zinc-700">
-                  Çizgi Mesafesi
-                </h3>
-                <div className="grid grid-cols-3 gap-2">
-                  {OFFSET_VALUES.map((offset) => (
-                    <button
-                      key={offset.value}
-                      onClick={() => updateDecoration({ offset: offset.value })}
-                      className={twMerge(
-                        "relative flex h-12 flex-col items-center justify-center rounded border px-1 py-1.5 transition-all",
-                        decoration.offset === offset.value
-                          ? "border-primary-500 bg-primary-50"
-                          : "border-zinc-200 bg-zinc-100 hover:border-zinc-300",
-                      )}
-                    >
-                      <p
-                        className="text-center"
-                        style={{
-                          textDecorationLine: "underline",
-                          textDecorationThickness: decoration.thickness,
-                          textDecorationColor:
-                            decoration.color !== "currentColor"
-                              ? decoration.color
-                              : "currentColor",
-                          textDecorationStyle: decoration.style as any,
-                          textUnderlineOffset: offset.value,
-                        }}
-                      >
-                        abc
-                      </p>
-                      <span className="absolute -bottom-5 text-[10px] font-medium text-zinc-500">
-                        {offset.label}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
 
             {/* Renk Seçimi */}
             <div>
@@ -370,10 +233,10 @@ export function TextDecorationButton({ editor }: { editor: Editor }) {
 
                 {/* Varsayılan renk */}
                 <button
-                  onClick={() => updateDecoration({ color: "currentColor" })}
+                  onClick={() => updateDecoration({ color: "#000" })}
                   className={twMerge(
                     "relative flex size-8 items-center justify-center rounded-full border",
-                    decoration.color === "currentColor"
+                    decoration.color === "#000"
                       ? "border-primary-500 ring-primary-300 ring-2"
                       : "border-zinc-300",
                   )}
@@ -395,11 +258,7 @@ export function TextDecorationButton({ editor }: { editor: Editor }) {
                   <input
                     ref={colorPickerRef}
                     type="color"
-                    value={
-                      decoration.color !== "currentColor"
-                        ? decoration.color
-                        : "#000000"
-                    }
+                    value={decoration.color}
                     onChange={(e) =>
                       updateDecoration({ color: e.target.value })
                     }
@@ -416,18 +275,12 @@ export function TextDecorationButton({ editor }: { editor: Editor }) {
               </h3>
               <p
                 className="text-center text-lg text-zinc-800"
-                style={
-                  {
-                    textDecorationLine: decoration.type,
-                    textDecorationStyle: decoration.style,
-                    textDecorationThickness: decoration.thickness,
-                    textDecorationColor: decoration.color,
-                    textUnderlineOffset:
-                      decoration.type === "underline"
-                        ? decoration.offset
-                        : undefined,
-                  } as any
-                }
+                style={{
+                  textDecorationLine: "line-through",
+                  textDecorationStyle: decoration.style as any,
+                  textDecorationThickness: decoration.thickness,
+                  textDecorationColor: decoration.color,
+                }}
               >
                 Örnek Metin
               </p>
@@ -437,7 +290,7 @@ export function TextDecorationButton({ editor }: { editor: Editor }) {
           {/* Butonlar */}
           <div className="flex justify-between border-t border-zinc-100 pt-4">
             <button
-              onClick={removeDecoration}
+              onClick={removeStrikethrough}
               className="flex items-center gap-1 rounded border border-red-400 bg-red-500 px-3 py-1.5 text-sm font-medium text-white transition-all hover:bg-red-600"
             >
               Kaldır
@@ -450,7 +303,7 @@ export function TextDecorationButton({ editor }: { editor: Editor }) {
                 İptal
               </button>
               <button
-                onClick={applyDecoration}
+                onClick={applyStrikethrough}
                 className="border-primary-500 bg-primary-500 hover:bg-primary-600 w-fit rounded border px-6 py-1.5 text-sm font-medium text-white transition-all"
               >
                 Uygula

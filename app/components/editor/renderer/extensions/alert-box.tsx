@@ -81,7 +81,7 @@ const AlertBox: React.FC<AlertBoxProps & { type: AlertType }> = ({
  * Editörde bilgi, uyarı ve tehlike kutuları eklemeyi sağlar
  */
 export const AlerBox = Node.create({
-  name: "alertBox", // Daha genel ve açıklayıcı isim
+  name: "alertBox",
   group: "block",
   content: "inline*",
 

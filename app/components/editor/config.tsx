@@ -1,8 +1,8 @@
+// app/components/editor/config.tsx
 import { useEditor as useTiptapEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import GlobalDragHandle from "tiptap-extension-global-drag-handle";
 import Image from "@tiptap/extension-image";
-import Underline from "@tiptap/extension-underline";
 import Highlight from "@tiptap/extension-highlight";
 import Subscript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
@@ -14,8 +14,9 @@ import TextAlign from "@tiptap/extension-text-align";
 import { FontWeight } from "./renderer/extensions/font-weight";
 import { AlerBox } from "./renderer/extensions/alert-box";
 import { FontSize } from "./renderer/extensions/font-size";
-import { TextDecoration } from "./renderer/extensions/text-decoration";
 import { EnhancedImage } from "./renderer/extensions/image";
+import { Underline } from "./renderer/extensions/underline";
+import { Strikethrough } from "./renderer/extensions/strike-through";
 
 export const useEditor = (initialContent: string = "") => {
   const editor = useTiptapEditor({
@@ -26,6 +27,8 @@ export const useEditor = (initialContent: string = "") => {
         hardBreak: {
           keepMarks: false,
         },
+        bold: false,
+        strike: false,
       }),
       GlobalDragHandle.configure({
         dragHandleWidth: 40,
@@ -45,17 +48,15 @@ export const useEditor = (initialContent: string = "") => {
       FontSize.configure({
         types: ["textStyle"],
       }),
-      TextDecoration.configure({
-        types: ["textStyle"],
-      }),
-      Image,
-      EnhancedImage,
       Underline,
+      Strikethrough,
+      Image,
       Subscript,
       Superscript,
       Link,
       TextStyle,
       Color,
+      EnhancedImage,
       FontFamily,
       AlerBox,
     ],

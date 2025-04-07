@@ -1,24 +1,21 @@
-// app/components/editor/renderer/marks/underline.tsx
-
-interface UnderlineMarkProps {
+interface StrikethroughMarkProps {
   node?: {
     attrs?: {
       color?: string;
       style?: string;
       thickness?: string;
-      offset?: string;
     };
   };
   children: React.ReactNode;
 }
 
-export const UnderlineMark: React.FC<UnderlineMarkProps> = ({
+export const StrikethroughMark: React.FC<StrikethroughMarkProps> = ({
   node,
   children,
 }) => {
   // Stil özellikleri oluştur
   const style: React.CSSProperties = {
-    textDecorationLine: "underline",
+    textDecorationLine: "line-through",
   };
 
   if (node?.attrs) {
@@ -33,10 +30,6 @@ export const UnderlineMark: React.FC<UnderlineMarkProps> = ({
     if (node.attrs.thickness) {
       style.textDecorationThickness = node.attrs.thickness;
     }
-
-    if (node.attrs.offset) {
-      style.textUnderlineOffset = node.attrs.offset;
-    }
   }
 
   // data-* özellikleri
@@ -44,19 +37,15 @@ export const UnderlineMark: React.FC<UnderlineMarkProps> = ({
 
   if (node?.attrs) {
     if (node.attrs.color) {
-      dataAttributes["data-underline-color"] = node.attrs.color;
+      dataAttributes["data-strike-color"] = node.attrs.color;
     }
 
     if (node.attrs.style && node.attrs.style !== "solid") {
-      dataAttributes["data-underline-style"] = node.attrs.style;
+      dataAttributes["data-strike-style"] = node.attrs.style;
     }
 
     if (node.attrs.thickness) {
-      dataAttributes["data-underline-thickness"] = node.attrs.thickness;
-    }
-
-    if (node.attrs.offset) {
-      dataAttributes["data-underline-offset"] = node.attrs.offset;
+      dataAttributes["data-strike-thickness"] = node.attrs.thickness;
     }
   }
 
@@ -64,12 +53,12 @@ export const UnderlineMark: React.FC<UnderlineMarkProps> = ({
   if (Object.keys(style).length > 1) {
     // 1'den fazla çünkü textDecorationLine her zaman var
     return (
-      <u style={style} {...dataAttributes}>
+      <s style={style} {...dataAttributes}>
         {children}
-      </u>
+      </s>
     );
   }
 
-  // Aksi halde standart <u> etiketi kullan
-  return <u>{children}</u>;
+  // Aksi halde standart <s> etiketi kullan
+  return <s>{children}</s>;
 };

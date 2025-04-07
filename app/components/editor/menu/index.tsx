@@ -5,7 +5,6 @@ import {
   AlignLeft,
   AlignRight,
   Bold,
-  ChevronDown,
   Heading,
   Heading1,
   Heading2,
@@ -29,10 +28,10 @@ import MenuButton from "./ui/button";
 import { twMerge } from "tailwind-merge";
 import { useIsActive } from "@/hooks/use-isActive";
 import { FontSizeButton } from "./font-size";
-import { TextDecorationButton } from "./text-decoration";
 import { AlertBoxButton } from "./alert-box";
-import { useState } from "react";
 import { EnhancedImageButton } from "./image";
+import { UnderlineButton } from "./underline";
+import { StrikethroughButton } from "./strike-through";
 
 type Props = {
   editor: Editor;
@@ -217,7 +216,8 @@ export const EditorRichMenu = ({ editor }: Props) => {
                   </MenuButton>
                   <FontWeightButton editor={editor} />
                   <FontSizeButton editor={editor} />
-                  <TextDecorationButton editor={editor} />
+                  <UnderlineButton editor={editor} />
+                  <StrikethroughButton editor={editor} />
                   <FontFamilyButton editor={editor} />
                   <ColorButton editor={editor} />
                 </div>
