@@ -15,9 +15,8 @@ export const EditorPage = () => {
   return (
     <div className="relative py-4">
       {/* Toggle butonları */}
-      <div className="absolute top-4 right-4 flex items-center gap-2 rounded-lg border border-zinc-200 bg-white p-1 px-4">
+      <div className="flex items-center gap-2 overflow-x-auto border-y border-zinc-200 bg-white p-1 px-4 sm:absolute sm:top-4 sm:right-4 sm:rounded-lg sm:border-x">
         <div className="mr-2 text-sm font-medium text-zinc-700">Görünüm:</div>
-
         <button
           onClick={() => setEditorMode("editor")}
           className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
@@ -71,7 +70,7 @@ export const EditorPage = () => {
         </button>
       </div>
 
-      <div className="mx-auto my-8 flex max-w-5xl flex-col gap-4 px-4 py-6">
+      <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-6 sm:my-8">
         {/* Editör başlığı */}
         <div className="mb-2">
           <h1 className="text-xl font-bold text-zinc-800">
