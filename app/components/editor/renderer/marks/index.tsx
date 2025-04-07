@@ -8,6 +8,7 @@ import { SuperscriptMark } from "./superscript";
 import { LinkMark } from "./link";
 import { TextStyleMark } from "./text-style";
 import { StrikeThroughMark } from "./strike-through";
+import { HighlightMark } from "./highlight";
 
 export const RenderMarks = (
   node: any,
@@ -33,6 +34,8 @@ export const RenderMarks = (
         return <UnderlineMark node={mark}>{result}</UnderlineMark>;
       case "strikethrough":
         return <StrikeThroughMark node={mark}>{result}</StrikeThroughMark>;
+      case "highlight":
+        return <HighlightMark node={mark}>{result}</HighlightMark>;
       default:
         return result;
     }

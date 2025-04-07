@@ -2,8 +2,7 @@
 import { useEditor as useTiptapEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import GlobalDragHandle from "tiptap-extension-global-drag-handle";
-import Image from "@tiptap/extension-image";
-import Highlight from "@tiptap/extension-highlight";
+
 import Subscript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
 import Link from "@tiptap/extension-link";
@@ -17,6 +16,7 @@ import { FontSize } from "./renderer/extensions/font-size";
 import { EnhancedImage } from "./renderer/extensions/image";
 import { Underline } from "./renderer/extensions/underline";
 import { StrikeThrough } from "./renderer/extensions/strike-through";
+import { Highlight } from "./renderer/extensions/highlight";
 
 export const useEditor = (initialContent: string = "") => {
   const editor = useTiptapEditor({
@@ -34,11 +34,6 @@ export const useEditor = (initialContent: string = "") => {
         dragHandleWidth: 40,
         scrollTreshold: 0,
       }),
-      Highlight.configure({
-        HTMLAttributes: {
-          class: "prose-highlight",
-        },
-      }),
       TextAlign.configure({
         types: ["heading", "paragraph"],
       }),
@@ -48,9 +43,11 @@ export const useEditor = (initialContent: string = "") => {
       FontSize.configure({
         types: ["textStyle"],
       }),
+      Highlight.configure({
+        types: ["textStyle"],
+      }),
       Underline,
       StrikeThrough,
-      Image,
       Subscript,
       Superscript,
       Link,

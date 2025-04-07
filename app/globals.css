@@ -156,49 +156,13 @@
         @apply text-primary-600 hover:text-primary-700 font-medium transition-colors;
       }
 
-      /* Enhanced Image styles */
-      & figure {
-        @apply relative my-8;
-
-        &.enhanced-image {
-          @apply w-full;
-
-          & img {
-            @apply h-auto w-full rounded-lg object-cover;
-          }
-
-          & figcaption {
-            @apply mt-2 text-center text-sm text-zinc-500;
-          }
-        }
+      & img {
+        @apply mb-8 aspect-video rounded-lg object-cover;
       }
 
-      /* Alert box styles */
-      & div[data-alert-box] {
-        @apply my-6 rounded-lg p-4;
-
-        &[data-type="information"] {
-          @apply border-l-4 border-blue-500 bg-blue-50;
-        }
-
-        &[data-type="warning"] {
-          @apply border-l-4 border-amber-500 bg-amber-50;
-        }
-
-        &[data-type="danger"] {
-          @apply border-l-4 border-red-500 bg-red-50;
-        }
-      }
-
-      /* Text alignment */
-      & [style*="text-align: center"] {
-        @apply text-center;
-      }
-      & [style*="text-align: right"] {
-        @apply text-right;
-      }
-      & [style*="text-align: justify"] {
-        @apply text-justify;
+      & img,
+      figcaption {
+        @apply mb-0;
       }
     }
   }

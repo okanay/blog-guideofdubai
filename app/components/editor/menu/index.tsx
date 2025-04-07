@@ -20,7 +20,6 @@ import {
   Subscript,
   Superscript,
 } from "lucide-react";
-import { ColorButton } from "./color";
 import { FontFamilyButton } from "./font-family";
 import { FontWeightButton } from "./font-weight";
 import { LinkButton } from "./link";
@@ -32,6 +31,7 @@ import { AlertBoxButton } from "./alert-box";
 import { EnhancedImageButton } from "./image";
 import { UnderlineButton } from "./underline";
 import { StrikeThroughButton } from "./strike-through";
+import { HighlightButton } from "./highlight";
 
 type Props = {
   editor: Editor;
@@ -219,7 +219,7 @@ export const EditorRichMenu = ({ editor }: Props) => {
                   <UnderlineButton editor={editor} />
                   <StrikeThroughButton editor={editor} />
                   <FontFamilyButton editor={editor} />
-                  <ColorButton editor={editor} />
+                  <HighlightButton editor={editor} />
                 </div>
 
                 {/* Ayırıcı çizgi */}
