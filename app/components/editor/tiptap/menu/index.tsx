@@ -1,4 +1,3 @@
-import { Editor } from "@tiptap/react";
 import {
   AlignCenter,
   AlignJustify,
@@ -32,12 +31,11 @@ import { EnhancedImageButton } from "./image";
 import { UnderlineButton } from "./underline";
 import { StrikeThroughButton } from "./strike-through";
 import { HighlightButton } from "./highlight";
+import { useTiptapContext } from "../store";
 
-type Props = {
-  editor: Editor;
-};
+export const EditorRichMenu = () => {
+  const { editor } = useTiptapContext();
 
-export const EditorRichMenu = ({ editor }: Props) => {
   const Categories = [
     { label: "Hepsini Göster", value: "all", icon: SeparatorHorizontal },
     { label: "Tip", value: "types", icon: Heading },
@@ -50,6 +48,33 @@ export const EditorRichMenu = ({ editor }: Props) => {
     Categories[0],
   );
 
+  const CategoryButtons = () => {
+    return (
+      <div className="flex items-center space-x-1">
+        {Categories.map((category) => (
+          <div key={category.value} className="group relative">
+            <button
+              className={twMerge(
+                `rounded-md px-2 py-1 text-xs font-semibold`,
+                isCategoryActive(category)
+                  ? "bg-zinc-800 text-zinc-50"
+                  : "text-color-font border border-zinc-200 bg-zinc-50",
+              )}
+              onClick={() => toggleCategory(category)}
+            >
+              {<category.icon className="size-3.5" />}
+            </button>
+
+            {/* Hover ile görünen tooltip */}
+            <div className="pointer-events-none absolute top-8 left-1/2 z-20 -translate-x-1/2 rounded bg-zinc-800 px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+              {category.label}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="pointer-events-none fixed top-0 right-0 left-0 z-1000">
       <div className="pointer-events-auto w-full border-b border-zinc-200 bg-zinc-100 transition-all duration-300 ease-in-out">
@@ -58,29 +83,7 @@ export const EditorRichMenu = ({ editor }: Props) => {
             <h1 className="text-color-font text-xs font-semibold">
               Metin Editörü
             </h1>
-
-            <div className="flex items-center space-x-1">
-              {Categories.map((category) => (
-                <div key={category.value} className="group relative">
-                  <button
-                    className={twMerge(
-                      `rounded-md px-2 py-1 text-xs font-semibold`,
-                      isCategoryActive(category)
-                        ? "bg-zinc-800 text-zinc-50"
-                        : "text-color-font border border-zinc-200 bg-zinc-50",
-                    )}
-                    onClick={() => toggleCategory(category)}
-                  >
-                    {<category.icon className="size-3.5" />}
-                  </button>
-
-                  {/* Hover ile görünen tooltip */}
-                  <div className="pointer-events-none absolute top-8 left-1/2 z-20 -translate-x-1/2 rounded bg-zinc-800 px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                    {category.label}
-                  </div>
-                </div>
-              ))}
-            </div>
+            <CategoryButtons />
           </div>
 
           <div className="grid grid-rows-[1fr] transition-all duration-300 aria-hidden:grid-rows-[0fr] aria-hidden:overflow-hidden">
@@ -149,17 +152,12 @@ export const EditorRichMenu = ({ editor }: Props) => {
                   </MenuButton>
                 </div>
 
-                {/* Ayırıcı çizgi */}
-                <div
-                  className={`mx-1 h-6 border-l border-zinc-300 ${isHidden("types") ? "hidden" : ""}`}
-                ></div>
-
                 {/* İçerik Tipi Butonları - types kategorisine ait */}
                 <div
                   className={`flex items-center gap-x-2 ${isHidden("types") ? "hidden" : ""}`}
                 >
-                  <EnhancedImageButton editor={editor} />
-                  <LinkButton editor={editor} />
+                  <EnhancedImageButton />
+                  <LinkButton />
                   <MenuButton
                     onClick={() =>
                       editor.chain().focus().toggleBlockquote().run()
@@ -198,11 +196,6 @@ export const EditorRichMenu = ({ editor }: Props) => {
                   </MenuButton>
                 </div>
 
-                {/* Ayırıcı çizgi */}
-                <div
-                  className={`mx-1 h-6 border-l border-zinc-300 ${isHidden("types") || isHidden("format") ? "hidden" : ""}`}
-                ></div>
-
                 {/* Biçimlendirme Butonları - format kategorisine ait */}
                 <div
                   className={`flex items-center gap-x-2 ${isHidden("format") ? "hidden" : ""}`}
@@ -214,18 +207,13 @@ export const EditorRichMenu = ({ editor }: Props) => {
                   >
                     <Italic size={16} />
                   </MenuButton>
-                  <FontWeightButton editor={editor} />
-                  <FontSizeButton editor={editor} />
-                  <UnderlineButton editor={editor} />
-                  <StrikeThroughButton editor={editor} />
-                  <FontFamilyButton editor={editor} />
-                  <HighlightButton editor={editor} />
+                  <FontWeightButton />
+                  <FontSizeButton />
+                  <UnderlineButton />
+                  <StrikeThroughButton />
+                  <FontFamilyButton />
+                  <HighlightButton />
                 </div>
-
-                {/* Ayırıcı çizgi */}
-                <div
-                  className={`mx-1 h-6 border-l border-zinc-300 ${isHidden("format") || isHidden("all") ? "hidden" : ""}`}
-                ></div>
 
                 {/* Hizalama Butonları - format kategorisinin bir parçası */}
                 <div
@@ -269,16 +257,11 @@ export const EditorRichMenu = ({ editor }: Props) => {
                   </MenuButton>
                 </div>
 
-                {/* Ayırıcı çizgi */}
-                <div
-                  className={`mx-1 h-6 border-l border-zinc-300 ${isHidden("format") || isHidden("special") ? "hidden" : ""}`}
-                ></div>
-
                 {/* Özel Modüller - special kategorisine ait */}
                 <div
                   className={`flex items-center gap-x-2 ${isHidden("special") ? "hidden" : ""}`}
                 >
-                  <AlertBoxButton editor={editor} />
+                  <AlertBoxButton />
                   <MenuButton
                     onClick={() =>
                       editor.chain().focus().setHorizontalRule().run()

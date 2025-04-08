@@ -1,14 +1,10 @@
 import { useState } from "react";
-import { Editor } from "@tiptap/react";
 import { Link as LinkIcon, ExternalLink, X } from "lucide-react";
 import RichButtonModal from "./ui/modal";
+import { useTiptapContext } from "../store";
 
-// Custom Link Button component
-type LinkButtonProps = {
-  editor: Editor;
-};
-
-const LinkButton = ({ editor }: LinkButtonProps) => {
+const LinkButton = () => {
+  const { editor } = useTiptapContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const [linkText, setLinkText] = useState("");

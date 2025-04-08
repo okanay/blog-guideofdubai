@@ -1,10 +1,24 @@
 {
   "root": {
-    "title": "Guide Of Dubai | Blogs",
+    "title": "Blog | Guide Of Dubai",
     "description": "Learn about Dubai's top blogs and discover the best content on the web."
   },
   "notFound": {
-    "title": "Page Not Found",
+    "title": "Page Not Found | Guide Of Dubai",
     "description": "The page you are looking for was not found"
+  },
+  "editor": {
+    "root": {
+      "title": "Editor | Guide Of Dubai",
+      "description": "Edit your post and contribute to Guide Of Dubai."
+    },
+    "create": {
+      "title": "Create Blog | Guide Of Dubai",
+      "description": "Create a new post and contribute to Guide Of Dubai."
+    },
+    "edit": {
+      "title": "Edit Blog | Guide Of Dubai",
+      "description": "Edit your post and contribute to Guide Of Dubai."
+    }
   }
 }

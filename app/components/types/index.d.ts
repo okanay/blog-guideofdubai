@@ -33,3 +33,5 @@ type Blog = {
   updatedAt: Date;
   publishedAt: Date | null;
 };
+
+type ViewMode = "edit" | "preview" | "json" | "html";

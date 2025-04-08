@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import { Editor } from "@tiptap/react";
 import {
   Image,
   AlignLeft,
@@ -8,6 +7,7 @@ import {
   LayoutGrid,
 } from "lucide-react";
 import RichButtonModal from "./ui/modal";
+import { useTiptapContext } from "../store";
 
 // Görsel boyut ve hizalama tipleri
 type ImageSize = "small" | "medium" | "large" | "fullscreen";
@@ -49,12 +49,8 @@ const OBJECT_FIT_OPTIONS = [
   { value: "none", label: "Orjinal", description: "Orjinal boyutunda kalır" },
 ];
 
-// Gelişmiş Görsel Butonu özellikleri
-type EnhancedImageButtonProps = {
-  editor: Editor;
-};
-
-const EnhancedImageButton = ({ editor }: EnhancedImageButtonProps) => {
+const EnhancedImageButton = () => {
+  const { editor } = useTiptapContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [altText, setAltText] = useState("");

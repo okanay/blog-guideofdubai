@@ -1,4 +1,3 @@
-import { EditorPage } from "@/components/editor";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/$lang/_editor/editor/")({
@@ -6,5 +5,5 @@ export const Route = createFileRoute("/$lang/_editor/editor/")({
 });
 
 function RouteComponent() {
-  return <EditorPage />;
+  return <main></main>;
 }

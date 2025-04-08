@@ -1,7 +1,7 @@
-import { Editor } from "@tiptap/react";
 import { Type } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SelectButton } from "./ui/select";
+import { useTiptapContext } from "../store";
 
 const FONT_FAMILY_OPTIONS = [
   { label: "Sans Serif", value: "var(--font-custom-sans)" },
@@ -9,11 +9,8 @@ const FONT_FAMILY_OPTIONS = [
   { label: "Monospace", value: "var(--font-mono)" },
 ];
 
-type FontFamilyButtonProps = {
-  editor: Editor;
-};
-
-const FontFamilyButton: React.FC<FontFamilyButtonProps> = ({ editor }) => {
+const FontFamilyButton = () => {
+  const { editor } = useTiptapContext();
   const [selectedFont, setSelectedFont] = useState("");
 
   // Editör değiştiğinde veya seçim değiştiğinde aktif fontu güncelle

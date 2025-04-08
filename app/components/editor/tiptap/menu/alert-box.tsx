@@ -7,6 +7,7 @@ import {
   AlertType,
   AlertBoxPreview,
 } from "../renderer/extensions/alert-box";
+import { useTiptapContext } from "../store";
 
 // Tip seçenekleri
 const ALERT_TYPES = Object.entries(ALERT_CONFIG).map(([value, config]) => ({
@@ -14,12 +15,8 @@ const ALERT_TYPES = Object.entries(ALERT_CONFIG).map(([value, config]) => ({
   ...config,
 }));
 
-// AlertBox Button component
-type AlertBoxButtonProps = {
-  editor: Editor;
-};
-
-const AlertBoxButton = ({ editor }: AlertBoxButtonProps) => {
+const AlertBoxButton = () => {
+  const { editor } = useTiptapContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [alertType, setAlertType] = useState<string>("information");
   const [alertTitle, setAlertTitle] = useState<string>("");

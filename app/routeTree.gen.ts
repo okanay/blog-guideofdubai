@@ -21,6 +21,7 @@ import { Route as LangMainBlogRouteImport } from './routes/$lang/_main/blog.rout
 import { Route as LangMainBlogIndexImport } from './routes/$lang/_main/blog.index'
 import { Route as LangEditorEditorIndexImport } from './routes/$lang/_editor/editor.index'
 import { Route as LangMainBlogSlugImport } from './routes/$lang/_main/blog.$slug'
+import { Route as LangEditorEditorCreateImport } from './routes/$lang/_editor/editor.create'
 
 // Create Virtual Routes
 
@@ -80,6 +81,12 @@ const LangMainBlogSlugRoute = LangMainBlogSlugImport.update({
   getParentRoute: () => LangMainBlogRouteRoute,
 } as any)
 
+const LangEditorEditorCreateRoute = LangEditorEditorCreateImport.update({
+  id: '/editor/create',
+  path: '/editor/create',
+  getParentRoute: () => LangEditorRouteRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -126,6 +133,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LangMainIndexImport
       parentRoute: typeof LangMainRouteImport
     }
+    '/$lang/_editor/editor/create': {
+      id: '/$lang/_editor/editor/create'
+      path: '/editor/create'
+      fullPath: '/$lang/editor/create'
+      preLoaderRoute: typeof LangEditorEditorCreateImport
+      parentRoute: typeof LangEditorRouteImport
+    }
     '/$lang/_main/blog/$slug': {
       id: '/$lang/_main/blog/$slug'
       path: '/$slug'
@@ -153,10 +167,12 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface LangEditorRouteRouteChildren {
+  LangEditorEditorCreateRoute: typeof LangEditorEditorCreateRoute
   LangEditorEditorIndexRoute: typeof LangEditorEditorIndexRoute
 }
 
 const LangEditorRouteRouteChildren: LangEditorRouteRouteChildren = {
+  LangEditorEditorCreateRoute: LangEditorEditorCreateRoute,
   LangEditorEditorIndexRoute: LangEditorEditorIndexRoute,
 }
 
@@ -210,6 +226,7 @@ export interface FileRoutesByFullPath {
   '/$lang/not-found': typeof LangNotFoundRoute
   '/$lang/blog': typeof LangMainBlogRouteRouteWithChildren
   '/$lang/': typeof LangMainIndexRoute
+  '/$lang/editor/create': typeof LangEditorEditorCreateRoute
   '/$lang/blog/$slug': typeof LangMainBlogSlugRoute
   '/$lang/editor': typeof LangEditorEditorIndexRoute
   '/$lang/blog/': typeof LangMainBlogIndexRoute
@@ -218,6 +235,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/$lang': typeof LangMainIndexRoute
   '/$lang/not-found': typeof LangNotFoundRoute
+  '/$lang/editor/create': typeof LangEditorEditorCreateRoute
   '/$lang/blog/$slug': typeof LangMainBlogSlugRoute
   '/$lang/editor': typeof LangEditorEditorIndexRoute
   '/$lang/blog': typeof LangMainBlogIndexRoute
@@ -231,6 +249,7 @@ export interface FileRoutesById {
   '/$lang/not-found': typeof LangNotFoundRoute
   '/$lang/_main/blog': typeof LangMainBlogRouteRouteWithChildren
   '/$lang/_main/': typeof LangMainIndexRoute
+  '/$lang/_editor/editor/create': typeof LangEditorEditorCreateRoute
   '/$lang/_main/blog/$slug': typeof LangMainBlogSlugRoute
   '/$lang/_editor/editor/': typeof LangEditorEditorIndexRoute
   '/$lang/_main/blog/': typeof LangMainBlogIndexRoute
@@ -243,6 +262,7 @@ export interface FileRouteTypes {
     | '/$lang/not-found'
     | '/$lang/blog'
     | '/$lang/'
+    | '/$lang/editor/create'
     | '/$lang/blog/$slug'
     | '/$lang/editor'
     | '/$lang/blog/'
@@ -250,6 +270,7 @@ export interface FileRouteTypes {
   to:
     | '/$lang'
     | '/$lang/not-found'
+    | '/$lang/editor/create'
     | '/$lang/blog/$slug'
     | '/$lang/editor'
     | '/$lang/blog'
@@ -261,6 +282,7 @@ export interface FileRouteTypes {
     | '/$lang/not-found'
     | '/$lang/_main/blog'
     | '/$lang/_main/'
+    | '/$lang/_editor/editor/create'
     | '/$lang/_main/blog/$slug'
     | '/$lang/_editor/editor/'
     | '/$lang/_main/blog/'
@@ -300,6 +322,7 @@ export const routeTree = rootRoute
       "filePath": "$lang/_editor/route.tsx",
       "parent": "/$lang",
       "children": [
+        "/$lang/_editor/editor/create",
         "/$lang/_editor/editor/"
       ]
     },
@@ -326,6 +349,10 @@ export const routeTree = rootRoute
     "/$lang/_main/": {
       "filePath": "$lang/_main/index.tsx",
       "parent": "/$lang/_main"
+    },
+    "/$lang/_editor/editor/create": {
+      "filePath": "$lang/_editor/editor.create.tsx",
+      "parent": "/$lang/_editor"
     },
     "/$lang/_main/blog/$slug": {
       "filePath": "$lang/_main/blog.$slug.tsx",

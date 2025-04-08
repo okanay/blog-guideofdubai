@@ -1,14 +1,11 @@
-import { Editor } from "@tiptap/react";
 import { LetterText } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SelectButton } from "./ui/select";
 import { FONT_SIZE_OPTIONS } from "../renderer/extensions/font-size";
+import { useTiptapContext } from "../store";
 
-type FontSizeButtonProps = {
-  editor: Editor;
-};
-
-const FontSizeButton: React.FC<FontSizeButtonProps> = ({ editor }) => {
+const FontSizeButton = () => {
+  const { editor } = useTiptapContext();
   const [selectedSize, setSelectedSize] = useState("");
 
   // Editör değiştiğinde veya seçim değiştiğinde aktif font boyutunu güncelle

@@ -1,10 +1,24 @@
 {
   "root": {
-    "title": "Guide Of Dubai | Rehber",
+    "title": "Rehber | Guide Of Dubai",
     "description": "Dubai'nin en iyi bloglarını öğrenin ve web'deki en iyi içerikleri keşfedin."
   },
   "notFound": {
-    "title": "Sayfa Bulunamadı",
+    "title": "Sayfa Bulunamadı | Guide Of Dubai",
     "description": "Aradığınız sayfa bulunamadı"
+  },
+  "editor": {
+    "root": {
+      "title": "Düzenle | Guide Of Dubai",
+      "description": "Yazınızı düzenleyin ve Guide Of Dubai'ye katkıda bulunun."
+    },
+    "create": {
+      "title": "Blog Oluştur | Guide Of Dubai",
+      "description": "Yeni bir yazı oluşturun ve Guide Of Dubai'ye katkıda bulunun."
+    },
+    "edit": {
+      "title": "Blog Düzenle | Guide Of Dubai",
+      "description": "Yazınızı düzenleyin ve Guide Of Dubai'ye katkıda bulunun."
+    }
   }
 }

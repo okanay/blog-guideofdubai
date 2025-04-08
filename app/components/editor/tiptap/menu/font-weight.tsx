@@ -3,6 +3,7 @@ import { Editor } from "@tiptap/react";
 import { Bold } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SelectButton } from "./ui/select";
+import { useTiptapContext } from "../store";
 
 const fontWeightOptions = {
   0: {
@@ -31,7 +32,8 @@ type Props = {
   editor: Editor;
 };
 
-const FontWeightButton: React.FC<Props> = ({ editor }) => {
+const FontWeightButton = () => {
+  const { editor } = useTiptapContext();
   const [selectedFont, setSelectedFont] = useState<string | number>("");
 
   useEffect(() => {

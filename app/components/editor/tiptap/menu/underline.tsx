@@ -1,10 +1,10 @@
-// app/components/editor/menu/strikethrough.tsx
+// app/components/editor/menu/-underline.tsx
 import { useState, useRef, useEffect } from "react";
-import { Editor } from "@tiptap/react";
-import { Strikethrough, PaintBucket, Circle } from "lucide-react";
+import { Underline, Type, PaintBucket, Circle } from "lucide-react";
 import RichButtonModal from "./ui/modal";
 import { COMMON_COLORS } from "./constants";
 import { twMerge } from "tailwind-merge";
+import { useTiptapContext } from "../store";
 
 // Dekorasyon stilleri ve seçenekleri
 const LINE_STYLES = [
@@ -21,19 +21,28 @@ const LINE_THICKNESS = [
   { value: "3px", label: "Kalın" },
 ];
 
-// currentColor için özel bir değer kullanıyoruz
+// Offset değerleri (sadece underline için)
+const OFFSET_VALUES = [
+  { value: "1px", label: "Yakın" },
+  { value: "3px", label: "Orta" },
+  { value: "5px", label: "Uzak" },
+];
+
+// currentColor için özel bir değer kullanıyoruz (null ya da özel bir string)
 const CURRENT_COLOR_VALUE = "current";
 
 // Buton bileşeni
-export function StrikeThroughButton({ editor }: { editor: Editor }) {
+export const UnderlineButton = () => {
+  const { editor } = useTiptapContext();
   const [isOpen, setIsOpen] = useState(false);
   const colorPickerRef = useRef<HTMLInputElement>(null);
 
   // Dekorasyon state'i
   const [decoration, setDecoration] = useState({
-    strikeStyle: "solid",
+    underlineStyle: "solid",
     thickness: "2px",
     color: CURRENT_COLOR_VALUE, // varsayılan olarak currentColor
+    offset: "3px",
     isActive: false,
   });
 
@@ -47,22 +56,23 @@ export function StrikeThroughButton({ editor }: { editor: Editor }) {
     if (!editor) return;
 
     const updateFromEditor = () => {
-      // Tiptap strikethrough mark'ını kontrol et
-      const isStrikethrough = editor.isActive("strikethrough");
+      // Tiptap Underline mark'ını kontrol et
+      const isUnderlined = editor.isActive("underline");
 
-      if (!isStrikethrough) {
+      if (!isUnderlined) {
         updateDecoration({ isActive: false });
         return;
       }
 
       // Attributes'ları al
-      const attrs = editor.getAttributes("strikethrough");
+      const attrs = editor.getAttributes("underline");
 
       // State'i güncelle - renk null ise currentColor olarak ayarla
       updateDecoration({
-        strikeStyle: attrs.strikeStyle || "solid",
+        underlineStyle: attrs.underlineStyle || "solid",
         thickness: attrs.thickness || "2px",
         color: attrs.color || CURRENT_COLOR_VALUE,
+        offset: attrs.offset || "3px",
         isActive: true,
       });
     };
@@ -81,17 +91,18 @@ export function StrikeThroughButton({ editor }: { editor: Editor }) {
     };
   }, [editor]);
 
-  // Editörde strikethrough uygula
-  const applyStrikethrough = () => {
+  // Editörde underline uygula
+  const applyUnderline = () => {
     editor
       .chain()
       .focus()
-      .setStrikeThrough({
-        strikeStyle: decoration.strikeStyle,
+      .setUnderline({
+        underlineStyle: decoration.underlineStyle,
         thickness: decoration.thickness,
         // Eğer currentColor değeri ise null gönder, değilse seçilen rengi gönder
         color:
           decoration.color !== CURRENT_COLOR_VALUE ? decoration.color : null,
+        offset: decoration.offset,
       })
       .run();
 
@@ -102,9 +113,9 @@ export function StrikeThroughButton({ editor }: { editor: Editor }) {
     setIsOpen(false);
   };
 
-  // Strikethrough'u kaldır
-  const removeStrikethrough = () => {
-    editor.chain().focus().unsetStrikeThrough().run();
+  // Underline'ı kaldır
+  const removeUnderline = () => {
+    editor.chain().focus().unsetUnderline().run();
 
     // Aktif durumunu güncelle
     updateDecoration({ isActive: false });
@@ -128,15 +139,15 @@ export function StrikeThroughButton({ editor }: { editor: Editor }) {
             ? "border-primary-300 bg-primary-50"
             : "border-transparent",
         )}
-        title="Üstü Çizili"
+        title="Alt Çizgi"
       >
-        <Strikethrough size={16} />
+        <Underline size={16} />
       </button>
 
       <RichButtonModal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        title="Üstü Çizili Biçimlendirme"
+        title="Alt Çizgi Biçimlendirme"
       >
         <div className="flex flex-col gap-4 overflow-y-auto">
           <div className="flex flex-col gap-6">
@@ -150,22 +161,23 @@ export function StrikeThroughButton({ editor }: { editor: Editor }) {
                   <button
                     key={style.value}
                     onClick={() =>
-                      updateDecoration({ strikeStyle: style.value })
+                      updateDecoration({ underlineStyle: style.value })
                     }
                     className={twMerge(
                       "relative flex h-10 items-center justify-center rounded border px-2 py-1.5 transition-all",
-                      decoration.strikeStyle === style.value
+                      decoration.underlineStyle === style.value
                         ? "border-primary-500 bg-primary-50"
                         : "border-zinc-200 bg-zinc-100 hover:border-zinc-300",
                     )}
                   >
                     <p
-                      className="w-full text-center text-zinc-800"
+                      className="w-full text-center"
                       style={{
-                        textDecorationLine: "line-through",
+                        textDecorationLine: "underline",
                         textDecorationThickness: decoration.thickness,
                         textDecorationColor: getDisplayColor(decoration.color),
                         textDecorationStyle: style.value as any,
+                        textUnderlineOffset: "2px",
                       }}
                     >
                       abc
@@ -198,18 +210,56 @@ export function StrikeThroughButton({ editor }: { editor: Editor }) {
                     )}
                   >
                     <p
-                      className="w-full text-center text-zinc-800"
+                      className="w-full text-center"
                       style={{
-                        textDecorationLine: "line-through",
+                        textDecorationLine: "underline",
                         textDecorationThickness: thickness.value,
                         textDecorationColor: getDisplayColor(decoration.color),
-                        textDecorationStyle: decoration.strikeStyle as any,
+                        textDecorationStyle: decoration.underlineStyle as any,
+                        textUnderlineOffset: "3px",
                       }}
                     >
                       abc
                     </p>
                     <span className="absolute -bottom-5 text-[10px] font-medium text-zinc-500">
                       {thickness.label}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Çizgi Mesafesi */}
+            <div>
+              <h3 className="mb-2 text-sm font-medium text-zinc-700">
+                Çizgi Mesafesi
+              </h3>
+              <div className="grid grid-cols-3 gap-2">
+                {OFFSET_VALUES.map((offset) => (
+                  <button
+                    key={offset.value}
+                    onClick={() => updateDecoration({ offset: offset.value })}
+                    className={twMerge(
+                      "relative flex h-12 flex-col items-center justify-center rounded border px-1 py-1.5 transition-all",
+                      decoration.offset === offset.value
+                        ? "border-primary-500 bg-primary-50"
+                        : "border-zinc-200 bg-zinc-100 hover:border-zinc-300",
+                    )}
+                  >
+                    <p
+                      className="text-center"
+                      style={{
+                        textDecorationLine: "underline",
+                        textDecorationThickness: decoration.thickness,
+                        textDecorationColor: getDisplayColor(decoration.color),
+                        textDecorationStyle: decoration.underlineStyle as any,
+                        textUnderlineOffset: offset.value,
+                      }}
+                    >
+                      abc
+                    </p>
+                    <span className="absolute -bottom-5 text-[10px] font-medium text-zinc-500">
+                      {offset.label}
                     </span>
                   </button>
                 ))}
@@ -286,10 +336,11 @@ export function StrikeThroughButton({ editor }: { editor: Editor }) {
               <p
                 className="text-center text-lg text-zinc-800"
                 style={{
-                  textDecorationLine: "line-through",
-                  textDecorationStyle: decoration.strikeStyle as any,
+                  textDecorationLine: "underline",
+                  textDecorationStyle: decoration.underlineStyle as any,
                   textDecorationThickness: decoration.thickness,
                   textDecorationColor: getDisplayColor(decoration.color),
+                  textUnderlineOffset: decoration.offset,
                 }}
               >
                 Örnek Metin
@@ -300,7 +351,7 @@ export function StrikeThroughButton({ editor }: { editor: Editor }) {
           {/* Butonlar */}
           <div className="flex justify-between border-t border-zinc-100 pt-4">
             <button
-              onClick={removeStrikethrough}
+              onClick={removeUnderline}
               className="flex items-center gap-1 rounded border border-red-400 bg-red-500 px-3 py-1.5 text-sm font-medium text-white transition-all hover:bg-red-600"
             >
               Kaldır
@@ -313,7 +364,7 @@ export function StrikeThroughButton({ editor }: { editor: Editor }) {
                 İptal
               </button>
               <button
-                onClick={applyStrikethrough}
+                onClick={applyUnderline}
                 className="border-primary-500 bg-primary-500 hover:bg-primary-600 w-fit rounded border px-6 py-1.5 text-sm font-medium text-white transition-all"
               >
                 Uygula
@@ -324,4 +375,4 @@ export function StrikeThroughButton({ editor }: { editor: Editor }) {
       </RichButtonModal>
     </>
   );
-}
+};

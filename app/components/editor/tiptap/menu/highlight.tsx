@@ -1,8 +1,8 @@
-import { Editor } from "@tiptap/react";
 import { Highlighter, X } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { twMerge } from "tailwind-merge";
 import RichButtonModal from "./ui/modal";
+import { useTiptapContext } from "../store";
 
 // Hazır stil setleri
 const PRESET_STYLES = [
@@ -73,11 +73,8 @@ const BORDER_STYLE_OPTIONS = [
   { value: "dotted", label: "Noktalı" },
 ];
 
-type HighlightButtonProps = {
-  editor: Editor;
-};
-
-export const HighlightButton = ({ editor }: HighlightButtonProps) => {
+export const HighlightButton = () => {
+  const { editor } = useTiptapContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const bgColorPickerRef = useRef<HTMLInputElement>(null);
   const borderColorPickerRef = useRef<HTMLInputElement>(null);
