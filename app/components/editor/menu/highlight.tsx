@@ -14,7 +14,7 @@ const PRESET_STYLES = [
       borderRadius: "0rem",
       borderWidth: "0",
       borderStyle: "none",
-      borderColor: "transparent",
+      borderColor: "",
       textColor: "",
     },
   },
@@ -71,7 +71,6 @@ const BORDER_STYLE_OPTIONS = [
   { value: "solid", label: "Düz" },
   { value: "dashed", label: "Kesik" },
   { value: "dotted", label: "Noktalı" },
-  { value: "double", label: "Çift" },
 ];
 
 type HighlightButtonProps = {
@@ -85,14 +84,14 @@ export const HighlightButton = ({ editor }: HighlightButtonProps) => {
   const textColorPickerRef = useRef<HTMLInputElement>(null);
 
   const [currentStyle, setCurrentStyle] = useState({
-    backgroundColor: "#FFFBEB",
+    backgroundColor: "",
     paddingX: "0.5",
     paddingY: "0.25",
-    borderRadius: "0.25rem",
-    borderWidth: "1",
+    borderRadius: "0rem",
+    borderWidth: "0",
     borderStyle: "none",
-    borderColor: "#000000",
-    textColor: "#000000",
+    borderColor: "",
+    textColor: "",
   });
 
   // Modal açıldığında mevcut highlight özellikleri varsa al

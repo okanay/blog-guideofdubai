@@ -1,12 +1,9 @@
-// app/components/editor/config.tsx
 import { useEditor as useTiptapEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import GlobalDragHandle from "tiptap-extension-global-drag-handle";
-
 import Subscript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
 import Link from "@tiptap/extension-link";
-import Color from "@tiptap/extension-color";
 import TextStyle from "@tiptap/extension-text-style";
 import FontFamily from "@tiptap/extension-font-family";
 import TextAlign from "@tiptap/extension-text-align";
@@ -21,6 +18,11 @@ import { Highlight } from "./renderer/extensions/highlight";
 export const useEditor = (initialContent: string = "") => {
   const editor = useTiptapEditor({
     content: initialContent,
+    editorProps: {
+      attributes: {
+        class: "tiptap-editor-initial",
+      },
+    },
     extensions: [
       StarterKit.configure({
         heading: { levels: [1, 2, 3, 4, 5, 6] },
@@ -52,17 +54,10 @@ export const useEditor = (initialContent: string = "") => {
       Superscript,
       Link,
       TextStyle,
-      Color,
       EnhancedImage,
       FontFamily,
       AlerBox,
     ],
-    editorProps: {
-      attributes: {
-        class: "tiptap-editor-initial",
-      },
-    },
-    onUpdate: ({ editor }) => {},
   });
 
   return editor;
