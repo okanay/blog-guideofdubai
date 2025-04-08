@@ -1,30 +1,12 @@
 import { useState } from "react";
 import { Editor } from "@tiptap/react";
-import { AlertCircle, AlertTriangle, Info, MessageSquare } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 import RichButtonModal from "./ui/modal";
-
-// AlertBox tipi için aynı ALERT_CONFIG yapısını kullanıyoruz
-// extensions/alert-box.tsx içindeki konfigürasyon ile aynı
-const ALERT_CONFIG = {
-  information: {
-    icon: Info,
-    colorClass: "sky",
-    label: "Bilgi",
-    description: "Kullanıcıya bilgi vermek için",
-  },
-  warning: {
-    icon: AlertTriangle,
-    colorClass: "amber",
-    label: "Uyarı",
-    description: "Kullanıcıyı uyarmak için",
-  },
-  danger: {
-    icon: AlertCircle,
-    colorClass: "rose",
-    label: "Tehlike",
-    description: "Önemli hata veya risk bildirmek için",
-  },
-};
+import {
+  ALERT_CONFIG,
+  AlertType,
+  AlertBoxPreview,
+} from "../renderer/extensions/alert-box";
 
 // Tip seçenekleri
 const ALERT_TYPES = Object.entries(ALERT_CONFIG).map(([value, config]) => ({
@@ -76,11 +58,6 @@ const AlertBoxButton = ({ editor }: AlertBoxButtonProps) => {
     setAlertType(type);
   };
 
-  // Aktif tip için config'i al
-  const currentConfig = ALERT_CONFIG[alertType as keyof typeof ALERT_CONFIG];
-  const PreviewIcon = currentConfig.icon;
-  const colorClass = currentConfig.colorClass;
-
   // AlertBox zaten aktif mi kontrolü
   const isActive = editor.isActive("alertBox");
 
@@ -128,7 +105,7 @@ const AlertBoxButton = ({ editor }: AlertBoxButtonProps) => {
               })}
             </div>
             <p className="mt-1.5 text-xs text-zinc-500">
-              {currentConfig.description}
+              {ALERT_CONFIG[alertType as AlertType].description}
             </p>
           </div>
 
@@ -151,50 +128,16 @@ const AlertBoxButton = ({ editor }: AlertBoxButtonProps) => {
             />
           </div>
 
-          {/* Önizleme */}
+          {/* Önizleme - Artık ortak AlertBoxPreview bileşenini kullanıyor */}
           <div className="mt-1">
             <h3 className="mb-1.5 text-xs font-medium text-zinc-600">
               Önizleme
             </h3>
 
-            {/* Başlıksız görünüm */}
-            {!alertTitle.trim() && (
-              <div
-                className={`rounded-md border-l-4 border-${colorClass}-500 bg-${colorClass}-50 p-3 shadow-sm`}
-              >
-                <div className="flex items-center gap-2">
-                  <PreviewIcon
-                    className={`text-${colorClass}-500 flex-shrink-0`}
-                    size={18}
-                  />
-                  <div className={`text-${colorClass}-700 text-xs`}>
-                    Burada kutu içeriği gösterilecek.
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Başlıklı görünüm */}
-            {alertTitle.trim() && (
-              <div
-                className={`rounded-md border-l-4 border-${colorClass}-500 bg-${colorClass}-50 p-3 shadow-sm`}
-              >
-                <div className="mb-1 flex items-center">
-                  <PreviewIcon
-                    className={`mr-1.5 text-${colorClass}-500`}
-                    size={16}
-                  />
-                  <h3
-                    className={`font-semibold text-${colorClass}-700 text-sm`}
-                  >
-                    {alertTitle}
-                  </h3>
-                </div>
-                <div className={`text-${colorClass}-700 text-xs`}>
-                  Burada kutu içeriği gösterilecek.
-                </div>
-              </div>
-            )}
+            <AlertBoxPreview
+              type={alertType as AlertType}
+              title={alertTitle.trim()}
+            />
           </div>
 
           {/* Alt butonlar */}

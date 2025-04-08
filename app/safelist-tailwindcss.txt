@@ -1,7 +1,7 @@
-border-amber-500 border-sky-500 border-rose-500
-bg-amber-50 bg-sky-50 bg-rose-50
-text-amber-500 text-sky-500 text-rose-500
-text-amber-700 text-sky-700 text-rose-700
+border-amber-500 border-sky-500 border-rose-500 bg-lime-500
+bg-amber-50 bg-sky-50 bg-rose-50 bg-lime-50
+text-amber-500 text-sky-500 text-rose-500 text-lime-500
+text-amber-700 text-sky-700 text-rose-700 text-lime-700
 
 float-left float-right
 md:float-left md:float-right
@@ -12,5 +12,3 @@ md:w-1/2 md:w-2/3 md:w-5/6
 lg:w-2/5 lg:w-3/5 lg:w-4/5
 max-w-xs max-w-md max-w-lg max-w-full
 mx-auto
-enhanced-image enhanced-image-left enhanced-image-center enhanced-image-right enhanced-image-small enhanced-image-medium enhanced-image-large
-enhanced-image-container enhanced-image-img enhanced-image-caption
