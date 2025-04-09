@@ -1,5 +1,6 @@
 type Blog = {
   id: string;
+  groupId: string;
   slug: string;
   status: "published" | "draft" | "archived" | "deleted";
   metadata: {
@@ -33,6 +34,3 @@ type Blog = {
   updatedAt: Date;
   publishedAt: Date | null;
 };
-
-type TiptapViewMode = "edit" | "preview" | "json" | "html";
-type BlogViewMode = "editor" | "form" | "preview";
