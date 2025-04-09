@@ -58,7 +58,7 @@ const SelectButton: React.FC<SelectButtonProps> = ({
       </button>
 
       {/* Tooltip - MenuButton'dakine benzer */}
-      <span className="pointer-events-none absolute top-full left-1/2 z-20 -translate-x-1/2 translate-y-[10px] rounded bg-zinc-800 px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity group-hover:opacity-100">
+      <span className="pointer-events-none absolute top-full left-1/2 z-50 -translate-x-1/2 translate-y-[10px] rounded bg-zinc-800 px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity group-hover:opacity-100">
         {label}
       </span>
 

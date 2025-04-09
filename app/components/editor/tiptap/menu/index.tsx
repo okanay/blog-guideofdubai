@@ -21,9 +21,21 @@ import { TextAlignButtons } from "./text-aligns";
 import { HorizontalRuleButton } from "./horizontal-rule";
 
 export const EditorRichMenu = () => {
-  console.log("render");
-  const { editor } = useTiptapContext();
   const [hidden, setHidden] = useState(false);
+
+  const HiddenButton = () => (
+    <button
+      onClick={() => setHidden(!hidden)}
+      className={`flex w-20 items-center justify-center gap-1.5 rounded-md py-1.5 text-xs font-medium transition-colors ${
+        !hidden
+          ? "bg-primary text-color-primary"
+          : "bg-zinc-900 text-zinc-50 hover:bg-zinc-800"
+      }`}
+    >
+      {hidden ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
+      <span>{hidden ? "Gizli" : "Göster"}</span>
+    </button>
+  );
 
   return (
     <div className="sticky top-0 right-0 z-40">
@@ -33,23 +45,12 @@ export const EditorRichMenu = () => {
             <h1 className="text-color-font text-xs font-semibold">
               Metin Editörü
             </h1>
-
-            <button
-              onClick={() => setHidden(!hidden)}
-              className={`flex w-20 items-center justify-center gap-1.5 rounded-md py-1.5 text-xs font-medium transition-colors ${
-                !hidden
-                  ? "bg-primary text-color-primary"
-                  : "bg-zinc-900 text-zinc-50 hover:bg-zinc-800"
-              }`}
-            >
-              {hidden ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
-              <span>{hidden ? "Gizli" : "Göster"}</span>
-            </button>
+            <HiddenButton />
           </div>
 
           <div
             aria-hidden={hidden}
-            className="border-t border-zinc-200 bg-white py-2 transition-[padding_,border] duration-300 aria-hidden:border-t-0 aria-hidden:py-0"
+            className="border-t border-zinc-200 bg-white py-2 transition-[padding_,border] duration-300 aria-hidden:overflow-hidden aria-hidden:border-t-0 aria-hidden:py-0"
           >
             <div
               aria-hidden={hidden}

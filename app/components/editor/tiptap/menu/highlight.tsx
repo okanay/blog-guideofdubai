@@ -6,6 +6,7 @@ import { useTiptapContext } from "../store";
 import MenuButton from "./ui/button";
 
 // Hazır stil setleri
+// Hazır stil setleri
 const PRESET_STYLES = [
   {
     name: "Temiz",
@@ -53,6 +54,43 @@ const PRESET_STYLES = [
       borderStyle: "solid",
       borderColor: "#10B981",
       textColor: "#047857",
+    },
+  },
+  // Yeni eklenen stiller
+  {
+    name: "Sarı Vurgu",
+    style: {
+      backgroundColor: "#FFFBEB",
+      padding: "0.2rem 0.4rem",
+      borderRadius: "0.25rem",
+      borderWidth: "0",
+      borderStyle: "none",
+      borderColor: "",
+      textColor: "#92400E",
+    },
+  },
+  {
+    name: "Mor Panel",
+    style: {
+      backgroundColor: "#F5F3FF",
+      padding: "0.5rem 0.75rem",
+      borderRadius: "0.5rem",
+      borderWidth: "1",
+      borderStyle: "solid",
+      borderColor: "#8B5CF6",
+      textColor: "#5B21B6",
+    },
+  },
+  {
+    name: "Gri Çerçeve",
+    style: {
+      backgroundColor: "transparent",
+      padding: "0.5rem 0.75rem",
+      borderRadius: "0.5rem",
+      borderWidth: "1",
+      borderStyle: "solid",
+      borderColor: "#71717A",
+      textColor: "#3F3F46",
     },
   },
 ];

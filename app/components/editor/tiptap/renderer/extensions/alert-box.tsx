@@ -1,15 +1,11 @@
 import React from "react";
 import { NodeViewContent, NodeViewWrapper, ReactNodeViewRenderer } from "@tiptap/react"; // prettier-ignore
-import { AlertCircle, AlertTriangle, CheckCircle, Info, LucideIcon } from "lucide-react"; // prettier-ignore
+import { AlertTriangle, CheckCircle, Info, LucideIcon, OctagonAlert } from "lucide-react"; // prettier-ignore
 import { mergeAttributes, Node, NodeViewProps } from "@tiptap/core";
 import { twMerge } from "tailwind-merge";
 
-// 1. TİP TANIMLAMALARI VE ARAYÜZLER -----------------------------------------
-
-// Alert kutusu tip tanımlaması
 export type AlertType = "information" | "warning" | "danger" | "success";
 
-// Alert kutusu config yapısı için type
 export interface AlertConfigItem {
   icon: LucideIcon;
   colorClass: string;
@@ -17,17 +13,13 @@ export interface AlertConfigItem {
   description: string;
 }
 
-// Alert Box props için temel arayüz
 export interface AlertBoxBaseProps {
   type: AlertType;
   title?: string;
   children?: React.ReactNode;
-  className?: string; // Ekstra stil vermek için opsiyonel className
+  className?: string;
 }
 
-// 2. ORTAK KONFİGÜRASYON -----------------------------------------------------
-
-// Tüm alert tipleri için ortak konfigürasyon
 export const ALERT_CONFIG: Record<AlertType, AlertConfigItem> = {
   information: {
     icon: Info,
@@ -42,7 +34,7 @@ export const ALERT_CONFIG: Record<AlertType, AlertConfigItem> = {
     description: "Kullanıcıyı uyarmak için",
   },
   danger: {
-    icon: AlertCircle,
+    icon: OctagonAlert,
     colorClass: "rose",
     label: "Tehlike",
     description: "Önemli hata veya risk bildirmek için",
@@ -55,12 +47,6 @@ export const ALERT_CONFIG: Record<AlertType, AlertConfigItem> = {
   },
 };
 
-// 3. ORTAK UI BİLEŞENLERİ ---------------------------------------------------
-
-/**
- * Ortak AlertBox UI bileşeni
- * Hem extension hem de menü preview için kullanılabilir
- */
 export const AlertBoxUI: React.FC<AlertBoxBaseProps> = ({
   type = "information",
   title,
@@ -107,21 +93,12 @@ export const AlertBoxUI: React.FC<AlertBoxBaseProps> = ({
   );
 };
 
-/**
- * Menü önizlemesi için dummy içerikli AlertBox
- */
 export const AlertBoxPreview: React.FC<Omit<AlertBoxBaseProps, "children">> = (
   props,
 ) => {
   return <AlertBoxUI {...props}>Burada kutu içeriği gösterilecek.</AlertBoxUI>;
 };
 
-// 4. TIPTAP EXTENSION VE NODE VIEW ------------------------------------------
-
-/**
- * TipTap AlerBox Extension
- * Editörde bilgi, uyarı ve tehlike kutuları eklemeyi sağlar
- */
 export const AlerBox = Node.create({
   name: "alertBox",
   group: "block",
@@ -179,9 +156,6 @@ export const AlerBox = Node.create({
   },
 });
 
-/**
- * Editör içinde görüntüleme için NodeView bileşeni
- */
 const AlertBoxEditorView: React.FC<NodeViewProps> = ({ node }) => {
   const type = node.attrs.type || "information";
   const title = node.attrs.title || "";
@@ -195,9 +169,6 @@ const AlertBoxEditorView: React.FC<NodeViewProps> = ({ node }) => {
   );
 };
 
-/**
- * Önizleme/Render için kullanılan bileşen
- */
 export const AlertBoxRenderer = ({
   node,
   children,
@@ -215,9 +186,6 @@ export const AlertBoxRenderer = ({
   );
 };
 
-// 5. YARDIMCI BİLEŞENLER ----------------------------------------------------
-
-// Kolaylık için ayrı tiplere özel bileşenler
 export const DangerBox: React.FC<Omit<AlertBoxBaseProps, "type">> = (props) => (
   <AlertBoxUI {...props} type="danger" />
 );
