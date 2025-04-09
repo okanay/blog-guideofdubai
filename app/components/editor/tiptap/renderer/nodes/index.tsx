@@ -36,11 +36,12 @@ export const RenderNode: React.FC<{ node: any; children: React.ReactNode }> = ({
     case "hardBreak":
       return <HardBreakNode />;
     case "image":
-      return <ImageNode node={node} />;
-    case "alertBox":
-      return <AlertBoxRenderer node={node}>{children}</AlertBoxRenderer>;
+      return <EnhancedImageRenderer node={node} />;
     case "enhancedImage":
       return <EnhancedImageRenderer node={node} />;
+    case "alertBox":
+      return <AlertBoxRenderer node={node}>{children}</AlertBoxRenderer>;
+
     default:
       return null;
   }

@@ -17,10 +17,10 @@ const Editor = () => {
   const { view: { mode, setMode }} = useTiptapContext(); // prettier-ignore
 
   return (
-    <div className="relative">
+    <>
       <EditorRichMenu />
-      <div className="mx-auto flex max-w-5xl flex-col gap-8">
-        <div className="mt-24 flex flex-col gap-4">
+      <div className="mx-auto mt-4 flex max-w-5xl flex-col gap-8 px-4">
+        <div className="flex flex-col gap-4">
           <ViewModeToggle currentMode={mode} setMode={setMode} />
         </div>
         <div>
@@ -48,7 +48,7 @@ const Editor = () => {
           {mode === "html" && <HtmlModeContent />}
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

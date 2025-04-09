@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import { twMerge } from "tailwind-merge";
 
 type Option = {
   label: string;
@@ -39,22 +40,28 @@ const SelectButton: React.FC<SelectButtonProps> = ({
 
   return (
     <div
-      aria-pressed={isActive}
-      aria-label={label}
-      data-tooltip-id="editor-tooltip"
-      data-tooltip-content={label}
-      className="relative rounded-md border border-transparent text-zinc-700 transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-100 aria-pressed:border-zinc-300 aria-pressed:bg-zinc-100 aria-pressed:text-blue-600"
+      className={twMerge(
+        "group relative rounded-md border transition-all duration-200",
+        "hover:border-zinc-300 hover:bg-zinc-100",
+        isActive
+          ? "border-zinc-300 bg-zinc-100 text-blue-600"
+          : "border-transparent text-zinc-700",
+      )}
     >
       <button
         onClick={handleButtonClick}
         aria-pressed={isActive}
         aria-label={label}
-        data-tooltip-id="editor-tooltip"
-        data-tooltip-content={label}
         className="flex size-8 items-center justify-center p-1"
       >
         {icon}
       </button>
+
+      {/* Tooltip - MenuButton'dakine benzer */}
+      <span className="pointer-events-none absolute top-full left-1/2 z-20 -translate-x-1/2 translate-y-[10px] rounded bg-zinc-800 px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity group-hover:opacity-100">
+        {label}
+      </span>
+
       <select
         ref={selectRef}
         value={value}

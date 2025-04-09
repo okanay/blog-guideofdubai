@@ -5,6 +5,7 @@ import RichButtonModal from "./ui/modal";
 import { COMMON_COLORS } from "./constants";
 import { twMerge } from "tailwind-merge";
 import { useTiptapContext } from "../store";
+import MenuButton from "./ui/button";
 
 // Dekorasyon stilleri ve seçenekleri
 const LINE_STYLES = [
@@ -131,18 +132,13 @@ export const UnderlineButton = () => {
 
   return (
     <>
-      <button
+      <MenuButton
         onClick={() => setIsOpen(true)}
-        className={twMerge(
-          "flex size-8 items-center justify-center rounded-md border p-1 text-zinc-700 transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-100",
-          decoration.isActive
-            ? "border-primary-300 bg-primary-50"
-            : "border-transparent",
-        )}
-        title="Alt Çizgi"
+        isActive={editor.isActive("underline")}
+        label="Alt Çizgi"
       >
         <Underline size={16} />
-      </button>
+      </MenuButton>
 
       <RichButtonModal
         isOpen={isOpen}

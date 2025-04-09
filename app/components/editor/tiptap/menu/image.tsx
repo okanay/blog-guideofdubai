@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Image,
   AlignLeft,
@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import RichButtonModal from "./ui/modal";
 import { useTiptapContext } from "../store";
+import MenuButton from "./ui/button";
 
 // Görsel boyut ve hizalama tipleri
 type ImageSize = "small" | "medium" | "large" | "fullscreen";
@@ -51,6 +52,7 @@ const OBJECT_FIT_OPTIONS = [
 
 const EnhancedImageButton = () => {
   const { editor } = useTiptapContext();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [altText, setAltText] = useState("");
@@ -156,18 +158,15 @@ const EnhancedImageButton = () => {
     setValidationError("");
   };
 
-  const isActive = editor.isActive("enhancedImage");
-
   return (
     <>
-      <button
+      <MenuButton
         onClick={handleOpenModal}
-        aria-pressed={isActive}
-        className={`aria-pressed:text-primary flex size-8 items-center justify-center rounded-md border border-transparent p-1 text-zinc-700 transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-100 aria-pressed:border-zinc-200 aria-pressed:bg-zinc-100`}
-        title="Gelişmiş Görsel Ekle"
+        isActive={editor.isActive("enhancedImage")}
+        label="Görsel Ekle"
       >
         <Image size={16} />
-      </button>
+      </MenuButton>
 
       <RichButtonModal
         isOpen={isModalOpen}
@@ -316,7 +315,7 @@ const EnhancedImageButton = () => {
                 className="focus:ring-primary-400 border-primary-500 bg-primary-500 hover:bg-primary-600 rounded-md border px-6 py-1.5 text-sm font-medium text-white transition-all focus:ring-1 focus:outline-none"
                 disabled={!imageUrl.trim() || !!validationError}
               >
-                {isActive ? "Güncelle" : "Ekle"}
+                {editor.isActive("enhancedImage") ? "Güncelle" : "Ekle"}
               </button>
             </div>
           </div>

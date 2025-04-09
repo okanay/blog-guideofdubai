@@ -85,7 +85,7 @@ export const EnhancedImage = Node.create({
   },
 
   parseHTML() {
-    return [{ tag: "figure.enhanced-image" }];
+    return [{ tag: "figure.enhanced-image" }, { tag: "img" }];
   },
 
   renderHTML({ HTMLAttributes }) {

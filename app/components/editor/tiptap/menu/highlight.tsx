@@ -3,6 +3,7 @@ import { useRef, useState, useEffect } from "react";
 import { twMerge } from "tailwind-merge";
 import RichButtonModal from "./ui/modal";
 import { useTiptapContext } from "../store";
+import MenuButton from "./ui/button";
 
 // Hazır stil setleri
 const PRESET_STYLES = [
@@ -202,16 +203,13 @@ export const HighlightButton = () => {
 
   return (
     <>
-      <button
+      <MenuButton
         onClick={handleOpenModal}
-        className={twMerge(
-          "flex size-8 items-center justify-center rounded-md border p-1 text-zinc-700 transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-100",
-          isActive ? "border-primary-300 bg-primary-50" : "border-transparent",
-        )}
-        title="Vurgula"
+        isActive={editor.isActive("highlight")}
+        label="Vurgula"
       >
         <Highlighter size={16} />
-      </button>
+      </MenuButton>
 
       <RichButtonModal
         isOpen={isModalOpen}

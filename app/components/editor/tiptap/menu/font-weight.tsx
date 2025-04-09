@@ -36,6 +36,28 @@ const FontWeightButton = () => {
   const { editor } = useTiptapContext();
   const [selectedFont, setSelectedFont] = useState<string | number>("");
 
+  const handleFontChange = (fontValue: string | number) => {
+    if (fontValue || fontValue === 0) {
+      const index =
+        typeof fontValue === "number"
+          ? fontValue
+          : parseInt(fontValue as string);
+      const weight = fontWeightOptions[index].value;
+
+      // Artık setFontWeight komutunu kullanıyoruz
+      editor.chain().focus().setFontWeight(weight).run();
+    } else {
+      editor.chain().focus().unsetFontWeight().run();
+    }
+
+    setSelectedFont(fontValue);
+  };
+
+  const options = Object.values(fontWeightOptions).map((option, index) => ({
+    label: option.label,
+    value: index,
+  }));
+
   useEffect(() => {
     if (!editor) return;
 
@@ -61,35 +83,13 @@ const FontWeightButton = () => {
     };
   }, [editor]);
 
-  const handleFontChange = (fontValue: string | number) => {
-    if (fontValue || fontValue === 0) {
-      const index =
-        typeof fontValue === "number"
-          ? fontValue
-          : parseInt(fontValue as string);
-      const weight = fontWeightOptions[index].value;
-
-      // Artık setFontWeight komutunu kullanıyoruz
-      editor.chain().focus().setFontWeight(weight).run();
-    } else {
-      editor.chain().focus().unsetFontWeight().run();
-    }
-
-    setSelectedFont(fontValue);
-  };
-
-  const options = Object.values(fontWeightOptions).map((option, index) => ({
-    label: option.label,
-    value: index,
-  }));
-
   return (
     <SelectButton
       options={options}
       value={selectedFont}
       onChange={handleFontChange}
       icon={<Bold size={16} />}
-      label="Yazı Tipi"
+      label="Yazı Kalınlığı"
       isActive={!!selectedFont}
     />
   );

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link as LinkIcon, ExternalLink, X } from "lucide-react";
 import RichButtonModal from "./ui/modal";
 import { useTiptapContext } from "../store";
+import MenuButton from "./ui/button";
 
 const LinkButton = () => {
   const { editor } = useTiptapContext();
@@ -136,15 +137,13 @@ const LinkButton = () => {
 
   return (
     <>
-      <button
+      <MenuButton
         onClick={handleOpenModal}
-        aria-pressed={isActive}
-        aria-label="Bağlantı Ekle"
-        className="flex size-8 items-center justify-center rounded-md border border-transparent p-1 text-zinc-700 transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-100 aria-pressed:border-zinc-300 aria-pressed:bg-zinc-100"
-        style={isActive ? { color: "#3b82f6" } : {}}
+        isActive={isActive}
+        label="Bağlantı Ekle"
       >
         <LinkIcon size={16} />
-      </button>
+      </MenuButton>
 
       <RichButtonModal
         isOpen={isModalOpen}

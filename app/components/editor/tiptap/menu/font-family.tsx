@@ -47,7 +47,7 @@ const FontFamilyButton = () => {
       value={selectedFont}
       onChange={handleFontChange}
       icon={<Type size={16} />}
-      label="Yazı Tipi"
+      label="Font Seçimi"
       isActive={!!selectedFont}
     />
   );

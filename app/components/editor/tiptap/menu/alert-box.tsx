@@ -8,6 +8,7 @@ import {
   AlertBoxPreview,
 } from "../renderer/extensions/alert-box";
 import { useTiptapContext } from "../store";
+import MenuButton from "./ui/button";
 
 // Tip seçenekleri
 const ALERT_TYPES = Object.entries(ALERT_CONFIG).map(([value, config]) => ({
@@ -60,14 +61,13 @@ const AlertBoxButton = () => {
 
   return (
     <>
-      <button
+      <MenuButton
         onClick={handleOpenModal}
-        aria-pressed={isActive}
-        className={`aria-pressed:text-primary flex size-8 items-center justify-center rounded-md border border-transparent p-1 text-zinc-700 transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-100 aria-pressed:border-zinc-200 aria-pressed:bg-zinc-100`}
-        title="Uyarı Kutusu Ekle"
+        isActive={isActive}
+        label="Uyarı Kutusu Ekle"
       >
         <MessageSquare size={16} />
-      </button>
+      </MenuButton>
 
       <RichButtonModal
         isOpen={isModalOpen}
