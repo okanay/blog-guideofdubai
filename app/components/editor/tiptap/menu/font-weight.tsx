@@ -7,7 +7,7 @@ import { useTiptapContext } from "../store";
 
 const fontWeightOptions = {
   0: {
-    value: "400",
+    value: "",
     label: "Varsayılan",
   },
   1: {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link as LinkIcon, ExternalLink, X } from "lucide-react";
 import RichButtonModal from "./ui/modal";
 import { useTiptapContext } from "../store";
@@ -133,7 +133,20 @@ const LinkButton = () => {
     setValidationError("");
   };
 
-  const isActive = editor.isActive("link");
+  const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    const updateIsActive = () => {
+      setIsActive(editor.isActive("link"));
+    };
+
+    editor.on("selectionUpdate", updateIsActive);
+    editor.on("transaction", updateIsActive);
+    return () => {
+      editor.off("selectionUpdate", updateIsActive);
+      editor.off("transaction", updateIsActive);
+    };
+  }, [editor]);
 
   return (
     <>

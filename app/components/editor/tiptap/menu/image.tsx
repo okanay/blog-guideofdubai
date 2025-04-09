@@ -158,11 +158,26 @@ const EnhancedImageButton = () => {
     setValidationError("");
   };
 
+  const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    const updateIsActive = () => {
+      setIsActive(editor.isActive("enhancedImage"));
+    };
+
+    editor.on("selectionUpdate", updateIsActive);
+    editor.on("transaction", updateIsActive);
+    return () => {
+      editor.off("selectionUpdate", updateIsActive);
+      editor.off("transaction", updateIsActive);
+    };
+  }, [editor]);
+
   return (
     <>
       <MenuButton
         onClick={handleOpenModal}
-        isActive={editor.isActive("enhancedImage")}
+        isActive={isActive}
         label="Görsel Ekle"
       >
         <Image size={16} />
@@ -315,7 +330,7 @@ const EnhancedImageButton = () => {
                 className="focus:ring-primary-400 border-primary-500 bg-primary-500 hover:bg-primary-600 rounded-md border px-6 py-1.5 text-sm font-medium text-white transition-all focus:ring-1 focus:outline-none"
                 disabled={!imageUrl.trim() || !!validationError}
               >
-                {editor.isActive("enhancedImage") ? "Güncelle" : "Ekle"}
+                {isActive ? "Güncelle" : "Ekle"}
               </button>
             </div>
           </div>

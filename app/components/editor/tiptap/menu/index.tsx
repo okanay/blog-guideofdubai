@@ -1,29 +1,6 @@
-import {
-  AlignCenter,
-  AlignJustify,
-  AlignLeft,
-  AlignRight,
-  Bold,
-  ChevronDown,
-  ChevronUp,
-  Eye,
-  Heading,
-  Heading1,
-  Heading2,
-  Heading3,
-  Heading4,
-  Heading5,
-  Heading6,
-  Italic,
-  List,
-  Pickaxe,
-  Quote,
-  SeparatorHorizontal,
-  Subscript,
-  Superscript,
-} from "lucide-react";
+// prettier-ignore
+import { AlignCenter, AlignJustify, AlignLeft, AlignRight, ChevronDown, ChevronUp, Italic, List, Quote, SeparatorHorizontal, Subscript, Superscript } from "lucide-react";
 import { useState } from "react";
-import { twMerge } from "tailwind-merge";
 import { useTiptapContext } from "../store";
 import { AlertBoxButton } from "./alert-box";
 import { FontFamilyButton } from "./font-family";
@@ -35,8 +12,10 @@ import { LinkButton } from "./link";
 import { StrikeThroughButton } from "./strike-through";
 import MenuButton from "./ui/button";
 import { UnderlineButton } from "./underline";
+import { HeadingButtons } from "./headings";
 
 export const EditorRichMenu = () => {
+  console.log("render");
   const { editor } = useTiptapContext();
   const [hidden, setHidden] = useState(false);
 
@@ -71,61 +50,7 @@ export const EditorRichMenu = () => {
               className="mx-auto grid max-w-5xl grid-rows-[1fr] bg-white px-4 transition-[grid_template_rows] duration-300 aria-hidden:grid-rows-[0fr]"
             >
               <div className="custom-scrollbar flex min-h-0 max-w-5xl flex-wrap items-center justify-start gap-1">
-                <MenuButton
-                  onClick={() =>
-                    editor.chain().focus().toggleHeading({ level: 1 }).run()
-                  }
-                  isActive={editor.isActive("heading", { level: 1 })}
-                  label="Başlık 1"
-                >
-                  <Heading1 size={16} />
-                </MenuButton>
-                <MenuButton
-                  onClick={() =>
-                    editor.chain().focus().toggleHeading({ level: 2 }).run()
-                  }
-                  isActive={editor.isActive("heading", { level: 2 })}
-                  label="Başlık 2"
-                >
-                  <Heading2 size={16} />
-                </MenuButton>
-                <MenuButton
-                  onClick={() =>
-                    editor.chain().focus().toggleHeading({ level: 3 }).run()
-                  }
-                  isActive={editor.isActive("heading", { level: 3 })}
-                  label="Başlık 3"
-                >
-                  <Heading3 size={16} />
-                </MenuButton>
-                <MenuButton
-                  onClick={() =>
-                    editor.chain().focus().toggleHeading({ level: 4 }).run()
-                  }
-                  isActive={editor.isActive("heading", { level: 4 })}
-                  label="Başlık 4"
-                >
-                  <Heading4 size={16} />
-                </MenuButton>
-                <MenuButton
-                  onClick={() =>
-                    editor.chain().focus().toggleHeading({ level: 5 }).run()
-                  }
-                  isActive={editor.isActive("heading", { level: 5 })}
-                  label="Başlık 5"
-                >
-                  <Heading5 size={16} />
-                </MenuButton>
-                <MenuButton
-                  onClick={() =>
-                    editor.chain().focus().toggleHeading({ level: 6 }).run()
-                  }
-                  isActive={editor.isActive("heading", { level: 6 })}
-                  label="Başlık 6"
-                >
-                  <Heading6 size={16} />
-                </MenuButton>
-
+                <HeadingButtons />
                 <EnhancedImageButton />
                 <LinkButton />
                 <MenuButton

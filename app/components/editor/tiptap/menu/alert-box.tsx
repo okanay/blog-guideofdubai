@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { Editor } from "@tiptap/react";
+import { useEffect, useState } from "react";
 import { MessageSquare } from "lucide-react";
 import RichButtonModal from "./ui/modal";
 import {
@@ -56,8 +55,20 @@ const AlertBoxButton = () => {
     setAlertType(type);
   };
 
-  // AlertBox zaten aktif mi kontrolü
-  const isActive = editor.isActive("alertBox");
+  const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    const updateIsActive = () => {
+      setIsActive(editor.isActive("alertBox"));
+    };
+
+    editor.on("selectionUpdate", updateIsActive);
+    editor.on("transaction", updateIsActive);
+    return () => {
+      editor.off("selectionUpdate", updateIsActive);
+      editor.off("transaction", updateIsActive);
+    };
+  }, [editor]);
 
   return (
     <>

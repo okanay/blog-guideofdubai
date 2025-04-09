@@ -199,15 +199,24 @@ export const HighlightButton = () => {
     setCurrentStyle((prev) => ({ ...prev, ...updates }));
   };
 
-  const isActive = editor.isActive("highlight");
+  const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    const updateIsActive = () => {
+      setIsActive(editor.isActive("textStyle"));
+    };
+
+    editor.on("selectionUpdate", updateIsActive);
+    editor.on("transaction", updateIsActive);
+    return () => {
+      editor.off("selectionUpdate", updateIsActive);
+      editor.off("transaction", updateIsActive);
+    };
+  }, [editor]);
 
   return (
     <>
-      <MenuButton
-        onClick={handleOpenModal}
-        isActive={editor.isActive("highlight")}
-        label="Vurgula"
-      >
+      <MenuButton onClick={handleOpenModal} isActive={isActive} label="Vurgula">
         <Highlighter size={16} />
       </MenuButton>
 
