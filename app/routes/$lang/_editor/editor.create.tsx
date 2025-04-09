@@ -1,6 +1,7 @@
 import CreateBlogPage from "@/components/editor/create";
 import { seoTranslations } from "@/i18n/languages";
 import { createFileRoute } from "@tanstack/react-router";
+import dragModuleStyles from "@/components/editor/tiptap/drag-styles.css?url";
 
 export const Route = createFileRoute("/$lang/_editor/editor/create")({
   head: ({ params: { lang } }) => {
@@ -15,7 +16,15 @@ export const Route = createFileRoute("/$lang/_editor/editor/create")({
           content: seoData.editor.create.description,
         },
       ],
-      links: [],
+      links: [
+        {
+          rel: "preload stylesheet",
+          as: "style",
+          type: "text/css",
+          crossOrigin: "anonymous",
+          href: dragModuleStyles,
+        },
+      ],
     };
   },
   component: CreateBlogPage,

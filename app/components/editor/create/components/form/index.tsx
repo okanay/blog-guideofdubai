@@ -1,26 +1,9 @@
 // app/components/editor/create/form.tsx
-import React, { useState } from "react";
+import { MoveRight } from "lucide-react";
 import { Input, Textarea, Select, Checkbox } from "./ui";
-import { useCreateBlog } from "../store";
 import { LANGUAGE_DICTONARY_TR } from "@/i18n/config";
 
-interface BlogFormData {
-  title: string;
-  description: string;
-  coverImage: string;
-  tags: string[];
-  categories: string[];
-  language: string;
-  featured: boolean;
-  seoTitle: string;
-  seoDescription: string;
-}
-
 export function CreateBlogForm() {
-  const {
-    view: { mode, setMode },
-  } = useCreateBlog();
-
   return (
     <div className="mx-auto max-w-3xl py-6">
       <div className="mb-8">
@@ -123,20 +106,7 @@ export function CreateBlogForm() {
         <div className="flex justify-end pt-4">
           <button className="bg-primary-500 hover:bg-primary-600 focus:ring-primary-200 flex items-center gap-1.5 rounded-md px-6 py-2 text-sm font-medium text-white focus:ring-2 focus:ring-offset-2 focus:outline-none">
             İçerik Ekle
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="ml-1 h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 7l5 5m0 0l-5 5m5-5H6"
-              />
-            </svg>
+            <MoveRight size={16} />
           </button>
         </div>
       </div>

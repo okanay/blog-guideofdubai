@@ -1,5 +1,4 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import editorStyles from "@/components/styles.css?url";
 import { seoTranslations } from "@/i18n/languages";
 
 export const Route = createFileRoute("/$lang/_editor")({
@@ -13,15 +12,6 @@ export const Route = createFileRoute("/$lang/_editor")({
         {
           name: "description",
           content: seoData.editor.root.description,
-        },
-      ],
-      links: [
-        {
-          rel: "preload stylesheet",
-          as: "style",
-          type: "text/css",
-          crossOrigin: "anonymous",
-          href: editorStyles,
         },
       ],
     };
