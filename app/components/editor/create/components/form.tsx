@@ -22,7 +22,12 @@ export function CreateBlogForm() {
         </h2>
 
         <div className="space-y-4">
-          <p>seo title (input)</p>
+          <Input
+            label="SEO Başlığı"
+            placeholder="SEO Başlığı"
+            hint="SEO başlığı, google gibi arama motolarının içeriği daha iyi değerlendirmesine yardımcı olur."
+            isRequired={true}
+          />
           <p>slug-creator (slug-creator)</p>
           <p>seo description (text-area)</p>
           <p>open-graph görseli (image)</p>
