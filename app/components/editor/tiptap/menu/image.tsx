@@ -102,7 +102,7 @@ const EnhancedImageButton = () => {
 
   // Modal açılınca eğer zaten bir enhancedImage içindeysek, mevcut bilgileri al
   const handleOpenModal = () => {
-    if (editor.isActive("enhancedImage")) {
+    if (isActive) {
       const attrs = editor.getAttributes("enhancedImage");
       setImageUrl(attrs.src || "");
       setAltText(attrs.alt || "");

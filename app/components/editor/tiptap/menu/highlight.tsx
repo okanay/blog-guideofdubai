@@ -21,74 +21,37 @@ const PRESET_STYLES = [
     },
   },
   {
-    name: "Mavi Kutu",
-    style: {
-      backgroundColor: "#EFF6FF",
-      padding: "0.5rem 0.75rem",
-      borderRadius: "0.5rem",
-      borderWidth: "1",
-      borderStyle: "solid",
-      borderColor: "#3B82F6",
-      textColor: "#1E40AF",
-    },
-  },
-  {
-    name: "Kırmızı Uyarı",
-    style: {
-      backgroundColor: "#FEF2F2",
-      padding: "0.5rem 0.75rem",
-      borderRadius: "0.25rem",
-      borderWidth: "1",
-      borderStyle: "dashed",
-      borderColor: "#EF4444",
-      textColor: "#B91C1C",
-    },
-  },
-  {
-    name: "Yeşil Not",
-    style: {
-      backgroundColor: "#ECFDF5",
-      padding: "0.35rem 0.65rem",
-      borderRadius: "0.25rem",
-      borderWidth: "1",
-      borderStyle: "solid",
-      borderColor: "#10B981",
-      textColor: "#047857",
-    },
-  },
-  // Yeni eklenen stiller
-  {
     name: "Sarı Vurgu",
     style: {
-      backgroundColor: "#FFFBEB",
-      padding: "0.2rem 0.4rem",
+      backgroundColor: "#FFF7ED",
+      padding: "0.2rem 0.3rem",
       borderRadius: "0.25rem",
       borderWidth: "0",
       borderStyle: "none",
       borderColor: "",
-      textColor: "#92400E",
+      textColor: "#9A3412",
     },
   },
   {
-    name: "Mor Panel",
+    name: "Mavi Bilgi",
     style: {
-      backgroundColor: "#F5F3FF",
-      padding: "0.5rem 0.75rem",
-      borderRadius: "0.5rem",
+      backgroundColor: "#F0F9FF",
+      padding: "0.4rem 0.6rem",
+      borderRadius: "0.3rem",
       borderWidth: "1",
       borderStyle: "solid",
-      borderColor: "#8B5CF6",
-      textColor: "#5B21B6",
+      borderColor: "#0EA5E9",
+      textColor: "#0C4A6E",
     },
   },
   {
     name: "Gri Çerçeve",
     style: {
-      backgroundColor: "transparent",
-      padding: "0.5rem 0.75rem",
-      borderRadius: "0.5rem",
+      backgroundColor: "",
+      padding: "0.4rem 0.6rem",
+      borderRadius: "0.3rem",
       borderWidth: "1",
-      borderStyle: "solid",
+      borderStyle: "dashed",
       borderColor: "#71717A",
       textColor: "#3F3F46",
     },
@@ -132,8 +95,9 @@ export const HighlightButton = () => {
 
   // Modal açıldığında mevcut highlight özellikleri varsa al
   const handleOpenModal = () => {
-    if (editor.isActive("highlight")) {
-      const attrs = editor.getAttributes("highlight");
+    if (isActive) {
+      const attrs = editor.getAttributes("textStyle");
+      console.log(attrs);
 
       // Padding ayrıştırma
       let paddingX = "0.5";
