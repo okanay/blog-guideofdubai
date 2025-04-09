@@ -1,6 +1,6 @@
 // app/components/editor/create/form.tsx
 import { MoveRight } from "lucide-react";
-import { Input, Textarea, Select, Checkbox } from "./ui";
+import { Input, Textarea, Select, Checkbox } from "@/components/editor/ui";
 import { LANGUAGE_DICTONARY_TR } from "@/i18n/config";
 
 export function CreateBlogForm() {
