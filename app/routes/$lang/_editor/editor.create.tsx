@@ -1,4 +1,4 @@
-import { TiptapEditor } from "@/components/editor/tiptap";
+import CreateBlogPage from "@/components/editor/create";
 import { seoTranslations } from "@/i18n/languages";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -18,13 +18,5 @@ export const Route = createFileRoute("/$lang/_editor/editor/create")({
       links: [],
     };
   },
-  component: RouteComponent,
+  component: CreateBlogPage,
 });
-
-function RouteComponent() {
-  return (
-    <main>
-      <TiptapEditor />
-    </main>
-  );
-}
