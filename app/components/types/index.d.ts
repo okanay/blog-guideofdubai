@@ -34,4 +34,5 @@ type Blog = {
   publishedAt: Date | null;
 };
 
-type ViewMode = "edit" | "preview" | "json" | "html";
+type TiptapViewMode = "edit" | "preview" | "json" | "html";
+type BlogViewMode = "editor" | "form" | "preview";

@@ -16,6 +16,12 @@ export const LANGUAGE_DIRECTIONS: Record<Language, Direction> = {
   ar: "rtl", // Arapça için RTL
 };
 
+export const LANGUAGE_DICTONARY_TR = [
+  { value: "tr", label: "Türkçe" },
+  { value: "en", label: "İngilizce" },
+  { value: "ar", label: "Arapça" },
+];
+
 export const SUPPORTED_LANGUAGES: Language[] = Object.values(LANGUAGES);
 export const DEFAULT_LANGUAGE: Language = LANGUAGES.ENGLISH;
 export const FALLBACK_LANGUAGE: Language = "";

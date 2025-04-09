@@ -11,8 +11,8 @@ type Props = PropsWithChildren & {
 interface DataState {
   editor: Editor;
   view: {
-    mode: ViewMode;
-    setMode: (mode: ViewMode) => void;
+    mode: TiptapViewMode;
+    setMode: (mode: TiptapViewMode) => void;
   };
 }
 
@@ -25,7 +25,7 @@ export function EditorProvider({ children, initialContent = "" }: Props) {
         editor,
         view: {
           mode: "edit",
-          setMode: (mode: ViewMode) =>
+          setMode: (mode: TiptapViewMode) =>
             set((state) => {
               state.view.mode = mode;
             }),

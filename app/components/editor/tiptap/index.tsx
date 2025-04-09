@@ -1,24 +1,13 @@
 import { Code, Eye, FileText, Pencil } from "lucide-react";
-import { EditorProvider, useTiptapContext } from "./store";
-import { EditorRichMenu } from "./menu";
+import { useTiptapContext } from "./store";
 import { EditorContent } from "@tiptap/react";
 import { RenderJSON } from "./renderer";
-import DummyText from "./dummy";
 
-export const TiptapEditor = () => {
-  return (
-    <EditorProvider initialContent={DummyText}>
-      <Editor />
-    </EditorProvider>
-  );
-};
-
-const Editor = () => {
+export const Editor = () => {
   const { view: { mode, setMode }} = useTiptapContext(); // prettier-ignore
 
   return (
     <>
-      <EditorRichMenu />
       <div className="mx-auto mt-4 flex max-w-5xl flex-col gap-8 px-4">
         <div className="flex flex-col gap-4">
           <ViewModeToggle currentMode={mode} setMode={setMode} />
@@ -96,8 +85,8 @@ const HtmlModeContent = () => {
 };
 
 interface ViewModeToggleProps {
-  currentMode: ViewMode;
-  setMode: (mode: ViewMode) => void;
+  currentMode: TiptapViewMode;
+  setMode: (mode: TiptapViewMode) => void;
 }
 
 const ViewModeToggle: React.FC<ViewModeToggleProps> = ({
@@ -148,8 +137,8 @@ const ViewModeToggle: React.FC<ViewModeToggleProps> = ({
 };
 
 interface ToggleButtonProps {
-  mode: ViewMode;
-  currentMode: ViewMode;
+  mode: TiptapViewMode;
+  currentMode: TiptapViewMode;
   onClick: () => void;
   icon: React.ReactNode;
   label: string;

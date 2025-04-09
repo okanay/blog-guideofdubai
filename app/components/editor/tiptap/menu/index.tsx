@@ -1,7 +1,4 @@
-// prettier-ignore
-import {ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
-import { useTiptapContext } from "../store";
 import { AlertBoxButton } from "./alert-box";
 import { FontFamilyButton } from "./font-family";
 import { FontSizeButton } from "./font-size";
@@ -23,31 +20,10 @@ import { HorizontalRuleButton } from "./horizontal-rule";
 export const EditorRichMenu = () => {
   const [hidden, setHidden] = useState(false);
 
-  const HiddenButton = () => (
-    <button
-      onClick={() => setHidden(!hidden)}
-      className={`flex w-20 items-center justify-center gap-1.5 rounded-md py-1.5 text-xs font-medium transition-colors ${
-        !hidden
-          ? "bg-primary text-color-primary"
-          : "bg-zinc-900 text-zinc-50 hover:bg-zinc-800"
-      }`}
-    >
-      {hidden ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
-      <span>{hidden ? "Gizli" : "Göster"}</span>
-    </button>
-  );
-
   return (
     <div className="sticky top-0 right-0 z-40">
-      <div className="sticky w-full border-b border-zinc-200 bg-zinc-100">
+      <div className="sticky w-full">
         <div className="mx-auto w-full">
-          <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-1">
-            <h1 className="text-color-font text-xs font-semibold">
-              Metin Editörü
-            </h1>
-            <HiddenButton />
-          </div>
-
           <div
             aria-hidden={hidden}
             className="border-t border-zinc-200 bg-white py-2 transition-[padding_,border] duration-300 aria-hidden:overflow-hidden aria-hidden:border-t-0 aria-hidden:py-0"
