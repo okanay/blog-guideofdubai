@@ -1,5 +1,5 @@
 // prettier-ignore
-import { AlignCenter, AlignJustify, AlignLeft, AlignRight, ChevronDown, ChevronUp, Italic, List, Quote, SeparatorHorizontal, Subscript, Superscript } from "lucide-react";
+import {ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import { useTiptapContext } from "../store";
 import { AlertBoxButton } from "./alert-box";
@@ -10,9 +10,15 @@ import { HighlightButton } from "./highlight";
 import { EnhancedImageButton } from "./image";
 import { LinkButton } from "./link";
 import { StrikeThroughButton } from "./strike-through";
-import MenuButton from "./ui/button";
 import { UnderlineButton } from "./underline";
 import { HeadingButtons } from "./headings";
+import { BlockquoteButton } from "./blockquote";
+import { BulletListButton } from "./bullet-list";
+import { SubscriptButton } from "./subscript";
+import { SuperscriptButton } from "./superscript";
+import { ItalicButton } from "./italic";
+import { TextAlignButtons } from "./text-aligns";
+import { HorizontalRuleButton } from "./horizontal-rule";
 
 export const EditorRichMenu = () => {
   console.log("render");
@@ -53,104 +59,20 @@ export const EditorRichMenu = () => {
                 <HeadingButtons />
                 <EnhancedImageButton />
                 <LinkButton />
-                <MenuButton
-                  onClick={() =>
-                    editor.chain().focus().toggleBlockquote().run()
-                  }
-                  isActive={editor.isActive("blockquote")}
-                  label="Alıntı"
-                >
-                  <Quote size={16} />
-                </MenuButton>
-                <MenuButton
-                  onClick={() =>
-                    editor.chain().focus().toggleBulletList().run()
-                  }
-                  isActive={editor.isActive("bulletList")}
-                  label="Madde İşaretli Liste"
-                >
-                  <List size={16} />
-                </MenuButton>
-                <MenuButton
-                  onClick={() => editor.chain().focus().toggleSubscript().run()}
-                  isActive={editor.isActive("subscript")}
-                  label="Alt Simge"
-                >
-                  <Subscript size={16} />
-                </MenuButton>
-                <MenuButton
-                  onClick={() =>
-                    editor.chain().focus().toggleSuperscript().run()
-                  }
-                  isActive={editor.isActive("superscript")}
-                  label="Üst Simge"
-                >
-                  <Superscript size={16} />
-                </MenuButton>
-
-                {/* Biçimlendirme Butonları - format kategorisine ait */}
-
-                <MenuButton
-                  onClick={() => editor.chain().focus().toggleItalic().run()}
-                  isActive={editor.isActive("italic")}
-                  label="İtalik"
-                >
-                  <Italic size={16} />
-                </MenuButton>
+                <BlockquoteButton />
+                <BulletListButton />
+                <SubscriptButton />
+                <SuperscriptButton />
+                <ItalicButton />
                 <FontWeightButton />
                 <FontSizeButton />
                 <UnderlineButton />
                 <StrikeThroughButton />
                 <FontFamilyButton />
                 <HighlightButton />
-
-                <MenuButton
-                  onClick={() =>
-                    editor.chain().focus().setTextAlign("left").run()
-                  }
-                  isActive={editor.isActive({ textAlign: "left" })}
-                  label="Sola Hizala"
-                >
-                  <AlignLeft size={16} />
-                </MenuButton>
-                <MenuButton
-                  onClick={() =>
-                    editor.chain().focus().setTextAlign("center").run()
-                  }
-                  isActive={editor.isActive({ textAlign: "center" })}
-                  label="Ortala"
-                >
-                  <AlignCenter size={16} />
-                </MenuButton>
-                <MenuButton
-                  onClick={() =>
-                    editor.chain().focus().setTextAlign("right").run()
-                  }
-                  isActive={editor.isActive({ textAlign: "right" })}
-                  label="Sağa Hizala"
-                >
-                  <AlignRight size={16} />
-                </MenuButton>
-                <MenuButton
-                  onClick={() =>
-                    editor.chain().focus().setTextAlign("justify").run()
-                  }
-                  isActive={editor.isActive({ textAlign: "justify" })}
-                  label="İki Yana Yasla"
-                >
-                  <AlignJustify size={16} />
-                </MenuButton>
-
+                <TextAlignButtons />
                 <AlertBoxButton />
-                <MenuButton
-                  onClick={() =>
-                    editor.chain().focus().setHorizontalRule().run()
-                  }
-                  isActive={false}
-                  label="Yatay Çizgi"
-                >
-                  <SeparatorHorizontal size={16} />
-                </MenuButton>
+                <HorizontalRuleButton />
               </div>
             </div>
           </div>
