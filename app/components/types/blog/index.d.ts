@@ -2,7 +2,6 @@ type Blog = {
   id: string;
   groupId: string;
   slug: string;
-  status: "published" | "draft" | "archived" | "deleted";
   metadata: {
     title: string;
     description: string;
@@ -11,6 +10,11 @@ type Blog = {
       description: string;
       image: string | null;
     };
+    canonicalSlug: boolean;
+    alternatives: {
+      language: Language;
+      slug: string;
+    }[];
   };
   writer: {
     name: string;
@@ -29,8 +33,11 @@ type Blog = {
     version: number | null;
   };
   language: Language;
+  status: BlogStatus;
   featured: boolean;
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;
 };
+
+type BlogStatus = "published" | "draft" | "archived" | "deleted";
