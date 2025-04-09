@@ -47,6 +47,40 @@ export const ALERT_CONFIG: Record<AlertType, AlertConfigItem> = {
   },
 };
 
+// Tailwind sınıflarını önceden tanımlayalım
+export const ALERT_CLASSES = {
+  borderClasses: {
+    information: "border-sky-500",
+    warning: "border-amber-500",
+    danger: "border-rose-500",
+    success: "border-lime-500",
+  },
+  bgClasses: {
+    information: "bg-sky-50",
+    warning: "bg-amber-50",
+    danger: "bg-rose-50",
+    success: "bg-lime-50",
+  },
+  iconClasses: {
+    information: "text-sky-500",
+    warning: "text-amber-500",
+    danger: "text-rose-500",
+    success: "text-lime-500",
+  },
+  titleClasses: {
+    information: "text-sky-700",
+    warning: "text-amber-700",
+    danger: "text-rose-700",
+    success: "text-lime-700",
+  },
+  textClasses: {
+    information: "text-sky-700",
+    warning: "text-amber-700",
+    danger: "text-rose-700",
+    success: "text-lime-700",
+  },
+};
+
 export const AlertBoxUI: React.FC<AlertBoxBaseProps> = ({
   type = "information",
   title,
@@ -55,24 +89,28 @@ export const AlertBoxUI: React.FC<AlertBoxBaseProps> = ({
 }) => {
   const config = ALERT_CONFIG[type as AlertType];
   const Icon = config.icon;
-  const colorClass = config.colorClass;
+
+  // Sınıf adlarını direk olarak kullanalım
+  const borderClass = ALERT_CLASSES.borderClasses[type];
+  const bgClass = ALERT_CLASSES.bgClasses[type];
+  const iconClass = ALERT_CLASSES.iconClasses[type];
+  const titleClass = ALERT_CLASSES.titleClasses[type];
+  const textClass = ALERT_CLASSES.textClasses[type];
 
   // Başlık varsa klasik görünüm
   if (title && title.trim()) {
     return (
       <div
         className={twMerge(
-          `rounded border-l-4 border-${colorClass}-500 bg-${colorClass}-50 px-4 py-2 font-medium shadow-sm`,
+          `rounded ${borderClass} ${bgClass} px-4 py-2 font-medium shadow-sm`,
           className,
         )}
       >
         <div className="mb-1 flex items-center">
-          <Icon className={`mr-1.5 text-${colorClass}-500`} size={16} />
-          <div className={`text-sm font-semibold text-${colorClass}-700`}>
-            {title}
-          </div>
+          <Icon className={`mr-1.5 ${iconClass}`} size={16} />
+          <div className={`text-sm font-semibold ${titleClass}`}>{title}</div>
         </div>
-        <div className={`text-${colorClass}-700 text-xs`}>{children}</div>
+        <div className={`${textClass} text-xs`}>{children}</div>
       </div>
     );
   }
@@ -81,13 +119,13 @@ export const AlertBoxUI: React.FC<AlertBoxBaseProps> = ({
   return (
     <div
       className={twMerge(
-        `rounded border-l-4 border-${colorClass}-500 bg-${colorClass}-50 px-4 py-2 font-medium shadow-sm`,
+        `rounded ${borderClass} ${bgClass} px-4 py-2 font-medium shadow-sm`,
         className,
       )}
     >
       <div className="flex items-start gap-2">
-        <Icon className={`text-${colorClass}-500 flex-shrink-0`} size={18} />
-        <div className={`text-${colorClass}-700 text-xs`}>{children}</div>
+        <Icon className={`${iconClass} flex-shrink-0`} size={18} />
+        <div className={`${textClass} text-xs`}>{children}</div>
       </div>
     </div>
   );
