@@ -47,9 +47,6 @@ export const Select = ({
   const [customOptionText, setCustomOptionText] = useState("");
   const [searchText, setSearchText] = useState("");
 
-  const inputId =
-    id || `enhanced-select-${Math.random().toString(36).substring(2, 9)}`;
-
   // Dışarıdan gelen değerleri izle
   useEffect(() => {
     if (value !== undefined) {
@@ -134,10 +131,7 @@ export const Select = ({
     <div className={twMerge("flex flex-col gap-1.5", containerClassName)}>
       {label && (
         <div className="flex items-center justify-between">
-          <label
-            htmlFor={inputId}
-            className="text-sm font-medium text-zinc-700"
-          >
+          <label className="text-sm font-medium text-zinc-700">
             {label}
             {isRequired && <span className="ml-1 text-red-500">*</span>}
           </label>

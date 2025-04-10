@@ -1,11 +1,13 @@
-import { useState, useRef } from "react";
+import { Images, Eye, X, AlertCircle, Unlock, Lock } from "lucide-react"; // prettier-ignore
+import { useState, useRef, useEffect } from "react";
 import { twMerge } from "tailwind-merge";
-import { Image as ImageIcon, Eye, X, AlertCircle } from "lucide-react";
 import useClickOutside from "@/hooks/use-click-outside";
 
 interface ImagePreviewProps
   extends Omit<React.ComponentProps<"input">, "onChange"> {
   label?: string;
+  autoMode?: boolean;
+  followId?: string;
   isRequired?: boolean;
   isError?: boolean;
   isSuccess?: boolean;
@@ -19,6 +21,8 @@ interface ImagePreviewProps
 
 export const ImagePreview = ({
   ref,
+  autoMode,
+  followId,
   className,
   label = "Görsel URL",
   isRequired = false,
@@ -39,7 +43,7 @@ export const ImagePreview = ({
   const [isValidUrl, setIsValidUrl] = useState(true);
   const [isImageLoading, setIsImageLoading] = useState(false);
   const [imageError, setImageError] = useState<string | null>(null);
-
+  const [isAuto, setIsAuto] = useState(autoMode ? true : false);
   const modalRef = useClickOutside<HTMLDivElement>(
     () => setIsPreviewOpen(false),
     isPreviewOpen,
@@ -98,6 +102,25 @@ export const ImagePreview = ({
     setImageError("Görsel yüklenemedi. URL'i kontrol edin.");
   };
 
+  const toggleMode = () => {
+    setIsAuto(!isAuto);
+  };
+
+  useEffect(() => {
+    const followElement = document.getElementById(followId);
+
+    if (followElement && isAuto) {
+      const handleInput = (event) => {
+        setImageUrl(event.target.value);
+      };
+
+      followElement.addEventListener("input", handleInput);
+      return () => {
+        followElement.removeEventListener("input", handleInput);
+      };
+    }
+  }, [isAuto]);
+
   const status =
     isError || !isValidUrl || imageError
       ? "error"
@@ -125,10 +148,32 @@ export const ImagePreview = ({
   return (
     <div className={twMerge("flex flex-col gap-1.5", containerClassName)}>
       {label && (
-        <label htmlFor={inputId} className="text-sm font-medium text-zinc-700">
-          {label}
-          {isRequired && <span className="ml-1 text-red-500">*</span>}
-        </label>
+        <div className="flex items-center justify-between">
+          <label
+            htmlFor={inputId}
+            className="text-sm font-medium text-zinc-700"
+          >
+            {label}
+            {isRequired && <span className="ml-1 text-red-500">*</span>}
+          </label>
+          {autoMode && (
+            <button
+              type="button"
+              onClick={toggleMode}
+              className="flex items-center gap-1 text-xs font-medium text-zinc-500 hover:text-zinc-700"
+            >
+              {isAuto ? (
+                <>
+                  <Lock size={12} /> Otomatik
+                </>
+              ) : (
+                <>
+                  <Unlock size={12} /> Manuel
+                </>
+              )}
+            </button>
+          )}
+        </div>
       )}
 
       <div
@@ -136,7 +181,7 @@ export const ImagePreview = ({
         className="relative flex items-center rounded-md border border-zinc-300 transition-all data-[status=error]:border-red-500 data-[status=error]:ring-2 data-[status=error]:ring-red-100 data-[status=focused]:border-zinc-500 data-[status=focused]:ring-2 data-[status=focused]:ring-zinc-100 data-[status=success]:border-green-500 data-[status=success]:ring-2 data-[status=success]:ring-green-100"
       >
         <div className="pointer-events-none absolute left-3 text-zinc-400">
-          <ImageIcon size={18} />
+          <Images size={18} />
         </div>
 
         <input
@@ -147,8 +192,10 @@ export const ImagePreview = ({
           value={imageUrl}
           onChange={handleUrlChange}
           placeholder="https://example.com/image.jpg"
+          readOnly={isAuto}
           className={twMerge(
-            "w-full rounded-md bg-transparent py-2 pr-16 pl-9 outline-none",
+            "w-full rounded-md bg-transparent py-2 pr-20 pl-10 outline-none",
+            isAuto && "cursor-not-allowed bg-zinc-50 text-zinc-500",
             className,
           )}
           onFocus={(e) => {

@@ -1,20 +1,24 @@
 // app/components/editor/create/form.tsx
-import { Input, Textarea, Select, Checkbox, SeoPreview, SlugCreator, ImagePreview, ReadTime, BlogStatus, MultiSelect } from "@/components/editor/ui" // prettier-ignore
-import { MoveRight } from "lucide-react";
 import { useRef, useState } from "react";
+import { useTiptapContext } from "../../tiptap/store";
+import { Input, Textarea, Select,  SeoPreview, SlugCreator, ImagePreview, ReadTime, MultiSelect } from "@/components/editor/ui" // prettier-ignore
+import { MoveRight } from "lucide-react";
 import { DEFAULT_CATEGORY_OPTIONS, DEFAULT_TAG_OPTIONS } from "../../constants";
-import { LANGUAGE_DICTONARY } from "@/i18n/config";
+import { DEFAULT_LANGUAGE, LANGUAGE_DICTONARY } from "@/i18n/config";
 
 export function CreateBlogForm() {
+  const { editor } = useTiptapContext();
   const titleRef = useRef<HTMLInputElement>(null);
   const slugRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
 
-  const [selectedCategories, setSelectedCategories] = useState<string | null>(
-    null,
-  );
+  const [readTime, setReadTime] = useState<number | null>(null);
+  const [selectedCategories, setSelectedCategories] = useState<string | null>(null); // prettier-ignore
   const [selectedTags, setSelectedTags] = useState<string[] | null>(null);
+  const [selectedLanguage, setSelectedLanguage] = useState<string | null>(
+    DEFAULT_LANGUAGE,
+  );
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-y-6 py-6">
@@ -121,9 +125,12 @@ export function CreateBlogForm() {
             id="content-image"
             label="Kart Görseli"
             hint="Blog kartında görünecek görsel, boş bırakılırsa sosyal medya görseli kullanılır."
+            autoMode={true}
+            followId="seo-image"
           />
           <Select
             label="Blog Kategorileri"
+            id="blog-categories"
             options={DEFAULT_CATEGORY_OPTIONS}
             value={selectedCategories}
             onChange={setSelectedCategories}
@@ -135,10 +142,11 @@ export function CreateBlogForm() {
           />
           <MultiSelect
             label="Blog Etiketleri"
+            id="blog-tags"
             options={DEFAULT_TAG_OPTIONS}
             value={selectedTags}
             onChange={setSelectedTags}
-            hint="Blog yazınıza uygun etiketleri seçin"
+            hint="Blog yazınıza uygun etiketleri seçin, arama yaparken kullanıcı deneyimini kolaylaştırır."
             placeholder="Etiket seçin..."
             allowCustomOption={true}
             isRequired={true}
@@ -157,17 +165,24 @@ export function CreateBlogForm() {
         <div className="space-y-4">
           <Select
             label="Blog Dili"
+            id="blog-language"
             options={LANGUAGE_DICTONARY}
-            value={selectedCategories}
-            onChange={setSelectedCategories}
+            value={selectedLanguage}
+            onChange={setSelectedLanguage}
             hint="Blog yazınızın dilini seçin."
             isRequired={true}
             allowCustomOption={false}
             placeholder="Dil seçimi yapın."
           />
-          <p>okuma Süresi (read-time)</p>
-          <p>featured (checkbox)</p>
-          <p>post initial status (blog-status)</p>
+          <ReadTime
+            label="Okuma Süresi"
+            id="blog-read-time"
+            value={readTime}
+            onChange={setReadTime}
+            htmlContent={editor.getHTML()}
+            defaultWordsPerMinute={1}
+            hint="Makalenin okunması için gereken tahmini süre"
+          />
         </div>
       </div>
 

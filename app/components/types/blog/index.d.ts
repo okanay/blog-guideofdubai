@@ -39,5 +39,3 @@ type Blog = {
   updatedAt: Date;
   publishedAt: Date | null;
 };
-
-type BlogStatus = "published" | "draft" | "archived" | "deleted";

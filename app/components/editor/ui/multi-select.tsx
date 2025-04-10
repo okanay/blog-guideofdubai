@@ -46,9 +46,6 @@ export const MultiSelect = ({
   const [selectedValues, setSelectedValues] = useState<string[]>(value || []);
   const [customOptionText, setCustomOptionText] = useState("");
   const [searchText, setSearchText] = useState("");
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const inputId =
-    id || `multi-select-${Math.random().toString(36).substring(2, 9)}`;
 
   // Dışarıdan gelen değerleri izle
   useEffect(() => {
@@ -137,10 +134,7 @@ export const MultiSelect = ({
     <div className={twMerge("flex flex-col gap-1.5", containerClassName)}>
       {label && (
         <div className="flex items-center justify-between">
-          <label
-            htmlFor={inputId}
-            className="text-sm font-medium text-zinc-700"
-          >
+          <label className="text-sm font-medium text-zinc-700">
             {label}
             {isRequired && <span className="ml-1 text-red-500">*</span>}
           </label>
