@@ -1,13 +1,20 @@
 // app/components/editor/create/form.tsx
 import { Input, Textarea, Select, Checkbox, SeoPreview, SlugCreator, ImagePreview, ReadTime, BlogStatus, MultiSelect } from "@/components/editor/ui" // prettier-ignore
 import { MoveRight } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { DEFAULT_CATEGORY_OPTIONS, DEFAULT_TAG_OPTIONS } from "../../constants";
+import { LANGUAGE_DICTONARY } from "@/i18n/config";
 
 export function CreateBlogForm() {
   const titleRef = useRef<HTMLInputElement>(null);
   const slugRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
+
+  const [selectedCategories, setSelectedCategories] = useState<string | null>(
+    null,
+  );
+  const [selectedTags, setSelectedTags] = useState<string[] | null>(null);
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-y-6 py-6">
@@ -115,8 +122,29 @@ export function CreateBlogForm() {
             label="Kart Görseli"
             hint="Blog kartında görünecek görsel, boş bırakılırsa sosyal medya görseli kullanılır."
           />
-          <p>kategoriler (multi-select)</p>
-          <p>tag (multi-select)</p>
+          <Select
+            label="Blog Kategorileri"
+            options={DEFAULT_CATEGORY_OPTIONS}
+            value={selectedCategories}
+            onChange={setSelectedCategories}
+            hint="Blog yazınıza uygun kategorileri seçin veya yeni ekleyin"
+            isRequired={true}
+            allowCustomOption={true}
+            customOptionPlaceholder="Yeni kategori ekle..."
+            placeholder="Kategori seçimi yapın."
+          />
+          <MultiSelect
+            label="Blog Etiketleri"
+            options={DEFAULT_TAG_OPTIONS}
+            value={selectedTags}
+            onChange={setSelectedTags}
+            hint="Blog yazınıza uygun etiketleri seçin"
+            placeholder="Etiket seçin..."
+            allowCustomOption={true}
+            isRequired={true}
+            customOptionPlaceholder="Özel etiket ekle..."
+            searchPlaceholder="Etiketlerde ara..."
+          />
         </div>
       </div>
 
@@ -127,7 +155,16 @@ export function CreateBlogForm() {
         </h2>
 
         <div className="space-y-4">
-          <p>dil seçimi (select)</p>
+          <Select
+            label="Blog Dili"
+            options={LANGUAGE_DICTONARY}
+            value={selectedCategories}
+            onChange={setSelectedCategories}
+            hint="Blog yazınızın dilini seçin."
+            isRequired={true}
+            allowCustomOption={false}
+            placeholder="Dil seçimi yapın."
+          />
           <p>okuma Süresi (read-time)</p>
           <p>featured (checkbox)</p>
           <p>post initial status (blog-status)</p>

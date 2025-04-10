@@ -14,7 +14,7 @@ export const LANGUAGE_DIRECTIONS: Record<Language, Direction> = {
   en: "ltr",
 };
 
-export const LANGUAGE_DICTONARY_TR = [
+export const LANGUAGE_DICTONARY = [
   { value: "tr", label: "Türkçe" },
   { value: "en", label: "İngilizce" },
 ];
