@@ -1,1 +1,0 @@
-## Burada utils işlemlerini saklayabilirsin.
