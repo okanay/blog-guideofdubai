@@ -21,7 +21,7 @@ export function ModeButton({
     <button
       onClick={onClick}
       className={twMerge(
-        "relative flex h-9 items-center gap-1.5 px-3 text-xs font-medium transition-all",
+        "relative flex h-12 items-center gap-2 px-4 text-xs font-medium transition-all",
         isActive
           ? "bg-primary border-primary-cover text-color-primary"
           : "bg-zinc-50 text-zinc-700 hover:bg-zinc-100",

@@ -16,7 +16,7 @@ interface DataState {
   };
 }
 
-export function EditorProvider({ children, initialContent = "" }: Props) {
+export function TiptapProvider({ children, initialContent = "" }: Props) {
   const editor = useEditor(initialContent);
 
   const [store] = useState(() =>
@@ -35,18 +35,18 @@ export function EditorProvider({ children, initialContent = "" }: Props) {
   );
 
   return (
-    <EditorContext.Provider value={store as StoreApi<DataState>}>
+    <TiptapContext.Provider value={store as StoreApi<DataState>}>
       {children}
-    </EditorContext.Provider>
+    </TiptapContext.Provider>
   );
 }
 
 export const useTiptapContext = () => {
-  const context = useContext(EditorContext);
+  const context = useContext(TiptapContext);
 
   if (!context) {
     throw new Error(
-      "useTiptapContext hook must be used within an EditorProvider",
+      "useTiptapContext hook must be used within an TiptapProvider",
     );
   }
 
@@ -54,8 +54,8 @@ export const useTiptapContext = () => {
   return editor;
 };
 
-const EditorContext = createContext<EditorContextType>(undefined);
+const TiptapContext = createContext<TiptapContextType>(undefined);
 
-type EditorContextType = StoreApi<DataState> | undefined;
+type TiptapContextType = StoreApi<DataState> | undefined;
 type Set = (fn: (state: DataState) => void) => void;
 type Get = () => DataState;

@@ -1,27 +1,31 @@
 // app/components/editor/create/form.tsx
 import { useRef, useState } from "react";
-import { useTiptapContext } from "../../tiptap/store";
-import { Input, Textarea, Select,  SeoPreview, SlugCreator, ImagePreview, ReadTime, MultiSelect } from "@/components/editor/ui" // prettier-ignore
-import { MoveRight } from "lucide-react";
-import { DEFAULT_CATEGORY_OPTIONS, DEFAULT_TAG_OPTIONS } from "../../constants";
+import { useTiptapContext } from "./tiptap/store";
+import { Input, Textarea, Select,  SeoPreview, SlugCreator, ImagePreview, ReadTime, MultiSelect, Toggle } from "@/components/editor/ui" // prettier-ignore
+import { DEFAULT_CATEGORY_OPTIONS, DEFAULT_TAG_OPTIONS } from "./constants";
 import { DEFAULT_LANGUAGE, LANGUAGE_DICTONARY } from "@/i18n/config";
+import { Send } from "lucide-react";
 
 export function CreateBlogForm() {
   const { editor } = useTiptapContext();
-  const titleRef = useRef<HTMLInputElement>(null);
+
+  const seoTitleRef = useRef<HTMLInputElement>(null);
+  const seoDescriptionRef = useRef<HTMLTextAreaElement>(null);
+  const seoImageRef = useRef<HTMLInputElement>(null);
   const slugRef = useRef<HTMLInputElement>(null);
-  const descriptionRef = useRef<HTMLTextAreaElement>(null);
-  const imageRef = useRef<HTMLInputElement>(null);
+
+  const blogTitleRef = useRef<HTMLInputElement>(null);
+  const blogDescriptionRef = useRef<HTMLTextAreaElement>(null);
+  const blogImageRef = useRef<HTMLInputElement>(null);
 
   const [readTime, setReadTime] = useState<number | null>(null);
-  const [selectedCategories, setSelectedCategories] = useState<string | null>(null); // prettier-ignore
+  const [selectedCategories, setSelectedCategories] = useState<string[] | null>(null); // prettier-ignore
   const [selectedTags, setSelectedTags] = useState<string[] | null>(null);
-  const [selectedLanguage, setSelectedLanguage] = useState<string | null>(
-    DEFAULT_LANGUAGE,
-  );
+  const [selectedLanguage, setSelectedLanguage] = useState<string | null>(DEFAULT_LANGUAGE); // prettier-ignore
+  const [featured, setFeatured] = useState<boolean>(false);
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-y-6 py-6">
+    <form className="mx-auto flex max-w-3xl flex-col gap-y-6 py-6">
       <div className="mb-4">
         <h1 className="mb-1 text-2xl font-bold text-zinc-900">
           Blog Detayları
@@ -40,10 +44,10 @@ export function CreateBlogForm() {
 
         <div className="space-y-4">
           <Input
-            ref={titleRef}
+            ref={seoTitleRef}
             id="seo-title"
             label="Başlık"
-            placeholder="SEO Başlığı"
+            placeholder="Arama motorları için başlık."
             hint="SEO başlığı, google gibi arama motolarının içeriği daha iyi değerlendirmesine yardımcı olur."
             isRequired={true}
             maxLength={60}
@@ -52,7 +56,7 @@ export function CreateBlogForm() {
             label="URL"
             id="seo-slug"
             ref={slugRef}
-            followRef={titleRef}
+            followRef={seoTitleRef}
             hint="Makalenin URL'de görünecek benzersiz tanımlayıcısı"
             isRequired={true}
             checkSlug={async (slug) => {
@@ -60,17 +64,17 @@ export function CreateBlogForm() {
             }}
           />
           <Textarea
-            ref={descriptionRef}
+            ref={seoDescriptionRef}
             label="Açıklaması"
             id="seo-description"
-            placeholder="Google arama sonuçlarında görünecek açıklama"
+            placeholder="Arama motorları için açıklama."
             hint="Hedef kelimelerinizi içeren, kullanıcıyı sayfaya çekecek bir açıklama yazın."
             maxLength={160}
             rows={3}
             isRequired={true}
           />
           <ImagePreview
-            ref={imageRef}
+            ref={seoImageRef}
             id="seo-image"
             label="Sosyal Medya Görseli"
             hint="Sosyal medyada paylaşıldığında görünecek görsel"
@@ -101,6 +105,7 @@ export function CreateBlogForm() {
 
         <div className="space-y-6">
           <Input
+            ref={blogTitleRef}
             id="blog-title"
             label="Kart Başlığı"
             placeholder="Dikkat çekici ve içeriği yansıtan bir başlık"
@@ -111,6 +116,7 @@ export function CreateBlogForm() {
           />
 
           <Textarea
+            ref={blogDescriptionRef}
             label="Kart Açıklaması"
             id="blog-description"
             placeholder="İçeriğinizin ana fikrini özetleyen kısa bir açıklama yazın"
@@ -122,14 +128,15 @@ export function CreateBlogForm() {
           />
 
           <ImagePreview
+            ref={blogImageRef}
             id="blog-image"
             label="Kart Görseli"
             hint="Blog kartında görünecek görsel, boş bırakılırsa sosyal medya görseli kullanılır."
             autoMode={true}
             followId="seo-image"
-            followRef={imageRef}
+            followRef={seoImageRef}
           />
-          <Select
+          <MultiSelect
             label="Blog Kategorileri"
             id="blog-categories"
             options={DEFAULT_CATEGORY_OPTIONS}
@@ -137,7 +144,7 @@ export function CreateBlogForm() {
             onChange={setSelectedCategories}
             hint="Blog yazınıza uygun kategorileri seçin veya yeni ekleyin"
             isRequired={true}
-            allowCustomOption={true}
+            allowCustomOption={false}
             customOptionPlaceholder="Yeni kategori ekle..."
             placeholder="Kategori seçimi yapın."
           />
@@ -149,8 +156,8 @@ export function CreateBlogForm() {
             onChange={setSelectedTags}
             hint="Blog yazınıza uygun etiketleri seçin, arama yaparken kullanıcı deneyimini kolaylaştırır."
             placeholder="Etiket seçin..."
-            allowCustomOption={true}
-            isRequired={true}
+            allowCustomOption={false}
+            isRequired={false}
             customOptionPlaceholder="Özel etiket ekle..."
             searchPlaceholder="Etiketlerde ara..."
           />
@@ -184,16 +191,22 @@ export function CreateBlogForm() {
             defaultWordsPerMinute={1}
             hint="Makalenin okunması için gereken tahmini süre"
           />
+
+          <Toggle
+            label="Öne Çıkar"
+            description="Bu içeriğin öncelikli olarak görüntülenmesini sağlar."
+            state={featured}
+            setState={setFeatured}
+          />
         </div>
       </div>
 
-      {/* Alt Butonlar */}
-      <div className="flex justify-end pt-4">
-        <button className="bg-primary-500 hover:bg-primary-600 focus:ring-primary-200 flex items-center gap-1.5 rounded-md px-6 py-2 text-sm font-medium text-white focus:ring-2 focus:ring-offset-2 focus:outline-none">
-          İçerik Ekle
-          <MoveRight size={16} />
+      <div className="fixed right-4 bottom-4 flex flex-col items-center justify-center">
+        <button className="bg-primary flex items-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-medium text-white shadow-lg transition-opacity duration-300 hover:opacity-75">
+          <span>Oluştur</span>
+          <Send size={14} />
         </button>
       </div>
-    </div>
+    </form>
   );
 }

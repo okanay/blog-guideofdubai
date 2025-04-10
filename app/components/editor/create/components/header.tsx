@@ -1,13 +1,13 @@
 import { ArrowLeft, FileText, PencilRuler } from "lucide-react";
 import { EditorRichMenu } from "../../tiptap/menu";
-import { useCreateBlog } from "../store";
+import { useEditorContext } from "../../store";
 import { ModeButton } from "./view-mode-btn";
 import { Link } from "@/i18n/link";
 
 export function CreateBlogHeader() {
   const {
     view: { mode, setMode },
-  } = useCreateBlog();
+  } = useEditorContext();
 
   // Mod değiştirme işlevi
   const changeMode = (newMode: "form" | "editor") => {

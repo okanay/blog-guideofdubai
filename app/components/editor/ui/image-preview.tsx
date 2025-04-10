@@ -220,7 +220,8 @@ export const ImagePreview = ({
           readOnly={isAuto}
           className={twMerge(
             "w-full rounded-md bg-transparent py-2 pr-20 pl-10 outline-none",
-            isAuto && "cursor-not-allowed bg-zinc-50 text-zinc-500",
+            isAuto &&
+              "pointer-events-none cursor-not-allowed bg-zinc-50 text-zinc-500",
             className,
           )}
           onFocus={(e) => {

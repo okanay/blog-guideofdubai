@@ -1,24 +1,24 @@
 import { Editor } from "../tiptap";
-import { EditorProvider } from "../tiptap/store";
-import { CreateBlogForm } from "./components/form";
-import { CreateBlogProvider, useCreateBlog } from "./store";
+import { TiptapProvider } from "../tiptap/store";
+import { EditorProvider, useEditorContext } from "../store";
+import { CreateBlogForm } from "../form";
 import { CreateBlogHeader } from "./components/header";
 import DummyText from "../tiptap/dummy";
 
 export default function CreateBlogPage() {
   return (
-    <CreateBlogProvider>
-      <EditorProvider initialContent={DummyText}>
+    <EditorProvider>
+      <TiptapProvider initialContent={DummyText}>
         <BlogPageContent />
-      </EditorProvider>
-    </CreateBlogProvider>
+      </TiptapProvider>
+    </EditorProvider>
   );
 }
 
 function BlogPageContent() {
   const {
     view: { mode },
-  } = useCreateBlog();
+  } = useEditorContext();
 
   return (
     <main className="flex min-h-screen flex-col">

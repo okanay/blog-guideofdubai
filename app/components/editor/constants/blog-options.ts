@@ -3,8 +3,8 @@ declare global {
 }
 
 export const BLOG_OPTIONS = [
-  { value: "published", label: "Yayınla" },
-  { value: "draft", label: "Hazırlanıyor" },
-  { value: "deleted", label: "Sil" },
-  { value: "archived", label: "Arşiv" },
+  { value: "status-published", label: "Yayınla" },
+  { value: "status-draft", label: "Hazırlanıyor" },
+  { value: "status-deleted", label: "Sil" },
+  { value: "status-archived", label: "Arşiv" },
 ];

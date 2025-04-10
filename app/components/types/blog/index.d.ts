@@ -5,37 +5,30 @@ type Blog = {
   metadata: {
     title: string;
     description: string;
-    openGraph: {
-      title: string;
-      description: string;
-      image: string | null;
-    };
+    image: string;
     canonicalSlug: boolean;
     alternatives: {
       language: Language;
       slug: string;
     }[];
   };
-  writer: {
-    name: string;
-    avatar: string | null;
-  };
   content: {
     title: string;
-    description: string | null;
-    tags: string[] | null;
-    categories: string[] | null;
+    description: string;
+    readTime: number;
+    tags: string[];
+    categories: string[];
     html: string;
+    json: string;
   };
   stats: {
-    views: number | null;
-    readTime: number | null;
-    version: number | null;
+    views: number;
   };
   language: Language;
   status: BlogStatus;
   featured: boolean;
   createdAt: Date;
   updatedAt: Date;
-  publishedAt: Date | null;
+  publishedAt: Date;
+  version: number;
 };

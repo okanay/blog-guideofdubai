@@ -1,39 +1,40 @@
 import { useState, useEffect } from "react";
 import { twMerge } from "tailwind-merge";
-import { Globe, Share2, RefreshCw } from "lucide-react";
+import { Globe, Share2 } from "lucide-react";
+import { ReactNode } from "react";
 
-// Alt bileşenler için type tanımları
 type PreviewMode = "google" | "social";
 
-interface SeoPreviewProps {
-  title?: string;
-  description?: string;
-  slug?: string;
-  image?: string;
-  baseUrl?: string;
-  titleInput?: { id: string; value: string };
-  descriptionInput?: { id: string; value: string };
-  slugInput?: { id: string; value: string };
-  imageInput?: { id: string; value: string };
-  containerClassName?: string;
-  defaultMode?: PreviewMode;
+const SEO_LIMITS = {
+  GOOGLE_TITLE: 60,
+  GOOGLE_DESCRIPTION: 160,
+  SOCIAL_TITLE: 60,
+  SOCIAL_DESCRIPTION: 160,
+} as const;
+
+function getInputValueById(id: string | undefined): string {
+  if (!id) return "";
+  const element = document.getElementById(id) as
+    | HTMLInputElement
+    | HTMLTextAreaElement
+    | null;
+  return element?.value || "";
 }
 
-export function SeoPreview({
-  title: initialTitle = "",
-  description: initialDescription = "",
-  slug: initialSlug = "",
-  image: initialImage = "",
-  baseUrl = "example.com",
+function truncateText(text: string, limit: number): string {
+  return text.length > limit ? `${text.substring(0, limit)}...` : text;
+}
+
+function useSeoPreview({
+  initialTitle,
+  initialDescription,
+  initialSlug,
+  initialImage,
   titleInput,
   descriptionInput,
   slugInput,
   imageInput,
-  containerClassName,
-  defaultMode = "google",
-}: SeoPreviewProps) {
-  // State yönetimi
-  const [mode, setMode] = useState<PreviewMode>(defaultMode);
+}: UseSeoPreviewParams) {
   const [previewData, setPreviewData] = useState({
     title: initialTitle,
     description: initialDescription,
@@ -41,18 +42,7 @@ export function SeoPreview({
     image: initialImage,
   });
 
-  // Input değerlerini izle ve değişiklik olduğunda güncelle
   useEffect(() => {
-    function getInputValueById(id: string | undefined): string {
-      if (!id) return "";
-      const element = document.getElementById(id) as
-        | HTMLInputElement
-        | HTMLTextAreaElement
-        | null;
-      return element?.value || "";
-    }
-
-    // Önizlemeyi güncelleyen fonksiyon
     function updatePreview() {
       const newData = {
         title: titleInput
@@ -74,10 +64,8 @@ export function SeoPreview({
       setPreviewData(newData);
     }
 
-    // İlk render'da önizlemeyi güncelle
     updatePreview();
 
-    // İzleyici fonksiyonu
     const observer = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
         if (
@@ -89,35 +77,30 @@ export function SeoPreview({
       }
     });
 
-    // İnput elementlerini izle
-    [titleInput?.id, descriptionInput?.id, slugInput?.id, imageInput?.id]
+    const elements = [
+      titleInput?.id,
+      descriptionInput?.id,
+      slugInput?.id,
+      imageInput?.id,
+    ]
       .filter(Boolean)
-      .forEach((id) => {
-        const element = document.getElementById(id as string);
-        if (element) {
-          observer.observe(element, {
-            attributes: true,
-            childList: true,
-            subtree: true,
-          });
+      .map((id) => document.getElementById(id as string))
+      .filter(Boolean);
 
-          // Input event listener ekle
-          element.addEventListener("input", updatePreview);
-        }
+    elements.forEach((element) => {
+      observer.observe(element as Element, {
+        attributes: true,
+        childList: true,
+        subtree: true,
       });
+      element?.addEventListener("input", updatePreview);
+    });
 
-    // Cleanup fonksiyonu
     return () => {
       observer.disconnect();
-
-      [titleInput?.id, descriptionInput?.id, slugInput?.id, imageInput?.id]
-        .filter(Boolean)
-        .forEach((id) => {
-          const element = document.getElementById(id as string);
-          if (element) {
-            element.removeEventListener("input", updatePreview);
-          }
-        });
+      elements.forEach((element) => {
+        element?.removeEventListener("input", updatePreview);
+      });
     };
   }, [
     initialTitle,
@@ -130,44 +113,157 @@ export function SeoPreview({
     imageInput,
   ]);
 
+  return previewData;
+}
+
+export function GoogleSearchPreview({
+  title,
+  description,
+  slug,
+  baseUrl,
+}: GoogleSearchPreviewProps) {
+  const url = slug ? `${baseUrl}/${slug}` : baseUrl;
+  const displayTitle = truncateText(
+    title || "Sayfa Başlığı",
+    SEO_LIMITS.GOOGLE_TITLE,
+  );
+  const displayDescription = truncateText(
+    description ||
+      "Sayfa açıklaması burada görünecek. Google arama sonuçlarında gösterilen metin.",
+    SEO_LIMITS.GOOGLE_DESCRIPTION,
+  );
+
+  return (
+    <div className="flex flex-col gap-1 rounded-md border border-zinc-200 p-4">
+      <div className="flex items-center gap-1 text-xs text-green-800">
+        <img
+          src="/metadata/favicons/favicon.ico"
+          alt="Favicon"
+          className="h-4 w-4"
+          loading="lazy"
+        />
+        <span>{url}</span>
+      </div>
+      <h3 className="text-base font-medium text-blue-700 hover:underline">
+        {displayTitle} | Guide Of Dubai
+      </h3>
+      <p className="text-sm text-zinc-700">{displayDescription}</p>
+      <div className="mt-1 flex flex-wrap gap-x-2 gap-y-1 text-xs text-zinc-500">
+        <span>10 Nis 2025</span>
+        <span>•</span>
+        <span>Diğer sayfalardan benzer sonuçlar</span>
+      </div>
+    </div>
+  );
+}
+
+export function SocialMediaPreview({
+  title,
+  description,
+  slug,
+  baseUrl,
+  image,
+}: SocialMediaPreviewProps) {
+  const [imageStatus, setImageStatus] = useState<
+    "loading" | "error" | "success"
+  >(image ? "loading" : "error");
+
+  const url = slug ? `${baseUrl}/${slug}` : baseUrl;
+  const displayTitle = truncateText(
+    title || "Sosyal Medya Paylaşım Başlığı",
+    SEO_LIMITS.SOCIAL_TITLE,
+  );
+  const displayDescription = truncateText(
+    description || "Sosyal medya paylaşımlarında gösterilecek açıklama metni.",
+    SEO_LIMITS.SOCIAL_DESCRIPTION,
+  );
+
+  useEffect(() => {
+    setImageStatus(image ? "loading" : "error");
+  }, [image]);
+
+  return (
+    <div className="flex w-full flex-col overflow-hidden rounded-lg border border-zinc-300 shadow-sm sm:max-w-[400px]">
+      {imageStatus !== "error" && image && (
+        <div className="relative w-full bg-zinc-100">
+          {imageStatus === "loading" && (
+            <div className="absolute inset-0 flex items-center justify-center bg-zinc-100">
+              <span className="text-sm text-zinc-500">Yükleniyor...</span>
+            </div>
+          )}
+          <img
+            src={image}
+            alt="Sosyal Medya Görseli"
+            className="h-[200px] w-full object-cover"
+            onError={() => setImageStatus("error")}
+            onLoad={() => setImageStatus("success")}
+            loading="lazy"
+          />
+        </div>
+      )}
+      {imageStatus === "error" && <div className="h-2 w-full bg-zinc-200" />}
+      <div className="flex flex-col gap-1 p-3">
+        <div className="text-xs text-zinc-500 uppercase">{url}</div>
+        <h3 className="line-clamp-2 text-base font-bold text-zinc-800">
+          {displayTitle}
+        </h3>
+        <p className="line-clamp-3 text-sm text-zinc-600">
+          {displayDescription}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export function SeoPreview({
+  title = "",
+  description = "",
+  slug = "",
+  image = "",
+  baseUrl = "example.com",
+  titleInput,
+  descriptionInput,
+  slugInput,
+  imageInput,
+  containerClassName,
+  defaultMode = "google",
+}: SeoPreviewProps) {
+  const [mode, setMode] = useState<PreviewMode>(defaultMode);
+
+  const previewData = useSeoPreview({
+    initialTitle: title,
+    initialDescription: description,
+    initialSlug: slug,
+    initialImage: image,
+    titleInput,
+    descriptionInput,
+    slugInput,
+    imageInput,
+  });
+
   return (
     <div className={twMerge("flex flex-col gap-3", containerClassName)}>
-      {/* Başlık ve mod seçimi */}
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium text-zinc-700">SEO Önizleme</h3>
-
         <div className="flex items-center gap-2">
-          {/* Mod değiştirme butonları */}
           <div className="flex overflow-hidden rounded-md border border-zinc-200">
-            <button
+            <PreviewModeButton
+              mode="google"
+              currentMode={mode}
               onClick={() => setMode("google")}
-              className={twMerge(
-                "flex items-center gap-1 px-3 py-1.5 text-xs font-medium transition-colors",
-                mode === "google"
-                  ? "bg-primary text-white"
-                  : "bg-zinc-50 text-zinc-700 hover:bg-zinc-100",
-              )}
-              type="button"
-            >
-              <Globe size={12} /> Google
-            </button>
-            <button
+              icon={<Globe size={12} />}
+              label="Google"
+            />
+            <PreviewModeButton
+              mode="social"
+              currentMode={mode}
               onClick={() => setMode("social")}
-              className={twMerge(
-                "flex items-center gap-1 px-3 py-1.5 text-xs font-medium transition-colors",
-                mode === "social"
-                  ? "bg-primary text-white"
-                  : "bg-zinc-50 text-zinc-700 hover:bg-zinc-100",
-              )}
-              type="button"
-            >
-              <Share2 size={12} /> Sosyal Medya
-            </button>
+              icon={<Share2 size={12} />}
+              label="Sosyal Medya"
+            />
           </div>
         </div>
       </div>
-
-      {/* Önizleme içeriği */}
       <div className="overflow-hidden bg-white">
         {mode === "google" ? (
           <GoogleSearchPreview
@@ -190,68 +286,59 @@ export function SeoPreview({
   );
 }
 
-// Google Arama Sonuçları Önizleme Alt Bileşeni
+function PreviewModeButton({
+  mode,
+  currentMode,
+  onClick,
+  icon,
+  label,
+}: PreviewModeButtonProps) {
+  return (
+    <button
+      onClick={onClick}
+      className={twMerge(
+        "flex items-center gap-1 px-3 py-1.5 text-xs font-medium transition-colors",
+        currentMode === mode
+          ? "bg-primary text-white"
+          : "bg-zinc-50 text-zinc-700 hover:bg-zinc-100",
+      )}
+      type="button"
+    >
+      {icon} {label}
+    </button>
+  );
+}
+
+interface SeoPreviewProps {
+  title?: string;
+  description?: string;
+  slug?: string;
+  image?: string;
+  baseUrl?: string;
+  titleInput?: { id: string; value: string };
+  descriptionInput?: { id: string; value: string };
+  slugInput?: { id: string; value: string };
+  imageInput?: { id: string; value: string };
+  containerClassName?: string;
+  defaultMode?: PreviewMode;
+}
+
+interface UseSeoPreviewParams {
+  initialTitle: string;
+  initialDescription: string;
+  initialSlug: string;
+  initialImage: string;
+  titleInput?: { id: string; value: string };
+  descriptionInput?: { id: string; value: string };
+  slugInput?: { id: string; value: string };
+  imageInput?: { id: string; value: string };
+}
+
 interface GoogleSearchPreviewProps {
   title: string;
   description: string;
   slug: string;
   baseUrl: string;
-}
-
-function GoogleSearchPreview({
-  title,
-  description,
-  slug,
-  baseUrl,
-}: GoogleSearchPreviewProps) {
-  // URL oluştur
-  const url = slug ? `${baseUrl}/${slug}` : baseUrl;
-
-  // Karakter sınırları
-  const titleLimit = 60;
-  const descriptionLimit = 160;
-
-  // Kesilen metinler
-  const displayTitle =
-    title.length > titleLimit
-      ? `${title.substring(0, titleLimit)}...`
-      : title || "Sayfa Başlığı";
-
-  const displayDescription =
-    description.length > descriptionLimit
-      ? `${description.substring(0, descriptionLimit)}...`
-      : description ||
-        "Sayfa açıklaması burada görünecek. Google arama sonuçlarında gösterilen metin.";
-
-  return (
-    <div className="flex flex-col gap-1 rounded-md border border-zinc-200 p-4">
-      {/* Favicon ve URL */}
-      <div className="flex items-center gap-1 text-xs text-green-800">
-        <img
-          src="/metadata/favicons/favicon.ico"
-          alt="Favicon"
-          className="h-4 w-4"
-          loading="lazy"
-        />
-        <span>{url}</span>
-      </div>
-
-      {/* Başlık */}
-      <h3 className="text-base font-medium text-blue-700 hover:underline">
-        {displayTitle} | Guide Of Dubai
-      </h3>
-
-      {/* Açıklama */}
-      <p className="text-sm text-zinc-700">{displayDescription}</p>
-
-      {/* Meta bilgiler (opsiyonel) */}
-      <div className="mt-1 flex flex-wrap gap-x-2 gap-y-1 text-xs text-zinc-500">
-        <span>10 Nis 2025</span>
-        <span>•</span>
-        <span>Diğer sayfalardan benzer sonuçlar</span>
-      </div>
-    </div>
-  );
 }
 
 interface SocialMediaPreviewProps {
@@ -262,95 +349,10 @@ interface SocialMediaPreviewProps {
   image?: string;
 }
 
-function SocialMediaPreview({
-  title,
-  description,
-  slug,
-  baseUrl,
-  image,
-}: SocialMediaPreviewProps) {
-  const url = slug ? `${baseUrl}/${slug}` : baseUrl;
-
-  const [imageStatus, setImageStatus] = useState<
-    "loading" | "error" | "success"
-  >(image ? "loading" : "error");
-
-  const titleLimit = 70;
-  const descriptionLimit = 200;
-
-  const displayTitle =
-    title.length > titleLimit
-      ? `${title.substring(0, titleLimit)}...`
-      : title || "Sosyal Medya Paylaşım Başlığı";
-
-  const displayDescription =
-    description.length > descriptionLimit
-      ? `${description.substring(0, descriptionLimit)}...`
-      : description ||
-        "Sosyal medya paylaşımlarında gösterilecek açıklama metni. Bu metin Facebook, Twitter, LinkedIn gibi platformlarda görünür.";
-
-  // Görsel değiştiğinde durumu güncelle
-  useEffect(() => {
-    if (image) {
-      setImageStatus("loading");
-    } else {
-      setImageStatus("error");
-    }
-  }, [image]);
-
-  // Görsel yükleme hatası işleyicisi
-  const handleImageError = () => {
-    setImageStatus("error");
-  };
-
-  // Görsel yükleme başarılı işleyicisi
-  const handleImageLoad = () => {
-    setImageStatus("success");
-  };
-
-  return (
-    <div className="flex w-full flex-col overflow-hidden rounded-lg border border-zinc-300 shadow-sm sm:max-w-[400px]">
-      {/* Görsel - sadece bir görsel URL'si varsa ve başarıyla yüklendiyse göster */}
-      {imageStatus !== "error" && image && (
-        <div className="relative w-full bg-zinc-100">
-          {imageStatus === "loading" && (
-            <div className="absolute inset-0 flex items-center justify-center bg-zinc-100">
-              <span className="text-sm text-zinc-500">Yükleniyor...</span>
-            </div>
-          )}
-          <img
-            src={image}
-            alt="Sosyal Medya Görseli"
-            className="h-[200px] w-full object-cover"
-            onError={handleImageError}
-            onLoad={handleImageLoad}
-            loading="lazy"
-          />
-        </div>
-      )}
-
-      {/* Görsel yoksa veya yüklenmediyse daha kompakt görünüm */}
-      {imageStatus === "error" && (
-        <div className="h-2 w-full bg-zinc-200"></div>
-      )}
-
-      {/* İçerik */}
-      <div className="flex flex-col gap-1 p-3">
-        {/* URL - gri metin */}
-        <div className="text-xs text-zinc-500 uppercase">{url}</div>
-
-        {/* Başlık */}
-        <h3 className="line-clamp-2 text-base font-bold text-zinc-800">
-          {displayTitle}
-        </h3>
-
-        {/* Açıklama */}
-        <p className="line-clamp-3 text-sm text-zinc-600">
-          {displayDescription}
-        </p>
-      </div>
-    </div>
-  );
+interface PreviewModeButtonProps {
+  mode: PreviewMode;
+  currentMode: PreviewMode;
+  onClick: () => void;
+  icon: ReactNode;
+  label: string;
 }
-
-export default SocialMediaPreview;
