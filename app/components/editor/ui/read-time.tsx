@@ -4,6 +4,7 @@ import { Clock, Lock, Unlock, RotateCcw } from "lucide-react";
 import { calculateContentStats } from "../helper";
 
 interface ReadTimeProps {
+  ref?: React.Ref<HTMLInputElement>;
   label?: string;
   id?: string;
   isRequired?: boolean;
@@ -11,13 +12,16 @@ interface ReadTimeProps {
   errorMessage?: string;
   hint?: string;
   containerClassName?: string;
-  value?: number | null;
-  onChange?: (value: number | null) => void;
+  value: number;
+  onChange: (value: number) => void;
+  onBlur?: () => void;
+  name?: string;
   htmlContent?: string;
   defaultWordsPerMinute?: number;
 }
 
 export const ReadTime = ({
+  ref,
   label = "Okuma Süresi",
   id,
   isRequired = false,
@@ -25,17 +29,14 @@ export const ReadTime = ({
   errorMessage,
   hint = "Dakika cinsinden ortalama okuma süresi",
   containerClassName,
-  value: externalValue,
+  value,
   onChange,
+  onBlur,
+  name,
   htmlContent = "",
-  defaultWordsPerMinute = 200,
+  defaultWordsPerMinute = 225,
 }: ReadTimeProps) => {
   const [isAuto, setIsAuto] = useState(true);
-
-  const [readTime, setReadTime] = useState<number | null>(
-    externalValue || null,
-  );
-
   const [stats, setStats] = useState<{
     wordCount: number;
     characterCount: number;
@@ -43,61 +44,66 @@ export const ReadTime = ({
   }>({
     wordCount: 0,
     characterCount: 0,
-    autoReadTime: externalValue,
+    autoReadTime: value || 1,
   });
 
   const inputId =
     id || `read-time-${Math.random().toString(36).substring(2, 9)}`;
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const updateReadTime = (newValue: number | null) => {
-    setReadTime(newValue);
-    if (onChange) {
-      onChange(newValue);
+  // forwardRef desteği için referansı ilet
+  useEffect(() => {
+    if (typeof ref === "function") {
+      ref(inputRef.current);
+    } else if (ref) {
+      ref.current = inputRef.current;
     }
-  };
+  }, [ref]);
+
+  // HTML içeriği değiştiğinde istatistikleri güncelle
+  useEffect(() => {
+    const contentStats = calculateContentStats(
+      htmlContent,
+      defaultWordsPerMinute,
+    );
+    setStats({
+      wordCount: contentStats.wordCount,
+      characterCount: contentStats.characterCount,
+      autoReadTime: contentStats.readTime,
+    });
+
+    // Otomatik moddaysa, okuma süresini güncelle
+    if (isAuto) {
+      onChange(contentStats.readTime);
+    }
+  }, [htmlContent, defaultWordsPerMinute, isAuto, onChange]);
 
   const handleManualChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value.trim();
-
     if (inputValue === "") {
-      updateReadTime(null);
+      onChange(1); // Minimum 1 dakika
       return;
     }
 
     const numericValue = parseInt(inputValue, 10);
     if (!isNaN(numericValue) && numericValue >= 1) {
-      updateReadTime(numericValue);
+      onChange(numericValue);
     }
   };
 
   const toggleMode = () => {
     if (isAuto) {
-      // Otomatikten manuele geçerken mevcut değeri koru
       setIsAuto(false);
     } else {
-      // Manuelden otomatiğe geçerken, otomatik hesaplanan değeri kullan
       setIsAuto(true);
-      updateReadTime(stats.autoReadTime);
+      onChange(stats.autoReadTime);
     }
   };
 
   const resetToAuto = () => {
-    updateReadTime(stats.autoReadTime);
+    setIsAuto(true);
+    onChange(stats.autoReadTime);
   };
-
-  useEffect(() => {
-    if (isAuto) {
-      const value = calculateContentStats(htmlContent);
-      setStats({
-        wordCount: value.wordCount,
-        characterCount: value.characterCount,
-        autoReadTime: value.readTime,
-      });
-
-      setReadTime(value.readTime);
-    }
-  }, [htmlContent]);
 
   return (
     <div className={twMerge("flex flex-col gap-1.5", containerClassName)}>
@@ -143,7 +149,7 @@ export const ReadTime = ({
           ref={inputRef}
           type="number"
           min="1"
-          value={readTime || externalValue || 0}
+          value={isAuto ? stats.autoReadTime : value || ""}
           onChange={handleManualChange}
           placeholder="Dakika"
           disabled={isAuto}
@@ -185,7 +191,7 @@ export const ReadTime = ({
           <span title="Kelime sayısı">{stats.wordCount} kelime</span>
           <span>•</span>
           <span title="Karakter sayısı">{stats.characterCount} karakter</span>
-          {!isAuto && stats.autoReadTime !== readTime && (
+          {!isAuto && (
             <>
               <span>•</span>
               <span title="Otomatik hesaplanan okuma süresi" className="italic">

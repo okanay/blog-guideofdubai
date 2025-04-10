@@ -6,7 +6,7 @@ type Blog = {
     title: string;
     description: string;
     image: string;
-    canonicalSlug: boolean;
+    canonical: boolean;
     alternatives: {
       language: Language;
       slug: string;

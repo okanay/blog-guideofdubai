@@ -152,9 +152,9 @@ export const MultiSelect = ({
       >
         {selectedOptions.length > 0 ? (
           <div className="flex flex-wrap gap-1.5">
-            {selectedOptions.map((option) => (
+            {selectedOptions.map((option, index) => (
               <div
-                key={option.value}
+                key={option.value + index + "MultiSelect-Options"}
                 className="group flex items-center gap-1 rounded-md bg-zinc-100 px-2 py-1 text-xs"
               >
                 <Tag size={12} className="text-zinc-500" />

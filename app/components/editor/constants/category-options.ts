@@ -57,7 +57,6 @@ export const DEFAULT_CATEGORY_OPTIONS = [
   { value: "category-rent-a-yatch", label: "Rent a Yatch" },
   { value: "category-restaurants", label: "Restaurants" },
   { value: "category-riverland-dubai", label: "Riverland Dubai" },
-  { value: "category-shopping", label: "Shopping" },
   { value: "category-theme-parks", label: "Theme Parks" },
   { value: "category-uncategorized", label: "Uncategorized" },
   { value: "category-wild-wadi-waterpark", label: "Wild Wadi Waterpark" },
