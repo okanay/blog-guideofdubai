@@ -1,8 +1,16 @@
 // app/components/editor/create/form.tsx
-import { Input, Textarea, Select, Checkbox, SeoPreview, SlugCreator, Image, ReadTime, BlogStatus, MultiSelect } from "@/components/editor/ui" // prettier-ignore
+import { Input, Textarea, Select, Checkbox, SeoPreview, SlugCreator, ImagePreview, ReadTime, BlogStatus, MultiSelect } from "@/components/editor/ui" // prettier-ignore
 import { MoveRight } from "lucide-react";
+import { useRef } from "react";
 
 export function CreateBlogForm() {
+  const titleRef = useRef<HTMLInputElement>(null);
+  const slugRef = useRef<HTMLInputElement>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
+  const imageRef = useRef<HTMLInputElement>(null);
+
+  console.log("render");
+
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-y-6 py-6">
       <div className="mb-4">
@@ -23,15 +31,56 @@ export function CreateBlogForm() {
 
         <div className="space-y-4">
           <Input
-            label="SEO Başlığı"
+            ref={titleRef}
+            id="seo-title"
+            label="Başlık"
             placeholder="SEO Başlığı"
             hint="SEO başlığı, google gibi arama motolarının içeriği daha iyi değerlendirmesine yardımcı olur."
             isRequired={true}
+            maxLength={60}
           />
-          <p>slug-creator (slug-creator)</p>
-          <p>seo description (text-area)</p>
-          <p>open-graph görseli (image)</p>
-          <p>preview google search (seo-preview)</p>
+          <SlugCreator
+            label="URL"
+            id="seo-slug"
+            ref={slugRef}
+            followRef={titleRef}
+            hint="Makalenin URL'de görünecek benzersiz tanımlayıcısı"
+            isRequired={true}
+            checkSlug={async (slug) => {
+              return false;
+            }}
+          />
+          <Textarea
+            ref={descriptionRef}
+            label="Açıklaması"
+            id="seo-description"
+            placeholder="Google arama sonuçlarında görünecek açıklama"
+            hint="Hedef kelimelerinizi içeren, kullanıcıyı sayfaya çekecek bir açıklama yazın."
+            maxLength={160}
+            rows={3}
+            isRequired={true}
+          />
+          <ImagePreview
+            ref={imageRef}
+            id="seo-image"
+            label="Sosyal Medya Görseli"
+            hint="Sosyal medyada paylaşıldığında görünecek görsel"
+            isRequired={true}
+          />
+          <SeoPreview
+            titleInput={{ id: "seo-title", value: "" }}
+            descriptionInput={{
+              id: "seo-description",
+              value: "",
+            }}
+            slugInput={{ id: "seo-slug", value: "" }}
+            imageInput={{
+              id: "seo-image",
+              value: "",
+            }}
+            defaultMode="google"
+            baseUrl="guideofdubai.com/blog"
+          />
         </div>
       </div>
 
@@ -42,9 +91,32 @@ export function CreateBlogForm() {
         </h2>
 
         <div className="space-y-6">
-          {/* Başlık */}
-          <p>content title (input)</p>
-          <p>content description (text-area)</p>
+          <Input
+            id="content-title"
+            label="Kart Başlığı"
+            placeholder="Dikkat çekici ve içeriği yansıtan bir başlık"
+            hint="Başlık blog kartında büyük puntolarla gösterilir ve dikkat çeken ilk unsurdur."
+            isRequired={true}
+            maxLength={40}
+            showCharCount={true}
+          />
+
+          <Textarea
+            label="Kart Açıklaması"
+            id="content-description"
+            placeholder="İçeriğinizin ana fikrini özetleyen kısa bir açıklama yazın"
+            hint="Blog kartında başlığın altında küçük yazı ile gösterilir. Okuyucuyu içeriğe çekmek için önemlidir."
+            maxLength={120}
+            rows={3}
+            isRequired={true}
+            showCharCount={true}
+          />
+
+          <ImagePreview
+            id="content-image"
+            label="Kart Görseli"
+            hint="Blog kartında görünecek görsel, boş bırakılırsa sosyal medya görseli kullanılır."
+          />
           <p>kategoriler (multi-select)</p>
           <p>tag (multi-select)</p>
           <p>okuma Süresi (read-time)</p>
