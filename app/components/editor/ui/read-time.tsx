@@ -15,6 +15,7 @@ interface ReadTimeProps {
   value: number;
   onChange: (value: number) => void;
   onBlur?: () => void;
+  initialAutoMode?: boolean;
   name?: string;
   htmlContent?: string;
   defaultWordsPerMinute?: number;
@@ -31,12 +32,11 @@ export const ReadTime = ({
   containerClassName,
   value,
   onChange,
-  onBlur,
-  name,
+  initialAutoMode = false,
   htmlContent = "",
   defaultWordsPerMinute = 225,
 }: ReadTimeProps) => {
-  const [isAuto, setIsAuto] = useState(true);
+  const [isAuto, setIsAuto] = useState(initialAutoMode);
   const [stats, setStats] = useState<{
     wordCount: number;
     characterCount: number;

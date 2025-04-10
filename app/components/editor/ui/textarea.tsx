@@ -1,3 +1,4 @@
+import { Lock, Unlock } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -12,7 +13,12 @@ interface TextareaProps extends React.ComponentProps<"textarea"> {
   maxLength?: number;
   showCharCount?: boolean;
   containerClassName?: string;
-  enforceMaxLength?: boolean; // Limit zorunluluğunu kontrol etmek için yeni prop
+  enforceMaxLength?: boolean;
+  autoMode?: boolean;
+  initialAutoMode?: boolean;
+  followRef?: React.RefObject<HTMLTextAreaElement>;
+  onValueSync?: (value: string) => void;
+  syncWithValue?: string;
 }
 
 export const Textarea = ({
@@ -32,99 +38,197 @@ export const Textarea = ({
   defaultValue,
   value,
   onChange,
-  enforceMaxLength = true, // Varsayılan olarak limit zorunlu
+  autoMode = false,
+  initialAutoMode = false,
+  followRef,
+  enforceMaxLength = true,
+  onValueSync,
+  syncWithValue,
   ...props
 }: TextareaProps) => {
   const [focused, setFocused] = useState(false);
   const [charCount, setCharCount] = useState(0);
-  const [isLimitExceeded, setIsLimitExceeded] = useState(false);
+  const [isAuto, setIsAuto] = useState(initialAutoMode);
+  const [internalValue, setInternalValue] = useState<string>(
+    (value as string) || (defaultValue as string) || "",
+  );
 
-  // Textarea için bir ref oluştur
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-
+  const elementRef = useRef<HTMLTextAreaElement | null>(null);
   const inputId =
     id || `textarea-${Math.random().toString(36).substring(2, 9)}`;
 
-  const status = isError ? "error" : isSuccess ? "success" : focused ? "focused" : "default"; // prettier-ignore
-  const message = errorMessage || successMessage || hint; // prettier-ignore
-  const messageType = isError ? "error" : isSuccess ? "success" : "hint"; // prettier-ignore
-
-  // Karakter sayısını göstermek için kontrol
   const showCount = showCharCount || maxLength !== undefined;
+  const isLimitExceeded = maxLength !== undefined && charCount > maxLength;
 
-  // Karakter sayısını güncelle
-  const updateCharCount = () => {
-    if (!textareaRef.current) return;
+  const status = isError
+    ? "error"
+    : isSuccess
+      ? "success"
+      : focused
+        ? "focused"
+        : "default";
+  const message = errorMessage || successMessage || hint;
+  const messageType = isError ? "error" : isSuccess ? "success" : "hint";
 
-    const length = textareaRef.current.value.length;
-    setCharCount(length);
+  // Referans birleştirme işlevi
+  const setRefs = (element: HTMLTextAreaElement | null) => {
+    // İç referans için atama
+    elementRef.current = element;
 
-    // Limit aşıldı mı kontrol et
-    if (maxLength !== undefined) {
-      setIsLimitExceeded(length > maxLength);
+    // Dışarıdan gelen ref için atama
+    if (typeof ref === "function") {
+      ref(element);
+    } else if (ref) {
+      (ref as React.MutableRefObject<HTMLTextAreaElement | null>).current =
+        element;
     }
   };
 
-  // İlk yükleme veya değer değişikliğinde karakter sayısını güncelle
-  useEffect(() => {
-    // Component mount olduğunda karakter sayısını güncelle
-    updateCharCount();
+  // onChange işleyicisi
+  const handleOnChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (isAuto) return; // Otomatik modda ise değişikliği engelle
 
-    // eğer controlled component ise (value prop'u varsa),
-    // value değiştiğinde karakter sayısını güncelle
-    if (value !== undefined) {
-      const length = String(value).length;
-      setCharCount(length);
-      if (maxLength !== undefined) {
-        setIsLimitExceeded(length > maxLength);
-      }
+    let newValue = e.target.value;
+
+    // Karakter sınırlaması uygula
+    if (enforceMaxLength && maxLength !== undefined) {
+      newValue = newValue.slice(0, maxLength);
     }
-  }, [value, maxLength]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newValue = e.target.value;
+    setInternalValue(newValue);
+    setCharCount(newValue.length);
 
-    // Eğer limit zorunluysa ve limit aşılıyorsa, yazıyı limitle sınırla
-    if (
-      enforceMaxLength &&
-      maxLength !== undefined &&
-      newValue.length > maxLength
-    ) {
-      // Controlled component ise event'i düzenle
-      if (value !== undefined) {
-        // Değeri maxLength'e göre kes
-        const truncatedValue = newValue.substring(0, maxLength);
+    // Orijinal onChange olayını simüle et
+    if (onChange) {
+      const simulatedEvent = {
+        ...e,
+        target: {
+          ...e.target,
+          value: newValue,
+        },
+      } as React.ChangeEvent<HTMLTextAreaElement>;
 
-        // Textarea değerini direkt değiştir (DOM manipülasyonu)
-        if (textareaRef.current) {
-          textareaRef.current.value = truncatedValue;
-        }
+      onChange(simulatedEvent);
+    }
 
-        // Yapay event oluştur
-        const modifiedEvent = {
-          ...e,
+    // Varsa onValueSync callback'ini çağır
+    if (onValueSync) {
+      onValueSync(newValue);
+    }
+  };
+
+  // Otomatik mod değişikliğini izle
+  useEffect(() => {
+    setIsAuto(isAuto);
+  }, [isAuto]);
+
+  // syncWithValue değişikliğini izle
+  useEffect(() => {
+    if (isAuto && syncWithValue !== undefined) {
+      setInternalValue(syncWithValue);
+      setCharCount(syncWithValue?.length || 0);
+
+      // Otomatik modda iken değerleri senkronize et
+      if (onChange && syncWithValue !== value) {
+        const simulatedEvent = {
           target: {
-            ...e.target,
-            value: truncatedValue,
-          } as HTMLTextAreaElement,
+            name: props.name,
+            value: syncWithValue,
+          },
         } as React.ChangeEvent<HTMLTextAreaElement>;
 
-        // Event'i gönder
-        if (onChange) {
-          onChange(modifiedEvent);
-        }
-      } else {
-        // Uncontrolled component ise doğrudan DOM'u güncelle
-        if (textareaRef.current) {
-          textareaRef.current.value = newValue.substring(0, maxLength);
-          updateCharCount();
-        }
+        onChange(simulatedEvent);
       }
-    } else {
-      // Normal durumda
-      updateCharCount();
-      if (onChange) {
-        onChange(e);
+
+      // Varsa onValueSync callback'ini çağır
+      if (onValueSync) {
+        onValueSync(syncWithValue);
+      }
+    }
+  }, [isAuto, syncWithValue, onChange, props.name, value, onValueSync]);
+
+  // followRef değişikliğini izle (eğer varsa)
+  useEffect(() => {
+    if (
+      isAuto &&
+      followRef?.current &&
+      followRef.current.value !== internalValue
+    ) {
+      const followedValue = followRef.current.value;
+      setInternalValue(followedValue);
+      setCharCount(followedValue.length);
+
+      // Otomatik modda iken değerleri senkronize et
+      if (onChange && followedValue !== value) {
+        const simulatedEvent = {
+          target: {
+            name: props.name,
+            value: followedValue,
+          },
+        } as React.ChangeEvent<HTMLTextAreaElement>;
+
+        onChange(simulatedEvent);
+      }
+
+      // Varsa onValueSync callback'ini çağır
+      if (onValueSync) {
+        onValueSync(followedValue);
+      }
+    }
+  }, [
+    isAuto,
+    followRef?.current?.value,
+    onChange,
+    props.name,
+    value,
+    onValueSync,
+    internalValue,
+  ]);
+
+  // Değer değişikliğini izle
+  useEffect(() => {
+    // Otomatik modda değilse ve kontrollü bileşen ise
+    if (!isAuto && value !== undefined && value !== internalValue) {
+      setInternalValue(value as string);
+      setCharCount((value as string)?.length || 0);
+    }
+  }, [value, isAuto, internalValue]);
+
+  // İlk render için karakter sayacını ayarla
+  useEffect(() => {
+    const initialValue = isAuto
+      ? syncWithValue || followRef?.current?.value || ""
+      : (value as string) || (defaultValue as string) || "";
+
+    setCharCount(initialValue?.length || 0);
+    setInternalValue(initialValue || "");
+  }, []);
+
+  // Otomatik mod değiştiğinde yapılacak işlemler
+  const toggleAutoMode = () => {
+    const newAutoMode = !isAuto;
+    setIsAuto(newAutoMode);
+
+    if (newAutoMode) {
+      // Otomatik moda geçince syncWithValue veya followRef değerini al
+      const syncValue = syncWithValue || followRef?.current?.value || "";
+      setInternalValue(syncValue);
+      setCharCount(syncValue?.length || 0);
+
+      if (onChange && syncValue !== value) {
+        const simulatedEvent = {
+          target: {
+            name: props.name,
+            value: syncValue,
+          },
+        } as React.ChangeEvent<HTMLTextAreaElement>;
+
+        onChange(simulatedEvent);
+      }
+
+      // Varsa onValueSync callback'ini çağır
+      if (onValueSync) {
+        onValueSync(syncValue);
       }
     }
   };
@@ -140,6 +244,23 @@ export const Textarea = ({
             {label}
             {isRequired && <span className="ml-1 text-red-500">*</span>}
           </label>
+          {autoMode && (
+            <button
+              type="button"
+              onClick={toggleAutoMode}
+              className="flex items-center gap-1 text-xs font-medium text-zinc-500 hover:text-zinc-700"
+            >
+              {isAuto ? (
+                <>
+                  <Lock size={12} /> Otomatik
+                </>
+              ) : (
+                <>
+                  <Unlock size={12} /> Manuel
+                </>
+              )}
+            </button>
+          )}
         </div>
       )}
 
@@ -157,27 +278,13 @@ export const Textarea = ({
       >
         <textarea
           {...props}
+          ref={setRefs}
           id={inputId}
-          ref={(node) => {
-            // İki ref'i birleştir: harici ref ve kendi ref'imiz
-            if (typeof ref === "function") {
-              ref(node);
-            } else if (ref) {
-              ref.current = node;
-            }
-            textareaRef.current = node;
-          }}
-          defaultValue={defaultValue}
-          value={value}
-          onChange={handleChange}
-          // enforceMaxLength true ise maxLength kullanmıyoruz, kendi mantığımızı uyguluyoruz
-          // başta karakter kısıtlaması çift uygulanmasın diye
-          maxLength={enforceMaxLength ? undefined : maxLength}
-          className={twMerge(
-            "w-full resize-y rounded-md bg-transparent px-3 py-2 outline-none",
-            maxLength !== undefined && "pr-12", // Eğer sağ alt köşede sayaç varsa padding ekle
-            className,
-          )}
+          value={
+            isAuto
+              ? syncWithValue || followRef?.current?.value || ""
+              : internalValue
+          }
           onFocus={(e) => {
             setFocused(true);
             props.onFocus?.(e);
@@ -186,6 +293,15 @@ export const Textarea = ({
             setFocused(false);
             props.onBlur?.(e);
           }}
+          onChange={handleOnChange}
+          className={twMerge(
+            "w-full resize-y rounded-md bg-transparent px-3 py-2 outline-none",
+            maxLength !== undefined && "pr-12",
+            isAuto &&
+              "pointer-events-none cursor-not-allowed bg-zinc-50 text-zinc-500",
+            className,
+          )}
+          readOnly={isAuto}
         />
 
         {/* Sağ alt köşede karakter sayacı (opsiyonel) */}
@@ -216,7 +332,7 @@ export const Textarea = ({
         </p>
       )}
 
-      {/* Limit aşıldı mesajı - enforceMaxLength false ise göster */}
+      {/* Limit aşıldı mesajı */}
       {isLimitExceeded && !enforceMaxLength && !message && (
         <p className="text-xs text-red-500">Karakter limiti aşıldı.</p>
       )}

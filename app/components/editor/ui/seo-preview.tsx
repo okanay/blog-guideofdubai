@@ -144,10 +144,10 @@ export function GoogleSearchPreview({
         />
         <span>{url}</span>
       </div>
-      <h3 className="text-base font-medium text-blue-700 hover:underline">
+      <h3 className="line-clamp-1 text-base font-medium text-blue-700 hover:underline">
         {displayTitle} | Guide Of Dubai
       </h3>
-      <p className="text-sm text-zinc-700">{displayDescription}</p>
+      <p className="line-clamp-2 text-sm text-zinc-700">{displayDescription}</p>
       <div className="mt-1 flex flex-wrap gap-x-2 gap-y-1 text-xs text-zinc-500">
         <span>10 Nis 2025</span>
         <span>•</span>
@@ -204,10 +204,10 @@ export function SocialMediaPreview({
       {imageStatus === "error" && <div className="h-2 w-full bg-zinc-200" />}
       <div className="flex flex-col gap-1 p-3">
         <div className="text-xs text-zinc-500 uppercase">{url}</div>
-        <h3 className="line-clamp-2 text-base font-bold text-zinc-800">
+        <h3 className="line-clamp-1 text-base font-bold text-zinc-800">
           {displayTitle}
         </h3>
-        <p className="line-clamp-3 text-sm text-zinc-600">
+        <p className="line-clamp-2 text-sm text-zinc-600">
           {displayDescription}
         </p>
       </div>

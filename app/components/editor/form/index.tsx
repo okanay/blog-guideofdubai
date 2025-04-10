@@ -3,34 +3,41 @@ import { DEFAULT_CATEGORY_OPTIONS, DEFAULT_TAG_OPTIONS } from "../constants"; //
 import { ImagePreview, Input, MultiSelect, ReadTime, Select, SeoPreview, SlugCreator, Textarea, Toggle } from "@/components/editor/ui"; // prettier-ignore
 import { LANGUAGE_DICTONARY } from "@/i18n/config";
 import { Controller, useForm } from "react-hook-form";
-import { Send } from "lucide-react";
 import { useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { formSchema } from "./validation";
 import { useTiptapContext } from "../tiptap/store";
 
-export function CreateBlogForm() {
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm<FormSchema>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      ...DEFAULT_BLOG_FORM_VALUES,
-    },
-  });
+type Props = {
+  initialValues?: FormSchema;
+  onSubmit?: (data: FormSchema) => void;
+  submitLabel?: string;
+  initialAutoMode?: boolean;
+};
+
+export function CreateBlogForm({
+  initialValues = DEFAULT_BLOG_FORM_VALUES,
+  submitLabel = "Yayınla",
+  initialAutoMode = true,
+  onSubmit,
+}: Props) {
+  const { editor } = useTiptapContext();
 
   const seoTitleRef = useRef<HTMLInputElement>(null);
   const seoDescriptionRef = useRef<HTMLTextAreaElement>(null);
   const seoImageRef = useRef<HTMLInputElement>(null);
   const slugRef = useRef<HTMLInputElement>(null);
 
-  const { editor } = useTiptapContext();
-
-  const onSubmit = (data: FormSchema) => {
-    console.log(data);
-  };
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+    watch,
+  } = useForm<FormSchema>({
+    resolver: zodResolver(formSchema),
+    mode: "onTouched",
+    defaultValues: { ...initialValues },
+  });
 
   return (
     <form
@@ -63,6 +70,8 @@ export function CreateBlogForm() {
                 id="seo-title"
                 label="Başlık"
                 isRequired={true}
+                maxLength={40}
+                showCharCount={true}
                 isError={!!errors.seoTitle}
                 errorMessage={errors.seoTitle?.message}
                 ref={(e) => {
@@ -81,15 +90,17 @@ export function CreateBlogForm() {
                 {...field}
                 label="URL"
                 id="seo-slug"
-                ref={(e) => {
-                  field.ref(e);
-                  slugRef.current = e;
-                }}
-                followRef={seoTitleRef}
                 hint="Makalenin URL'de görünecek benzersiz tanımlayıcısı"
                 isRequired={true}
                 isError={!!errors.seoSlug}
                 errorMessage={errors.seoSlug?.message}
+                syncWithValue={watch("seoTitle")}
+                autoMode={true}
+                initialAutoMode={initialAutoMode}
+                ref={(e) => {
+                  field.ref(e);
+                  slugRef.current = e;
+                }}
               />
             )}
           />
@@ -164,18 +175,22 @@ export function CreateBlogForm() {
           <Controller
             name="blogTitle"
             control={control}
+            rules={{ required: "Blog başlığı gereklidir" }}
             render={({ field }) => (
               <Input
                 {...field}
                 id="blog-title"
                 label="Kart Başlığı"
                 placeholder="Dikkat çekici ve içeriği yansıtan bir başlık"
-                hint="Başlık blog kartında büyük puntolarla gösterilir ve dikkat çeken ilk unsurdur."
+                hint="Başlık blog kartında büyük puntolarla gösterilir"
+                isError={!!errors.blogTitle}
+                errorMessage={errors.blogTitle?.message}
                 isRequired={true}
                 maxLength={40}
                 showCharCount={true}
-                isError={!!errors.blogTitle}
-                errorMessage={errors.blogTitle?.message}
+                autoMode={true}
+                initialAutoMode={initialAutoMode}
+                syncWithValue={watch("seoTitle")}
               />
             )}
           />
@@ -183,19 +198,23 @@ export function CreateBlogForm() {
           <Controller
             name="blogDescription"
             control={control}
+            rules={{ required: "Kart açıklaması gereklidir" }}
             render={({ field }) => (
               <Textarea
                 {...field}
-                label="Kart Açıklaması"
                 id="blog-description"
+                label="Kart Açıklaması"
                 placeholder="İçeriğinizin ana fikrini özetleyen kısa bir açıklama yazın"
-                hint="Blog kartında başlığın altında küçük yazı ile gösterilir. Okuyucuyu içeriğe çekmek için önemlidir."
-                maxLength={120}
-                rows={3}
-                isRequired={true}
-                showCharCount={true}
+                hint="Blog kartında başlığın altında küçük yazı ile gösterilir"
                 isError={!!errors.blogDescription}
                 errorMessage={errors.blogDescription?.message}
+                isRequired={true}
+                maxLength={120}
+                rows={3}
+                showCharCount={true}
+                autoMode={true}
+                initialAutoMode={initialAutoMode}
+                syncWithValue={watch("seoDescription")}
               />
             )}
           />
@@ -210,7 +229,8 @@ export function CreateBlogForm() {
                 label="Kart Görseli"
                 hint="Blog kartında görünecek görsel, boş bırakılırsa sosyal medya görseli kullanılır."
                 autoMode={true}
-                followId="seo-image"
+                isRequired={true}
+                initialAutoMode={initialAutoMode}
                 followRef={seoImageRef}
                 isError={!!errors.blogImage}
                 errorMessage={errors.blogImage?.message}
@@ -294,6 +314,7 @@ export function CreateBlogForm() {
                 id="blog-read-time"
                 isRequired={true}
                 value={field.value}
+                initialAutoMode={initialAutoMode}
                 onChange={field.onChange}
                 onBlur={field.onBlur}
                 name={field.name}
@@ -325,13 +346,12 @@ export function CreateBlogForm() {
         </div>
       </div>
 
-      <div className="fixed right-4 bottom-4 flex flex-col items-center justify-center">
+      <div className="fixed right-8 bottom-8 flex flex-col items-center justify-center">
         <button
           type="submit"
-          className="bg-primary flex items-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-medium text-white shadow-lg transition-opacity duration-300 hover:opacity-75"
+          className="bg-primary flex items-center gap-2 rounded px-8 py-2 text-lg font-semibold text-white shadow-xl transition-transform duration-300 hover:scale-105"
         >
-          <span>Oluştur</span>
-          <Send size={14} />
+          <span>{submitLabel}</span>
         </button>
       </div>
     </form>

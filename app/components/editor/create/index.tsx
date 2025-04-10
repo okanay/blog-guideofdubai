@@ -16,29 +16,28 @@ export default function CreateBlogPage() {
 }
 
 function BlogPageContent() {
-  const {
-    view: { mode },
-  } = useEditorContext();
+  const { view } = useEditorContext();
 
   return (
-    <main className="flex min-h-screen flex-col">
+    <>
       <CreateBlogHeader />
+      <main className="flex min-h-screen flex-col">
+        <div className="relative overflow-hidden bg-white pb-8">
+          <div
+            data-visible={view.mode === "form"}
+            className="w-full px-4 transition-all duration-300 ease-in-out data-[visible=false]:invisible data-[visible=false]:absolute data-[visible=false]:opacity-0 data-[visible=true]:opacity-100"
+          >
+            <CreateBlogForm />
+          </div>
 
-      <div className="relative overflow-hidden bg-white pb-8">
-        <div
-          data-visible={mode === "form"}
-          className="w-full px-4 transition-all duration-300 ease-in-out data-[visible=false]:invisible data-[visible=false]:absolute data-[visible=false]:opacity-0 data-[visible=true]:opacity-100"
-        >
-          <CreateBlogForm />
+          <div
+            data-visible={view.mode === "editor"}
+            className="w-full transition-all duration-300 ease-in-out data-[visible=false]:invisible data-[visible=false]:absolute data-[visible=false]:opacity-0 data-[visible=true]:opacity-100"
+          >
+            <Editor />
+          </div>
         </div>
-
-        <div
-          data-visible={mode === "editor"}
-          className="w-full transition-all duration-300 ease-in-out data-[visible=false]:invisible data-[visible=false]:absolute data-[visible=false]:opacity-0 data-[visible=true]:opacity-100"
-        >
-          <Editor />
-        </div>
-      </div>
-    </main>
+      </main>
+    </>
   );
 }

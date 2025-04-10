@@ -7,7 +7,7 @@ interface ImagePreviewProps
   extends Omit<React.ComponentProps<"input">, "onChange"> {
   label?: string;
   autoMode?: boolean;
-  followId?: string;
+  initialAutoMode?: boolean;
   followRef?: React.RefObject<HTMLInputElement>;
   isRequired?: boolean;
   isError?: boolean;
@@ -18,15 +18,16 @@ interface ImagePreviewProps
   containerClassName?: string;
   onChange?: (url: string) => void;
   value?: string;
+  syncWithValue?: string;
 }
 
 export const ImagePreview = ({
   ref,
-  autoMode,
-  followId,
-  followRef,
   className,
   label = "Görsel URL",
+  autoMode = false,
+  initialAutoMode = false,
+  followRef,
   isRequired = false,
   isError = false,
   isSuccess = false,
@@ -37,6 +38,7 @@ export const ImagePreview = ({
   id,
   value = "",
   onChange,
+  syncWithValue = "",
   ...props
 }: ImagePreviewProps) => {
   const [focused, setFocused] = useState(false);
@@ -45,7 +47,9 @@ export const ImagePreview = ({
   const [isValidUrl, setIsValidUrl] = useState(true);
   const [isImageLoading, setIsImageLoading] = useState(false);
   const [imageError, setImageError] = useState<string | null>(null);
-  const [isAuto, setIsAuto] = useState(autoMode ? true : false);
+  const [isAuto, setIsAuto] = useState(initialAutoMode);
+
+  const inputRef = useRef<HTMLInputElement>(null);
   const modalRef = useClickOutside<HTMLDivElement>(
     () => setIsPreviewOpen(false),
     isPreviewOpen,
@@ -53,8 +57,6 @@ export const ImagePreview = ({
 
   const inputId =
     id || `image-preview-${Math.random().toString(36).substring(2, 9)}`;
-
-  const inputRef = useRef<HTMLInputElement>(null);
 
   // URL doğrulama fonksiyonu - basit bir URL kontrolü yapıyor
   const validateImageUrl = (url: string): boolean => {
@@ -68,8 +70,24 @@ export const ImagePreview = ({
     }
   };
 
+  // Referans birleştirme işlevi
+  const setRefs = (element: HTMLInputElement | null) => {
+    // İç referans için atama
+    inputRef.current = element;
+
+    // Dışarıdan gelen ref için atama
+    if (typeof ref === "function") {
+      ref(element);
+    } else if (ref) {
+      (ref as React.MutableRefObject<HTMLInputElement | null>).current =
+        element;
+    }
+  };
+
   // Görsel URL'si değiştiğinde
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isAuto) return; // Otomatik modda ise değişikliği engelle
+
     const newUrl = e.target.value;
     setImageUrl(newUrl);
     setIsValidUrl(validateImageUrl(newUrl));
@@ -78,6 +96,21 @@ export const ImagePreview = ({
     if (onChange) {
       onChange(newUrl);
     }
+  };
+
+  // URL'i temizle
+  const clearUrl = () => {
+    if (isAuto) return; // Otomatik modda ise engelle
+
+    setImageUrl("");
+    setIsValidUrl(true);
+    setImageError(null);
+
+    if (onChange) {
+      onChange("");
+    }
+
+    inputRef.current?.focus();
   };
 
   // Görsel önizleme modalını aç
@@ -105,25 +138,67 @@ export const ImagePreview = ({
     setImageError("Görsel yüklenemedi. URL'i kontrol edin.");
   };
 
+  // Otomatik mod değiştiğinde yapılacak işlemler
   const toggleMode = () => {
-    setIsAuto(!isAuto);
+    const newAutoMode = !isAuto;
+    setIsAuto(newAutoMode);
+
+    if (newAutoMode) {
+      // Otomatik moda geçince syncWithValue veya followRef değerini al
+      const syncValue = syncWithValue || followRef?.current?.value || "";
+      setImageUrl(syncValue);
+      setIsValidUrl(validateImageUrl(syncValue));
+      setImageError(null);
+
+      if (onChange && syncValue !== value) {
+        onChange(syncValue);
+      }
+    }
   };
 
+  // Otomatik mod değişikliğini izle
+  useEffect(() => {
+    setIsAuto(isAuto);
+  }, [isAuto]);
+
+  // syncWithValue değişikliğini izle
+  useEffect(() => {
+    if (isAuto && syncWithValue !== undefined) {
+      setImageUrl(syncWithValue);
+      setIsValidUrl(validateImageUrl(syncWithValue));
+      setImageError(null);
+
+      // Otomatik modda iken değerleri senkronize et
+      if (onChange && syncWithValue !== value) {
+        onChange(syncWithValue);
+      }
+    }
+  }, [isAuto, syncWithValue, onChange, value]);
+
+  // followRef değişikliğini izle (eğer varsa)
   useEffect(() => {
     if (!followRef?.current) return;
 
     // Başlangıçta mevcut değeri alıp imageUrl'i ayarla
     if (isAuto && followRef.current.value) {
-      setImageUrl(followRef.current.value);
+      const refValue = followRef.current.value;
+      setImageUrl(refValue);
+      setIsValidUrl(validateImageUrl(refValue));
+      setImageError(null);
+
+      if (onChange && refValue !== value) {
+        onChange(refValue);
+      }
     }
 
-    // Input'ta değişiklik olduğunda event listener
-    const handleInput = (e: Event) => {
+    // followRef inputunda değişikliği dinle
+    const handleInputChange = (e: Event) => {
       if (isAuto && e.target) {
         const inputValue = (e.target as HTMLInputElement).value;
         setImageUrl(inputValue);
+        setIsValidUrl(validateImageUrl(inputValue));
+        setImageError(null);
 
-        // Eğer dışarıdan bir onChange handler verilmişse çağır
         if (onChange) {
           onChange(inputValue);
         }
@@ -131,13 +206,33 @@ export const ImagePreview = ({
     };
 
     // Event listener'ı ekle
-    followRef.current.addEventListener("input", handleInput);
+    followRef.current.addEventListener("input", handleInputChange);
 
-    // Cleanup: component unmount olduğunda veya effect değiştiğinde listener'ı kaldır
+    // Cleanup
     return () => {
-      followRef.current?.removeEventListener("input", handleInput);
+      followRef.current?.removeEventListener("input", handleInputChange);
     };
-  }, [isAuto, followRef, onChange]);
+  }, [isAuto, followRef, onChange, value]);
+
+  // Değer değişikliğini izle
+  useEffect(() => {
+    // Otomatik modda değilse ve prop'dan gelen value değişirse
+    if (!isAuto && value !== undefined && value !== imageUrl) {
+      setImageUrl(value);
+      setIsValidUrl(validateImageUrl(value));
+      setImageError(null);
+    }
+  }, [value, isAuto, imageUrl]);
+
+  // İlk render için URL'i ayarla
+  useEffect(() => {
+    const initialValue = isAuto
+      ? syncWithValue || followRef?.current?.value || ""
+      : value || "";
+
+    setImageUrl(initialValue);
+    setIsValidUrl(validateImageUrl(initialValue));
+  }, []);
 
   const status =
     isError || !isValidUrl || imageError
@@ -205,14 +300,7 @@ export const ImagePreview = ({
         <input
           {...props}
           id={inputId}
-          ref={(node) => {
-            if (typeof ref === "function") {
-              ref(node);
-            } else if (ref) {
-              ref.current = node;
-            }
-            inputRef.current = node;
-          }}
+          ref={setRefs}
           type="text"
           value={imageUrl}
           onChange={handleUrlChange}
@@ -236,16 +324,10 @@ export const ImagePreview = ({
 
         <div className="absolute right-2 flex items-center gap-1.5">
           {/* Temizle butonu */}
-          {imageUrl && (
+          {imageUrl && !isAuto && (
             <button
               type="button"
-              onClick={() => {
-                setImageUrl("");
-                setIsValidUrl(true);
-                setImageError(null);
-                if (onChange) onChange("");
-                inputRef.current?.focus();
-              }}
+              onClick={clearUrl}
               className="rounded border border-zinc-200 bg-zinc-100 p-1 text-zinc-600 hover:bg-zinc-200 hover:text-zinc-700"
               title="URL'i temizle"
             >
@@ -259,12 +341,12 @@ export const ImagePreview = ({
             disabled={!imageUrl || !isValidUrl}
             onClick={openPreview}
             className={twMerge(
-              "rounded border border-zinc-200 bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-200 hover:text-zinc-700",
+              "flex items-center gap-0.5 rounded border border-zinc-200 bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-200 hover:text-zinc-700",
               (!imageUrl || !isValidUrl) && "cursor-not-allowed opacity-50",
             )}
             title="Görseli önizle"
           >
-            <Eye size={14} className="mr-1 inline-block" /> Önizle
+            <Eye size={14} className="mr-1 inline-block" /> <span>Önizle</span>
           </button>
         </div>
       </div>

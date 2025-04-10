@@ -5,14 +5,12 @@ import { ModeButton } from "./view-mode-btn";
 import { Link } from "@/i18n/link";
 
 export function CreateBlogHeader() {
-  const {
-    view: { mode, setMode },
-  } = useEditorContext();
+  const { view } = useEditorContext();
 
   // Mod değiştirme işlevi
   const changeMode = (newMode: "form" | "editor") => {
-    if (mode !== newMode) {
-      setMode(newMode);
+    if (view.mode !== newMode) {
+      view.setMode(newMode);
     }
   };
 
@@ -29,20 +27,20 @@ export function CreateBlogHeader() {
             <ArrowLeft size={18} />
           </Link>
 
-          <ModeTitle mode={mode} />
+          <ModeTitle mode={view.mode} />
         </div>
 
         <div className="flex flex-shrink-0 overflow-hidden rounded-md border border-zinc-200 bg-zinc-50">
           <ModeButton
             mode="form"
-            currentMode={mode}
+            currentMode={view.mode}
             onClick={() => changeMode("form")}
             icon={<FileText size={16} />}
             label="Form"
           />
           <ModeButton
             mode="editor"
-            currentMode={mode}
+            currentMode={view.mode}
             onClick={() => changeMode("editor")}
             icon={<PencilRuler size={16} />}
             label="Editör"
@@ -51,7 +49,7 @@ export function CreateBlogHeader() {
       </div>
 
       {/* Editör menüsü - sadece editor modunda göster */}
-      {mode === "editor" && <EditorRichMenu />}
+      {view.mode === "editor" && <EditorRichMenu />}
     </header>
   );
 }

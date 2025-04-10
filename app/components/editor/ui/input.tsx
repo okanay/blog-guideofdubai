@@ -1,3 +1,4 @@
+import { Lock, Unlock } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -15,6 +16,9 @@ interface InputProps extends React.ComponentProps<"input"> {
   maxLength?: number;
   showCharCount?: boolean;
   enforceMaxLength?: boolean;
+  autoMode?: boolean;
+  initialAutoMode?: boolean;
+  syncWithValue?: string;
 }
 
 export const Input = ({
@@ -35,89 +39,140 @@ export const Input = ({
   defaultValue,
   onChange,
   maxLength,
+  autoMode = false,
+  initialAutoMode = false,
+  syncWithValue,
   showCharCount = false,
   enforceMaxLength = true,
   ...props
 }: InputProps) => {
   const [focused, setFocused] = useState(false);
   const [charCount, setCharCount] = useState(0);
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [isAuto, setIsAuto] = useState(initialAutoMode);
+  const [internalValue, setInternalValue] = useState<string>(
+    (value as string) || (defaultValue as string) || "",
+  );
 
+  const elementRef = useRef<HTMLInputElement | null>(null);
   const inputId = id || `input-${Math.random().toString(36).substring(2, 9)}`;
 
-  const status = isError ? "error" : isSuccess ? "success" : focused ? "focused" : "default"; // prettier-ignore
-  const message = errorMessage || successMessage || hint; // prettier-ignore
-  const messageType = isError ? "error" : isSuccess ? "success" : "hint"; // prettier-ignore
-
-  // Karakter sayısını göstermek için kontrol
   const showCount = showCharCount || maxLength !== undefined;
   const isLimitExceeded = maxLength !== undefined && charCount > maxLength;
 
-  // Karakter sayısını güncelle
-  const updateCharCount = () => {
-    if (!inputRef.current) return;
+  const status = isError
+    ? "error"
+    : isSuccess
+      ? "success"
+      : focused
+        ? "focused"
+        : "default";
+  const message = errorMessage || successMessage || hint;
+  const messageType = isError ? "error" : isSuccess ? "success" : "hint";
 
-    const length = inputRef.current.value.length;
-    setCharCount(length);
+  // Referans birleştirme işlevi
+  const setRefs = (element: HTMLInputElement | null) => {
+    // İç referans için atama
+    elementRef.current = element;
+
+    // Dışarıdan gelen ref için atama
+    if (typeof ref === "function") {
+      ref(element);
+    } else if (ref) {
+      (ref as React.MutableRefObject<HTMLInputElement | null>).current =
+        element;
+    }
   };
 
-  // İlk yükleme veya değer değişikliğinde karakter sayısını güncelle
-  useEffect(() => {
-    // Component mount olduğunda karakter sayısını güncelle
-    updateCharCount();
+  // onChange işleyicisi
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isAuto) return; // Otomatik modda ise değişikliği engelle
 
-    // eğer controlled component ise (value prop'u varsa),
-    // value değiştiğinde karakter sayısını güncelle
-    if (value !== undefined) {
-      const length = String(value).length;
-      setCharCount(length);
+    let newValue = e.target.value;
+
+    // Karakter sınırlaması uygula
+    if (enforceMaxLength && maxLength !== undefined) {
+      newValue = newValue.slice(0, maxLength);
     }
-  }, [value]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
+    setInternalValue(newValue);
+    setCharCount(newValue.length);
 
-    // Eğer limit zorunluysa ve limit aşılıyorsa, yazıyı limitle sınırla
-    if (
-      enforceMaxLength &&
-      maxLength !== undefined &&
-      newValue.length > maxLength
-    ) {
-      // Controlled component ise event'i düzenle
-      if (value !== undefined) {
-        // Değeri maxLength'e göre kes
-        const truncatedValue = newValue.substring(0, maxLength);
+    // Orijinal onChange olayını simüle et
+    if (onChange) {
+      const simulatedEvent = {
+        ...e,
+        target: {
+          ...e.target,
+          value: newValue,
+        },
+      } as React.ChangeEvent<HTMLInputElement>;
 
-        // Input değerini direkt değiştir (DOM manipülasyonu)
-        if (inputRef.current) {
-          inputRef.current.value = truncatedValue;
-        }
+      onChange(simulatedEvent);
+    }
+  };
 
-        // Yapay event oluştur
-        const modifiedEvent = {
-          ...e,
+  // Otomatik mod değişikliğini izle
+  useEffect(() => {
+    setIsAuto(isAuto);
+  }, [isAuto]);
+
+  // syncWithValue değişikliğini izle
+  useEffect(() => {
+    if (isAuto && syncWithValue !== undefined) {
+      setInternalValue(syncWithValue);
+      setCharCount(syncWithValue?.length || 0);
+
+      // Otomatik modda iken değerleri senkronize et
+      if (onChange && syncWithValue !== value) {
+        const simulatedEvent = {
           target: {
-            ...e.target,
-            value: truncatedValue,
-          } as HTMLInputElement,
+            name: props.name,
+            value: syncWithValue,
+          },
         } as React.ChangeEvent<HTMLInputElement>;
 
-        // Event'i gönder
-        if (onChange) {
-          onChange(modifiedEvent);
-        }
-      } else {
-        // Uncontrolled component ise doğrudan DOM'u güncelle
-        if (inputRef.current) {
-          inputRef.current.value = newValue.substring(0, maxLength);
-          updateCharCount();
-        }
+        onChange(simulatedEvent);
       }
-    } else {
-      // Normal durumda
-      updateCharCount();
-      if (onChange) {
-        onChange(e);
+    }
+  }, [isAuto, syncWithValue, onChange, props.name, value]);
+
+  // Değer değişikliğini izle
+  useEffect(() => {
+    // Otomatik modda değilse ve kontrollü bileşen ise
+    if (!isAuto && value !== undefined && value !== internalValue) {
+      setInternalValue(value as string);
+      setCharCount((value as string)?.length || 0);
+    }
+  }, [value, isAuto, internalValue]);
+
+  // İlk render için karakter sayacını ayarla
+  useEffect(() => {
+    const initialValue = isAuto
+      ? syncWithValue
+      : (value as string) || (defaultValue as string) || "";
+    setCharCount(initialValue?.length || 0);
+    setInternalValue(initialValue || "");
+  }, []);
+
+  // Otomatik mod değiştiğinde yapılacak işlemler
+  const toggleAutoMode = () => {
+    const newAutoMode = !isAuto;
+    setIsAuto(newAutoMode);
+
+    if (newAutoMode) {
+      // Otomatik moda geçince syncWithValue değerini al
+      setInternalValue(syncWithValue || "");
+      setCharCount(syncWithValue?.length || 0);
+
+      if (onChange && syncWithValue !== value) {
+        const simulatedEvent = {
+          target: {
+            name: props.name,
+            value: syncWithValue,
+          },
+        } as React.ChangeEvent<HTMLInputElement>;
+
+        onChange(simulatedEvent);
       }
     }
   };
@@ -133,6 +188,23 @@ export const Input = ({
             {label}
             {isRequired && <span className="ml-1 text-red-500">*</span>}
           </label>
+          {autoMode && (
+            <button
+              type="button"
+              onClick={toggleAutoMode}
+              className="flex items-center gap-1 text-xs font-medium text-zinc-500 hover:text-zinc-700"
+            >
+              {isAuto ? (
+                <>
+                  <Lock size={12} /> Otomatik
+                </>
+              ) : (
+                <>
+                  <Unlock size={12} /> Manuel
+                </>
+              )}
+            </button>
+          )}
         </div>
       )}
 
@@ -155,24 +227,15 @@ export const Input = ({
         <input
           {...props}
           id={inputId}
-          ref={(node) => {
-            // İki ref'i birleştir: harici ref ve kendi ref'imiz
-            if (typeof ref === "function") {
-              ref(node);
-            } else if (ref) {
-              ref.current = node;
-            }
-            inputRef.current = node;
-          }}
-          defaultValue={defaultValue}
-          value={value}
-          onChange={handleChange}
-          // enforceMaxLength true ise maxLength kullanmıyoruz, kendi mantığımızı uyguluyoruz
-          maxLength={enforceMaxLength ? undefined : maxLength}
+          ref={setRefs}
+          value={isAuto ? syncWithValue || "" : internalValue}
+          onChange={handleOnChange}
           className={twMerge(
             "w-full rounded-md bg-transparent px-3 py-2 outline-none",
             startIcon && "pl-9",
             (endIcon || showCount) && "pr-9",
+            isAuto &&
+              "pointer-events-none cursor-not-allowed bg-zinc-50 text-zinc-500",
             className,
           )}
           onFocus={(e) => {
@@ -183,6 +246,7 @@ export const Input = ({
             setFocused(false);
             props.onBlur?.(e);
           }}
+          readOnly={isAuto}
         />
 
         <div className="absolute right-3 flex items-center gap-2">
