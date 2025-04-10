@@ -9,8 +9,6 @@ export function CreateBlogForm() {
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
 
-  console.log("render");
-
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-y-6 py-6">
       <div className="mb-4">
@@ -119,7 +117,6 @@ export function CreateBlogForm() {
           />
           <p>kategoriler (multi-select)</p>
           <p>tag (multi-select)</p>
-          <p>okuma Süresi (read-time)</p>
         </div>
       </div>
 
@@ -131,6 +128,7 @@ export function CreateBlogForm() {
 
         <div className="space-y-4">
           <p>dil seçimi (select)</p>
+          <p>okuma Süresi (read-time)</p>
           <p>featured (checkbox)</p>
           <p>post initial status (blog-status)</p>
         </div>
