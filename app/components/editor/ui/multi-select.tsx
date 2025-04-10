@@ -101,7 +101,8 @@ export const MultiSelect = ({
         label: customOptionText.trim(),
       };
 
-      // Seçeneklere ekle ve otomatik olarak seç
+      console.log(newOption);
+
       setOptions([...options, newOption]);
       handleValueChange([...selectedValues, newOption.value]);
     } else {
@@ -298,8 +299,8 @@ export const MultiSelect = ({
           <div className="border-t border-zinc-200 pt-3">
             <div className="flex items-center justify-between">
               <p className="text-sm text-zinc-500">
-                <span className="font-medium">{selectedValues.length}</span>{" "}
-                kategori seçildi
+                <span className="font-medium">{selectedValues.length}</span> öge
+                seçildi
               </p>
               <button
                 type="button"

@@ -101,7 +101,7 @@ export function CreateBlogForm() {
 
         <div className="space-y-6">
           <Input
-            id="content-title"
+            id="blog-title"
             label="Kart Başlığı"
             placeholder="Dikkat çekici ve içeriği yansıtan bir başlık"
             hint="Başlık blog kartında büyük puntolarla gösterilir ve dikkat çeken ilk unsurdur."
@@ -112,7 +112,7 @@ export function CreateBlogForm() {
 
           <Textarea
             label="Kart Açıklaması"
-            id="content-description"
+            id="blog-description"
             placeholder="İçeriğinizin ana fikrini özetleyen kısa bir açıklama yazın"
             hint="Blog kartında başlığın altında küçük yazı ile gösterilir. Okuyucuyu içeriğe çekmek için önemlidir."
             maxLength={120}
@@ -122,11 +122,12 @@ export function CreateBlogForm() {
           />
 
           <ImagePreview
-            id="content-image"
+            id="blog-image"
             label="Kart Görseli"
             hint="Blog kartında görünecek görsel, boş bırakılırsa sosyal medya görseli kullanılır."
             autoMode={true}
             followId="seo-image"
+            followRef={imageRef}
           />
           <Select
             label="Blog Kategorileri"

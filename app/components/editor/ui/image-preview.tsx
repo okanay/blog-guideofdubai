@@ -8,6 +8,7 @@ interface ImagePreviewProps
   label?: string;
   autoMode?: boolean;
   followId?: string;
+  followRef?: React.RefObject<HTMLInputElement>;
   isRequired?: boolean;
   isError?: boolean;
   isSuccess?: boolean;
@@ -23,6 +24,7 @@ export const ImagePreview = ({
   ref,
   autoMode,
   followId,
+  followRef,
   className,
   label = "Görsel URL",
   isRequired = false,
@@ -51,6 +53,7 @@ export const ImagePreview = ({
 
   const inputId =
     id || `image-preview-${Math.random().toString(36).substring(2, 9)}`;
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   // URL doğrulama fonksiyonu - basit bir URL kontrolü yapıyor
@@ -107,19 +110,34 @@ export const ImagePreview = ({
   };
 
   useEffect(() => {
-    const followElement = document.getElementById(followId);
+    if (!followRef?.current) return;
 
-    if (followElement && isAuto) {
-      const handleInput = (event) => {
-        setImageUrl(event.target.value);
-      };
-
-      followElement.addEventListener("input", handleInput);
-      return () => {
-        followElement.removeEventListener("input", handleInput);
-      };
+    // Başlangıçta mevcut değeri alıp imageUrl'i ayarla
+    if (isAuto && followRef.current.value) {
+      setImageUrl(followRef.current.value);
     }
-  }, [isAuto]);
+
+    // Input'ta değişiklik olduğunda event listener
+    const handleInput = (e: Event) => {
+      if (isAuto && e.target) {
+        const inputValue = (e.target as HTMLInputElement).value;
+        setImageUrl(inputValue);
+
+        // Eğer dışarıdan bir onChange handler verilmişse çağır
+        if (onChange) {
+          onChange(inputValue);
+        }
+      }
+    };
+
+    // Event listener'ı ekle
+    followRef.current.addEventListener("input", handleInput);
+
+    // Cleanup: component unmount olduğunda veya effect değiştiğinde listener'ı kaldır
+    return () => {
+      followRef.current?.removeEventListener("input", handleInput);
+    };
+  }, [isAuto, followRef, onChange]);
 
   const status =
     isError || !isValidUrl || imageError
@@ -187,7 +205,14 @@ export const ImagePreview = ({
         <input
           {...props}
           id={inputId}
-          ref={inputRef}
+          ref={(node) => {
+            if (typeof ref === "function") {
+              ref(node);
+            } else if (ref) {
+              ref.current = node;
+            }
+            inputRef.current = node;
+          }}
           type="text"
           value={imageUrl}
           onChange={handleUrlChange}
