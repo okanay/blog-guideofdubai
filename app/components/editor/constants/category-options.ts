@@ -54,7 +54,6 @@ export const DEFAULT_CATEGORY_OPTIONS = [
   { value: "category-museums", label: "Museums" },
   { value: "category-rent-a-car", label: "Rent a Car" },
   { value: "category-rent-a-yacht", label: "Rent a Yacht" },
-  { value: "category-rent-a-yatch", label: "Rent a Yatch" },
   { value: "category-restaurants", label: "Restaurants" },
   { value: "category-riverland-dubai", label: "Riverland Dubai" },
   { value: "category-theme-parks", label: "Theme Parks" },
