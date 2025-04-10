@@ -117,11 +117,6 @@ export const Textarea = ({
     }
   };
 
-  // Otomatik mod değişikliğini izle
-  useEffect(() => {
-    setIsAuto(isAuto);
-  }, [isAuto]);
-
   // syncWithValue değişikliğini izle
   useEffect(() => {
     if (isAuto && syncWithValue !== undefined) {
@@ -147,23 +142,24 @@ export const Textarea = ({
     }
   }, [isAuto, syncWithValue, onChange, props.name, value, onValueSync]);
 
-  // followRef değişikliğini izle (eğer varsa)
+  // followRef değişikliğini izle (eğer varsa) - ref değerini useEffect içinde tek seferde alıyoruz
   useEffect(() => {
-    if (
-      isAuto &&
-      followRef?.current &&
-      followRef.current.value !== internalValue
-    ) {
-      const followedValue = followRef.current.value;
-      setInternalValue(followedValue);
-      setCharCount(followedValue.length);
+    if (!followRef?.current || !isAuto) return;
+
+    // Takip edilen referans değerini al
+    const currentFollowedValue = followRef.current.value;
+
+    // Sadece değer değiştiyse güncelle
+    if (currentFollowedValue !== internalValue) {
+      setInternalValue(currentFollowedValue);
+      setCharCount(currentFollowedValue.length);
 
       // Otomatik modda iken değerleri senkronize et
-      if (onChange && followedValue !== value) {
+      if (onChange && currentFollowedValue !== value) {
         const simulatedEvent = {
           target: {
             name: props.name,
-            value: followedValue,
+            value: currentFollowedValue,
           },
         } as React.ChangeEvent<HTMLTextAreaElement>;
 
@@ -172,12 +168,15 @@ export const Textarea = ({
 
       // Varsa onValueSync callback'ini çağır
       if (onValueSync) {
-        onValueSync(followedValue);
+        onValueSync(currentFollowedValue);
       }
     }
+
+    // followRef.current.value yerine isAuto'ya bağımlılık ekledik
+    // Bu sayede sorunlu dependency listesini düzelttik
   }, [
     isAuto,
-    followRef?.current?.value,
+    followRef,
     onChange,
     props.name,
     value,
@@ -194,7 +193,7 @@ export const Textarea = ({
     }
   }, [value, isAuto, internalValue]);
 
-  // İlk render için karakter sayacını ayarla
+  // İlk render için karakter sayacını ayarla (sadece bir kez çalışacak)
   useEffect(() => {
     const initialValue = isAuto
       ? syncWithValue || followRef?.current?.value || ""
@@ -202,7 +201,7 @@ export const Textarea = ({
 
     setCharCount(initialValue?.length || 0);
     setInternalValue(initialValue || "");
-  }, []);
+  }, []); // Boş dependency array ile sadece bir kez çalışır
 
   // Otomatik mod değiştiğinde yapılacak işlemler
   const toggleAutoMode = () => {
@@ -232,6 +231,11 @@ export const Textarea = ({
       }
     }
   };
+
+  // İçeriği otomatik moda bağlı olarak belirle
+  const displayValue = isAuto
+    ? syncWithValue || followRef?.current?.value || ""
+    : internalValue;
 
   return (
     <div className={twMerge("flex flex-col gap-1.5", containerClassName)}>
@@ -280,11 +284,7 @@ export const Textarea = ({
           {...props}
           ref={setRefs}
           id={inputId}
-          value={
-            isAuto
-              ? syncWithValue || followRef?.current?.value || ""
-              : internalValue
-          }
+          value={displayValue}
           onFocus={(e) => {
             setFocused(true);
             props.onFocus?.(e);

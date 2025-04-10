@@ -111,11 +111,6 @@ export const Input = ({
     }
   };
 
-  // Otomatik mod değişikliğini izle
-  useEffect(() => {
-    setIsAuto(isAuto);
-  }, [isAuto]);
-
   // syncWithValue değişikliğini izle
   useEffect(() => {
     if (isAuto && syncWithValue !== undefined) {

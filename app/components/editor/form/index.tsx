@@ -19,7 +19,9 @@ export function CreateBlogForm({
   initialValues = DEFAULT_BLOG_FORM_VALUES,
   submitLabel = "Yayınla",
   initialAutoMode = true,
-  onSubmit,
+  onSubmit = (data: FormSchema) => {
+    console.log(data);
+  },
 }: Props) {
   const { editor } = useTiptapContext();
 
@@ -160,7 +162,7 @@ export function CreateBlogForm({
               value: "",
             }}
             defaultMode="google"
-            baseUrl="https://blog.guideofdubai.com"
+            baseUrl="https://blog.guideofdubai.com/tr"
           />
         </div>
       </div>
@@ -229,9 +231,9 @@ export function CreateBlogForm({
                 label="Kart Görseli"
                 hint="Blog kartında görünecek görsel, boş bırakılırsa sosyal medya görseli kullanılır."
                 autoMode={true}
-                isRequired={true}
                 initialAutoMode={initialAutoMode}
-                followRef={seoImageRef}
+                syncWithValue={watch("seoImage")}
+                isRequired={true}
                 isError={!!errors.blogImage}
                 errorMessage={errors.blogImage?.message}
               />
