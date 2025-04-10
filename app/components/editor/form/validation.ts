@@ -5,37 +5,21 @@ const imageUrlSchema = z
   .url()
   .refine(
     async (url) => {
-      // Daha önce başlatılmış bir isteği iptal etmek için controller
-      let controller = new AbortController();
-
       try {
-        // İstek için zaman aşımı süresi (3 saniye)
-        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        const response = await fetch(url, { method: "HEAD" });
+        const contentType = response.headers.get("content-type");
 
-        const response = await fetch(url, {
-          method: "HEAD",
-          signal: controller.signal, // AbortController sinyalini ekle
-        });
-
-        // Zaman aşımı zamanlayıcısını temizle
-        clearTimeout(timeoutId);
-
-        return (
-          response.ok &&
-          response.headers.get("content-type")?.startsWith("image/")
-        );
-      } catch (error) {
-        // AbortError olup olmadığını kontrol et
-        if (error.name === "AbortError") {
-          console.log("Fetch işlemi zaman aşımına uğradı veya iptal edildi");
-        }
+        // Sadece belirli formatları kabul et
+        const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+        return response.ok && contentType && allowedTypes.includes(contentType);
+      } catch {
         return false;
-      } finally {
-        // Controller'ı temizle
-        controller = null;
       }
     },
-    { message: "URL erişilebilir bir görsel dosyasına işaret etmelidir." },
+    {
+      message:
+        "URL sadece JPEG, PNG veya WebP formatında bir görsel olmalıdır.",
+    },
   );
 
 export const formSchema = z.object({
