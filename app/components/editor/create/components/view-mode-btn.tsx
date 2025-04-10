@@ -17,9 +17,14 @@ export function ModeButton({
 }: ModeButtonProps) {
   const isActive = mode === currentMode;
 
+  const handleOnClick = () => {
+    window.scrollTo(0, 0);
+    onClick();
+  };
+
   return (
     <button
-      onClick={onClick}
+      onClick={handleOnClick}
       className={twMerge(
         "relative flex h-12 items-center gap-2 px-4 text-xs font-medium transition-all",
         isActive
