@@ -1,6 +1,6 @@
 import { DEFAULT_LANGUAGE } from "@/i18n/config";
 
-export const DEFAULT_BLOG_FORM_VALUES: FormSchema = {
+export const DEFAULT_BLOG_FORM_VALUES: Blog = {
   seoTitle: "Dubai'de Alışveriş Rehberi",
   seoSlug: "dubai-de-alisveris-rehberi",
   seoDescription:

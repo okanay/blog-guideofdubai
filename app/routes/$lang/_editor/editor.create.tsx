@@ -5,16 +5,10 @@ import { EditorProvider } from "@/components/editor/store";
 import { TiptapProvider } from "@/components/editor/tiptap/store";
 import { CreateBlogHeader } from "@/components/editor/create/header";
 import { CreateBlogPage } from "@/components/editor/create";
-
-import * as fs from "node:fs";
-const blogPath = "public/blog.json";
-
-async function readBlog() {
-  return await fs.promises.readFile(blogPath, "utf-8");
-}
+import { DEFAULT_BLOG_FORM_VALUES } from "@/components/editor/form/default";
+import DummyText from "@/components/editor/tiptap/dummy";
 
 export const Route = createFileRoute("/$lang/_editor/editor/create")({
-  loader: async () => await readBlog(),
   head: ({ params: { lang } }) => {
     const seoData = seoTranslations[lang];
     return {
@@ -42,12 +36,9 @@ export const Route = createFileRoute("/$lang/_editor/editor/create")({
 });
 
 function RouteComponent() {
-  const state = Route.useLoaderData();
-  const data = JSON.parse(state);
-
   return (
-    <EditorProvider>
-      <TiptapProvider initialContent={data.content.html}>
+    <EditorProvider initialFormValues={DEFAULT_BLOG_FORM_VALUES}>
+      <TiptapProvider initialContent={DummyText}>
         <CreateBlogHeader />
         <CreateBlogPage />
       </TiptapProvider>

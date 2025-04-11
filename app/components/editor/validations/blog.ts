@@ -66,5 +66,5 @@ export const formSchema = z.object({
 });
 
 declare global {
-  type FormSchema = z.infer<typeof formSchema>;
+  type Blog = z.infer<typeof formSchema>;
 }
