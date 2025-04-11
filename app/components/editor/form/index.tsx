@@ -9,19 +9,18 @@ import { formSchema } from "./validation";
 import { useTiptapContext } from "../tiptap/store";
 
 type Props = {
-  initialValues?: FormSchema;
-  onSubmit?: (data: FormSchema) => void;
-  submitLabel?: string;
-  initialAutoMode?: boolean;
+  initialValues: FormSchema;
+  initialAutoMode: boolean;
+
+  onSubmit: (data: FormSchema) => void;
+  submitLabel: string;
 };
 
 export function CreateBlogForm({
-  initialValues = DEFAULT_BLOG_FORM_VALUES,
-  submitLabel = "Yayınla",
-  initialAutoMode = true,
-  onSubmit = (data: FormSchema) => {
-    console.log(data);
-  },
+  initialValues,
+  submitLabel,
+  initialAutoMode,
+  onSubmit,
 }: Props) {
   const { editor } = useTiptapContext();
 
@@ -40,8 +39,6 @@ export function CreateBlogForm({
   const seoImageRef = useRef<HTMLInputElement>(null);
   const slugRef = useRef<HTMLInputElement>(null);
 
-  console.log("render");
-
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -49,18 +46,18 @@ export function CreateBlogForm({
     >
       <div className="mb-4">
         <h1 className="mb-1 text-2xl font-bold text-zinc-900">
-          Blog Detayları
+          Blog İçerik Yönetimi
         </h1>
         <p className="text-sm text-zinc-500">
-          Blog yazınızın başlığı, açıklaması ve diğer detaylarını ayarlayın.
-          İçerik eklemek için "İçerik" sekmesine geçebilirsiniz.
+          Bloglarınız için SEO dostu içerik ve görsel ayarlarını düzenleyin.
+          İçerik girmek için "İçerik" sekmesini kullanabilirsiniz.
         </p>
       </div>
 
       {/* SEO Ayarları */}
       <div>
         <h2 className="mb-4 border-b border-zinc-200 pb-2 text-lg font-medium text-zinc-800">
-          SEO Ayarları
+          SEO Optimizasyonu
         </h2>
 
         <div className="space-y-4">
@@ -71,9 +68,9 @@ export function CreateBlogForm({
               <Input
                 {...field}
                 id="seo-title"
-                label="Başlık"
+                label="SEO Başlığı"
                 isRequired={true}
-                maxLength={40}
+                maxLength={60}
                 showCharCount={true}
                 isError={!!errors.seoTitle}
                 errorMessage={errors.seoTitle?.message}
@@ -91,9 +88,9 @@ export function CreateBlogForm({
             render={({ field }) => (
               <SlugCreator
                 {...field}
-                label="URL"
+                label="URL Yapısı"
                 id="seo-slug"
-                hint="Makalenin URL'de görünecek benzersiz tanımlayıcısı"
+                hint="Arama motorları ve kullanıcılar için kolay okunabilir URL"
                 isRequired={true}
                 isError={!!errors.seoSlug}
                 errorMessage={errors.seoSlug?.message}
@@ -114,10 +111,10 @@ export function CreateBlogForm({
             render={({ field }) => (
               <Textarea
                 {...field}
-                label="Açıklaması"
+                label="Meta Açıklama"
                 id="seo-description"
-                placeholder="Arama motorları için açıklama."
-                hint="Hedef kelimelerinizi içeren, kullanıcıyı sayfaya çekecek bir açıklama yazın."
+                placeholder="Google ve diğer arama motorlarında görünecek açıklama metni"
+                hint="Kullanıcıyı tıklamaya yönlendirecek, anahtar kelimeler içeren etkili bir açıklama yazın"
                 maxLength={160}
                 rows={3}
                 isRequired={true}
@@ -139,7 +136,7 @@ export function CreateBlogForm({
                 {...field}
                 id="seo-image"
                 label="Sosyal Medya Görseli"
-                hint="Sosyal medyada paylaşıldığında görünecek görsel"
+                hint="Sosyal medya platformlarında link olarak paylaşıldığında görünecek görsel (1200x630px önerilir)"
                 maxLength={160}
                 isRequired={true}
                 isError={!!errors.seoImage}
@@ -172,7 +169,7 @@ export function CreateBlogForm({
       {/* İçerik Ayarları */}
       <div>
         <h2 className="mb-4 border-b border-zinc-200 pb-2 text-lg font-medium text-zinc-800">
-          İçerik Ayarları
+          Blog Kart Bilgileri
         </h2>
 
         <div className="space-y-6">
@@ -184,13 +181,13 @@ export function CreateBlogForm({
                 {...field}
                 id="blog-title"
                 label="Kart Başlığı"
-                placeholder="Dikkat çekici ve içeriği yansıtan bir başlık"
-                hint="Başlık blog kartında büyük puntolarla gösterilir"
+                placeholder="İlgi çekici ve konuyu net ifade eden başlık"
+                hint="Listeleme sayfalarında blog kartında büyük punto ile görünür"
                 isRequired={true}
                 isError={!!errors.blogTitle}
                 errorMessage={errors.blogTitle?.message}
                 showCharCount={true}
-                maxLength={40}
+                maxLength={60}
                 isAutoMode={true}
                 initialAutoMode={initialAutoMode}
                 followRef={seoTitleRef}
@@ -206,14 +203,14 @@ export function CreateBlogForm({
               <Textarea
                 {...field}
                 id="blog-description"
-                label="Kart Açıklaması"
-                placeholder="İçeriğinizin ana fikrini özetleyen kısa bir açıklama yazın"
-                hint="Blog kartında başlığın altında küçük yazı ile gösterilir"
+                label="Kart Özeti"
+                placeholder="İçeriğin ana değerini ve faydalarını vurgulayan özet"
+                hint="Kullanıcıyı içeriği okumaya teşvik edecek kısa ve öz bir açıklama"
                 isRequired={true}
                 isError={!!errors.blogDescription}
                 errorMessage={errors.blogDescription?.message}
                 showCharCount={true}
-                maxLength={120}
+                maxLength={160}
                 rows={3}
                 isAutoMode={true}
                 initialAutoMode={initialAutoMode}
@@ -231,8 +228,8 @@ export function CreateBlogForm({
                 {...field}
                 id="blog-image"
                 label="Kart Görseli"
-                placeholder="https://www.example.com/image.png"
-                hint="Blog kartında görünecek görsel, boş bırakılırsa sosyal medya görseli kullanılır."
+                placeholder="https://example.com/images/blog-image.jpg"
+                hint="Blog listelerinde gösterilecek kapak görseli (1200x630px önerilir)"
                 isRequired={true}
                 isError={!!errors.blogImage}
                 errorMessage={errors.blogImage?.message}
@@ -248,7 +245,7 @@ export function CreateBlogForm({
             control={control}
             render={({ field }) => (
               <MultiSelect
-                label="Blog Kategorileri"
+                label="Kategoriler"
                 id="blog-categories"
                 options={DEFAULT_CATEGORY_OPTIONS}
                 value={field.value}
@@ -256,6 +253,8 @@ export function CreateBlogForm({
                 isRequired={true}
                 isError={!!errors.categories}
                 errorMessage={errors.categories?.message}
+                placeholder="Uygun kategorileri seçin"
+                hint="İçeriğin hangi ana başlıklar altında sınıflandırılacağını belirleyin"
               />
             )}
           />
@@ -265,16 +264,16 @@ export function CreateBlogForm({
             control={control}
             render={({ field }) => (
               <MultiSelect
-                label="Blog Etiketleri"
+                label="Etiketler"
                 id="blog-tags"
                 options={DEFAULT_TAG_OPTIONS}
                 value={field.value}
                 onChange={(newValue) => field.onChange(newValue)}
-                hint="Blog yazınıza uygun etiketleri seçin, arama yaparken kullanıcı deneyimini kolaylaştırır."
-                placeholder="Etiket seçin..."
-                allowCustomOption={false}
+                hint="İçerikle ilgili anahtar kelimeleri seçin, arama ve filtreleme işlemlerinde kullanılır"
+                placeholder="İlgili etiketleri seçin veya ekleyin"
+                allowCustomOption={true}
                 isRequired={false}
-                customOptionPlaceholder="Özel etiket ekle..."
+                customOptionPlaceholder="Yeni etiket ekle..."
                 searchPlaceholder="Etiketlerde ara..."
                 isError={!!errors.tags}
                 errorMessage={errors.tags?.message}
@@ -287,7 +286,7 @@ export function CreateBlogForm({
       {/* Diğer Ayarlar */}
       <div>
         <h2 className="mb-4 border-b border-zinc-200 pb-2 text-lg font-medium text-zinc-800">
-          Diğer Ayarlar
+          İçerik Özellikleri
         </h2>
 
         <div className="space-y-4">
@@ -296,15 +295,15 @@ export function CreateBlogForm({
             control={control}
             render={({ field }) => (
               <Select
-                label="Blog Dili"
+                label="İçerik Dili"
                 id="blog-language"
                 options={LANGUAGE_DICTONARY}
                 value={field.value}
                 onChange={(newValue) => field.onChange(newValue)}
-                hint="Blog yazınızın dilini seçin."
+                hint="Doğru dil seçimi, içeriğin doğru hedef kitleye ulaşmasını sağlar"
                 isRequired={true}
                 allowCustomOption={false}
-                placeholder="Dil seçimi yapın."
+                placeholder="Yazı dilini seçin"
                 isError={!!errors.language}
                 errorMessage={errors.language?.message}
               />
@@ -324,7 +323,7 @@ export function CreateBlogForm({
                 onBlur={field.onBlur}
                 name={field.name}
                 htmlContent={editor.getHTML()}
-                hint="Makalenin okunması için gereken tahmini süre"
+                hint="İçeriğin tahmini okuma süresi (dakika cinsinden)"
                 isError={!!errors.readTime}
                 errorMessage={errors.readTime?.message}
               />
@@ -337,8 +336,8 @@ export function CreateBlogForm({
             render={({ field }) => (
               <Toggle
                 ref={field.ref as any}
-                label="Öne Çıkar"
-                description="Bu içeriğin öncelikli olarak görüntülenmesini sağlar."
+                label="Öne Çıkarılmış İçerik"
+                description="Bu içerik ana sayfada ve kategori sayfalarında öncelikli olarak gösterilir"
                 checked={field.value}
                 onChange={field.onChange}
                 onBlur={field.onBlur}

@@ -190,11 +190,11 @@ export const Textarea = ({
             >
               {isAuto ? (
                 <>
-                  <Lock size={12} /> Otomatik
+                  <Lock size={12} /> Düzenlemeyi Aç
                 </>
               ) : (
                 <>
-                  <Unlock size={12} /> Manuel
+                  <Unlock size={12} /> Otomatik Düzenle
                 </>
               )}
             </button>

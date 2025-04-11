@@ -4,6 +4,7 @@ import { EditorProvider, useEditorContext } from "../store";
 import { CreateBlogForm } from "../form";
 import { CreateBlogHeader } from "./components/header";
 import DummyText from "../tiptap/dummy";
+import { DEFAULT_BLOG_FORM_VALUES } from "../form/default";
 
 export default function CreateBlogPage() {
   return (
@@ -27,7 +28,14 @@ function BlogPageContent() {
             data-visible={view.mode === "form"}
             className="w-full px-4 transition-all duration-300 ease-in-out data-[visible=false]:invisible data-[visible=false]:absolute data-[visible=false]:opacity-0 data-[visible=true]:opacity-100"
           >
-            <CreateBlogForm />
+            <CreateBlogForm
+              initialValues={DEFAULT_BLOG_FORM_VALUES}
+              submitLabel="Blog Oluştur"
+              initialAutoMode={true}
+              onSubmit={(data) => {
+                console.log(data);
+              }}
+            />
           </div>
 
           <div
