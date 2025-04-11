@@ -1,22 +1,8 @@
 import { Editor } from "../tiptap";
-import { TiptapProvider } from "../tiptap/store";
-import { EditorProvider, useEditorContext } from "../store";
-import { CreateBlogHeader } from "./header";
+import { useEditorContext } from "../store";
 import { CreateBlogAction } from "./action";
-import DummyText from "../tiptap/dummy";
 
-export function RouteComponent() {
-  return (
-    <EditorProvider>
-      <TiptapProvider initialContent={DummyText}>
-        <CreateBlogHeader />
-        <CreateBlogPage />
-      </TiptapProvider>
-    </EditorProvider>
-  );
-}
-
-function CreateBlogPage() {
+export function CreateBlogPage() {
   const { view } = useEditorContext();
 
   return (

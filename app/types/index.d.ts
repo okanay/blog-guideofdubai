@@ -19,7 +19,6 @@ type Blog = {
     tags: string[];
     categories: string[];
     html: string;
-    json: string;
   };
   stats: {
     views: number;
