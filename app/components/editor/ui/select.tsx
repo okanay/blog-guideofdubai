@@ -96,12 +96,10 @@ export const Select = ({
         label: customOptionText.trim(),
       };
 
-      // Seçeneklere ekle ve otomatik olarak seç
-      setOptions([...options, newOption]);
+      setOptions([newOption, ...options]);
       handleValueChange(newOption.value);
       setIsModalOpen(false);
     } else {
-      // Zaten var olan bir seçeneği seç
       const existingValue = options.find(
         (option) =>
           option.value.toLowerCase() === customOptionText.trim().toLowerCase(),
@@ -113,7 +111,6 @@ export const Select = ({
       }
     }
 
-    // Input'u temizle
     setCustomOptionText("");
   };
 

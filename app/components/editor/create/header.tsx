@@ -1,8 +1,8 @@
-import { ArrowLeft, FileText, PencilRuler } from "lucide-react";
-import { EditorRichMenu } from "../../tiptap/menu";
-import { useEditorContext } from "../../store";
-import { ModeButton } from "./view-mode-btn";
 import { Link } from "@/i18n/link";
+import { ArrowLeft, FileText, PencilRuler } from "lucide-react";
+import { useEditorContext } from "../store";
+import { EditorRichMenu } from "../tiptap/menu";
+import { ToggleModeButton } from "../ui/toggle-mode-btn";
 
 export function CreateBlogHeader() {
   const { view } = useEditorContext();
@@ -31,14 +31,14 @@ export function CreateBlogHeader() {
         </div>
 
         <div className="flex flex-shrink-0 overflow-hidden rounded-md border border-zinc-200 bg-zinc-50">
-          <ModeButton
+          <ToggleModeButton
             mode="form"
             currentMode={view.mode}
             onClick={() => changeMode("form")}
             icon={<FileText size={16} />}
             label="Form"
           />
-          <ModeButton
+          <ToggleModeButton
             mode="editor"
             currentMode={view.mode}
             onClick={() => changeMode("editor")}

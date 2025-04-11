@@ -101,9 +101,7 @@ export const MultiSelect = ({
         label: customOptionText.trim(),
       };
 
-      console.log(newOption);
-
-      setOptions([...options, newOption]);
+      setOptions([newOption, ...options]);
       handleValueChange([...selectedValues, newOption.value]);
     } else {
       // Zaten var olan bir seçeneği seç
@@ -113,7 +111,7 @@ export const MultiSelect = ({
       )?.value;
 
       if (existingValue && !selectedValues.includes(existingValue)) {
-        handleValueChange([...selectedValues, existingValue]);
+        handleValueChange([existingValue, ...selectedValues]);
       }
     }
 

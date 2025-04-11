@@ -1,6 +1,6 @@
 import { twMerge } from "tailwind-merge";
 
-interface ModeButtonProps {
+interface Props {
   mode: "form" | "editor";
   currentMode: string;
   onClick: () => void;
@@ -8,13 +8,13 @@ interface ModeButtonProps {
   label: string;
 }
 
-export function ModeButton({
+export function ToggleModeButton({
   mode,
   currentMode,
   onClick,
   icon,
   label,
-}: ModeButtonProps) {
+}: Props) {
   const isActive = mode === currentMode;
 
   const handleOnClick = () => {

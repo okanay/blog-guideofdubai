@@ -1,4 +1,3 @@
-import { DEFAULT_BLOG_FORM_VALUES } from "./default";
 import { DEFAULT_CATEGORY_OPTIONS, DEFAULT_TAG_OPTIONS } from "../constants"; // prettier-ignore
 import { ImagePreview, Input, MultiSelect, ReadTime, Select, SeoPreview, SlugCreator, Textarea, Toggle } from "@/components/editor/ui"; // prettier-ignore
 import { LANGUAGE_DICTONARY } from "@/i18n/config";
