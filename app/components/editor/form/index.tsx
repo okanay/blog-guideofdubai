@@ -25,21 +25,22 @@ export function CreateBlogForm({
 }: Props) {
   const { editor } = useTiptapContext();
 
-  const seoTitleRef = useRef<HTMLInputElement>(null);
-  const seoDescriptionRef = useRef<HTMLTextAreaElement>(null);
-  const seoImageRef = useRef<HTMLInputElement>(null);
-  const slugRef = useRef<HTMLInputElement>(null);
-
   const {
     handleSubmit,
     control,
     formState: { errors },
-    watch,
   } = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     mode: "onTouched",
     defaultValues: { ...initialValues },
   });
+
+  const seoTitleRef = useRef<HTMLInputElement>(null);
+  const seoDescriptionRef = useRef<HTMLTextAreaElement>(null);
+  const seoImageRef = useRef<HTMLInputElement>(null);
+  const slugRef = useRef<HTMLInputElement>(null);
+
+  console.log("render");
 
   return (
     <form
@@ -96,9 +97,9 @@ export function CreateBlogForm({
                 isRequired={true}
                 isError={!!errors.seoSlug}
                 errorMessage={errors.seoSlug?.message}
-                syncWithValue={watch("seoTitle")}
-                autoMode={true}
+                isAutoMode={true}
                 initialAutoMode={initialAutoMode}
+                followRef={seoTitleRef}
                 ref={(e) => {
                   field.ref(e);
                   slugRef.current = e;
@@ -120,12 +121,12 @@ export function CreateBlogForm({
                 maxLength={160}
                 rows={3}
                 isRequired={true}
+                isError={!!errors.seoDescription}
+                errorMessage={errors.seoDescription?.message}
                 ref={(e) => {
                   field.ref(e);
                   seoDescriptionRef.current = e;
                 }}
-                isError={!!errors.seoDescription}
-                errorMessage={errors.seoDescription?.message}
               />
             )}
           />
@@ -136,16 +137,17 @@ export function CreateBlogForm({
             render={({ field }) => (
               <ImagePreview
                 {...field}
+                id="seo-image"
+                label="Sosyal Medya Görseli"
+                hint="Sosyal medyada paylaşıldığında görünecek görsel"
+                maxLength={160}
+                isRequired={true}
+                isError={!!errors.seoImage}
+                errorMessage={errors.seoImage?.message}
                 ref={(e) => {
                   field.ref(e);
                   seoImageRef.current = e;
                 }}
-                id="seo-image"
-                label="Sosyal Medya Görseli"
-                hint="Sosyal medyada paylaşıldığında görünecek görsel"
-                isRequired={true}
-                isError={!!errors.seoImage}
-                errorMessage={errors.seoImage?.message}
               />
             )}
           />
@@ -177,7 +179,6 @@ export function CreateBlogForm({
           <Controller
             name="blogTitle"
             control={control}
-            rules={{ required: "Blog başlığı gereklidir" }}
             render={({ field }) => (
               <Input
                 {...field}
@@ -185,14 +186,14 @@ export function CreateBlogForm({
                 label="Kart Başlığı"
                 placeholder="Dikkat çekici ve içeriği yansıtan bir başlık"
                 hint="Başlık blog kartında büyük puntolarla gösterilir"
+                isRequired={true}
                 isError={!!errors.blogTitle}
                 errorMessage={errors.blogTitle?.message}
-                isRequired={true}
-                maxLength={40}
                 showCharCount={true}
-                autoMode={true}
+                maxLength={40}
+                isAutoMode={true}
                 initialAutoMode={initialAutoMode}
-                syncWithValue={watch("seoTitle")}
+                followRef={seoTitleRef}
               />
             )}
           />
@@ -208,15 +209,15 @@ export function CreateBlogForm({
                 label="Kart Açıklaması"
                 placeholder="İçeriğinizin ana fikrini özetleyen kısa bir açıklama yazın"
                 hint="Blog kartında başlığın altında küçük yazı ile gösterilir"
+                isRequired={true}
                 isError={!!errors.blogDescription}
                 errorMessage={errors.blogDescription?.message}
-                isRequired={true}
+                showCharCount={true}
                 maxLength={120}
                 rows={3}
-                showCharCount={true}
-                autoMode={true}
+                isAutoMode={true}
                 initialAutoMode={initialAutoMode}
-                syncWithValue={watch("seoDescription")}
+                followRef={seoDescriptionRef}
               />
             )}
           />
@@ -224,18 +225,20 @@ export function CreateBlogForm({
           <Controller
             name="blogImage"
             control={control}
+            rules={{ required: "Kart görseli gereklidir." }}
             render={({ field }) => (
               <ImagePreview
                 {...field}
                 id="blog-image"
                 label="Kart Görseli"
+                placeholder="https://www.example.com/image.png"
                 hint="Blog kartında görünecek görsel, boş bırakılırsa sosyal medya görseli kullanılır."
-                autoMode={true}
-                initialAutoMode={initialAutoMode}
-                syncWithValue={watch("seoImage")}
                 isRequired={true}
                 isError={!!errors.blogImage}
                 errorMessage={errors.blogImage?.message}
+                isAutoMode={true}
+                initialAutoMode={initialAutoMode}
+                followRef={seoImageRef}
               />
             )}
           />

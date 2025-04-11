@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const imageUrlSchema = z
   .string()
-  .url()
+  .url({ message: "Lütfen geçerli bir URL girin." })
   .refine(
     async (url) => {
       try {
@@ -18,7 +18,7 @@ const imageUrlSchema = z
     },
     {
       message:
-        "URL sadece JPEG, PNG veya WebP formatında bir görsel olmalıdır.",
+        "URL sadece JPEG, PNG veya WEBP formatında bir görsel olmalıdır.",
     },
   );
 

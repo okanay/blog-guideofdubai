@@ -10,33 +10,36 @@ interface SlugCreatorProps extends React.ComponentProps<"input"> {
   errorMessage?: string;
   successMessage?: string;
   hint?: string;
+
+  isAutoMode?: boolean;
+  initialAutoMode?: boolean;
   followRef?: React.RefObject<HTMLInputElement>;
+
   containerClassName?: string;
   checkSlug?: (slug: string) => Promise<boolean>;
-  autoMode?: boolean;
-  initialAutoMode?: boolean;
-  syncWithValue?: string;
 }
 
 export const SlugCreator = ({
   ref,
   className,
   label = "Slug",
+  id,
+  value = "",
+  onChange,
+
   isRequired = false,
   isError = false,
   isSuccess = false,
   errorMessage,
   successMessage,
   hint = "URL'de görünecek benzersiz tanımlayıcı",
+
+  isAutoMode = true,
+  initialAutoMode = true,
   followRef,
+
   containerClassName,
   checkSlug,
-  id,
-  value = "",
-  onChange,
-  autoMode = true,
-  initialAutoMode = true,
-  syncWithValue = "",
   ...props
 }: SlugCreatorProps) => {
   const [focused, setFocused] = useState(false);
@@ -129,9 +132,9 @@ export const SlugCreator = ({
 
   // Başlıktan slug'ı yeniden oluştur
   const regenerateFromTitle = () => {
-    if (!followRef?.current && !syncWithValue) return;
+    if (!followRef?.current) return;
 
-    const sourceValue = syncWithValue || followRef?.current?.value || "";
+    const sourceValue = followRef?.current?.value || "";
     const newSlug = cleanSlug(sourceValue);
 
     setInternalValue(newSlug);
@@ -150,44 +153,23 @@ export const SlugCreator = ({
     }
   };
 
-  // Otomatik modu değiştir
-  const toggleAutoMode = () => {
-    const newAutoMode = !isAuto;
-    setIsAuto(newAutoMode);
-
-    if (newAutoMode) {
-      // Otomatik moda geçince syncWithValue veya followRef değerini al
-      const sourceValue = syncWithValue || followRef?.current?.value || "";
-      const newSlug = cleanSlug(sourceValue);
-
-      setInternalValue(newSlug);
-      setCheckResult(null);
-
-      if (onChange && newSlug !== value) {
-        const simulatedEvent = {
-          target: {
-            name: props.name,
-            value: newSlug,
-          },
-        } as React.ChangeEvent<HTMLInputElement>;
-
-        onChange(simulatedEvent);
-      }
-    }
-  };
-
-  // syncWithValue değişikliğini izle
+  // Auto mode için followRef yaklaşımı
   useEffect(() => {
-    if (isAuto && syncWithValue !== undefined) {
-      const newSlug = cleanSlug(syncWithValue);
+    if (!isAutoMode || !followRef?.current) return;
 
-      // Sadece değer değiştiyse güncelle
+    // Takip edilen input değiştiğinde dinleme işlevi
+    const handleFollowInputChange = () => {
+      if (!isAuto || !followRef.current) return;
+
+      const followValue = followRef.current.value;
+      const newSlug = cleanSlug(followValue);
+
       if (newSlug !== internalValue) {
         setInternalValue(newSlug);
         setCheckResult(null);
 
-        // Otomatik modda iken değerleri senkronize et
-        if (onChange && newSlug !== value) {
+        // React Hook Form için onChange olayını tetikle
+        if (onChange) {
           const simulatedEvent = {
             target: {
               name: props.name,
@@ -198,27 +180,17 @@ export const SlugCreator = ({
           onChange(simulatedEvent);
         }
       }
-    }
-  }, [
-    isAuto,
-    syncWithValue,
-    onChange,
-    props.name,
-    value,
-    internalValue,
-    cleanSlug,
-  ]);
+    };
 
-  // followRef değişikliğini izle (eğer varsa)
-  useEffect(() => {
-    if (!followRef?.current || syncWithValue) return;
+    // İlk yükleme için değeri al
+    if (isAuto && followRef.current) {
+      const initialFollowValue = followRef.current.value;
+      const newSlug = cleanSlug(initialFollowValue);
 
-    // Başlangıçta mevcut değeri alıp slug'ı ayarla
-    if (isAuto && followRef.current.value && !internalValue) {
-      const newSlug = cleanSlug(followRef.current.value);
       setInternalValue(newSlug);
+      setCheckResult(null);
 
-      if (onChange) {
+      if (onChange && newSlug !== internalValue) {
         const simulatedEvent = {
           target: {
             name: props.name,
@@ -230,47 +202,21 @@ export const SlugCreator = ({
       }
     }
 
-    // Başlık input'unda değişiklik olduğunda event listener
-    const handleTitleChange = (e: Event) => {
-      if (isAuto && e.target && !syncWithValue) {
-        const titleValue = (e.target as HTMLInputElement).value;
-        const newSlug = cleanSlug(titleValue);
+    // input event listener kullanarak gerçek zamanlı takip et
+    followRef.current.addEventListener("input", handleFollowInputChange);
 
-        // Sadece değer değiştiyse güncelle
-        if (newSlug !== internalValue) {
-          setInternalValue(newSlug);
-          setCheckResult(null);
-
-          // Eğer dışarıdan bir onChange handler verilmişse çağır
-          if (onChange) {
-            const simulatedEvent = {
-              target: {
-                name: props.name,
-                value: newSlug,
-              },
-            } as React.ChangeEvent<HTMLInputElement>;
-
-            onChange(simulatedEvent);
-          }
-        }
-      }
-    };
-
-    // Event listener'ı ekle
-    followRef.current.addEventListener("input", handleTitleChange);
-
-    // Cleanup: component unmount olduğunda veya effect değiştiğinde listener'ı kaldır
+    // Temizleme fonksiyonu
     return () => {
-      followRef.current?.removeEventListener("input", handleTitleChange);
+      followRef.current?.removeEventListener("input", handleFollowInputChange);
     };
   }, [
     isAuto,
     followRef,
     onChange,
-    syncWithValue,
+    props.name,
     internalValue,
     cleanSlug,
-    props.name,
+    isAutoMode,
   ]);
 
   // Değer değişikliğini izle
@@ -281,14 +227,11 @@ export const SlugCreator = ({
     }
   }, [value, isAuto, internalValue]);
 
-  // İlk render için slug'ı ayarla
+  // İlk render için değeri ayarla
   useEffect(() => {
-    const initialValue = isAuto
-      ? cleanSlug(syncWithValue || followRef?.current?.value || "")
-      : (value as string) || "";
-
+    const initialValue = (value as string) || "";
     setInternalValue(initialValue);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps - Sadece ilk render'da çalışsın
+  }, []);
 
   // Durum bilgisini hesapla
   const status =
@@ -318,10 +261,6 @@ export const SlugCreator = ({
         ? "success"
         : "hint";
 
-  // Görüntülenecek değeri hesapla - bu her render'da yeniden hesaplanmasın diye useEffect değil
-  // Değerin tutarlı olması için input value olarak internalValue kullanıyoruz
-  // Bu useEffect'lerdeki mantıkla senkronize tutulacak
-
   return (
     <div className={twMerge("flex flex-col gap-1.5", containerClassName)}>
       {label && (
@@ -333,10 +272,10 @@ export const SlugCreator = ({
             {label}
             {isRequired && <span className="ml-1 text-red-500">*</span>}
           </label>
-          {autoMode && (
+          {isAutoMode && (
             <button
               type="button"
-              onClick={toggleAutoMode}
+              onClick={() => setIsAuto(!isAuto)}
               className="flex items-center gap-1 text-xs font-medium text-zinc-500 hover:text-zinc-700"
             >
               {isAuto ? (
@@ -385,7 +324,7 @@ export const SlugCreator = ({
         />
 
         <div className="absolute right-2 flex items-center gap-1.5">
-          {(followRef || syncWithValue) && (
+          {followRef && (
             <button
               type="button"
               onClick={regenerateFromTitle}

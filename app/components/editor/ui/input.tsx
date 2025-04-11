@@ -7,52 +7,56 @@ interface InputProps extends React.ComponentProps<"input"> {
   isRequired?: boolean;
   isError?: boolean;
   isSuccess?: boolean;
+
+  isAutoMode?: boolean;
+  initialAutoMode?: boolean;
+  followRef?: React.RefObject<HTMLInputElement>;
+
   errorMessage?: string;
   successMessage?: string;
   hint?: string;
+
   startIcon?: React.ReactNode;
   endIcon?: React.ReactNode;
-  containerClassName?: string;
-  maxLength?: number;
+
   showCharCount?: boolean;
   enforceMaxLength?: boolean;
-  autoMode?: boolean;
-  initialAutoMode?: boolean;
-  syncWithValue?: string;
+  maxLength?: number;
 }
 
 export const Input = ({
   ref,
   className,
   label,
-  isRequired = false,
-  isError = false,
-  isSuccess = false,
-  errorMessage,
-  successMessage,
-  hint,
-  startIcon,
-  endIcon,
-  containerClassName,
   id,
   value,
   defaultValue,
   onChange,
-  maxLength,
-  autoMode = false,
+
+  isRequired = false,
+  isError = false,
+  isSuccess = false,
+
+  isAutoMode = false,
   initialAutoMode = false,
-  syncWithValue,
+  followRef,
+
+  errorMessage,
+  successMessage,
+  hint,
+
+  startIcon,
+  endIcon,
+
   showCharCount = false,
   enforceMaxLength = true,
+  maxLength,
   ...props
 }: InputProps) => {
   const [focused, setFocused] = useState(false);
   const [charCount, setCharCount] = useState(0);
-  const [isAuto, setIsAuto] = useState(initialAutoMode);
-  const [internalValue, setInternalValue] = useState<string>(
-    (value as string) || (defaultValue as string) || "",
-  );
-
+  const [internalValue, setInternalValue] = useState<string>((value as string) || (defaultValue as string) || ""); // prettier-ignore
+  const [isAuto, setIsAuto] = useState<boolean>(initialAutoMode);
   const elementRef = useRef<HTMLInputElement | null>(null);
   const inputId = id || `input-${Math.random().toString(36).substring(2, 9)}`;
 
@@ -85,8 +89,6 @@ export const Input = ({
 
   // onChange işleyicisi
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (isAuto) return; // Otomatik modda ise değişikliği engelle
-
     let newValue = e.target.value;
 
     // Karakter sınırlaması uygula
@@ -111,69 +113,67 @@ export const Input = ({
     }
   };
 
-  // syncWithValue değişikliğini izle
   useEffect(() => {
-    if (isAuto && syncWithValue !== undefined) {
-      setInternalValue(syncWithValue);
-      setCharCount(syncWithValue?.length || 0);
-
-      // Otomatik modda iken değerleri senkronize et
-      if (onChange && syncWithValue !== value) {
-        const simulatedEvent = {
-          target: {
-            name: props.name,
-            value: syncWithValue,
-          },
-        } as React.ChangeEvent<HTMLInputElement>;
-
-        onChange(simulatedEvent);
-      }
-    }
-  }, [isAuto, syncWithValue, onChange, props.name, value]);
-
-  // Değer değişikliğini izle
-  useEffect(() => {
-    // Otomatik modda değilse ve kontrollü bileşen ise
-    if (!isAuto && value !== undefined && value !== internalValue) {
-      setInternalValue(value as string);
-      setCharCount((value as string)?.length || 0);
-    }
-  }, [value, isAuto, internalValue]);
-
-  // İlk render için karakter sayacını ayarla
-  useEffect(() => {
-    const initialValue = isAuto
-      ? syncWithValue
-      : (value as string) || (defaultValue as string) || "";
-    setCharCount(initialValue?.length || 0);
-    setInternalValue(initialValue || "");
+    const initialValue = (value as string).slice(0, maxLength);
+    setInternalValue(initialValue);
+    setCharCount(initialValue.length);
   }, []);
 
-  // Otomatik mod değiştiğinde yapılacak işlemler
-  const toggleAutoMode = () => {
-    const newAutoMode = !isAuto;
-    setIsAuto(newAutoMode);
+  useEffect(() => {
+    if (!isAutoMode || !followRef?.current) return;
 
-    if (newAutoMode) {
-      // Otomatik moda geçince syncWithValue değerini al
-      setInternalValue(syncWithValue || "");
-      setCharCount(syncWithValue?.length || 0);
+    // Takip edilen input değiştiğinde dinleme işlevi
+    const handleFollowInputChange = () => {
+      if (!isAuto || !followRef.current) return;
 
-      if (onChange && syncWithValue !== value) {
+      const followValue = followRef.current.value;
+      if (followValue !== internalValue) {
+        setInternalValue(followValue);
+        setCharCount(followValue.length);
+
+        // React Hook Form için onChange olayını tetikle
+        if (onChange) {
+          const simulatedEvent = {
+            target: {
+              name: props.name,
+              value: followValue,
+            },
+          } as React.ChangeEvent<HTMLInputElement>;
+
+          onChange(simulatedEvent);
+        }
+      }
+    };
+
+    // İlk yükleme için değeri al
+    if (isAuto && followRef.current) {
+      const initialFollowValue = followRef.current.value;
+      setInternalValue(initialFollowValue);
+      setCharCount(initialFollowValue.length);
+
+      if (onChange && initialFollowValue !== internalValue) {
         const simulatedEvent = {
           target: {
             name: props.name,
-            value: syncWithValue,
+            value: initialFollowValue,
           },
         } as React.ChangeEvent<HTMLInputElement>;
 
         onChange(simulatedEvent);
       }
     }
-  };
+
+    // input event listener kullanarak gerçek zamanlı takip et
+    followRef.current.addEventListener("input", handleFollowInputChange);
+
+    // Temizleme fonksiyonu
+    return () => {
+      followRef.current?.removeEventListener("input", handleFollowInputChange);
+    };
+  }, [isAuto, followRef, onChange, props.name]);
 
   return (
-    <div className={twMerge("flex flex-col gap-1.5", containerClassName)}>
+    <div className="flex flex-col gap-1.5">
       {label && (
         <div className="flex items-center justify-between">
           <label
@@ -183,10 +183,10 @@ export const Input = ({
             {label}
             {isRequired && <span className="ml-1 text-red-500">*</span>}
           </label>
-          {autoMode && (
+          {isAutoMode && (
             <button
               type="button"
-              onClick={toggleAutoMode}
+              onClick={() => setIsAuto(!isAuto)}
               className="flex items-center gap-1 text-xs font-medium text-zinc-500 hover:text-zinc-700"
             >
               {isAuto ? (
@@ -223,7 +223,7 @@ export const Input = ({
           {...props}
           id={inputId}
           ref={setRefs}
-          value={isAuto ? syncWithValue || "" : internalValue}
+          value={internalValue}
           onChange={handleOnChange}
           className={twMerge(
             "w-full rounded-md bg-transparent px-3 py-2 outline-none",

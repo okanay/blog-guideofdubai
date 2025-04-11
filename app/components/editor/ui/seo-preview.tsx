@@ -142,7 +142,7 @@ export function GoogleSearchPreview({
           className="h-4 w-4"
           loading="lazy"
         />
-        <span>{url}</span>
+        <span className="line-clamp-1">{url}</span>
       </div>
       <h3 className="line-clamp-1 text-base font-medium text-blue-700 hover:underline">
         {displayTitle} | Guide Of Dubai
@@ -203,7 +203,9 @@ export function SocialMediaPreview({
       )}
       {imageStatus === "error" && <div className="h-2 w-full bg-zinc-200" />}
       <div className="flex flex-col gap-1 p-3">
-        <div className="text-xs text-zinc-500 uppercase">{url}</div>
+        <div className="line-clamp-1 text-xs text-zinc-500 uppercase">
+          {url}
+        </div>
         <h3 className="line-clamp-1 text-base font-bold text-zinc-800">
           {displayTitle}
         </h3>

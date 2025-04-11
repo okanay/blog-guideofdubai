@@ -95,11 +95,13 @@ export const Route = createRootRoute({
         {
           rel: "preload",
           as: "image",
+          type: "image/svg",
           href: `/images/brand.svg`,
         },
         {
           rel: "preload stylesheet",
           as: "style",
+          crossOrigin: "anonymous",
           href: `/fonts/custom-sans/font.css`,
         },
         {

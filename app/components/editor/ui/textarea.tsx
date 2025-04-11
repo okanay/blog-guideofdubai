@@ -10,52 +10,50 @@ interface TextareaProps extends React.ComponentProps<"textarea"> {
   errorMessage?: string;
   successMessage?: string;
   hint?: string;
+
+  isAutoMode?: boolean;
+  initialAutoMode?: boolean;
+  followRef?: React.RefObject<HTMLTextAreaElement>;
+
   maxLength?: number;
   showCharCount?: boolean;
   containerClassName?: string;
   enforceMaxLength?: boolean;
-  autoMode?: boolean;
-  initialAutoMode?: boolean;
-  followRef?: React.RefObject<HTMLTextAreaElement>;
-  onValueSync?: (value: string) => void;
-  syncWithValue?: string;
 }
 
 export const Textarea = ({
   ref,
   className,
   label,
+  id,
+  defaultValue,
+  value,
+  onChange,
+
   isRequired = false,
   isError = false,
   isSuccess = false,
   errorMessage,
   successMessage,
   hint,
+
+  isAutoMode = false,
+  initialAutoMode = false,
+  followRef,
+
   maxLength,
   showCharCount = false,
   containerClassName,
-  id,
-  defaultValue,
-  value,
-  onChange,
-  autoMode = false,
-  initialAutoMode = false,
-  followRef,
   enforceMaxLength = true,
-  onValueSync,
-  syncWithValue,
   ...props
 }: TextareaProps) => {
   const [focused, setFocused] = useState(false);
   const [charCount, setCharCount] = useState(0);
   const [isAuto, setIsAuto] = useState(initialAutoMode);
-  const [internalValue, setInternalValue] = useState<string>(
-    (value as string) || (defaultValue as string) || "",
-  );
+  const [internalValue, setInternalValue] = useState<string>((value as string) || (defaultValue as string) || ""); // prettier-ignore
 
   const elementRef = useRef<HTMLTextAreaElement | null>(null);
-  const inputId =
-    id || `textarea-${Math.random().toString(36).substring(2, 9)}`;
+  const inputId = id || `textarea-${Math.random().toString(36).substring(2, 9)}` // prettier-ignore
 
   const showCount = showCharCount || maxLength !== undefined;
   const isLimitExceeded = maxLength !== undefined && charCount > maxLength;
@@ -110,132 +108,68 @@ export const Textarea = ({
 
       onChange(simulatedEvent);
     }
-
-    // Varsa onValueSync callback'ini çağır
-    if (onValueSync) {
-      onValueSync(newValue);
-    }
   };
 
-  // syncWithValue değişikliğini izle
+  // İlk render için karakter sayacını ayarla
   useEffect(() => {
-    if (isAuto && syncWithValue !== undefined) {
-      setInternalValue(syncWithValue);
-      setCharCount(syncWithValue?.length || 0);
+    const initialValue = (value as string) || (defaultValue as string) || "";
+    setInternalValue(initialValue);
+    setCharCount(initialValue.length);
+  }, []);
 
-      // Otomatik modda iken değerleri senkronize et
-      if (onChange && syncWithValue !== value) {
+  // Auto mode için followRef yaklaşımı
+  useEffect(() => {
+    if (!isAutoMode || !followRef?.current) return;
+
+    // Takip edilen textarea değiştiğinde dinleme işlevi
+    const handleFollowInputChange = () => {
+      if (!isAuto || !followRef.current) return;
+
+      const followValue = followRef.current.value;
+      if (followValue !== internalValue) {
+        setInternalValue(followValue);
+        setCharCount(followValue.length);
+
+        // React Hook Form için onChange olayını tetikle
+        if (onChange) {
+          const simulatedEvent = {
+            target: {
+              name: props.name,
+              value: followValue,
+            },
+          } as React.ChangeEvent<HTMLTextAreaElement>;
+
+          onChange(simulatedEvent);
+        }
+      }
+    };
+
+    // İlk yükleme için değeri al
+    if (isAuto && followRef.current) {
+      const initialFollowValue = followRef.current.value;
+      setInternalValue(initialFollowValue);
+      setCharCount(initialFollowValue.length);
+
+      if (onChange && initialFollowValue !== internalValue) {
         const simulatedEvent = {
           target: {
             name: props.name,
-            value: syncWithValue,
+            value: initialFollowValue,
           },
         } as React.ChangeEvent<HTMLTextAreaElement>;
 
         onChange(simulatedEvent);
       }
-
-      // Varsa onValueSync callback'ini çağır
-      if (onValueSync) {
-        onValueSync(syncWithValue);
-      }
-    }
-  }, [isAuto, syncWithValue, onChange, props.name, value, onValueSync]);
-
-  // followRef değişikliğini izle (eğer varsa) - ref değerini useEffect içinde tek seferde alıyoruz
-  useEffect(() => {
-    if (!followRef?.current || !isAuto) return;
-
-    // Takip edilen referans değerini al
-    const currentFollowedValue = followRef.current.value;
-
-    // Sadece değer değiştiyse güncelle
-    if (currentFollowedValue !== internalValue) {
-      setInternalValue(currentFollowedValue);
-      setCharCount(currentFollowedValue.length);
-
-      // Otomatik modda iken değerleri senkronize et
-      if (onChange && currentFollowedValue !== value) {
-        const simulatedEvent = {
-          target: {
-            name: props.name,
-            value: currentFollowedValue,
-          },
-        } as React.ChangeEvent<HTMLTextAreaElement>;
-
-        onChange(simulatedEvent);
-      }
-
-      // Varsa onValueSync callback'ini çağır
-      if (onValueSync) {
-        onValueSync(currentFollowedValue);
-      }
     }
 
-    // followRef.current.value yerine isAuto'ya bağımlılık ekledik
-    // Bu sayede sorunlu dependency listesini düzelttik
-  }, [
-    isAuto,
-    followRef,
-    onChange,
-    props.name,
-    value,
-    onValueSync,
-    internalValue,
-  ]);
+    // input event listener kullanarak gerçek zamanlı takip et
+    followRef.current.addEventListener("input", handleFollowInputChange);
 
-  // Değer değişikliğini izle
-  useEffect(() => {
-    // Otomatik modda değilse ve kontrollü bileşen ise
-    if (!isAuto && value !== undefined && value !== internalValue) {
-      setInternalValue(value as string);
-      setCharCount((value as string)?.length || 0);
-    }
-  }, [value, isAuto, internalValue]);
-
-  // İlk render için karakter sayacını ayarla (sadece bir kez çalışacak)
-  useEffect(() => {
-    const initialValue = isAuto
-      ? syncWithValue || followRef?.current?.value || ""
-      : (value as string) || (defaultValue as string) || "";
-
-    setCharCount(initialValue?.length || 0);
-    setInternalValue(initialValue || "");
-  }, []); // Boş dependency array ile sadece bir kez çalışır
-
-  // Otomatik mod değiştiğinde yapılacak işlemler
-  const toggleAutoMode = () => {
-    const newAutoMode = !isAuto;
-    setIsAuto(newAutoMode);
-
-    if (newAutoMode) {
-      // Otomatik moda geçince syncWithValue veya followRef değerini al
-      const syncValue = syncWithValue || followRef?.current?.value || "";
-      setInternalValue(syncValue);
-      setCharCount(syncValue?.length || 0);
-
-      if (onChange && syncValue !== value) {
-        const simulatedEvent = {
-          target: {
-            name: props.name,
-            value: syncValue,
-          },
-        } as React.ChangeEvent<HTMLTextAreaElement>;
-
-        onChange(simulatedEvent);
-      }
-
-      // Varsa onValueSync callback'ini çağır
-      if (onValueSync) {
-        onValueSync(syncValue);
-      }
-    }
-  };
-
-  // İçeriği otomatik moda bağlı olarak belirle
-  const displayValue = isAuto
-    ? syncWithValue || followRef?.current?.value || ""
-    : internalValue;
+    // Temizleme fonksiyonu
+    return () => {
+      followRef.current?.removeEventListener("input", handleFollowInputChange);
+    };
+  }, [isAuto, followRef, onChange, props.name, internalValue]);
 
   return (
     <div className={twMerge("flex flex-col gap-1.5", containerClassName)}>
@@ -248,10 +182,10 @@ export const Textarea = ({
             {label}
             {isRequired && <span className="ml-1 text-red-500">*</span>}
           </label>
-          {autoMode && (
+          {isAutoMode && (
             <button
               type="button"
-              onClick={toggleAutoMode}
+              onClick={() => setIsAuto(!isAuto)}
               className="flex items-center gap-1 text-xs font-medium text-zinc-500 hover:text-zinc-700"
             >
               {isAuto ? (
@@ -284,7 +218,7 @@ export const Textarea = ({
           {...props}
           ref={setRefs}
           id={inputId}
-          value={displayValue}
+          value={internalValue}
           onFocus={(e) => {
             setFocused(true);
             props.onFocus?.(e);
