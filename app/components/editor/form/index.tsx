@@ -1,17 +1,15 @@
-import { DEFAULT_CATEGORY_OPTIONS, DEFAULT_TAG_OPTIONS } from "../constants"; // prettier-ignore
 import { ImagePreview, Input, MultiSelect, ReadTime, Select, SeoPreview, SlugCreator, Textarea, Toggle } from "@/components/editor/ui"; // prettier-ignore
 import { LANGUAGE_DICTONARY } from "@/i18n/config";
 import { Controller, useForm } from "react-hook-form";
 import { useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { formSchema } from "../validations/form";
 import { useTiptapContext } from "../tiptap/store";
 import { useEditorContext } from "../store";
+import { BlogFormSchema } from "../validations/form";
 
 type Props = {
   initialValues: BlogFormSchema;
   initialAutoMode: boolean;
-
   onSubmit: (data: BlogFormSchema) => void;
   submitLabel: string;
 };
@@ -39,7 +37,7 @@ export function CreateBlogForm({
     control,
     formState: { errors },
   } = useForm<BlogFormSchema>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(BlogFormSchema),
     mode: "onTouched",
     defaultValues: { ...initialValues },
   });
@@ -72,18 +70,18 @@ export function CreateBlogForm({
 
         <div className="space-y-4">
           <Controller
-            name="seoTitle"
+            name="metadata.title"
             control={control}
             render={({ field }) => (
               <Input
                 {...field}
-                id="seo-title"
+                id="metadata.title"
                 label="SEO Başlığı"
                 isRequired={true}
                 maxLength={60}
                 showCharCount={true}
-                isError={!!errors.seoTitle}
-                errorMessage={errors.seoTitle?.message}
+                isError={!!errors.metadata?.title}
+                errorMessage={errors.metadata?.title?.message}
                 ref={(e) => {
                   field.ref(e);
                   seoTitleRef.current = e;
@@ -93,17 +91,17 @@ export function CreateBlogForm({
           />
 
           <Controller
-            name="seoSlug"
+            name="slug"
             control={control}
             render={({ field }) => (
               <SlugCreator
                 {...field}
                 label="URL Yapısı"
-                id="seo-slug"
+                id="slug"
                 hint="Arama motorları ve kullanıcılar için kolay okunabilir URL"
                 isRequired={true}
-                isError={!!errors.seoSlug}
-                errorMessage={errors.seoSlug?.message}
+                isError={!!errors.slug}
+                errorMessage={errors.slug?.message}
                 isAutoMode={true}
                 initialAutoMode={initialAutoMode}
                 followRef={seoTitleRef}
@@ -116,20 +114,20 @@ export function CreateBlogForm({
           />
 
           <Controller
-            name="seoDescription"
+            name="metadata.description"
             control={control}
             render={({ field }) => (
               <Textarea
                 {...field}
                 label="Meta Açıklama"
-                id="seo-description"
+                id="metadata.description"
                 placeholder="Google ve diğer arama motorlarında görünecek açıklama metni"
                 hint="Kullanıcıyı tıklamaya yönlendirecek, anahtar kelimeler içeren etkili bir açıklama yazın"
                 maxLength={160}
                 rows={3}
                 isRequired={true}
-                isError={!!errors.seoDescription}
-                errorMessage={errors.seoDescription?.message}
+                isError={!!errors.metadata?.description}
+                errorMessage={errors.metadata?.description?.message}
                 ref={(e) => {
                   field.ref(e);
                   seoDescriptionRef.current = e;
@@ -139,18 +137,18 @@ export function CreateBlogForm({
           />
 
           <Controller
-            name="seoImage"
+            name="metadata.image"
             control={control}
             render={({ field }) => (
               <ImagePreview
                 {...field}
-                id="seo-image"
+                id="metadata.image"
                 label="Sosyal Medya Görseli"
                 hint="Sosyal medya platformlarında link olarak paylaşıldığında görünecek görsel (1200x630px önerilir)"
                 maxLength={160}
                 isRequired={true}
-                isError={!!errors.seoImage}
-                errorMessage={errors.seoImage?.message}
+                isError={!!errors.metadata?.image}
+                errorMessage={errors.metadata?.image?.message}
                 ref={(e) => {
                   field.ref(e);
                   seoImageRef.current = e;
@@ -160,14 +158,14 @@ export function CreateBlogForm({
           />
 
           <SeoPreview
-            titleInput={{ id: "seo-title", value: "" }}
+            titleInput={{ id: "metadata.title", value: "" }}
             descriptionInput={{
-              id: "seo-description",
+              id: "metadata.description",
               value: "",
             }}
-            slugInput={{ id: "seo-slug", value: "" }}
+            slugInput={{ id: "slug", value: "" }}
             imageInput={{
-              id: "seo-image",
+              id: "metadata.image",
               value: "",
             }}
             defaultMode="google"
@@ -184,18 +182,18 @@ export function CreateBlogForm({
 
         <div className="space-y-6">
           <Controller
-            name="blogTitle"
+            name="content.title"
             control={control}
             render={({ field }) => (
               <Input
                 {...field}
-                id="blog-title"
+                id="content.title"
                 label="Kart Başlığı"
                 placeholder="İlgi çekici ve konuyu net ifade eden başlık"
                 hint="Listeleme sayfalarında blog kartında büyük punto ile görünür"
                 isRequired={true}
-                isError={!!errors.blogTitle}
-                errorMessage={errors.blogTitle?.message}
+                isError={!!errors.content?.title}
+                errorMessage={errors.content?.title?.message}
                 showCharCount={true}
                 maxLength={60}
                 isAutoMode={true}
@@ -206,19 +204,19 @@ export function CreateBlogForm({
           />
 
           <Controller
-            name="blogDescription"
+            name="content.description"
             control={control}
             rules={{ required: "Kart açıklaması gereklidir" }}
             render={({ field }) => (
               <Textarea
                 {...field}
-                id="blog-description"
+                id="content.description"
                 label="Kart Özeti"
                 placeholder="İçeriğin ana değerini ve faydalarını vurgulayan özet"
                 hint="Kullanıcıyı içeriği okumaya teşvik edecek kısa ve öz bir açıklama"
                 isRequired={true}
-                isError={!!errors.blogDescription}
-                errorMessage={errors.blogDescription?.message}
+                isError={!!errors.content?.description}
+                errorMessage={errors.content?.description?.message}
                 showCharCount={true}
                 maxLength={160}
                 rows={3}
@@ -230,19 +228,19 @@ export function CreateBlogForm({
           />
 
           <Controller
-            name="blogImage"
+            name="content.image"
             control={control}
             rules={{ required: "Kart görseli gereklidir." }}
             render={({ field }) => (
               <ImagePreview
                 {...field}
-                id="blog-image"
+                id="content.image"
                 label="Kart Görseli"
                 placeholder="https://example.com/images/blog-image.jpg"
                 hint="Blog listelerinde gösterilecek kapak görseli (1200x630px önerilir)"
                 isRequired={true}
-                isError={!!errors.blogImage}
-                errorMessage={errors.blogImage?.message}
+                isError={!!errors.content?.image}
+                errorMessage={errors.content?.image?.message}
                 isAutoMode={true}
                 initialAutoMode={initialAutoMode}
                 followRef={seoImageRef}
@@ -256,7 +254,7 @@ export function CreateBlogForm({
             render={({ field }) => (
               <MultiSelect
                 label="Kategoriler"
-                id="blog-categories"
+                id="categories"
                 options={categories}
                 onAddCustomOption={addCategory}
                 onRefreshOptions={refreshCategories}
@@ -278,7 +276,7 @@ export function CreateBlogForm({
             render={({ field }) => (
               <MultiSelect
                 label="Etiketler"
-                id="blog-tags"
+                id="tags"
                 options={tags}
                 onAddCustomOption={addTag}
                 onRefreshOptions={refreshTags}
@@ -312,7 +310,7 @@ export function CreateBlogForm({
             render={({ field }) => (
               <Select
                 label="İçerik Dili"
-                id="blog-language"
+                id="language"
                 options={LANGUAGE_DICTONARY}
                 value={field.value}
                 onChange={(newValue) => field.onChange(newValue)}
@@ -326,12 +324,12 @@ export function CreateBlogForm({
             )}
           />
           <Controller
-            name="readTime"
+            name="content.readTime"
             control={control}
             render={({ field }) => (
               <ReadTime
                 label="Okuma Süresi"
-                id="blog-read-time"
+                id="content.readTime"
                 isRequired={true}
                 value={field.value}
                 initialAutoMode={initialAutoMode}
@@ -340,8 +338,8 @@ export function CreateBlogForm({
                 name={field.name}
                 htmlContent={editor.getHTML()}
                 hint="İçeriğin tahmini okuma süresi (dakika cinsinden)"
-                isError={!!errors.readTime}
-                errorMessage={errors.readTime?.message}
+                isError={!!errors.content?.readTime}
+                errorMessage={errors.content?.readTime?.message}
               />
             )}
           />

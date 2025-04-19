@@ -114,10 +114,10 @@ export const Input = ({
   };
 
   useEffect(() => {
-    const initialValue = (value as string).slice(0, maxLength);
+    const initialValue = value ? (value as string).slice(0, maxLength) : "";
     setInternalValue(initialValue);
-    setCharCount(initialValue.length);
-  }, []);
+    setCharCount(initialValue?.length || 0);
+  }, [value, maxLength]);
 
   useEffect(() => {
     if (!isAutoMode || !followRef?.current) return;

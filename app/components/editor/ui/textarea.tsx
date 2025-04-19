@@ -77,8 +77,7 @@ export const Textarea = ({
     if (typeof ref === "function") {
       ref(element);
     } else if (ref) {
-      (ref as React.MutableRefObject<HTMLTextAreaElement | null>).current =
-        element;
+      (ref as any).current = element;
     }
   };
 
@@ -112,10 +111,10 @@ export const Textarea = ({
 
   // İlk render için karakter sayacını ayarla
   useEffect(() => {
-    const initialValue = (value as string) || (defaultValue as string) || "";
+    const initialValue = value ? (value as string).slice(0, maxLength) : "";
     setInternalValue(initialValue);
     setCharCount(initialValue.length);
-  }, []);
+  }, [value, maxLength]);
 
   // Auto mode için followRef yaklaşımı
   useEffect(() => {

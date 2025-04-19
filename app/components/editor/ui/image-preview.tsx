@@ -82,8 +82,7 @@ export const ImagePreview = ({
     if (typeof ref === "function") {
       ref(element);
     } else if (ref) {
-      (ref as React.MutableRefObject<HTMLInputElement | null>).current =
-        element;
+      (ref as any).current = element;
     }
   };
 

@@ -5,22 +5,7 @@ import { immer } from "zustand/middleware/immer";
 
 type Props = PropsWithChildren & {
   children: React.ReactNode;
-  initialFormValues: BlogFormSchema;
-};
-
-type Category = {
-  name: string;
-  value: string;
-};
-
-type Tag = {
-  name: string;
-  value: string;
-};
-
-type StatusState = {
-  loading: boolean;
-  error: string | null;
+  initialFormValues: BlogSchema;
 };
 
 interface DataState {
@@ -28,10 +13,10 @@ interface DataState {
     mode: BlogViewMode;
     setMode: (mode: BlogViewMode) => void;
   };
-  formValues: BlogFormSchema;
-  setFormValues: (values: BlogFormSchema) => void;
+  formValues: BlogSchema;
+  setFormValues: (values: BlogSchema) => void;
 
-  createBlog: (blog: BlogCreate) => Promise<boolean>;
+  createBlog: (blog: any) => Promise<boolean>;
   createStatus: StatusState;
 
   categories: Category[];
@@ -61,7 +46,7 @@ export function EditorProvider({ children, initialFormValues }: Props) {
             }),
         },
         formValues: { ...initialFormValues },
-        setFormValues: (values: BlogFormSchema) =>
+        setFormValues: (values: BlogSchema) =>
           set((state) => {
             state.formValues = values;
           }),
@@ -70,7 +55,7 @@ export function EditorProvider({ children, initialFormValues }: Props) {
           loading: false,
           error: null,
         },
-        createBlog: async (blog: BlogCreateRequest) => {
+        createBlog: async (blog: any) => {
           set((state) => {
             state.categoryStatus.loading = true;
             state.categoryStatus.error = null;
