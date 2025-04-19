@@ -1,12 +1,18 @@
 export type AuthStatus = "loading" | "authorize" | "unauthorize";
 
-export type UserRole = "user" | "editor" | "admin";
+export type Role = "User" | "Editor" | "Admin";
+
+export type Status = "Active" | "Suspended" | "Deleted";
 
 export type User = {
   id: string;
   username: string;
   email: string;
-  role: UserRole;
+  role: Role;
+  status: Status;
+  emailVerified: boolean;
+  createdAt: string;
+  lastLogin: string;
 };
 
 export type LoginCredentials = {

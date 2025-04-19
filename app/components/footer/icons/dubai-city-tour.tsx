@@ -5,16 +5,18 @@ export function DubaiCityTourSVG() {
       width="28"
       height="28"
       stroke="#ffffff"
-      stroke-width="0.96"
+      strokeWidth="0.96"
       viewBox="0 0 32.00 32.00"
     >
-      <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+      <g id="SVGRepo_bgCarrier" style={{ strokeWidth: 0 }}></g>
       <g
         id="SVGRepo_tracerCarrier"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke="#CCCCCC"
-        stroke-width="0.192"
+        style={{
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
+          stroke: "#CCCCCC",
+          strokeWidth: 0.192,
+        }}
       ></g>
       <g id="SVGRepo_iconCarrier">
         <path

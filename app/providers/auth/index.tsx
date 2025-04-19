@@ -15,7 +15,9 @@ interface DataState {
   user: User | null;
   setUser: (user: User | null) => void;
   logout: () => Promise<void>;
-  login: (user: LoginCredentials) => Promise<void>;
+  login: (
+    credentials: LoginCredentials,
+  ) => Promise<{ success: boolean; message: string }>;
   initialSessionControl: () => Promise<void>;
 }
 
@@ -47,17 +49,27 @@ export function AuthProvider({
         },
         login: async (credentials: LoginCredentials) => {
           try {
-            await fetch(`${import.meta.env.VITE_APP_BACKEND_URL}/login`, {
-              headers: {
-                "Content-Type": "application/json",
+            const response = await fetch(
+              `${import.meta.env.VITE_APP_BACKEND_URL}/login`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(credentials),
+                credentials: "include",
               },
-              method: "POST",
-              body: JSON.stringify(credentials),
-              credentials: "include",
-            });
-            set({ user: null });
-          } catch (error) {
-            console.warn("Failed to login:", error);
+            );
+
+            if (response.ok) {
+              const user = await response.json();
+              set({ user, status: "authorize" });
+              return { success: true, message: "Login successful" };
+            }
+
+            set({ user: null, status: "unauthorize" });
+            return { success: false, message: "Login failed" };
+          } catch {
+            set({ user: null, status: "unauthorize" });
+            return { success: false, message: "Login failed" };
           }
         },
         initialSessionControl: async () => {
@@ -65,24 +77,21 @@ export function AuthProvider({
             const response = await fetch(
               `${import.meta.env.VITE_APP_BACKEND_URL}/auth/get-me`,
               {
-                headers: {
-                  "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 method: "GET",
                 credentials: "include",
               },
             );
 
-            if (!response.ok) {
+            if (response.ok) {
+              const data = await response.json();
+              set({ user: data.user, status: "authorize" });
+            } else {
               set({ user: null, status: "unauthorize" });
-              return;
             }
-
-            const data = await response.json();
-            set({ user: data.user, status: "authorize" });
           } catch (error) {
-            set({ user: null, status: "unauthorize" });
             console.warn("Failed to check user login:", error);
+            set({ user: null, status: "unauthorize" });
           }
         },
       })),
