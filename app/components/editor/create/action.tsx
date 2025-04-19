@@ -1,7 +1,7 @@
 import { CreateBlogForm } from "../form";
 import { useTiptapContext } from "../tiptap/store";
 import { useEditorContext } from "../store";
-import { BlogCreateData } from "../validations/form";
+import { BlogCreateData } from "../validations/blog-form";
 
 export const CreateBlogAction = () => {
   const { editor } = useTiptapContext();

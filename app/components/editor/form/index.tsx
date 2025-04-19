@@ -5,7 +5,7 @@ import { useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTiptapContext } from "../tiptap/store";
 import { useEditorContext } from "../store";
-import { BlogFormSchema } from "../validations/form";
+import { BlogFormSchema } from "../validations/blog-form";
 
 type Props = {
   initialValues: BlogFormSchema;

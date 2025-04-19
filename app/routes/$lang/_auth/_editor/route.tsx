@@ -1,7 +1,6 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { seoTranslations } from "@/i18n/languages";
 import dragModuleStyles from "@/components/editor/tiptap/drag-styles.css?url";
-import { AuthProvider } from "@/providers/auth";
 import ProtectedRoute from "@/providers/auth/protected-route";
 
 export const Route = createFileRoute("/$lang/_auth/_editor")({
