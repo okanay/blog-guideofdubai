@@ -16,8 +16,6 @@ export default function ProtectedRoute({
   const { status } = useAuth();
   const navigate = useNavigate();
 
-  console.log("status", status);
-
   useEffect(() => {
     if (status === "loading") return;
 

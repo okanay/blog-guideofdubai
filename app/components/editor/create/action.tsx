@@ -5,13 +5,12 @@ import { SafeBlogCreateData } from "../validations/create";
 
 export const CreateBlogAction = () => {
   const { editor } = useTiptapContext();
-  const { formValues } = useEditorContext();
+  const { formValues, createBlog, createStatus } = useEditorContext();
 
   const handleOnSubmit = async (values: BlogFormSchema) => {
     const safeData = await SafeBlogCreateData(values, editor);
-    if (!safeData.success) return;
-    const data = safeData.data;
-    console.log(data);
+    if (!safeData.success || createStatus.loading) return;
+    const status = await createBlog(safeData.data);
   };
 
   return (

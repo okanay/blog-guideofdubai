@@ -6,6 +6,7 @@ import { useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { formSchema } from "../validations/form";
 import { useTiptapContext } from "../tiptap/store";
+import { useEditorContext } from "../store";
 
 type Props = {
   initialValues: BlogFormSchema;
@@ -22,6 +23,16 @@ export function CreateBlogForm({
   onSubmit,
 }: Props) {
   const { editor } = useTiptapContext();
+  const {
+    refreshTags,
+    tags,
+    addTag,
+    tagStatus,
+    categories,
+    addCategory,
+    categoryStatus,
+    refreshCategories,
+  } = useEditorContext();
 
   const {
     handleSubmit,
@@ -246,7 +257,10 @@ export function CreateBlogForm({
               <MultiSelect
                 label="Kategoriler"
                 id="blog-categories"
-                options={DEFAULT_CATEGORY_OPTIONS}
+                options={categories}
+                onAddCustomOption={addCategory}
+                onRefreshOptions={refreshCategories}
+                modalStatus={categoryStatus}
                 value={field.value}
                 onChange={(newValue) => field.onChange(newValue)}
                 isRequired={true}
@@ -265,7 +279,10 @@ export function CreateBlogForm({
               <MultiSelect
                 label="Etiketler"
                 id="blog-tags"
-                options={DEFAULT_TAG_OPTIONS}
+                options={tags}
+                onAddCustomOption={addTag}
+                onRefreshOptions={refreshTags}
+                modalStatus={tagStatus}
                 value={field.value}
                 onChange={(newValue) => field.onChange(newValue)}
                 hint="İçerikle ilgili anahtar kelimeleri seçin, arama ve filtreleme işlemlerinde kullanılır"

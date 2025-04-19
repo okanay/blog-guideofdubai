@@ -1,12 +1,27 @@
-import { useState, useRef, useEffect } from "react";
+import { slugify } from "../helper";
+import { useState, useEffect } from "react";
 import { twMerge } from "tailwind-merge";
-import { Tag, Plus, X, Check, ChevronDown, Tags } from "lucide-react";
+import {
+  Tag,
+  Plus,
+  X,
+  Check,
+  ChevronDown,
+  Tags,
+  Loader2,
+  RefreshCw,
+} from "lucide-react";
 import RichButtonModal from "../tiptap/menu/ui/modal";
 
 interface MultiSelectOption {
+  name: string;
   value: string;
-  label: string;
 }
+
+type ModalStatus = {
+  loading: boolean;
+  error: string | null;
+};
 
 interface MultiSelectProps {
   label?: string;
@@ -23,11 +38,15 @@ interface MultiSelectProps {
   allowCustomOption?: boolean;
   customOptionPlaceholder?: string;
   searchPlaceholder?: string;
+
+  // Dışarıdan gelen fonksiyonlar ve durumlar
+  onAddCustomOption: (option: { name: string; value: string }) => Promise<void>;
+  onRefreshOptions: () => Promise<void>;
+  modalStatus: ModalStatus;
 }
 
 export const MultiSelect = ({
   label,
-  id,
   options: initialOptions,
   isRequired = false,
   isError = false,
@@ -40,12 +59,22 @@ export const MultiSelect = ({
   allowCustomOption = true,
   customOptionPlaceholder = "Yeni kategori ekle...",
   searchPlaceholder = "Kategorilerde ara...",
+  // Dışarıdan gelen fonksiyonlar ve durumlar
+  onAddCustomOption,
+  onRefreshOptions,
+  modalStatus,
 }: MultiSelectProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [options, setOptions] = useState<MultiSelectOption[]>(initialOptions);
   const [selectedValues, setSelectedValues] = useState<string[]>(value || []);
   const [customOptionText, setCustomOptionText] = useState("");
   const [searchText, setSearchText] = useState("");
+  const [localError, setLocalError] = useState<string | null>(null);
+
+  // Ilk render da fetch atarak yenile.
+  useEffect(() => {
+    onRefreshOptions();
+  }, []);
 
   // Dışarıdan gelen değerleri izle
   useEffect(() => {
@@ -54,10 +83,21 @@ export const MultiSelect = ({
     }
   }, [value]);
 
+  // Dışarıdan gelen seçenekleri izle
+  useEffect(() => {
+    setOptions(initialOptions);
+  }, [initialOptions]);
+
+  // Dışarıdan gelen hataları izle
+  useEffect(() => {
+    setLocalError(modalStatus.error);
+  }, [modalStatus.error]);
+
   // Modal dışına tıklandığında kapatma
   const closeModal = () => {
     setIsModalOpen(false);
     setSearchText("");
+    setLocalError(null);
   };
 
   // Seçili değerleri değiştir ve parent'a bildir
@@ -71,7 +111,7 @@ export const MultiSelect = ({
   // Opsiyon seçme/seçimi kaldırma
   const toggleOption = (optionValue: string) => {
     const newSelectedValues = selectedValues.includes(optionValue)
-      ? selectedValues.filter((val) => val !== optionValue)
+      ? selectedValues.filter((name) => name !== optionValue)
       : [...selectedValues, optionValue];
 
     handleValueChange(newSelectedValues);
@@ -85,48 +125,66 @@ export const MultiSelect = ({
     handleValueChange(newSelectedValues);
   };
 
-  // Yeni özel kategori ekle
-  const addCustomOption = () => {
+  const addCustomOption = async () => {
     if (!customOptionText.trim()) return;
+    setLocalError(null);
 
-    // Aynı değere sahip bir seçenek var mı kontrol et
+    const value = customOptionText.trim();
+    const name = slugify(value);
+
+    // Güvenli kontrol
     const exists = options.some(
       (option) =>
-        option.value.toLowerCase() === customOptionText.trim().toLowerCase(),
+        option &&
+        option.value &&
+        typeof option.value === "string" &&
+        option?.value?.toLowerCase() === value.toLowerCase(),
     );
 
-    if (!exists) {
-      const newOption: MultiSelectOption = {
-        value: customOptionText.trim(),
-        label: customOptionText.trim(),
-      };
-
-      setOptions([newOption, ...options]);
-      handleValueChange([...selectedValues, newOption.value]);
-    } else {
-      // Zaten var olan bir seçeneği seç
-      const existingValue = options.find(
-        (option) =>
-          option.value.toLowerCase() === customOptionText.trim().toLowerCase(),
-      )?.value;
-
-      if (existingValue && !selectedValues.includes(existingValue)) {
-        handleValueChange([existingValue, ...selectedValues]);
-      }
+    if (exists) {
+      setCustomOptionText("");
+      setLocalError("Bu seçenek zaten mevcut");
+      return;
     }
 
-    // Input'u temizle
-    setCustomOptionText("");
+    if (!onAddCustomOption) return;
+
+    try {
+      await onAddCustomOption({
+        name: name,
+        value: value,
+      });
+
+      // Input'u başarılı eklemeden sonra temizle
+      setCustomOptionText("");
+    } catch (error) {
+      console.error("Failed to add custom option:", error);
+      setLocalError(
+        error instanceof Error
+          ? error.message
+          : "Ekleme sırasında bir hata oluştu",
+      );
+      return; // Hata durumunda fonksiyondan çık
+    }
+
+    // finally yerine try bloğundan sonra - hata olmadığında çalışsın
+    if (onRefreshOptions) {
+      try {
+        await onRefreshOptions(); // await kullanıldığına dikkat edin
+      } catch (refreshError) {
+        console.error("Failed to refresh options:", refreshError);
+        // Yenileme hatası olursa kullanıcıya bildir (isteğe bağlı)
+        setLocalError("Seçenekler yenilenirken bir hata oluştu");
+      }
+    }
   };
 
-  // Arama sonucuna göre filtrelenmiş seçenekler
   const filteredOptions = options.filter((option) =>
-    option.label.toLowerCase().includes(searchText.toLowerCase()),
+    option?.value?.toLowerCase().includes(searchText.toLowerCase()),
   );
 
-  // Seçili etiketleri bul ve göster
   const selectedOptions = options.filter((option) =>
-    selectedValues.includes(option.value),
+    selectedValues.includes(option.name),
   );
 
   return (
@@ -152,16 +210,16 @@ export const MultiSelect = ({
           <div className="flex flex-wrap gap-1.5">
             {selectedOptions.map((option, index) => (
               <div
-                key={option.value + index + "MultiSelect-Options"}
+                key={option.name + index + "MultiSelect-Options"}
                 className="group flex items-center gap-1 rounded-md bg-zinc-100 px-2 py-1 text-xs"
               >
                 <Tag size={12} className="text-zinc-500" />
-                <span>{option.label}</span>
+                <span>{option.value}</span>
                 <button
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
-                    removeSelectedValue(option.value);
+                    removeSelectedValue(option.name);
                   }}
                   className="rounded-full p-0.5 text-zinc-400 hover:bg-zinc-200 hover:text-red-500"
                 >
@@ -222,6 +280,13 @@ export const MultiSelect = ({
             )}
           </div>
 
+          {/* Hata mesajı */}
+          {localError && (
+            <div className="rounded-md bg-red-50 p-2 text-sm text-red-600">
+              {localError}
+            </div>
+          )}
+
           {/* Özel kategori ekleme */}
           {allowCustomOption && (
             <div className="flex items-center gap-2">
@@ -237,30 +302,55 @@ export const MultiSelect = ({
                     addCustomOption();
                   }
                 }}
+                disabled={modalStatus.loading}
               />
+
               <button
                 type="button"
-                onClick={addCustomOption}
-                disabled={!customOptionText.trim()}
-                className="flex items-center gap-1 rounded-md bg-zinc-100 px-3 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50"
+                onClick={() => addCustomOption()}
+                disabled={!customOptionText.trim() || modalStatus.loading}
+                className="flex h-10 items-center gap-1 rounded-md bg-zinc-100 px-3 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <Plus size={14} />
+                {modalStatus.loading ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : (
+                  <Plus size={14} />
+                )}
                 Ekle
+              </button>
+              <button
+                type="button"
+                onClick={() => onRefreshOptions()}
+                disabled={modalStatus.loading}
+                className="flex h-10 items-center gap-1 rounded-md bg-zinc-100 px-3 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {modalStatus.loading ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : (
+                  <RefreshCw size={14} />
+                )}
               </button>
             </div>
           )}
 
           {/* Seçenekler listesi */}
           <div className="max-h-60 overflow-y-auto rounded-md border border-zinc-200">
-            {filteredOptions.length > 0 ? (
+            {modalStatus.loading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 size={24} className="animate-spin text-zinc-500" />
+                <span className="ml-2 text-sm text-zinc-500">
+                  Yükleniyor...
+                </span>
+              </div>
+            ) : filteredOptions.length > 0 ? (
               <div className="flex flex-col divide-y divide-zinc-100">
                 {filteredOptions.map((option) => {
-                  const isSelected = selectedValues.includes(option.value);
+                  const isSelected = selectedValues.includes(option.name);
                   return (
                     <button
-                      key={option.value}
+                      key={option.name}
                       type="button"
-                      onClick={() => toggleOption(option.value)}
+                      onClick={() => toggleOption(option.name)}
                       className={twMerge(
                         "flex items-center gap-3 px-3 py-2 text-left text-sm transition-colors hover:bg-zinc-50",
                         isSelected && "bg-zinc-50",
@@ -276,7 +366,7 @@ export const MultiSelect = ({
                           <Check size={12} className="text-white" />
                         )}
                       </div>
-                      <span>{option.label}</span>
+                      <span>{option.value}</span>
                     </button>
                   );
                 })}

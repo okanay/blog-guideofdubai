@@ -9,11 +9,10 @@ export const DEFAULT_BLOG_FORM_VALUES: BlogFormSchema = {
   blogTitle: "",
   blogDescription: "",
   blogImage: "",
-  categories: ["category-shopping"],
+  categories: [],
   tags: [],
   language: DEFAULT_LANGUAGE,
   readTime: 0,
   featured: false,
   status: "published",
-  isCanonical: true,
 };

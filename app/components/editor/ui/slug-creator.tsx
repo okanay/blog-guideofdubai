@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { twMerge } from "tailwind-merge";
 import { Lock, Unlock, RotateCcw, CheckCircle } from "lucide-react";
+import { slugify } from "../helper";
 
 interface SlugCreatorProps extends React.ComponentProps<"input"> {
   label?: string;
@@ -54,28 +55,6 @@ export const SlugCreator = ({
   const elementRef = useRef<HTMLInputElement | null>(null);
   const inputId = id || `slug-${Math.random().toString(36).substring(2, 9)}`;
 
-  // URL-dostu slug oluşturma fonksiyonu - useCallback ile memoize ediyoruz
-  const cleanSlug = useCallback((text: string): string => {
-    if (!text) return "";
-
-    return (
-      text
-        .toLowerCase()
-        .trim()
-        // Türkçe karakterleri değiştir
-        .replace(/ğ/g, "g")
-        .replace(/ü/g, "u")
-        .replace(/ş/g, "s")
-        .replace(/ı/g, "i")
-        .replace(/ö/g, "o")
-        .replace(/ç/g, "c")
-        // Diğer özel karakterleri ve boşlukları değiştir
-        .replace(/[^a-z0-9\s-]/g, "")
-        .replace(/\s+/g, "-") // Boşlukları tire ile değiştir
-        .replace(/-+/g, "-")
-    ); // Birden fazla tireyi tekli tireye dönüştür
-  }, []);
-
   // Referans birleştirme işlevi
   const setRefs = (element: HTMLInputElement | null) => {
     // İç referans için atama
@@ -94,7 +73,7 @@ export const SlugCreator = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isAuto) return; // Otomatik modda ise değişikliği engelle
 
-    const newValue = cleanSlug(e.target.value);
+    const newValue = slugify(e.target.value);
     setInternalValue(newValue);
     setCheckResult(null);
 
@@ -135,7 +114,7 @@ export const SlugCreator = ({
     if (!followRef?.current) return;
 
     const sourceValue = followRef?.current?.value || "";
-    const newSlug = cleanSlug(sourceValue);
+    const newSlug = slugify(sourceValue);
 
     setInternalValue(newSlug);
     setCheckResult(null);
@@ -162,7 +141,7 @@ export const SlugCreator = ({
       if (!isAuto || !followRef.current) return;
 
       const followValue = followRef.current.value;
-      const newSlug = cleanSlug(followValue);
+      const newSlug = slugify(followValue);
 
       if (newSlug !== internalValue) {
         setInternalValue(newSlug);
@@ -185,7 +164,7 @@ export const SlugCreator = ({
     // İlk yükleme için değeri al
     if (isAuto && followRef.current) {
       const initialFollowValue = followRef.current.value;
-      const newSlug = cleanSlug(initialFollowValue);
+      const newSlug = slugify(initialFollowValue);
 
       setInternalValue(newSlug);
       setCheckResult(null);
@@ -215,7 +194,7 @@ export const SlugCreator = ({
     onChange,
     props.name,
     internalValue,
-    cleanSlug,
+    slugify,
     isAutoMode,
   ]);
 

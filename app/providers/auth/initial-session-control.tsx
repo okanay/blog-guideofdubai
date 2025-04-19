@@ -6,7 +6,7 @@ export const InitialSessionControl = () => {
 
   useEffect(() => {
     if (status !== "loading") return;
-    initialSessionControl().then(() => console.log("User checked"));
+    initialSessionControl();
   }, []);
 
   return <></>;

@@ -6,6 +6,7 @@ declare global {
 }
 
 export const blogCreateValidation = z.object({
+  groupId: z.string({ message: "Lütfen geçerli bir grup ID'si girin." }),
   slug: z
     .string()
     .min(10, "URL en az 10 karakter olmalıdır. Bu alan boş bırakılamaz."),
@@ -47,21 +48,21 @@ export const blogCreateValidation = z.object({
       .int()
       .positive("Okuma süresi pozitif bir sayı olmalıdır.")
       .min(1, "Okuma dakikasi en az 1 dakika olmalıdır."),
-    categories: z
-      .array(z.string(), {
-        required_error: "En az 1 kategori seçilmelidir.",
-        invalid_type_error: "En az 1 kategori seçilmelidir.",
-      })
-      .min(1, {
-        message: "En az 1 kategori seçilmelidir.",
-      }),
-    tags: z
-      .array(z.string(), {
-        invalid_type_error: "En az 1 etiket seçilmelidir.",
-      })
-      .default([]),
     html: z.string().min(100, "Blog içeriği en az 100 karakter olmalıdır."),
   }),
+  categories: z
+    .array(z.string(), {
+      required_error: "En az 1 kategori seçilmelidir.",
+      invalid_type_error: "En az 1 kategori seçilmelidir.",
+    })
+    .min(1, {
+      message: "En az 1 kategori seçilmelidir.",
+    }),
+  tags: z
+    .array(z.string(), {
+      invalid_type_error: "En az 1 etiket seçilmelidir.",
+    })
+    .default([]),
   language: z
     .string({
       required_error: "Blog dili seçilmelidir.",
@@ -83,6 +84,7 @@ export const SafeBlogCreateData = async (
   editor: Editor,
 ) => {
   const json: BlogCreate = {
+    groupId: data.seoSlug,
     slug: data.seoSlug,
     metadata: {
       title: data.seoTitle,
@@ -94,10 +96,10 @@ export const SafeBlogCreateData = async (
       description: data.blogDescription,
       image: data.blogImage,
       readTime: data.readTime,
-      tags: data.tags,
-      categories: data.categories,
       html: editor?.getHTML(),
     },
+    tags: data.tags,
+    categories: data.categories,
     language: data.language as Language,
     status: data.status as BlogStatus,
     featured: data.featured,
