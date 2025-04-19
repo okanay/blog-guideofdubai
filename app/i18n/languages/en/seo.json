@@ -7,18 +7,32 @@
     "title": "Page Not Found | Guide Of Dubai",
     "description": "The page you are looking for was not found"
   },
-  "editor": {
+  "auth": {
     "root": {
-      "title": "Editor | Guide Of Dubai",
-      "description": "Edit your post and contribute to Guide Of Dubai."
+      "title": "Login | Guide Of Dubai",
+      "description": "Login to your account and contribute to Guide Of Dubai."
     },
-    "create": {
-      "title": "Create Blog | Guide Of Dubai",
-      "description": "Create a new post and contribute to Guide Of Dubai."
+    "login": {
+      "title": "Login | Guide Of Dubai",
+      "description": "Login to your account and contribute to Guide Of Dubai."
     },
-    "edit": {
-      "title": "Edit Blog | Guide Of Dubai",
-      "description": "Edit your post and contribute to Guide Of Dubai."
+    "register": {
+      "title": "Register | Guide Of Dubai",
+      "description": "Register for an account and contribute to Guide Of Dubai."
+    },
+    "editor": {
+      "root": {
+        "title": "Editor | Guide Of Dubai",
+        "description": "Edit your post and contribute to Guide Of Dubai."
+      },
+      "create": {
+        "title": "Create Blog | Guide Of Dubai",
+        "description": "Create a new post and contribute to Guide Of Dubai."
+      },
+      "edit": {
+        "title": "Edit Blog | Guide Of Dubai",
+        "description": "Edit your post and contribute to Guide Of Dubai."
+      }
     }
   }
 }

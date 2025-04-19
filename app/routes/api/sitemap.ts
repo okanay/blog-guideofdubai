@@ -3,7 +3,7 @@ import { createAPIFileRoute } from "@tanstack/react-start/api";
 export const APIRoute = createAPIFileRoute("/api/sitemap")({
   GET: async () => {
     const baseUrl =
-      process.env.REACT_APP_FRONTEND_URL || "http://localhost:3000";
+      process.env.VITE_APP_FRONTEND_URL || "http://localhost:3000";
 
     const pages = [
       {

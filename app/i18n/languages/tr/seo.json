@@ -7,18 +7,32 @@
     "title": "Sayfa Bulunamadı | Guide Of Dubai",
     "description": "Aradığınız sayfa bulunamadı"
   },
-  "editor": {
+  "auth": {
     "root": {
-      "title": "Düzenle | Guide Of Dubai",
-      "description": "Yazınızı düzenleyin ve Guide Of Dubai'ye katkıda bulunun."
+      "title": "Giriş Yap | Guide Of Dubai",
+      "description": "Hesabınıza giriş yapın ve Guide Of Dubai'ye katkıda bulunun."
     },
-    "create": {
-      "title": "Blog Oluştur | Guide Of Dubai",
-      "description": "Yeni bir yazı oluşturun ve Guide Of Dubai'ye katkıda bulunun."
+    "login": {
+      "title": "Giriş Yap | Guide Of Dubai",
+      "description": "Hesabınıza giriş yapın ve Guide Of Dubai'ye katkıda bulunun."
     },
-    "edit": {
-      "title": "Blog Düzenle | Guide Of Dubai",
-      "description": "Yazınızı düzenleyin ve Guide Of Dubai'ye katkıda bulunun."
+    "register": {
+      "title": "Kayıt Ol | Guide Of Dubai",
+      "description": "Bir hesap oluşturun ve Guide Of Dubai'ye katkıda bulunun."
+    },
+    "editor": {
+      "root": {
+        "title": "Düzenleyici | Guide Of Dubai",
+        "description": "Yazınızı düzenleyin ve Guide Of Dubai'ye katkıda bulunun."
+      },
+      "create": {
+        "title": "Blog Oluştur | Guide Of Dubai",
+        "description": "Yeni bir yazı oluşturun ve Guide Of Dubai'ye katkıda bulunun."
+      },
+      "edit": {
+        "title": "Blog Düzenle | Guide Of Dubai",
+        "description": "Yazınızı düzenleyin ve Guide Of Dubai'ye katkıda bulunun."
+      }
     }
   }
 }

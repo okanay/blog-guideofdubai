@@ -15,13 +15,15 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRoute } from './routes/__root'
 import { Route as LangNotFoundImport } from './routes/$lang/not-found'
 import { Route as LangMainRouteImport } from './routes/$lang/_main/route'
-import { Route as LangEditorRouteImport } from './routes/$lang/_editor/route'
+import { Route as LangAuthRouteImport } from './routes/$lang/_auth/route'
 import { Route as LangMainIndexImport } from './routes/$lang/_main/index'
+import { Route as LangAuthLoginImport } from './routes/$lang/_auth/login'
 import { Route as LangMainBlogRouteImport } from './routes/$lang/_main/blog.route'
+import { Route as LangAuthEditorRouteImport } from './routes/$lang/_auth/_editor/route'
 import { Route as LangMainBlogIndexImport } from './routes/$lang/_main/blog.index'
-import { Route as LangEditorEditorIndexImport } from './routes/$lang/_editor/editor.index'
 import { Route as LangMainBlogSlugImport } from './routes/$lang/_main/blog.$slug'
-import { Route as LangEditorEditorCreateImport } from './routes/$lang/_editor/editor.create'
+import { Route as LangAuthEditorEditorIndexImport } from './routes/$lang/_auth/_editor/editor.index'
+import { Route as LangAuthEditorEditorCreateImport } from './routes/$lang/_auth/_editor/editor.create'
 
 // Create Virtual Routes
 
@@ -46,8 +48,8 @@ const LangMainRouteRoute = LangMainRouteImport.update({
   getParentRoute: () => LangRoute,
 } as any)
 
-const LangEditorRouteRoute = LangEditorRouteImport.update({
-  id: '/_editor',
+const LangAuthRouteRoute = LangAuthRouteImport.update({
+  id: '/_auth',
   getParentRoute: () => LangRoute,
 } as any)
 
@@ -57,10 +59,21 @@ const LangMainIndexRoute = LangMainIndexImport.update({
   getParentRoute: () => LangMainRouteRoute,
 } as any)
 
+const LangAuthLoginRoute = LangAuthLoginImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => LangAuthRouteRoute,
+} as any)
+
 const LangMainBlogRouteRoute = LangMainBlogRouteImport.update({
   id: '/blog',
   path: '/blog',
   getParentRoute: () => LangMainRouteRoute,
+} as any)
+
+const LangAuthEditorRouteRoute = LangAuthEditorRouteImport.update({
+  id: '/_editor',
+  getParentRoute: () => LangAuthRouteRoute,
 } as any)
 
 const LangMainBlogIndexRoute = LangMainBlogIndexImport.update({
@@ -69,23 +82,25 @@ const LangMainBlogIndexRoute = LangMainBlogIndexImport.update({
   getParentRoute: () => LangMainBlogRouteRoute,
 } as any)
 
-const LangEditorEditorIndexRoute = LangEditorEditorIndexImport.update({
-  id: '/editor/',
-  path: '/editor/',
-  getParentRoute: () => LangEditorRouteRoute,
-} as any)
-
 const LangMainBlogSlugRoute = LangMainBlogSlugImport.update({
   id: '/$slug',
   path: '/$slug',
   getParentRoute: () => LangMainBlogRouteRoute,
 } as any)
 
-const LangEditorEditorCreateRoute = LangEditorEditorCreateImport.update({
-  id: '/editor/create',
-  path: '/editor/create',
-  getParentRoute: () => LangEditorRouteRoute,
+const LangAuthEditorEditorIndexRoute = LangAuthEditorEditorIndexImport.update({
+  id: '/editor/',
+  path: '/editor/',
+  getParentRoute: () => LangAuthEditorRouteRoute,
 } as any)
+
+const LangAuthEditorEditorCreateRoute = LangAuthEditorEditorCreateImport.update(
+  {
+    id: '/editor/create',
+    path: '/editor/create',
+    getParentRoute: () => LangAuthEditorRouteRoute,
+  } as any,
+)
 
 // Populate the FileRoutesByPath interface
 
@@ -98,11 +113,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LangImport
       parentRoute: typeof rootRoute
     }
-    '/$lang/_editor': {
-      id: '/$lang/_editor'
+    '/$lang/_auth': {
+      id: '/$lang/_auth'
       path: '/$lang'
       fullPath: '/$lang'
-      preLoaderRoute: typeof LangEditorRouteImport
+      preLoaderRoute: typeof LangAuthRouteImport
       parentRoute: typeof LangRoute
     }
     '/$lang/_main': {
@@ -119,12 +134,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LangNotFoundImport
       parentRoute: typeof LangImport
     }
+    '/$lang/_auth/_editor': {
+      id: '/$lang/_auth/_editor'
+      path: ''
+      fullPath: '/$lang'
+      preLoaderRoute: typeof LangAuthEditorRouteImport
+      parentRoute: typeof LangAuthRouteImport
+    }
     '/$lang/_main/blog': {
       id: '/$lang/_main/blog'
       path: '/blog'
       fullPath: '/$lang/blog'
       preLoaderRoute: typeof LangMainBlogRouteImport
       parentRoute: typeof LangMainRouteImport
+    }
+    '/$lang/_auth/login': {
+      id: '/$lang/_auth/login'
+      path: '/login'
+      fullPath: '/$lang/login'
+      preLoaderRoute: typeof LangAuthLoginImport
+      parentRoute: typeof LangAuthRouteImport
     }
     '/$lang/_main/': {
       id: '/$lang/_main/'
@@ -133,26 +162,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LangMainIndexImport
       parentRoute: typeof LangMainRouteImport
     }
-    '/$lang/_editor/editor/create': {
-      id: '/$lang/_editor/editor/create'
-      path: '/editor/create'
-      fullPath: '/$lang/editor/create'
-      preLoaderRoute: typeof LangEditorEditorCreateImport
-      parentRoute: typeof LangEditorRouteImport
-    }
     '/$lang/_main/blog/$slug': {
       id: '/$lang/_main/blog/$slug'
       path: '/$slug'
       fullPath: '/$lang/blog/$slug'
       preLoaderRoute: typeof LangMainBlogSlugImport
       parentRoute: typeof LangMainBlogRouteImport
-    }
-    '/$lang/_editor/editor/': {
-      id: '/$lang/_editor/editor/'
-      path: '/editor'
-      fullPath: '/$lang/editor'
-      preLoaderRoute: typeof LangEditorEditorIndexImport
-      parentRoute: typeof LangEditorRouteImport
     }
     '/$lang/_main/blog/': {
       id: '/$lang/_main/blog/'
@@ -161,23 +176,50 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LangMainBlogIndexImport
       parentRoute: typeof LangMainBlogRouteImport
     }
+    '/$lang/_auth/_editor/editor/create': {
+      id: '/$lang/_auth/_editor/editor/create'
+      path: '/editor/create'
+      fullPath: '/$lang/editor/create'
+      preLoaderRoute: typeof LangAuthEditorEditorCreateImport
+      parentRoute: typeof LangAuthEditorRouteImport
+    }
+    '/$lang/_auth/_editor/editor/': {
+      id: '/$lang/_auth/_editor/editor/'
+      path: '/editor'
+      fullPath: '/$lang/editor'
+      preLoaderRoute: typeof LangAuthEditorEditorIndexImport
+      parentRoute: typeof LangAuthEditorRouteImport
+    }
   }
 }
 
 // Create and export the route tree
 
-interface LangEditorRouteRouteChildren {
-  LangEditorEditorCreateRoute: typeof LangEditorEditorCreateRoute
-  LangEditorEditorIndexRoute: typeof LangEditorEditorIndexRoute
+interface LangAuthEditorRouteRouteChildren {
+  LangAuthEditorEditorCreateRoute: typeof LangAuthEditorEditorCreateRoute
+  LangAuthEditorEditorIndexRoute: typeof LangAuthEditorEditorIndexRoute
 }
 
-const LangEditorRouteRouteChildren: LangEditorRouteRouteChildren = {
-  LangEditorEditorCreateRoute: LangEditorEditorCreateRoute,
-  LangEditorEditorIndexRoute: LangEditorEditorIndexRoute,
+const LangAuthEditorRouteRouteChildren: LangAuthEditorRouteRouteChildren = {
+  LangAuthEditorEditorCreateRoute: LangAuthEditorEditorCreateRoute,
+  LangAuthEditorEditorIndexRoute: LangAuthEditorEditorIndexRoute,
 }
 
-const LangEditorRouteRouteWithChildren = LangEditorRouteRoute._addFileChildren(
-  LangEditorRouteRouteChildren,
+const LangAuthEditorRouteRouteWithChildren =
+  LangAuthEditorRouteRoute._addFileChildren(LangAuthEditorRouteRouteChildren)
+
+interface LangAuthRouteRouteChildren {
+  LangAuthEditorRouteRoute: typeof LangAuthEditorRouteRouteWithChildren
+  LangAuthLoginRoute: typeof LangAuthLoginRoute
+}
+
+const LangAuthRouteRouteChildren: LangAuthRouteRouteChildren = {
+  LangAuthEditorRouteRoute: LangAuthEditorRouteRouteWithChildren,
+  LangAuthLoginRoute: LangAuthLoginRoute,
+}
+
+const LangAuthRouteRouteWithChildren = LangAuthRouteRoute._addFileChildren(
+  LangAuthRouteRouteChildren,
 )
 
 interface LangMainBlogRouteRouteChildren {
@@ -208,13 +250,13 @@ const LangMainRouteRouteWithChildren = LangMainRouteRoute._addFileChildren(
 )
 
 interface LangRouteChildren {
-  LangEditorRouteRoute: typeof LangEditorRouteRouteWithChildren
+  LangAuthRouteRoute: typeof LangAuthRouteRouteWithChildren
   LangMainRouteRoute: typeof LangMainRouteRouteWithChildren
   LangNotFoundRoute: typeof LangNotFoundRoute
 }
 
 const LangRouteChildren: LangRouteChildren = {
-  LangEditorRouteRoute: LangEditorRouteRouteWithChildren,
+  LangAuthRouteRoute: LangAuthRouteRouteWithChildren,
   LangMainRouteRoute: LangMainRouteRouteWithChildren,
   LangNotFoundRoute: LangNotFoundRoute,
 }
@@ -222,37 +264,41 @@ const LangRouteChildren: LangRouteChildren = {
 const LangRouteWithChildren = LangRoute._addFileChildren(LangRouteChildren)
 
 export interface FileRoutesByFullPath {
-  '/$lang': typeof LangMainRouteRouteWithChildren
+  '/$lang': typeof LangAuthEditorRouteRouteWithChildren
   '/$lang/not-found': typeof LangNotFoundRoute
   '/$lang/blog': typeof LangMainBlogRouteRouteWithChildren
+  '/$lang/login': typeof LangAuthLoginRoute
   '/$lang/': typeof LangMainIndexRoute
-  '/$lang/editor/create': typeof LangEditorEditorCreateRoute
   '/$lang/blog/$slug': typeof LangMainBlogSlugRoute
-  '/$lang/editor': typeof LangEditorEditorIndexRoute
   '/$lang/blog/': typeof LangMainBlogIndexRoute
+  '/$lang/editor/create': typeof LangAuthEditorEditorCreateRoute
+  '/$lang/editor': typeof LangAuthEditorEditorIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/$lang': typeof LangMainIndexRoute
   '/$lang/not-found': typeof LangNotFoundRoute
-  '/$lang/editor/create': typeof LangEditorEditorCreateRoute
+  '/$lang/login': typeof LangAuthLoginRoute
   '/$lang/blog/$slug': typeof LangMainBlogSlugRoute
-  '/$lang/editor': typeof LangEditorEditorIndexRoute
   '/$lang/blog': typeof LangMainBlogIndexRoute
+  '/$lang/editor/create': typeof LangAuthEditorEditorCreateRoute
+  '/$lang/editor': typeof LangAuthEditorEditorIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/$lang': typeof LangRouteWithChildren
-  '/$lang/_editor': typeof LangEditorRouteRouteWithChildren
+  '/$lang/_auth': typeof LangAuthRouteRouteWithChildren
   '/$lang/_main': typeof LangMainRouteRouteWithChildren
   '/$lang/not-found': typeof LangNotFoundRoute
+  '/$lang/_auth/_editor': typeof LangAuthEditorRouteRouteWithChildren
   '/$lang/_main/blog': typeof LangMainBlogRouteRouteWithChildren
+  '/$lang/_auth/login': typeof LangAuthLoginRoute
   '/$lang/_main/': typeof LangMainIndexRoute
-  '/$lang/_editor/editor/create': typeof LangEditorEditorCreateRoute
   '/$lang/_main/blog/$slug': typeof LangMainBlogSlugRoute
-  '/$lang/_editor/editor/': typeof LangEditorEditorIndexRoute
   '/$lang/_main/blog/': typeof LangMainBlogIndexRoute
+  '/$lang/_auth/_editor/editor/create': typeof LangAuthEditorEditorCreateRoute
+  '/$lang/_auth/_editor/editor/': typeof LangAuthEditorEditorIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -261,31 +307,35 @@ export interface FileRouteTypes {
     | '/$lang'
     | '/$lang/not-found'
     | '/$lang/blog'
+    | '/$lang/login'
     | '/$lang/'
-    | '/$lang/editor/create'
     | '/$lang/blog/$slug'
-    | '/$lang/editor'
     | '/$lang/blog/'
+    | '/$lang/editor/create'
+    | '/$lang/editor'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/$lang'
     | '/$lang/not-found'
-    | '/$lang/editor/create'
+    | '/$lang/login'
     | '/$lang/blog/$slug'
-    | '/$lang/editor'
     | '/$lang/blog'
+    | '/$lang/editor/create'
+    | '/$lang/editor'
   id:
     | '__root__'
     | '/$lang'
-    | '/$lang/_editor'
+    | '/$lang/_auth'
     | '/$lang/_main'
     | '/$lang/not-found'
+    | '/$lang/_auth/_editor'
     | '/$lang/_main/blog'
+    | '/$lang/_auth/login'
     | '/$lang/_main/'
-    | '/$lang/_editor/editor/create'
     | '/$lang/_main/blog/$slug'
-    | '/$lang/_editor/editor/'
     | '/$lang/_main/blog/'
+    | '/$lang/_auth/_editor/editor/create'
+    | '/$lang/_auth/_editor/editor/'
   fileRoutesById: FileRoutesById
 }
 
@@ -311,19 +361,19 @@ export const routeTree = rootRoute
       ]
     },
     "/$lang": {
-      "filePath": "$lang/_editor",
+      "filePath": "$lang/_auth",
       "children": [
-        "/$lang/_editor",
+        "/$lang/_auth",
         "/$lang/_main",
         "/$lang/not-found"
       ]
     },
-    "/$lang/_editor": {
-      "filePath": "$lang/_editor/route.tsx",
+    "/$lang/_auth": {
+      "filePath": "$lang/_auth/route.tsx",
       "parent": "/$lang",
       "children": [
-        "/$lang/_editor/editor/create",
-        "/$lang/_editor/editor/"
+        "/$lang/_auth/_editor",
+        "/$lang/_auth/login"
       ]
     },
     "/$lang/_main": {
@@ -338,6 +388,14 @@ export const routeTree = rootRoute
       "filePath": "$lang/not-found.tsx",
       "parent": "/$lang"
     },
+    "/$lang/_auth/_editor": {
+      "filePath": "$lang/_auth/_editor/route.tsx",
+      "parent": "/$lang/_auth",
+      "children": [
+        "/$lang/_auth/_editor/editor/create",
+        "/$lang/_auth/_editor/editor/"
+      ]
+    },
     "/$lang/_main/blog": {
       "filePath": "$lang/_main/blog.route.tsx",
       "parent": "/$lang/_main",
@@ -346,25 +404,29 @@ export const routeTree = rootRoute
         "/$lang/_main/blog/"
       ]
     },
+    "/$lang/_auth/login": {
+      "filePath": "$lang/_auth/login.tsx",
+      "parent": "/$lang/_auth"
+    },
     "/$lang/_main/": {
       "filePath": "$lang/_main/index.tsx",
       "parent": "/$lang/_main"
-    },
-    "/$lang/_editor/editor/create": {
-      "filePath": "$lang/_editor/editor.create.tsx",
-      "parent": "/$lang/_editor"
     },
     "/$lang/_main/blog/$slug": {
       "filePath": "$lang/_main/blog.$slug.tsx",
       "parent": "/$lang/_main/blog"
     },
-    "/$lang/_editor/editor/": {
-      "filePath": "$lang/_editor/editor.index.tsx",
-      "parent": "/$lang/_editor"
-    },
     "/$lang/_main/blog/": {
       "filePath": "$lang/_main/blog.index.tsx",
       "parent": "/$lang/_main/blog"
+    },
+    "/$lang/_auth/_editor/editor/create": {
+      "filePath": "$lang/_auth/_editor/editor.create.tsx",
+      "parent": "/$lang/_auth/_editor"
+    },
+    "/$lang/_auth/_editor/editor/": {
+      "filePath": "$lang/_auth/_editor/editor.index.tsx",
+      "parent": "/$lang/_auth/_editor"
     }
   }
 }

@@ -5,7 +5,7 @@ import { immer } from "zustand/middleware/immer";
 
 type Props = PropsWithChildren & {
   children: React.ReactNode;
-  initialFormValues: Blog;
+  initialFormValues: BlogFormSchema;
 };
 
 interface DataState {
@@ -13,8 +13,8 @@ interface DataState {
     mode: BlogViewMode;
     setMode: (mode: BlogViewMode) => void;
   };
-  formValues: Blog;
-  setFormValues: (values: Blog) => void;
+  formValues: BlogFormSchema;
+  setFormValues: (values: BlogFormSchema) => void;
 }
 
 export function EditorProvider({ children, initialFormValues }: Props) {
@@ -29,7 +29,7 @@ export function EditorProvider({ children, initialFormValues }: Props) {
             }),
         },
         formValues: { ...initialFormValues },
-        setFormValues: (values: Blog) =>
+        setFormValues: (values: BlogFormSchema) =>
           set((state) => {
             state.formValues = values;
           }),

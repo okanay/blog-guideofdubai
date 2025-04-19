@@ -4,14 +4,14 @@ import { LANGUAGE_DICTONARY } from "@/i18n/config";
 import { Controller, useForm } from "react-hook-form";
 import { useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { formSchema } from "../validations/blog";
+import { formSchema } from "../validations/form";
 import { useTiptapContext } from "../tiptap/store";
 
 type Props = {
-  initialValues: Blog;
+  initialValues: BlogFormSchema;
   initialAutoMode: boolean;
 
-  onSubmit: (data: Blog) => void;
+  onSubmit: (data: BlogFormSchema) => void;
   submitLabel: string;
 };
 
@@ -27,7 +27,7 @@ export function CreateBlogForm({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<Blog>({
+  } = useForm<BlogFormSchema>({
     resolver: zodResolver(formSchema),
     mode: "onTouched",
     defaultValues: { ...initialValues },

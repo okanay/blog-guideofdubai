@@ -7,7 +7,7 @@ export const CreateBlogAction = () => {
   const { editor } = useTiptapContext();
   const { formValues } = useEditorContext();
 
-  const handleOnSubmit = async (values: Blog) => {
+  const handleOnSubmit = async (values: BlogFormSchema) => {
     const safeData = await SafeBlogCreateData(values, editor);
     if (!safeData.success) return;
     const data = safeData.data;

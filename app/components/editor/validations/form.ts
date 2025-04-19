@@ -56,15 +56,30 @@ export const formSchema = z.object({
     )
     .max(120, "Kart açıklaması en fazla 120 karakter olabilir."),
   blogImage: imageUrlSchema,
-  categories: z.array(z.string()).min(1, "En az 1 kategori seçilmelidir."),
-  tags: z.array(z.string()).optional(),
-  language: z.string().min(1, "Blog dili seçilmelidir."),
+  categories: z
+    .array(z.string(), {
+      required_error: "En az 1 kategori seçilmelidir.",
+      invalid_type_error: "En az 1 kategori seçilmelidir.",
+    })
+    .min(1, {
+      message: "En az 1 kategori seçilmelidir.",
+    }),
+  tags: z
+    .array(z.string(), {
+      invalid_type_error: "En az 1 etiket seçilmelidir.",
+    })
+    .optional(),
+  language: z
+    .string({
+      required_error: "Blog dili seçilmelidir.",
+      invalid_type_error: "Blog dili seçilmelidir.",
+    })
+    .min(1, "Blog dili seçilmelidir."),
   featured: z.boolean().default(false),
   readTime: z.number().min(1, "Okuma dakikasi en az 1 dakika olmalıdır."),
   status: z.string().min(1, "Blog durumu seçilmelidir."),
-  isCanonical: z.boolean().default(true),
 });
 
 declare global {
-  type Blog = z.infer<typeof formSchema>;
+  type BlogFormSchema = z.infer<typeof formSchema>;
 }

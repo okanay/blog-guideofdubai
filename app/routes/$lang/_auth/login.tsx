@@ -1,17 +1,17 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { seoTranslations } from "@/i18n/languages";
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/$lang/_editor")({
+export const Route = createFileRoute("/$lang/_auth/login")({
   head: ({ params: { lang } }) => {
     const seoData = seoTranslations[lang];
     return {
       meta: [
         {
-          title: seoData.editor.root.title,
+          title: seoData.auth.login.title,
         },
         {
           name: "description",
-          content: seoData.editor.root.description,
+          content: seoData.auth.login.description,
         },
       ],
     };
@@ -20,5 +20,5 @@ export const Route = createFileRoute("/$lang/_editor")({
 });
 
 function RouteComponent() {
-  return <Outlet />;
+  return <main>Login Page</main>;
 }
