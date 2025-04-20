@@ -6,6 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTiptapContext } from "../tiptap/store";
 import { useEditorContext } from "../store";
 import { BlogFormSchema } from "../validations/blog-form";
+import { toast } from "sonner";
+import { extractErrorMessages } from "../helper";
 
 type Props = {
   initialAutoMode: boolean;
@@ -19,23 +21,10 @@ export function CreateBlogForm({
   onSubmit,
 }: Props) {
   const { editor } = useTiptapContext();
-  const {
-    formValues,
-    refreshTags,
-    tags,
-    addTag,
-    tagStatus,
-    categories,
-    addCategory,
-    categoryStatus,
-    refreshCategories,
-  } = useEditorContext();
+  const { formValues, refreshTags, tags, addTag, tagStatus, categories, addCategory, categoryStatus, refreshCategories } = useEditorContext(); // prettier-ignore
 
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm<BlogFormSchema>({
+  // prettier-ignore
+  const { handleSubmit, control, formState: { errors } } = useForm<BlogFormSchema>({
     resolver: zodResolver(BlogFormSchema),
     mode: "onTouched",
     defaultValues: { ...formValues },
@@ -46,9 +35,31 @@ export function CreateBlogForm({
   const seoImageRef = useRef<HTMLInputElement>(null);
   const slugRef = useRef<HTMLInputElement>(null);
 
+  const processSubmit = (data: BlogFormSchema) => {
+    onSubmit(data);
+  };
+
+  const handleFormSubmit = handleSubmit(processSubmit, (validationErrors) => {
+    const allErrorMessages = extractErrorMessages(validationErrors);
+    const errorCount = allErrorMessages.length;
+
+    if (errorCount > 0) {
+      toast.error("Form Doğrulama Hataları", {
+        description: (
+          <ul className="mt-2 ml-4 list-disc text-sm">
+            {allErrorMessages.map((msg, i) => (
+              <li key={i}>{msg}</li>
+            ))}
+          </ul>
+        ),
+        duration: 4000,
+      });
+    }
+  });
+
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleFormSubmit}
       className="mx-auto flex max-w-3xl flex-col gap-y-6 py-6"
     >
       <div className="mb-4">

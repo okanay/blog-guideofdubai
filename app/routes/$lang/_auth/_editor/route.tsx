@@ -32,7 +32,7 @@ export const Route = createFileRoute("/$lang/_auth/_editor")({
 
 function RouteComponent() {
   return (
-    <ProtectedRoute control="unauthorize" navigateTo="/">
+    <ProtectedRoute control="unauthorize" navigateTo="/login">
       <Outlet />
     </ProtectedRoute>
   );
