@@ -87,7 +87,7 @@ export function EditorProvider({ children, initialFormValues }: Props) {
               set((state) => {
                 state.createStatus = createStatusState(
                   "error",
-                  data.error || "Blog oluşturulurken bir hata oluştu",
+                  data.message || "Blog oluşturulurken bir hata oluştu",
                 );
               });
 
