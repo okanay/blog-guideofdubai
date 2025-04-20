@@ -91,7 +91,10 @@ export const BlogFormSchema = z.object({
   tags: z.array(z.string()).default([]),
 });
 
-export const BlogCreateData = (data: BlogFormSchema, editor: Editor) => {
+export const ConvertFormSchemaToCreateData = (
+  data: BlogFormSchema,
+  editor: Editor,
+) => {
   const json = {
     groupId: data.slug,
     slug: data.slug,

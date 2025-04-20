@@ -1,6 +1,6 @@
 export const DEFAULT_BLOG_FORM_VALUES: BlogFormSchema = {
-  groupId: "araba-nasil-kiralanir",
-  slug: "araba-nasil-kiralanir",
+  groupId: "dubainin-simgesi-burj-khalifa-deneyimi",
+  slug: "dubainin-simgesi-burj-khalifa-deneyimi",
   language: "en",
   featured: true,
   status: "draft",

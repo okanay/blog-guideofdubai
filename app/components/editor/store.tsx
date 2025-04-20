@@ -3,6 +3,20 @@ import { createContext, PropsWithChildren, useContext, useState } from "react";
 import { createStore, StoreApi, useStore } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
+const API_URL =
+  import.meta.env.VITE_APP_BACKEND_URL + "/auth" ||
+  "http://localhost:8080/auth";
+
+const createStatusState = (
+  status: StatusState["status"] = "idle",
+  message?: string,
+): StatusState => ({
+  status,
+  message,
+  loading: status === "loading",
+  error: status === "error" ? message || null : null,
+});
+
 type Props = PropsWithChildren & {
   children: React.ReactNode;
   initialFormValues: BlogSchema;
@@ -16,7 +30,7 @@ interface DataState {
   formValues: BlogSchema;
   setFormValues: (values: BlogSchema) => void;
 
-  createBlog: (blog: any) => Promise<boolean>;
+  createBlog: (blog: any) => Promise<void>;
   createStatus: StatusState;
 
   categories: Category[];
@@ -29,10 +43,6 @@ interface DataState {
   refreshTags: () => Promise<void>;
   tagStatus: StatusState;
 }
-
-const API_URL =
-  import.meta.env.VITE_APP_BACKEND_URL + "/auth" ||
-  "http://localhost:8080/auth";
 
 export function EditorProvider({ children, initialFormValues }: Props) {
   const [store] = useState(() =>
@@ -51,14 +61,16 @@ export function EditorProvider({ children, initialFormValues }: Props) {
             state.formValues = values;
           }),
 
-        categoryStatus: {
-          loading: false,
-          error: null,
-        },
+        createStatus: createStatusState(),
+        categoryStatus: createStatusState(),
+        tagStatus: createStatusState(),
+
+        categories: [],
+        tags: [],
+
         createBlog: async (blog: any) => {
           set((state) => {
-            state.categoryStatus.loading = true;
-            state.categoryStatus.error = null;
+            state.createStatus = createStatusState("loading");
           });
 
           try {
@@ -69,78 +81,37 @@ export function EditorProvider({ children, initialFormValues }: Props) {
               credentials: "include",
             });
 
-            if (!response.ok) {
-              set((state) => {
-                state.categoryStatus.error =
-                  "Blog oluşturulurken bir hata oluştu";
-                state.categoryStatus.loading = false;
-              });
-              return false;
-            }
-
-            set((state) => {
-              state.categoryStatus.loading = false;
-              state.categoryStatus.error = null;
-            });
-
-            return true;
-          } catch (error) {
-            set((state) => {
-              state.categoryStatus.error =
-                "Blog oluşturulurken bir hata oluştu";
-              state.categoryStatus.loading = false;
-            });
-            return false;
-          }
-        },
-
-        categories: [],
-        createStatus: {
-          loading: false,
-          error: null,
-        },
-        refreshCategories: async () => {
-          // Sadece kategori yüklenme durumunu güncelle
-          set((state) => {
-            state.categoryStatus.loading = true;
-            state.categoryStatus.error = null;
-          });
-
-          try {
-            const response = await fetch(`${API_URL}/blog/categories`, {
-              headers: { "Content-Type": "application/json" },
-              method: "GET",
-              credentials: "include",
-            });
+            const data = await response.json();
 
             if (!response.ok) {
               set((state) => {
-                state.categoryStatus.error =
-                  "Kategori listesi yenilenirken bir hata oluştu";
-                state.categoryStatus.loading = false;
+                state.createStatus = createStatusState(
+                  "error",
+                  data.error || "Blog oluşturulurken bir hata oluştu",
+                );
               });
+
               return;
             }
 
-            const data = await response.json();
-
             set((state) => {
-              state.categories = data.categories ?? [];
-              state.categoryStatus.loading = false;
+              state.createStatus = createStatusState("success");
             });
+
+            return data;
           } catch (error) {
             set((state) => {
-              state.categoryStatus.error =
-                "Kategori listesi yenilenirken bir hata oluştu";
-              state.categoryStatus.loading = false;
+              state.createStatus = createStatusState(
+                "error",
+                "Beklenmedik bir hata oluştu lütfen tekrar deneyin.",
+              );
             });
           }
         },
+
         addCategory: async (category: Category) => {
-          // Sadece kategori yüklenme durumunu güncelle
           set((state) => {
-            state.categoryStatus.loading = true;
-            state.categoryStatus.error = null;
+            state.categoryStatus = createStatusState("loading");
           });
 
           try {
@@ -152,75 +123,37 @@ export function EditorProvider({ children, initialFormValues }: Props) {
             });
 
             if (!response.ok) {
-              set((state) => {
-                state.categoryStatus.error =
-                  "Kategori eklerken bir hata oluştu";
-                state.categoryStatus.loading = false;
-              });
-              return;
+              const errorMessage = "Kategori eklerken bir hata oluştu";
+              throw new Error(errorMessage);
             }
 
             const newCategory = await response.json();
 
             set((state) => {
               state.categories.push(newCategory);
-              state.categoryStatus.loading = false;
+              state.categoryStatus = createStatusState("success");
             });
+
+            return newCategory;
           } catch (error) {
             console.error("Failed to add category:", error);
+
+            const errorMessage =
+              error instanceof Error
+                ? error.message
+                : "Kategori eklerken bir hata oluştu";
+
             set((state) => {
-              state.categoryStatus.error = "Kategori eklerken bir hata oluştu";
-              state.categoryStatus.loading = false;
+              state.categoryStatus = createStatusState("error", errorMessage);
             });
-            return;
+
+            throw error;
           }
         },
 
-        tags: [],
-        tagStatus: {
-          loading: false,
-          error: null,
-        },
-        refreshTags: async () => {
-          // Sadece tag yüklenme durumunu güncelle
-          set((state) => {
-            state.tagStatus.loading = true;
-            state.tagStatus.error = null;
-          });
-
-          try {
-            const response = await fetch(`${API_URL}/blog/tags`, {
-              headers: { "Content-Type": "application/json" },
-              credentials: "include",
-            });
-
-            if (!response.ok) {
-              set((state) => {
-                state.tagStatus.error =
-                  "Etiket listesi yenilenirken bir hata oluştu";
-                state.tagStatus.loading = false;
-              });
-            }
-
-            const data = await response.json();
-
-            set((state) => {
-              state.tags = data.tags ?? [];
-              state.tagStatus.loading = false;
-            });
-          } catch (error) {
-            set((state) => {
-              state.tagStatus.error =
-                "Etiket listesi yenilenirken bir hata oluştu";
-              state.tagStatus.loading = false;
-            });
-          }
-        },
         addTag: async (tag: Tag) => {
-          // Sadece tag yüklenme durumunu güncelle
           set((state) => {
-            state.tagStatus.loading = true;
-            state.tagStatus.error = null;
+            state.tagStatus = createStatusState("loading");
           });
 
           try {
@@ -232,23 +165,108 @@ export function EditorProvider({ children, initialFormValues }: Props) {
             });
 
             if (!response.ok) {
-              set((state) => {
-                state.tagStatus.error = "Etiket eklerken bir hata oluştu";
-                state.tagStatus.loading = false;
-              });
+              const errorMessage = "Etiket eklerken bir hata oluştu";
+              throw new Error(errorMessage);
             }
 
             const newTag = await response.json();
 
             set((state) => {
               state.tags.push(newTag);
-              state.tagStatus.loading = false;
+              state.tagStatus = createStatusState("success");
             });
+
+            return newTag;
           } catch (error) {
+            const errorMessage =
+              error instanceof Error
+                ? error.message
+                : "Etiket eklerken bir hata oluştu";
+
             set((state) => {
-              state.tagStatus.error = "Etiket eklerken bir hata oluştu";
-              state.tagStatus.loading = false;
+              state.tagStatus = createStatusState("error", errorMessage);
             });
+
+            throw error;
+          }
+        },
+
+        refreshCategories: async () => {
+          set((state) => {
+            state.categoryStatus = createStatusState("loading");
+          });
+
+          try {
+            const response = await fetch(`${API_URL}/blog/categories`, {
+              headers: { "Content-Type": "application/json" },
+              method: "GET",
+              credentials: "include",
+            });
+
+            if (!response.ok) {
+              const errorMessage =
+                "Kategori listesi yenilenirken bir hata oluştu";
+              throw new Error(errorMessage);
+            }
+
+            const data = await response.json();
+
+            set((state) => {
+              state.categories = data.categories ?? [];
+              state.categoryStatus = createStatusState("success");
+            });
+
+            return data.categories;
+          } catch (error) {
+            const errorMessage =
+              error instanceof Error
+                ? error.message
+                : "Kategori listesi yenilenirken bir hata oluştu";
+
+            set((state) => {
+              state.categoryStatus = createStatusState("error", errorMessage);
+            });
+
+            throw error;
+          }
+        },
+
+        refreshTags: async () => {
+          set((state) => {
+            state.tagStatus = createStatusState("loading");
+          });
+
+          try {
+            const response = await fetch(`${API_URL}/blog/tags`, {
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+            });
+
+            if (!response.ok) {
+              const errorMessage =
+                "Etiket listesi yenilenirken bir hata oluştu";
+              throw new Error(errorMessage);
+            }
+
+            const data = await response.json();
+
+            set((state) => {
+              state.tags = data.tags ?? [];
+              state.tagStatus = createStatusState("success");
+            });
+
+            return data.tags;
+          } catch (error) {
+            const errorMessage =
+              error instanceof Error
+                ? error.message
+                : "Etiket listesi yenilenirken bir hata oluştu";
+
+            set((state) => {
+              state.tagStatus = createStatusState("error", errorMessage);
+            });
+
+            throw error;
           }
         },
       })),

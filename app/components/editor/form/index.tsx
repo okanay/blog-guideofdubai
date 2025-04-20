@@ -8,20 +8,19 @@ import { useEditorContext } from "../store";
 import { BlogFormSchema } from "../validations/blog-form";
 
 type Props = {
-  initialValues: BlogFormSchema;
   initialAutoMode: boolean;
   onSubmit: (data: BlogFormSchema) => void;
   submitLabel: string;
 };
 
 export function CreateBlogForm({
-  initialValues,
   submitLabel,
   initialAutoMode,
   onSubmit,
 }: Props) {
   const { editor } = useTiptapContext();
   const {
+    formValues,
     refreshTags,
     tags,
     addTag,
@@ -39,7 +38,7 @@ export function CreateBlogForm({
   } = useForm<BlogFormSchema>({
     resolver: zodResolver(BlogFormSchema),
     mode: "onTouched",
-    defaultValues: { ...initialValues },
+    defaultValues: { ...formValues },
   });
 
   const seoTitleRef = useRef<HTMLInputElement>(null);

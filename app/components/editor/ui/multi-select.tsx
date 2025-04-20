@@ -18,11 +18,6 @@ interface MultiSelectOption {
   value: string;
 }
 
-type ModalStatus = {
-  loading: boolean;
-  error: string | null;
-};
-
 interface MultiSelectProps {
   label?: string;
   id?: string;
@@ -42,7 +37,7 @@ interface MultiSelectProps {
   // Dışarıdan gelen fonksiyonlar ve durumlar
   onAddCustomOption: (option: { name: string; value: string }) => Promise<void>;
   onRefreshOptions: () => Promise<void>;
-  modalStatus: ModalStatus;
+  modalStatus: StatusState;
 }
 
 export const MultiSelect = ({
@@ -183,9 +178,30 @@ export const MultiSelect = ({
     option?.value?.toLowerCase().includes(searchText.toLowerCase()),
   );
 
-  const selectedOptions = options.filter((option) =>
-    selectedValues.includes(option.name),
-  );
+  const getSelectedOptions = () => {
+    const result: MultiSelectOption[] = [];
+
+    // Öncelikle options içinde bulunan seçili değerleri ekle
+    const optionsMap = new Map(options.map((opt) => [opt.name, opt]));
+
+    // Seçili olan her değeri kontrol et
+    selectedValues.forEach((selected) => {
+      // Eğer options içinde bu değer varsa, onu kullan
+      if (optionsMap.has(selected)) {
+        result.push(optionsMap.get(selected)!);
+      } else {
+        // Options içinde yoksa, yeni bir option oluştur
+        result.push({
+          name: selected,
+          value: selected, // Değeri gösterim için kullan
+        });
+      }
+    });
+
+    return result;
+  };
+
+  const selectedOptions = getSelectedOptions();
 
   return (
     <div className={twMerge("flex flex-col gap-1.5", containerClassName)}>

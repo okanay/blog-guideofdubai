@@ -12,6 +12,8 @@ type Tag = {
 };
 
 type StatusState = {
+  status: "loading" | "success" | "error" | "idle";
+  message: string | undefined;
   loading: boolean;
   error: string | null;
 };
