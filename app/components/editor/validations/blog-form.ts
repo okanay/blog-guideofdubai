@@ -85,17 +85,31 @@ export const BlogFormSchema = z.object({
       ),
   }),
 
-  categories: z.array(z.string()).min(1, {
-    message: "En az 1 kategori seçilmelidir.",
-  }),
-  tags: z.array(z.string()).default([]),
+  categories: z
+    .array(
+      z.object({
+        name: z.string().min(1, "Kategori adı boş bırakılamaz."),
+        value: z.string().min(1, "Kategori değeri boş bırakılamaz."),
+      }),
+    )
+    .min(1, {
+      message: "En az 1 kategori seçilmelidir.",
+    }),
+  tags: z
+    .array(
+      z.object({
+        name: z.string().min(1, "Etiket adı boş bırakılamaz."),
+        value: z.string().min(1, "Etiket değeri boş bırakılamaz."),
+      }),
+    )
+    .default([]),
 });
 
 export const ConvertFormSchemaToCreateData = (
   data: BlogFormSchema,
   editor: Editor,
 ) => {
-  const json = {
+  return {
     groupId: data.slug,
     slug: data.slug,
     metadata: {
@@ -110,15 +124,10 @@ export const ConvertFormSchemaToCreateData = (
       readTime: data.content.readTime,
       html: editor?.getHTML(),
     },
-    tags: data.tags,
-    categories: data.categories,
+    tags: data.tags.map((tag) => tag.name),
+    categories: data.categories.map((category) => category.name),
     language: data.language,
     status: data.status,
     featured: data.featured,
-  };
-
-  return {
-    success: true,
-    data: json,
   };
 };

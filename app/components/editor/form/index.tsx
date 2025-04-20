@@ -1,13 +1,13 @@
 import { ImagePreview, Input, MultiSelect, ReadTime, Select, SeoPreview, SlugCreator, Textarea, Toggle } from "@/components/editor/ui"; // prettier-ignore
 import { LANGUAGE_DICTONARY } from "@/i18n/config";
-import { Controller, useForm } from "react-hook-form";
-import { useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTiptapContext } from "../tiptap/store";
-import { useEditorContext } from "../store";
-import { BlogFormSchema } from "../validations/blog-form";
+import { useRef } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { extractErrorMessages } from "../helper";
+import { useEditorContext } from "../store";
+import { useTiptapContext } from "../tiptap/store";
+import { BlogFormSchema } from "../validations/blog-form";
 
 type Props = {
   initialAutoMode: boolean;
@@ -21,13 +21,13 @@ export function CreateBlogForm({
   onSubmit,
 }: Props) {
   const { editor } = useTiptapContext();
-  const { formValues, refreshTags, tags, addTag, tagStatus, categories, addCategory, categoryStatus, refreshCategories } = useEditorContext(); // prettier-ignore
+  const { activeBlogData, refreshTags, tags, addTag, tagStatus, categories, addCategory, categoryStatus, refreshCategories } = useEditorContext(); // prettier-ignore
 
   // prettier-ignore
   const { handleSubmit, control, formState: { errors } } = useForm<BlogFormSchema>({
     resolver: zodResolver(BlogFormSchema),
     mode: "onTouched",
-    defaultValues: { ...formValues },
+    defaultValues: { ...activeBlogData },
   });
 
   const seoTitleRef = useRef<HTMLInputElement>(null);
@@ -269,7 +269,7 @@ export function CreateBlogForm({
                 onAddCustomOption={addCategory}
                 onRefreshOptions={refreshCategories}
                 modalStatus={categoryStatus}
-                value={field.value}
+                value={field.value as any}
                 onChange={(newValue) => field.onChange(newValue)}
                 isRequired={true}
                 isError={!!errors.categories}
@@ -291,7 +291,7 @@ export function CreateBlogForm({
                 onAddCustomOption={addTag}
                 onRefreshOptions={refreshTags}
                 modalStatus={tagStatus}
-                value={field.value}
+                value={field.value as any}
                 onChange={(newValue) => field.onChange(newValue)}
                 hint="İçerikle ilgili anahtar kelimeleri seçin, arama ve filtreleme işlemlerinde kullanılır"
                 placeholder="İlgili etiketleri seçin veya ekleyin"

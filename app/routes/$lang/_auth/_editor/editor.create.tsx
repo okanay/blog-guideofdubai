@@ -27,7 +27,7 @@ export const Route = createFileRoute("/$lang/_auth/_editor/editor/create")({
 
 function RouteComponent() {
   return (
-    <EditorProvider initialFormValues={DEFAULT_BLOG_FORM_VALUES}>
+    <EditorProvider activeBlogData={DEFAULT_BLOG_FORM_VALUES}>
       <TiptapProvider initialContent={DummyText}>
         <CreateBlogHeader />
         <CreateBlogPage />

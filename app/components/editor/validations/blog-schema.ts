@@ -91,10 +91,24 @@ export const BlogSchema = z.object({
       ),
   }),
 
-  categories: z.array(z.string()).min(1, {
-    message: "En az 1 kategori seçilmelidir.",
-  }),
-  tags: z.array(z.string()).default([]),
+  categories: z
+    .array(
+      z.object({
+        name: z.string().min(1, "Kategori adı boş bırakılamaz."),
+        value: z.string().min(1, "Kategori değeri boş bırakılamaz."),
+      }),
+    )
+    .min(1, {
+      message: "En az 1 kategori seçilmelidir.",
+    }),
+  tags: z
+    .array(
+      z.object({
+        name: z.string().min(1, "Etiket adı boş bırakılamaz."),
+        value: z.string().min(1, "Etiket değeri boş bırakılamaz."),
+      }),
+    )
+    .default([]),
 
   // İsteğe bağlı: Tarih alanları için validasyon
   createdAt: z.string().datetime().optional(),

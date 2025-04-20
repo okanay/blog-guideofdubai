@@ -19,7 +19,7 @@ const createStatusState = (
 
 type Props = PropsWithChildren & {
   children: React.ReactNode;
-  initialFormValues: BlogSchema;
+  activeBlogData: BlogSchema;
 };
 
 interface DataState {
@@ -27,8 +27,8 @@ interface DataState {
     mode: BlogViewMode;
     setMode: (mode: BlogViewMode) => void;
   };
-  formValues: BlogSchema;
-  setFormValues: (values: BlogSchema) => void;
+  activeBlogData: BlogSchema;
+  setActiveBlogData: (values: BlogSchema) => void;
 
   createBlog: (blog: any) => Promise<void>;
   createStatus: StatusState;
@@ -44,7 +44,7 @@ interface DataState {
   tagStatus: StatusState;
 }
 
-export function EditorProvider({ children, initialFormValues }: Props) {
+export function EditorProvider({ children, activeBlogData }: Props) {
   const [store] = useState(() =>
     createStore<DataState>()(
       immer((set) => ({
@@ -55,10 +55,10 @@ export function EditorProvider({ children, initialFormValues }: Props) {
               state.view.mode = mode;
             }),
         },
-        formValues: { ...initialFormValues },
-        setFormValues: (values: BlogSchema) =>
+        activeBlogData: { ...activeBlogData },
+        setActiveBlogData: (values: BlogSchema) =>
           set((state) => {
-            state.formValues = values;
+            state.activeBlogData = values;
           }),
 
         createStatus: createStatusState(),

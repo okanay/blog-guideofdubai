@@ -1,25 +1,17 @@
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { CreateBlogForm } from "../form";
-import { useTiptapContext } from "../tiptap/store";
 import { useEditorContext } from "../store";
-import { ConvertFormSchemaToCreateData } from "../validations/blog-form";
+import { useTiptapContext } from "../tiptap/store";
 import { LoadingBlocker } from "../ui/loading-blocker";
+import { ConvertFormSchemaToCreateData } from "../validations/blog-form";
+import { useNavigate } from "@/i18n/navigate";
 
 export const CreateBlogAction = () => {
   const { editor } = useTiptapContext();
   const { createBlog, createStatus } = useEditorContext();
+  const navigate = useNavigate();
 
-  // Form gönderim işleyicisi
-  const handleOnSubmit = async (values: BlogFormSchema) => {
-    const safeData = ConvertFormSchemaToCreateData(values, editor);
-
-    if (!safeData.success) return;
-
-    await createBlog(safeData.data);
-  };
-
-  // İşlem durumunu izle ve bildirimleri göster
   useEffect(() => {
     if (createStatus.status === "error") {
       toast.error("Blog oluşturulurken bir hata oluştu.", {
@@ -29,6 +21,7 @@ export const CreateBlogAction = () => {
 
     if (createStatus.status === "success") {
       toast.success("Blog başarıyla oluşturuldu.");
+      navigate({ to: "/editor" });
     }
   }, [createStatus]);
 
@@ -42,7 +35,9 @@ export const CreateBlogAction = () => {
       <CreateBlogForm
         submitLabel="Blog Oluştur"
         initialAutoMode={true}
-        onSubmit={handleOnSubmit}
+        onSubmit={(values: BlogFormSchema) => {
+          createBlog(ConvertFormSchemaToCreateData(values, editor));
+        }}
       />
     </>
   );

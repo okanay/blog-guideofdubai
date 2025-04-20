@@ -13,23 +13,28 @@ import {
 } from "lucide-react";
 import RichButtonModal from "../tiptap/menu/ui/modal";
 
-interface MultiSelectOption {
-  name: string;
-  value: string;
+interface ValueOptions {
+  name: string; // Slug değeri (örn: "rent-a-car")
+  value: string; // Görüntülenecek isim (örn: "Rent A Car")
+}
+
+interface StatusState {
+  loading: boolean;
+  error: string | null;
 }
 
 interface MultiSelectProps {
   label?: string;
   id?: string;
-  options: MultiSelectOption[];
+  options: ValueOptions[];
   isRequired?: boolean;
   isError?: boolean;
   errorMessage?: string;
   hint?: string;
   placeholder?: string;
   containerClassName?: string;
-  value?: string[] | null;
-  onChange?: (values: string[] | null) => void;
+  value: ValueOptions[];
+  onChange?: (values: ValueOptions[] | null) => void;
   allowCustomOption?: boolean;
   customOptionPlaceholder?: string;
   searchPlaceholder?: string;
@@ -43,13 +48,13 @@ interface MultiSelectProps {
 export const MultiSelect = ({
   label,
   options: initialOptions,
+  value,
   isRequired = false,
   isError = false,
   errorMessage,
   hint,
   placeholder = "Seçenekler seçmek için tıklayın",
   containerClassName,
-  value = null,
   onChange,
   allowCustomOption = true,
   customOptionPlaceholder = "Yeni kategori ekle...",
@@ -60,8 +65,8 @@ export const MultiSelect = ({
   modalStatus,
 }: MultiSelectProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [options, setOptions] = useState<MultiSelectOption[]>(initialOptions);
-  const [selectedValues, setSelectedValues] = useState<string[]>(value || []);
+  const [options, setOptions] = useState<ValueOptions[]>(initialOptions);
+  const [selectedValues, setSelectedValues] = useState<ValueOptions[]>(value);
   const [customOptionText, setCustomOptionText] = useState("");
   const [searchText, setSearchText] = useState("");
   const [localError, setLocalError] = useState<string | null>(null);
@@ -96,26 +101,32 @@ export const MultiSelect = ({
   };
 
   // Seçili değerleri değiştir ve parent'a bildir
-  const handleValueChange = (newValues: string[]) => {
+  const handleValueChange = (newValues: ValueOptions[]) => {
     setSelectedValues(newValues);
     if (onChange) {
       onChange(newValues.length ? newValues : null);
     }
   };
 
+  const handleClearSelection = () => {
+    handleValueChange([]);
+  };
+
   // Opsiyon seçme/seçimi kaldırma
-  const toggleOption = (optionValue: string) => {
-    const newSelectedValues = selectedValues.includes(optionValue)
-      ? selectedValues.filter((name) => name !== optionValue)
-      : [...selectedValues, optionValue];
+  const toggleOption = (option: ValueOptions) => {
+    const isSelected = selectedValues.some((item) => item.name === option.name);
+
+    const newSelectedValues = isSelected
+      ? selectedValues.filter((item) => item.name !== option.name)
+      : [...selectedValues, option];
 
     handleValueChange(newSelectedValues);
   };
 
   // Dışarıdan seçili bir değeri kaldır
-  const removeSelectedValue = (optionValue: string) => {
+  const removeSelectedValue = (optionName: string) => {
     const newSelectedValues = selectedValues.filter(
-      (val) => val !== optionValue,
+      (val) => val.name !== optionName,
     );
     handleValueChange(newSelectedValues);
   };
@@ -124,16 +135,16 @@ export const MultiSelect = ({
     if (!customOptionText.trim()) return;
     setLocalError(null);
 
-    const value = customOptionText.trim();
-    const name = slugify(value);
+    const displayValue = customOptionText.trim();
+    const slugName = slugify(displayValue);
 
-    // Güvenli kontrol
+    // Güvenli kontrol - değer kontrolü
     const exists = options.some(
       (option) =>
         option &&
         option.value &&
         typeof option.value === "string" &&
-        option?.value?.toLowerCase() === value.toLowerCase(),
+        option.value.toLowerCase() === displayValue.toLowerCase(),
     );
 
     if (exists) {
@@ -146,8 +157,8 @@ export const MultiSelect = ({
 
     try {
       await onAddCustomOption({
-        name: name,
-        value: value,
+        name: slugName, // Slug değeri
+        value: displayValue, // Görüntülenecek isim
       });
 
       // Input'u başarılı eklemeden sonra temizle
@@ -178,31 +189,6 @@ export const MultiSelect = ({
     option?.value?.toLowerCase().includes(searchText.toLowerCase()),
   );
 
-  const getSelectedOptions = () => {
-    const result: MultiSelectOption[] = [];
-
-    // Öncelikle options içinde bulunan seçili değerleri ekle
-    const optionsMap = new Map(options.map((opt) => [opt.name, opt]));
-
-    // Seçili olan her değeri kontrol et
-    selectedValues.forEach((selected) => {
-      // Eğer options içinde bu değer varsa, onu kullan
-      if (optionsMap.has(selected)) {
-        result.push(optionsMap.get(selected)!);
-      } else {
-        // Options içinde yoksa, yeni bir option oluştur
-        result.push({
-          name: selected,
-          value: selected, // Değeri gösterim için kullan
-        });
-      }
-    });
-
-    return result;
-  };
-
-  const selectedOptions = getSelectedOptions();
-
   return (
     <div className={twMerge("flex flex-col gap-1.5", containerClassName)}>
       {label && (
@@ -222,9 +208,9 @@ export const MultiSelect = ({
           isError && "border-red-500 ring-2 ring-red-100",
         )}
       >
-        {selectedOptions.length > 0 ? (
+        {selectedValues.length > 0 ? (
           <div className="flex flex-wrap gap-1.5">
-            {selectedOptions.map((option, index) => (
+            {selectedValues.map((option, index) => (
               <div
                 key={option.name + index + "MultiSelect-Options"}
                 className="group flex items-center gap-1 rounded-md bg-zinc-100 px-2 py-1 text-xs"
@@ -361,12 +347,14 @@ export const MultiSelect = ({
             ) : filteredOptions.length > 0 ? (
               <div className="flex flex-col divide-y divide-zinc-100">
                 {filteredOptions.map((option) => {
-                  const isSelected = selectedValues.includes(option.name);
+                  const isSelected = selectedValues.some(
+                    (item) => item.name === option.name,
+                  );
                   return (
                     <button
                       key={option.name}
                       type="button"
-                      onClick={() => toggleOption(option.name)}
+                      onClick={() => toggleOption(option)}
                       className={twMerge(
                         "flex items-center gap-3 px-3 py-2 text-left text-sm transition-colors hover:bg-zinc-50",
                         isSelected && "bg-zinc-50",
@@ -406,13 +394,25 @@ export const MultiSelect = ({
                 <span className="font-medium">{selectedValues.length}</span> öge
                 seçildi
               </p>
-              <button
-                type="button"
-                onClick={closeModal}
-                className="bg-primary-500 hover:bg-primary-600 rounded-md px-4 py-2 text-sm font-medium text-white"
-              >
-                Tamam
-              </button>
+              <div className="flex items-center gap-4">
+                <button
+                  type="button"
+                  onClick={handleClearSelection}
+                  className="text-sm text-zinc-500 hover:text-zinc-700"
+                >
+                  {selectedValues.length >= 2
+                    ? "Seçimleri temizle"
+                    : "Seçimi temizle"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="bg-primary-500 hover:bg-primary-600 rounded-md px-4 py-2 text-sm font-medium text-white"
+                >
+                  Tamam
+                </button>
+              </div>
             </div>
           </div>
         </div>
