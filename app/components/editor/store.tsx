@@ -31,7 +31,7 @@ interface DataState {
   activeBlogData: BlogSchema;
   setActiveBlogData: (values: BlogSchema) => void;
 
-  createBlog: (blog: any) => Promise<void>;
+  createBlog: (blog: any) => Promise<boolean>;
   createStatus: StatusState;
 
   categories: Category[];
@@ -111,28 +111,44 @@ export function EditorProvider({ children, activeBlogData }: Props) {
             const data = await response.json();
 
             if (!response.ok) {
+              const errorMessage =
+                data.message || "Blog oluşturulurken bir hata oluştu";
+
               set((state) => {
-                state.createStatus = createStatusState(
-                  "error",
-                  data.message || "Blog oluşturulurken bir hata oluştu",
-                );
+                state.createStatus = createStatusState("error", errorMessage);
               });
 
-              return;
+              toast.error("Blog Oluşturulamadı", {
+                description: errorMessage,
+              });
+
+              return false;
             }
 
             set((state) => {
               state.createStatus = createStatusState("success");
             });
 
-            return data;
-          } catch (error) {
-            set((state) => {
-              state.createStatus = createStatusState(
-                "error",
-                "Beklenmedik bir hata oluştu lütfen tekrar deneyin.",
-              );
+            toast.success("Blog Başarıyla Oluşturuldu", {
+              description: "Blog içeriğiniz başarıyla kaydedildi.",
             });
+
+            return true;
+          } catch (error) {
+            const errorMessage =
+              error instanceof Error
+                ? error.message
+                : "Beklenmedik bir hata oluştu lütfen tekrar deneyin.";
+
+            set((state) => {
+              state.createStatus = createStatusState("error", errorMessage);
+            });
+
+            toast.error("Blog Oluşturulamadı", {
+              description: errorMessage,
+            });
+
+            return false;
           }
         },
 

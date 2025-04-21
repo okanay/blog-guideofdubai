@@ -76,13 +76,8 @@ export const BlogFormSchema = z.object({
       .int()
       .min(1, "Okuma dakikası en az 1 dakika olmalıdır.")
       .max(60, "Okuma dakikası en fazla 60 dakika olabilir."),
-
-    json: z
-      .string()
-      .min(
-        100,
-        "Blog içeriği en az 100 karakter olmalıdır. Bu alan boş bırakılamaz.",
-      ),
+    html: z.string().default(""),
+    json: z.string().default(""),
   }),
 
   categories: z
@@ -122,6 +117,7 @@ export const ConvertFormSchemaToCreateData = (
       description: data.content.description,
       image: data.content.image,
       readTime: data.content.readTime,
+      html: editor.getHTML(),
       json: JSON.stringify(editor?.getJSON()),
     },
     tags: data.tags.map((tag) => tag.name),

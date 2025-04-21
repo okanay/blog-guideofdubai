@@ -36,8 +36,8 @@ function BlogListPage() {
 
   // Sayfa yükleme durumlarını belirleyen değişkenler
   const isLoading = blogPostsStatus.loading;
-  const isEmpty = !isLoading && blogPosts.length === 0;
-  const hasData = !isLoading && blogPosts.length > 0;
+  const isEmpty = !isLoading && blogPostsTotal === 0;
+  const hasData = !isLoading && blogPostsTotal > 0;
 
   // Sayfa değiştirme fonksiyonları
   const handleNextPage = () => {

@@ -12,18 +12,14 @@ export const CreateBlogAction = () => {
   const { createBlog, createStatus } = useEditorContext();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (createStatus.status === "error") {
-      toast.error("Blog oluşturulurken bir hata oluştu.", {
-        description: createStatus.error,
-      });
-    }
+  const handleCreateForm = async (values: BlogFormSchema) => {
+    const status = await createBlog(
+      ConvertFormSchemaToCreateData(values, editor),
+    );
 
-    if (createStatus.status === "success") {
-      toast.success("Blog başarıyla oluşturuldu.");
-      navigate({ to: "/editor" });
-    }
-  }, [createStatus]);
+    if (!status) return;
+    navigate({ to: "/editor" });
+  };
 
   return (
     <>
@@ -35,9 +31,7 @@ export const CreateBlogAction = () => {
       <CreateBlogForm
         submitLabel="Blog Oluştur"
         initialAutoMode={true}
-        onSubmit={(values: BlogFormSchema) => {
-          createBlog(ConvertFormSchemaToCreateData(values, editor));
-        }}
+        onSubmit={(values) => handleCreateForm(values)}
       />
     </>
   );
