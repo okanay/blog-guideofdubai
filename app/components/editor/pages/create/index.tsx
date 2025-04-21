@@ -1,5 +1,5 @@
-import { Editor } from "../tiptap";
-import { useEditorContext } from "../store";
+import { Editor } from "@/components/editor/tiptap";
+import { useEditorContext } from "@/components/editor/store";
 import { CreateBlogAction } from "./action";
 
 export function CreateBlogPage() {

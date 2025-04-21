@@ -1,11 +1,11 @@
+import { CreateBlogForm } from "@/components/editor/form";
+import { useEditorContext } from "@/components/editor/store";
+import { useTiptapContext } from "@/components/editor/tiptap/store";
+import { LoadingBlocker } from "@/components/editor/ui/loading-blocker";
+import { ConvertFormSchemaToCreateData } from "@/components/editor/validations/blog-form";
+import { useNavigate } from "@/i18n/navigate";
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { CreateBlogForm } from "../form";
-import { useEditorContext } from "../store";
-import { useTiptapContext } from "../tiptap/store";
-import { LoadingBlocker } from "../ui/loading-blocker";
-import { ConvertFormSchemaToCreateData } from "../validations/blog-form";
-import { useNavigate } from "@/i18n/navigate";
 
 export const CreateBlogAction = () => {
   const { editor } = useTiptapContext();

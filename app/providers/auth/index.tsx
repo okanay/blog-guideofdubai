@@ -42,6 +42,7 @@ export function AuthProvider({
               method: "GET",
               credentials: "include",
             });
+            window.location.reload();
             set({ user: null });
           } catch (error) {
             console.warn("Failed to logout:", error);
@@ -59,14 +60,14 @@ export function AuthProvider({
               },
             );
 
-            if (response.ok) {
-              const user = await response.json();
-              set({ user, status: "authorize" });
-              return { success: true, message: "Login successful" };
+            if (!response.ok) {
+              set({ user: null, status: "unauthorize" });
+              return { success: false, message: "Login failed" };
             }
 
-            set({ user: null, status: "unauthorize" });
-            return { success: false, message: "Login failed" };
+            const user = await response.json();
+            set({ user, status: "authorize" });
+            return { success: true, message: "Login successful" };
           } catch {
             set({ user: null, status: "unauthorize" });
             return { success: false, message: "Login failed" };

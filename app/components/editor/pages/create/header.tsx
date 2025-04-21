@@ -1,8 +1,8 @@
 import { Link } from "@/i18n/link";
 import { ArrowLeft, FileText, PencilRuler } from "lucide-react";
-import { useEditorContext } from "../store";
-import { EditorRichMenu } from "../tiptap/menu";
-import { ToggleModeButton } from "../ui/toggle-mode-btn";
+import { useEditorContext } from "@/components/editor/store";
+import { EditorRichMenu } from "@/components/editor/tiptap/menu";
+import { ToggleModeButton } from "@/components/editor/ui/toggle-mode-btn";
 
 export function CreateBlogHeader() {
   const { view } = useEditorContext();
