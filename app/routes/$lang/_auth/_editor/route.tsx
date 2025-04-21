@@ -3,7 +3,6 @@ import { seoTranslations } from "@/i18n/languages";
 import dragModuleStyles from "@/components/editor/tiptap/drag-styles.css?url";
 import ProtectedRoute from "@/providers/auth/protected-route";
 import { EditorProvider } from "@/components/editor/store";
-import { DEFAULT_BLOG_FORM_VALUES } from "@/components/editor/form/default";
 
 export const Route = createFileRoute("/$lang/_auth/_editor")({
   head: ({ params: { lang } }) => {
@@ -35,7 +34,7 @@ export const Route = createFileRoute("/$lang/_auth/_editor")({
 function RouteComponent() {
   return (
     <ProtectedRoute control="unauthorize" navigateTo="/login">
-      <EditorProvider activeBlogData={DEFAULT_BLOG_FORM_VALUES}>
+      <EditorProvider>
         <Outlet />
       </EditorProvider>
     </ProtectedRoute>

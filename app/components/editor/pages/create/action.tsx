@@ -4,10 +4,8 @@ import { useTiptapContext } from "@/components/editor/tiptap/store";
 import { LoadingBlocker } from "@/components/editor/ui/loading-blocker";
 import { ConvertFormSchemaToCreateData } from "@/components/editor/validations/blog-form";
 import { useNavigate } from "@/i18n/navigate";
-import { useEffect } from "react";
-import { toast } from "sonner";
 
-export const CreateBlogAction = () => {
+export const CreateBlogAction = (props: { initialData: BlogFormSchema }) => {
   const { editor } = useTiptapContext();
   const { createBlog, createStatus } = useEditorContext();
   const navigate = useNavigate();
@@ -29,6 +27,7 @@ export const CreateBlogAction = () => {
       />
 
       <CreateBlogForm
+        initialData={props.initialData}
         submitLabel="Blog Oluştur"
         initialAutoMode={true}
         onSubmit={(values) => handleCreateForm(values)}

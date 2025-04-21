@@ -1,6 +1,7 @@
 import { Editor } from "@/components/editor/tiptap";
 import { useEditorContext } from "@/components/editor/store";
 import { CreateBlogAction } from "./action";
+import { DEFAULT_BLOG_FORM_VALUES } from "../../form/default";
 
 export function CreateBlogPage() {
   const { view } = useEditorContext();
@@ -12,7 +13,7 @@ export function CreateBlogPage() {
           data-visible={view.mode === "form"}
           className="w-full px-4 transition-all duration-300 ease-in-out data-[visible=false]:invisible data-[visible=false]:absolute data-[visible=false]:opacity-0 data-[visible=true]:opacity-100"
         >
-          <CreateBlogAction />
+          <CreateBlogAction initialData={DEFAULT_BLOG_FORM_VALUES} />
         </div>
 
         <div

@@ -10,24 +10,26 @@ import { useTiptapContext } from "../tiptap/store";
 import { BlogFormSchema } from "../validations/blog-form";
 
 type Props = {
+  initialData: BlogFormSchema;
   initialAutoMode: boolean;
   onSubmit: (data: BlogFormSchema) => void;
   submitLabel: string;
 };
 
 export function CreateBlogForm({
+  initialData,
   submitLabel,
   initialAutoMode,
   onSubmit,
 }: Props) {
   const { editor } = useTiptapContext();
-  const { activeBlogData, refreshTags, tags, addTag, tagStatus, categories, addCategory, categoryStatus, refreshCategories } = useEditorContext(); // prettier-ignore
+  const { refreshTags, tags, addTag, tagStatus, categories, addCategory, categoryStatus, refreshCategories } = useEditorContext(); // prettier-ignore
 
   // prettier-ignore
   const { handleSubmit, control, formState: { errors } } = useForm<BlogFormSchema>({
     resolver: zodResolver(BlogFormSchema),
     mode: "onTouched",
-    defaultValues: { ...activeBlogData },
+    defaultValues: { ...initialData },
   });
 
   const seoTitleRef = useRef<HTMLInputElement>(null);
