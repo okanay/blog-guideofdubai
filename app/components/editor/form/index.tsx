@@ -1,4 +1,4 @@
-import { ImagePreview, Input, MultiSelect, ReadTime, Select, SeoPreview, SlugCreator, Textarea, Toggle } from "@/components/editor/ui"; // prettier-ignore
+import { GroupIDSelector, ImagePreview, Input, MultiSelect, ReadTime, Select, SeoPreview, SlugCreator, Textarea, Toggle } from "@/components/editor/ui"; // prettier-ignore
 import { LANGUAGE_DICTONARY } from "@/i18n/config";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRef } from "react";
@@ -337,6 +337,28 @@ export function CreateBlogForm({
               />
             )}
           />
+
+          <Controller
+            name="groupId"
+            control={control}
+            render={({ field }) => (
+              <GroupIDSelector
+                {...field}
+                ref={field.ref as any}
+                label="Blog Dil Bağlantısı"
+                id="groupId"
+                modalTitle="Blog Dil Bağlantısı."
+                hint="Dil versiyonları arasında ilişki kurmak için kullanılır"
+                isRequired={true}
+                isError={!!errors.groupId}
+                errorMessage={errors.groupId?.message}
+                isAutoMode={initialAutoMode}
+                initialAutoMode={initialAutoMode}
+                followRef={seoTitleRef}
+              />
+            )}
+          />
+
           <Controller
             name="content.readTime"
             control={control}

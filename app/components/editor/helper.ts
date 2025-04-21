@@ -99,3 +99,29 @@ export const extractErrorMessages = (errors) => {
   // Tekrarlanan mesajları kaldır
   return [...new Set(messages)];
 };
+
+export const throttle = (func: Function, delay: number) => {
+  let lastCall = 0;
+  let timeoutId: NodeJS.Timeout | null = null;
+
+  return (...args: any[]) => {
+    const now = Date.now();
+    const timeSinceLastCall = now - lastCall;
+
+    if (timeSinceLastCall >= delay) {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+      }
+
+      lastCall = now;
+      func(...args);
+    } else if (!timeoutId) {
+      timeoutId = setTimeout(() => {
+        lastCall = Date.now();
+        timeoutId = null;
+        func(...args);
+      }, delay - timeSinceLastCall);
+    }
+  };
+};

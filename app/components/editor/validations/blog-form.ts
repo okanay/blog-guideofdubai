@@ -1,3 +1,4 @@
+// app/components/editor/validations/blog-form.ts
 import { Editor } from "@tiptap/react";
 import { z } from "zod";
 import { imageUrlSchema } from "./image-url";
@@ -105,7 +106,7 @@ export const ConvertFormSchemaToCreateData = (
   editor: Editor,
 ) => {
   return {
-    groupId: data.slug,
+    groupId: data.groupId,
     slug: data.slug,
     metadata: {
       title: data.metadata.title,

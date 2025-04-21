@@ -1,4 +1,3 @@
-// app/components/editor/create/ui/index.ts
 export * from "./input";
 export * from "./textarea";
 export * from "./select";
@@ -11,3 +10,4 @@ export * from "./slug-creator";
 export * from "./read-time";
 export * from "./blog-status";
 export * from "./toggle";
+export * from "./group-id-selector";

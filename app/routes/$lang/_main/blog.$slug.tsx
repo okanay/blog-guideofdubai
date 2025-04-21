@@ -12,16 +12,12 @@ export const Route = createFileRoute("/$lang/_main/blog/$slug")({
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_APP_BACKEND_URL}/blog`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/blog?slug=${slug}&lang=${lang}`,
         {
-          method: "POST",
+          method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            groupId: slug,
-            language: lang,
-          }),
         },
       );
 
