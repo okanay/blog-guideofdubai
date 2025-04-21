@@ -25,7 +25,9 @@ export const useEditor = (initialContent: string = "") => {
     },
     extensions: [
       StarterKit.configure({
-        heading: { levels: [1, 2, 3, 4, 5, 6] },
+        heading: {
+          levels: [1, 2, 3, 4, 5, 6],
+        },
         hardBreak: {
           keepMarks: false,
         },

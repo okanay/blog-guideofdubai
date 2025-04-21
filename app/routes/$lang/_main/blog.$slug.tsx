@@ -1,14 +1,11 @@
 import { RenderJSON } from "@/components/editor/tiptap/renderer";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
+// Blog sayfasının ana route tanımlaması
 export const Route = createFileRoute("/$lang/_main/blog/$slug")({
   loader: async ({ params }) => {
     const slug = params.slug;
     const lang = params.lang;
-
-    if (slug === "0" || slug === "" || slug === undefined || slug === null) {
-      throw redirect({ replace: true, to: `/${lang}/not-found` });
-    }
 
     try {
       const response = await fetch(
@@ -22,7 +19,6 @@ export const Route = createFileRoute("/$lang/_main/blog/$slug")({
       );
 
       const data = await response.json();
-
       if (data.blog === null || data.blog === undefined) {
         throw redirect({ replace: true, to: `/${lang}/not-found` });
       }
@@ -36,15 +32,25 @@ export const Route = createFileRoute("/$lang/_main/blog/$slug")({
       throw redirect({ replace: true, to: `/${lang}/not-found` });
     }
   },
-  component: RouteComponent,
+  head: ({ loaderData: { blog } }) => {
+    return {
+      meta: [
+        {
+          charSet: "utf-8",
+        },
+      ],
+    };
+  },
+  component: BlogPage,
 });
 
-function RouteComponent() {
-  const data = Route.useLoaderData();
+// Ana blog sayfası komponenti
+function BlogPage() {
+  const { blog, lang } = Route.useLoaderData();
 
   return (
-    <div className="prose mx-auto max-w-5xl py-12">
-      <RenderJSON json={JSON.parse(data?.blog?.content?.json) || {}} />
+    <div className="prose mx-auto max-w-5xl px-4 py-8">
+      <RenderJSON json={JSON.parse(blog.content.json) || {}} />
     </div>
   );
 }

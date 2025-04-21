@@ -107,7 +107,7 @@ const EnhancedImageButton = () => {
       setImageUrl(attrs.src || "");
       setAltText(attrs.alt || "");
       setTitle(attrs.title || "");
-      setSize(attrs.size || "medium");
+      setSize(attrs.size || "fullscreen");
       setAlignment(attrs.alignment || "center");
       setObjectFit(attrs.objectFit || "cover");
       setCaption(attrs.caption || "");
@@ -151,7 +151,7 @@ const EnhancedImageButton = () => {
     setImageUrl("");
     setAltText("");
     setTitle("");
-    setSize("medium");
+    setSize("fullscreen");
     setAlignment("center");
     setObjectFit("cover");
     setCaption("");

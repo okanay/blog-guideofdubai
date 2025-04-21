@@ -82,15 +82,19 @@
     .prose {
       @apply text-color-font-dark;
 
+      & h1 {
+        @apply text-center text-balance;
+        @apply text-color-font-dark font-semibold tracking-tight;
+        @apply scroll-m-20;
+      }
       /* Headings with improved spacing and responsive sizes */
-      & h1,
       & h2,
       & h3,
       & h4,
       & h5,
       & h6 {
-        @apply text-color-font-dark font-semibold tracking-tight;
-        @apply scroll-m-20; /* For better anchor link scrolling */
+        @apply text-color-font-dark font-semibold tracking-tight text-pretty;
+        @apply scroll-m-20;
       }
 
       & h1 {

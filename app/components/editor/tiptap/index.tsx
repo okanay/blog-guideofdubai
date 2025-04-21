@@ -46,7 +46,7 @@ const EditModeContent = () => {
   return (
     <div
       style={{ scrollbarWidth: "none" }}
-      className="prose border border-zinc-200 bg-white p-4 focus-within:!border-zinc-300"
+      className="prose border-none bg-white p-4 ring-1 ring-zinc-200 focus-within:!ring-zinc-300"
     >
       <EditorContent editor={editor} />
     </div>
@@ -56,7 +56,7 @@ const EditModeContent = () => {
 const PreviewModeContent = () => {
   const { editor } = useTiptapContext();
   return (
-    <div className="prose border border-transparent bg-white py-4 sm:px-4">
+    <div className="prose bg-white py-4 sm:px-4">
       <RenderJSON json={editor.getJSON()} />
     </div>
   );

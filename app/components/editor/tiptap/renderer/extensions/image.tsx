@@ -77,7 +77,7 @@ export const EnhancedImage = Node.create({
       src: { default: null },
       alt: { default: null },
       title: { default: null },
-      size: { default: "medium" },
+      size: { default: "fullscreen" },
       alignment: { default: "center" },
       objectFit: { default: "cover" },
       caption: { default: "" },

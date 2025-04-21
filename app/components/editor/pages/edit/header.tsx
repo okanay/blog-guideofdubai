@@ -21,7 +21,7 @@ export function EditBlogHeader() {
         {/* Sol kısım: Geri butonu ve başlık */}
         <div className="flex items-center gap-2">
           <Link
-            to="/editor/"
+            to="/editor/list"
             className="bg-primary border-primary-cover text-color-primary flex size-8 flex-shrink-0 items-center justify-center rounded-md border transition-opacity duration-300 hover:opacity-75"
           >
             <ArrowLeft size={18} />
