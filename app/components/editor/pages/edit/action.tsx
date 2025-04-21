@@ -16,7 +16,7 @@ export const EditBlogAction = (props: { initialData: BlogSchema }) => {
     });
 
     if (!status) return;
-    navigate({ to: "/editor" });
+    navigate({ to: "/editor/list" });
   };
 
   return (

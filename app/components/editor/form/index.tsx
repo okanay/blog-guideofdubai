@@ -356,9 +356,9 @@ export function CreateBlogForm({
               <Select
                 label="İçerik Durumu"
                 id="status"
-                options={BLOG_OPTIONS.map(({ label2, value }) => ({
+                options={BLOG_OPTIONS.map(({ label3, value }) => ({
                   name: value,
-                  value: label2,
+                  value: label3,
                 }))}
                 value={field.value}
                 onChange={(newValue) => field.onChange(newValue)}
