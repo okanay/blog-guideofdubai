@@ -41,6 +41,7 @@ interface MultiSelectProps {
 
   // Dışarıdan gelen fonksiyonlar ve durumlar
   onAddCustomOption: (option: { name: string; value: string }) => Promise<void>;
+  onFetchOptions: () => Promise<void>;
   onRefreshOptions: () => Promise<void>;
   modalStatus: StatusState;
 }
@@ -61,6 +62,7 @@ export const MultiSelect = ({
   searchPlaceholder = "Kategorilerde ara...",
   // Dışarıdan gelen fonksiyonlar ve durumlar
   onAddCustomOption,
+  onFetchOptions,
   onRefreshOptions,
   modalStatus,
 }: MultiSelectProps) => {
@@ -73,7 +75,7 @@ export const MultiSelect = ({
 
   // Ilk render da fetch atarak yenile.
   useEffect(() => {
-    onRefreshOptions();
+    onFetchOptions();
   }, []);
 
   // Dışarıdan gelen değerleri izle

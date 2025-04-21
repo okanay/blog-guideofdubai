@@ -2,10 +2,24 @@ import { z } from "zod";
 import { imageUrlSchema } from "./image-url";
 
 declare global {
-  type BlogSchema = z.infer<typeof BlogSchema>;
+  type BlogPostCardView = z.infer<typeof BlogPostCardViewSchema>;
+
+  type BlogCardQueryOptions = {
+    id?: string;
+    title?: string;
+    language?: string;
+    categoryValue?: string;
+    tagValue?: string;
+    featured?: boolean;
+    status?: BlogStatus;
+    limit?: number;
+    offset?: number;
+    sortBy?: string;
+    sortDirection?: "asc" | "desc";
+  };
 }
 
-export const BlogSchema = z.object({
+export const BlogPostCardViewSchema = z.object({
   id: z.string().uuid({ message: "Geçersiz ID." }),
 
   groupId: z
@@ -38,26 +52,6 @@ export const BlogSchema = z.object({
     invalid_type_error: "Geçersiz blog durumu.",
   }),
 
-  metadata: z.object({
-    title: z
-      .string()
-      .min(
-        10,
-        "SEO başlığı en az 10 karakter olmalıdır. Bu alan boş bırakılamaz.",
-      )
-      .max(60, "SEO başlığı en fazla 60 karakter olabilir."),
-
-    description: z
-      .string()
-      .min(
-        40,
-        "SEO açıklaması en az 40 karakter olmalıdır. Bu alan boş bırakılamaz.",
-      )
-      .max(160, "SEO açıklaması en fazla 160 karakter olabilir."),
-
-    image: imageUrlSchema,
-  }),
-
   content: z.object({
     title: z
       .string()
@@ -82,46 +76,8 @@ export const BlogSchema = z.object({
       .int()
       .min(1, "Okuma dakikası en az 1 dakika olmalıdır.")
       .max(60, "Okuma dakikası en fazla 60 dakika olabilir."),
-
-    json: z
-      .string()
-      .min(
-        100,
-        "Blog içeriği en az 100 karakter olmalıdır. Bu alan boş bırakılamaz.",
-      ),
   }),
 
-  categories: z
-    .array(
-      z.object({
-        name: z.string().min(1, "Kategori adı boş bırakılamaz."),
-        value: z.string().min(1, "Kategori değeri boş bırakılamaz."),
-      }),
-    )
-    .min(1, {
-      message: "En az 1 kategori seçilmelidir.",
-    }),
-  tags: z
-    .array(
-      z.object({
-        name: z.string().min(1, "Etiket adı boş bırakılamaz."),
-        value: z.string().min(1, "Etiket değeri boş bırakılamaz."),
-      }),
-    )
-    .default([]),
-
-  // İsteğe bağlı: Tarih alanları için validasyon
   createdAt: z.string().datetime().optional(),
   updatedAt: z.string().datetime().optional(),
-  publishedAt: z.string().datetime().nullable().optional(),
-
-  // İsteğe bağlı: İstatistikler için validasyon
-  stats: z
-    .object({
-      views: z.number().int().min(0).default(0),
-      likes: z.number().int().min(0).default(0),
-      shares: z.number().int().min(0).default(0),
-      comments: z.number().int().min(0).default(0),
-    })
-    .optional(),
 });

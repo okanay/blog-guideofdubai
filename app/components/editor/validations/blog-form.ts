@@ -77,7 +77,7 @@ export const BlogFormSchema = z.object({
       .min(1, "Okuma dakikası en az 1 dakika olmalıdır.")
       .max(60, "Okuma dakikası en fazla 60 dakika olabilir."),
 
-    html: z
+    json: z
       .string()
       .min(
         100,
@@ -122,7 +122,7 @@ export const ConvertFormSchemaToCreateData = (
       description: data.content.description,
       image: data.content.image,
       readTime: data.content.readTime,
-      html: editor?.getHTML(),
+      json: JSON.stringify(editor?.getJSON()),
     },
     tags: data.tags.map((tag) => tag.name),
     categories: data.categories.map((category) => category.name),

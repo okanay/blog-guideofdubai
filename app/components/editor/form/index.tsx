@@ -267,6 +267,7 @@ export function CreateBlogForm({
                 id="categories"
                 options={categories}
                 onAddCustomOption={addCategory}
+                onFetchOptions={refreshCategories}
                 onRefreshOptions={refreshCategories}
                 modalStatus={categoryStatus}
                 value={field.value as any}
@@ -289,6 +290,7 @@ export function CreateBlogForm({
                 id="tags"
                 options={tags}
                 onAddCustomOption={addTag}
+                onFetchOptions={refreshCategories}
                 onRefreshOptions={refreshTags}
                 modalStatus={tagStatus}
                 value={field.value as any}

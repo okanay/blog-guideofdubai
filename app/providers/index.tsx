@@ -1,9 +1,10 @@
 import { Toaster } from "sonner";
-import { Fragment, PropsWithChildren } from "react";
+import { PropsWithChildren } from "react";
+import { TanStackQueryProvider } from "./query";
 
 export const RootProviders = (props: PropsWithChildren) => {
   return (
-    <Fragment>
+    <TanStackQueryProvider>
       <Toaster
         position="top-right"
         closeButton={true}
@@ -11,6 +12,6 @@ export const RootProviders = (props: PropsWithChildren) => {
         richColors={true}
       />
       {props.children}
-    </Fragment>
+    </TanStackQueryProvider>
   );
 };
