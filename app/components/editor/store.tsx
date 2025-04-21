@@ -78,6 +78,7 @@ export function EditorProvider({ children }: Props) {
         blogPostsStatus: createStatusState(),
         deleteBlogStatus: createStatusState(),
         changeBlogStatusStatus: createStatusState(),
+        updateStatus: createStatusState(),
 
         categories: [],
         tags: [],
@@ -410,8 +411,6 @@ export function EditorProvider({ children }: Props) {
           });
         },
 
-        updateStatus: createStatusState(),
-
         updateBlog: async (blog: any) => {
           set((state) => {
             state.updateStatus = createStatusState("loading");
@@ -494,14 +493,7 @@ export function EditorProvider({ children }: Props) {
               );
             }
 
-            set((state) => {
-              // Blog durumunu güncelle
-              state.blogPosts = state.blogPosts.map((post) =>
-                post.id === id ? { ...post, status } : post,
-              );
-              state.changeBlogStatusStatus = createStatusState("success");
-            });
-
+            get().fetchBlogPosts();
             toast.success("Blog durumu başarıyla güncellendi");
             return true;
           } catch (error) {

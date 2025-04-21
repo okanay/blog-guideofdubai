@@ -11,6 +11,7 @@ import {
   LoadingState,
   EmptyState,
   DeleteModal,
+  BlogFilters,
 } from "@/components/editor/pages/list";
 
 export const Route = createFileRoute("/$lang/_auth/_editor/editor/list")({
@@ -65,6 +66,15 @@ function BlogListPage() {
     fetchBlogPosts();
   };
 
+  const handleApplyFilters = () => {
+    fetchBlogPosts();
+  };
+
+  // Filtreleri sıfırlama işlemi
+  const handleResetFilters = () => {
+    fetchBlogPosts();
+  };
+
   // Tarih formatla
   const formatDate = (dateStr: string, lang: string = "tr") => {
     try {
@@ -107,6 +117,11 @@ function BlogListPage() {
 
       <main className="bg-white">
         <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
+          <BlogFilters
+            onApplyFilters={handleApplyFilters}
+            onResetFilters={handleResetFilters}
+            isLoading={isLoading}
+          />
           <div>
             {/* Blog sayısı ve yükleme durumu */}
             <div className="mb-2 flex items-center justify-between">

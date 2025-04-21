@@ -3,8 +3,40 @@ declare global {
 }
 
 export const BLOG_OPTIONS = [
-  { value: "status-published", label: "Yayınla" },
-  { value: "status-draft", label: "Hazırlanıyor" },
-  { value: "status-deleted", label: "Sil" },
-  { value: "status-archived", label: "Arşiv" },
+  {
+    value: "published",
+    label: "Yayınla",
+    label2: "Yayınlandı",
+    config: {
+      label: "Yayında",
+      color: "text-green-600 bg-green-50 border-green-200",
+    },
+  },
+  {
+    value: "draft",
+    label: "Hazırlanıyor",
+    label2: "Hazırlanıyor",
+    config: {
+      label: "Taslak",
+      color: "text-amber-600 bg-amber-50 border-amber-200",
+    },
+  },
+  {
+    value: "deleted",
+    label: "Sil",
+    label2: "Silindi",
+    config: {
+      label: "Silinmiş",
+      color: "text-red-600 bg-red-50 border-red-200",
+    },
+  },
+  {
+    value: "archived",
+    label: "Arşiv",
+    label2: "Arşivlendi",
+    config: {
+      label: "Arşivlenmiş",
+      color: "text-purple-600 bg-purple-50 border-purple-200",
+    },
+  },
 ];

@@ -4,6 +4,7 @@ import { BlogTable } from "./table";
 import { LoadingState } from "./loading";
 import { Pagination } from "./pagination";
 import { EmptyState } from "./empty";
+import { BlogFilters } from "./filters";
 
 export {
   DeleteModal,
@@ -12,4 +13,5 @@ export {
   LoadingState,
   Pagination,
   EmptyState,
+  BlogFilters,
 };

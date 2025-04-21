@@ -2,6 +2,7 @@ import { Eye, FileTextIcon, MoreHorizontal, CheckCircle2, Trash2, Star, Archive 
 import { LANGUAGE_DICTONARY } from "@/i18n/config";
 import { Link } from "@/i18n/link";
 import { useState } from "react";
+import { BLOG_OPTIONS } from "../../constants";
 
 interface BlogTableProps {
   blogs: BlogPostCardView[];
@@ -20,25 +21,6 @@ export function BlogTable({
 
   const toggleActiveMenu = (id: string) => {
     setActiveMenu(activeMenu === "empty" ? id : "empty");
-  };
-
-  const STATUS_CONFIGS = {
-    published: {
-      label: "Yayında",
-      color: "text-green-600 bg-green-50 border-green-200",
-    },
-    draft: {
-      label: "Taslak",
-      color: "text-amber-600 bg-amber-50 border-amber-200",
-    },
-    archived: {
-      label: "Arşivlenmiş",
-      color: "text-purple-600 bg-purple-50 border-purple-200",
-    },
-    deleted: {
-      label: "Silinmiş",
-      color: "text-red-600 bg-red-50 border-red-200",
-    },
   };
 
   return (
@@ -116,9 +98,15 @@ export function BlogTable({
               </td>
               <td className="hidden px-4 py-3 whitespace-nowrap md:table-cell">
                 <span
-                  className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${STATUS_CONFIGS[blog.status].color}`}
+                  className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
+                    BLOG_OPTIONS.find((option) => option.value === blog.status)
+                      ?.config.color
+                  }`}
                 >
-                  {STATUS_CONFIGS[blog.status].label}
+                  {
+                    BLOG_OPTIONS.find((option) => option.value === blog.status)
+                      ?.label2
+                  }
                 </span>
               </td>
               <td className="hidden px-4 py-3 text-sm whitespace-nowrap text-zinc-600 md:table-cell">
