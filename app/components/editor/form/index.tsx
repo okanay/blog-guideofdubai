@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { extractErrorMessages } from "../helper";
 import { useEditorContext } from "../store";
 import { useTiptapContext } from "../tiptap/store";
-import { BlogFormSchema } from "../validations/blog-form";
+import { BlogFormSchema } from "../validations/blog-create";
 
 type Props = {
   initialData: BlogFormSchema;

@@ -2,7 +2,7 @@ import { CreateBlogForm } from "@/components/editor/form";
 import { useEditorContext } from "@/components/editor/store";
 import { useTiptapContext } from "@/components/editor/tiptap/store";
 import { LoadingBlocker } from "@/components/editor/ui/loading-blocker";
-import { ConvertFormSchemaToCreateData } from "@/components/editor/validations/blog-form";
+import { ConvertFormSchemaToCreateData } from "@/components/editor/validations/convert";
 import { useNavigate } from "@/i18n/navigate";
 
 export const CreateBlogAction = (props: { initialData: BlogFormSchema }) => {

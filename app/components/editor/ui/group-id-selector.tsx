@@ -9,11 +9,13 @@ import {
   Loader2,
   Link2,
   ExternalLink,
+  RefreshCw,
 } from "lucide-react";
 import RichButtonModal from "../tiptap/menu/ui/modal";
 import { useEditorContext } from "../store";
 import { slugify } from "../helper";
 import useThrottle from "@/hooks/use-throttle";
+import { LANGUAGE_DICTONARY } from "@/i18n/config";
 
 interface GroupIDSelectorProps extends React.ComponentProps<"input"> {
   label?: string;
@@ -378,27 +380,44 @@ export const GroupIDSelector = ({
           {/* Arama Modu İçeriği */}
           {groupModeState === "search" && (
             <>
-              {/* Arama alanı */}
-              <div className="relative">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Search size={16} className="text-zinc-400" />
+              <div className="flex items-center justify-between gap-2">
+                {/* Arama alanı */}
+                <div className="relative w-full">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <Search size={16} className="text-zinc-400" />
+                  </div>
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                    placeholder="Blog başlıklarında ara..."
+                    className="focus:border-primary focus:ring-primary h-10 w-full rounded-md border border-zinc-300 px-10 focus:ring-1 focus:outline-none"
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery("")}
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-zinc-400 hover:text-zinc-700"
+                    >
+                      <X size={16} />
+                    </button>
+                  )}
                 </div>
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  placeholder="Blog başlıklarında ara..."
-                  className="focus:border-primary focus:ring-primary w-full rounded-md border border-zinc-300 px-10 py-2 focus:ring-1 focus:outline-none"
-                />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchQuery("")}
-                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-zinc-400 hover:text-zinc-700"
-                  >
-                    <X size={16} />
-                  </button>
-                )}
+
+                {/* Yenileme butonu */}
+                <button
+                  type="button"
+                  onClick={() => fetchBlogPosts()}
+                  disabled={isLoading}
+                  className="flex h-10 items-center gap-2 rounded-md bg-zinc-100 px-4 text-sm font-medium text-zinc-700 hover:bg-zinc-200 disabled:opacity-50"
+                >
+                  {isLoading ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <RefreshCw size={16} />
+                  )}
+                  {isLoading ? "Yükleniyor..." : "Yenile"}
+                </button>
               </div>
 
               {/* Yükleme durumu */}
@@ -442,12 +461,7 @@ export const GroupIDSelector = ({
                         >
                           Dil
                         </th>
-                        <th
-                          scope="col"
-                          className="hidden px-4 py-3 text-left text-xs font-medium tracking-wider text-zinc-500 uppercase md:table-cell"
-                        >
-                          Grup ID
-                        </th>
+
                         <th
                           scope="col"
                           className="px-4 py-3 text-center text-xs font-medium tracking-wider text-zinc-500 uppercase"
@@ -476,26 +490,24 @@ export const GroupIDSelector = ({
                                 ) : null}
                               </div>
                               <div className="ml-3 max-w-xs">
-                                <p className="truncate text-sm font-medium text-zinc-900">
+                                <p className="max-w-50 truncate text-sm font-medium text-zinc-900">
                                   {blog.content.title}
+                                </p>
+                                <p className="max-w-50 truncate text-sm text-zinc-500">
+                                  {blog.groupId}
                                 </p>
                               </div>
                             </div>
                           </td>
+
                           <td className="px-4 py-3 text-center whitespace-nowrap">
                             <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                              {blog.language === "tr"
-                                ? "Türkçe"
-                                : blog.language === "en"
-                                  ? "İngilizce"
-                                  : blog.language}
+                              {LANGUAGE_DICTONARY.find(
+                                (lang) => lang.value === blog.language,
+                              )?.label || "Bilinmeyen Dil"}
                             </span>
                           </td>
-                          <td className="hidden px-4 py-3 text-sm whitespace-nowrap text-zinc-600 md:table-cell">
-                            <code className="rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-xs">
-                              {blog.groupId}
-                            </code>
-                          </td>
+
                           <td className="px-4 py-3 text-center text-sm font-medium whitespace-nowrap">
                             <button
                               type="button"
@@ -511,23 +523,6 @@ export const GroupIDSelector = ({
                   </table>
                 </div>
               )}
-
-              {/* Yenileme butonu */}
-              <div className="flex justify-center border-t border-zinc-100 pt-4">
-                <button
-                  type="button"
-                  onClick={() => fetchBlogPosts()}
-                  disabled={isLoading}
-                  className="flex items-center gap-2 rounded-md bg-zinc-100 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-200 disabled:opacity-50"
-                >
-                  {isLoading ? (
-                    <Loader2 size={16} className="animate-spin" />
-                  ) : (
-                    <Search size={16} />
-                  )}
-                  {isLoading ? "Yükleniyor..." : "Blogları Yenile"}
-                </button>
-              </div>
             </>
           )}
 

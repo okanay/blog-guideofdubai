@@ -25,6 +25,7 @@ import { Route as LangMainBlogSlugImport } from './routes/$lang/_main/blog.$slug
 import { Route as LangAuthEditorEditorIndexImport } from './routes/$lang/_auth/_editor/editor.index'
 import { Route as LangAuthEditorEditorListImport } from './routes/$lang/_auth/_editor/editor.list'
 import { Route as LangAuthEditorEditorCreateImport } from './routes/$lang/_auth/_editor/editor.create'
+import { Route as LangAuthEditorEditorEditIdImport } from './routes/$lang/_auth/_editor/editor.edit.$id'
 
 // Create Virtual Routes
 
@@ -105,6 +106,14 @@ const LangAuthEditorEditorCreateRoute = LangAuthEditorEditorCreateImport.update(
   {
     id: '/editor/create',
     path: '/editor/create',
+    getParentRoute: () => LangAuthEditorRouteRoute,
+  } as any,
+)
+
+const LangAuthEditorEditorEditIdRoute = LangAuthEditorEditorEditIdImport.update(
+  {
+    id: '/editor/edit/$id',
+    path: '/editor/edit/$id',
     getParentRoute: () => LangAuthEditorRouteRoute,
   } as any,
 )
@@ -204,6 +213,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LangAuthEditorEditorIndexImport
       parentRoute: typeof LangAuthEditorRouteImport
     }
+    '/$lang/_auth/_editor/editor/edit/$id': {
+      id: '/$lang/_auth/_editor/editor/edit/$id'
+      path: '/editor/edit/$id'
+      fullPath: '/$lang/editor/edit/$id'
+      preLoaderRoute: typeof LangAuthEditorEditorEditIdImport
+      parentRoute: typeof LangAuthEditorRouteImport
+    }
   }
 }
 
@@ -213,12 +229,14 @@ interface LangAuthEditorRouteRouteChildren {
   LangAuthEditorEditorCreateRoute: typeof LangAuthEditorEditorCreateRoute
   LangAuthEditorEditorListRoute: typeof LangAuthEditorEditorListRoute
   LangAuthEditorEditorIndexRoute: typeof LangAuthEditorEditorIndexRoute
+  LangAuthEditorEditorEditIdRoute: typeof LangAuthEditorEditorEditIdRoute
 }
 
 const LangAuthEditorRouteRouteChildren: LangAuthEditorRouteRouteChildren = {
   LangAuthEditorEditorCreateRoute: LangAuthEditorEditorCreateRoute,
   LangAuthEditorEditorListRoute: LangAuthEditorEditorListRoute,
   LangAuthEditorEditorIndexRoute: LangAuthEditorEditorIndexRoute,
+  LangAuthEditorEditorEditIdRoute: LangAuthEditorEditorEditIdRoute,
 }
 
 const LangAuthEditorRouteRouteWithChildren =
@@ -290,6 +308,7 @@ export interface FileRoutesByFullPath {
   '/$lang/editor/create': typeof LangAuthEditorEditorCreateRoute
   '/$lang/editor/list': typeof LangAuthEditorEditorListRoute
   '/$lang/editor': typeof LangAuthEditorEditorIndexRoute
+  '/$lang/editor/edit/$id': typeof LangAuthEditorEditorEditIdRoute
 }
 
 export interface FileRoutesByTo {
@@ -301,6 +320,7 @@ export interface FileRoutesByTo {
   '/$lang/editor/create': typeof LangAuthEditorEditorCreateRoute
   '/$lang/editor/list': typeof LangAuthEditorEditorListRoute
   '/$lang/editor': typeof LangAuthEditorEditorIndexRoute
+  '/$lang/editor/edit/$id': typeof LangAuthEditorEditorEditIdRoute
 }
 
 export interface FileRoutesById {
@@ -318,6 +338,7 @@ export interface FileRoutesById {
   '/$lang/_auth/_editor/editor/create': typeof LangAuthEditorEditorCreateRoute
   '/$lang/_auth/_editor/editor/list': typeof LangAuthEditorEditorListRoute
   '/$lang/_auth/_editor/editor/': typeof LangAuthEditorEditorIndexRoute
+  '/$lang/_auth/_editor/editor/edit/$id': typeof LangAuthEditorEditorEditIdRoute
 }
 
 export interface FileRouteTypes {
@@ -333,6 +354,7 @@ export interface FileRouteTypes {
     | '/$lang/editor/create'
     | '/$lang/editor/list'
     | '/$lang/editor'
+    | '/$lang/editor/edit/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/$lang'
@@ -343,6 +365,7 @@ export interface FileRouteTypes {
     | '/$lang/editor/create'
     | '/$lang/editor/list'
     | '/$lang/editor'
+    | '/$lang/editor/edit/$id'
   id:
     | '__root__'
     | '/$lang'
@@ -358,6 +381,7 @@ export interface FileRouteTypes {
     | '/$lang/_auth/_editor/editor/create'
     | '/$lang/_auth/_editor/editor/list'
     | '/$lang/_auth/_editor/editor/'
+    | '/$lang/_auth/_editor/editor/edit/$id'
   fileRoutesById: FileRoutesById
 }
 
@@ -416,7 +440,8 @@ export const routeTree = rootRoute
       "children": [
         "/$lang/_auth/_editor/editor/create",
         "/$lang/_auth/_editor/editor/list",
-        "/$lang/_auth/_editor/editor/"
+        "/$lang/_auth/_editor/editor/",
+        "/$lang/_auth/_editor/editor/edit/$id"
       ]
     },
     "/$lang/_main/blog": {
@@ -453,6 +478,10 @@ export const routeTree = rootRoute
     },
     "/$lang/_auth/_editor/editor/": {
       "filePath": "$lang/_auth/_editor/editor.index.tsx",
+      "parent": "/$lang/_auth/_editor"
+    },
+    "/$lang/_auth/_editor/editor/edit/$id": {
+      "filePath": "$lang/_auth/_editor/editor.edit.$id.tsx",
       "parent": "/$lang/_auth/_editor"
     }
   }

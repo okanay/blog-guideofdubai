@@ -1,5 +1,3 @@
-// app/components/editor/validations/blog-form.ts
-import { Editor } from "@tiptap/react";
 import { z } from "zod";
 import { imageUrlSchema } from "./image-url";
 
@@ -100,31 +98,3 @@ export const BlogFormSchema = z.object({
     )
     .default([]),
 });
-
-export const ConvertFormSchemaToCreateData = (
-  data: BlogFormSchema,
-  editor: Editor,
-) => {
-  return {
-    groupId: data.groupId,
-    slug: data.slug,
-    metadata: {
-      title: data.metadata.title,
-      description: data.metadata.description,
-      image: data.metadata.image,
-    },
-    content: {
-      title: data.content.title,
-      description: data.content.description,
-      image: data.content.image,
-      readTime: data.content.readTime,
-      html: editor.getHTML(),
-      json: JSON.stringify(editor?.getJSON()),
-    },
-    tags: data.tags.map((tag) => tag.name),
-    categories: data.categories.map((category) => category.name),
-    language: data.language,
-    status: data.status,
-    featured: data.featured,
-  };
-};

@@ -50,6 +50,9 @@ interface DataState {
   fetchBlogPosts: () => Promise<void>;
   clearBlogPosts: () => void;
 
+  updateBlog: (blog: any) => Promise<boolean>;
+  updateStatus: StatusState;
+
   deleteBlogStatus: StatusState;
   deleteBlog: (id: string) => Promise<boolean>;
 
@@ -405,6 +408,65 @@ export function EditorProvider({ children }: Props) {
               sortDirection: "desc",
             };
           });
+        },
+
+        updateStatus: createStatusState(),
+
+        updateBlog: async (blog: any) => {
+          set((state) => {
+            state.updateStatus = createStatusState("loading");
+          });
+
+          try {
+            const response = await fetch(`${API_URL}/auth/blog`, {
+              method: "PATCH",
+              body: JSON.stringify(blog),
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+              const errorMessage =
+                data.message || "Blog güncellenirken bir hata oluştu";
+
+              set((state) => {
+                state.updateStatus = createStatusState("error", errorMessage);
+              });
+
+              toast.error("Blog Güncellenemedi", {
+                description: errorMessage,
+              });
+
+              return false;
+            }
+
+            set((state) => {
+              state.updateStatus = createStatusState("success");
+            });
+
+            toast.success("Blog Başarıyla Güncellendi", {
+              description: "Blog içeriğiniz başarıyla güncellendi.",
+            });
+
+            return true;
+          } catch (error) {
+            const errorMessage =
+              error instanceof Error
+                ? error.message
+                : "Beklenmedik bir hata oluştu lütfen tekrar deneyin.";
+
+            set((state) => {
+              state.updateStatus = createStatusState("error", errorMessage);
+            });
+
+            toast.error("Blog Güncellenemedi", {
+              description: errorMessage,
+            });
+
+            return false;
+          }
         },
 
         changeBlogStatus: async (id: string, status: BlogStatus) => {
