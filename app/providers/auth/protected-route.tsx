@@ -31,6 +31,8 @@ export default function ProtectedRoute({
   }, [status]);
 
   if (status === "loading") return null;
+  if (control === "unauthorize" && status === "unauthorize") return null;
+  if (control === "authorize" && status === "authorize") return null;
 
   return children;
 }
