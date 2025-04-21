@@ -159,8 +159,8 @@ export const MultiSelect = ({
 
     try {
       await onAddCustomOption({
-        name: slugName, // Slug değeri
-        name: displayValue, // Görüntülenecek isim
+        name: slugName,
+        value: displayValue,
       });
 
       // Input'u başarılı eklemeden sonra temizle
