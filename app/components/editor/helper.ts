@@ -100,28 +100,15 @@ export const extractErrorMessages = (errors) => {
   return [...new Set(messages)];
 };
 
-export const throttle = (func: Function, delay: number) => {
-  let lastCall = 0;
-  let timeoutId: NodeJS.Timeout | null = null;
+export const API_URL =
+  import.meta.env.VITE_APP_BACKEND_URL || "http://localhost:8080/";
 
-  return (...args: any[]) => {
-    const now = Date.now();
-    const timeSinceLastCall = now - lastCall;
-
-    if (timeSinceLastCall >= delay) {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-        timeoutId = null;
-      }
-
-      lastCall = now;
-      func(...args);
-    } else if (!timeoutId) {
-      timeoutId = setTimeout(() => {
-        lastCall = Date.now();
-        timeoutId = null;
-        func(...args);
-      }, delay - timeSinceLastCall);
-    }
-  };
-};
+export const createStatusState = (
+  status: StatusState["status"] = "idle",
+  message?: string,
+): StatusState => ({
+  status,
+  message,
+  loading: status === "loading",
+  error: status === "error" ? message || null : null,
+});

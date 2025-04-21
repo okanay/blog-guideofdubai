@@ -1,19 +1,5 @@
+import { Search, Filter, ChevronsUpDown, X, Star, RefreshCw, SlidersHorizontal, ArrowDownAZ, ArrowUpAZ, Layout, Tag, Calendar, Type } from "lucide-react"; // prettier-ignore
 import { useState, useEffect } from "react";
-import {
-  Search,
-  Filter,
-  ChevronsUpDown,
-  X,
-  Star,
-  RefreshCw,
-  SlidersHorizontal,
-  ArrowDownAZ,
-  ArrowUpAZ,
-  Layout,
-  Tag,
-  Calendar,
-  Type,
-} from "lucide-react";
 import { LANGUAGE_DICTONARY } from "@/i18n/config";
 import { BLOG_OPTIONS } from "@/components/editor/constants";
 import { useEditorContext } from "@/components/editor/store";
@@ -43,12 +29,12 @@ export function BlogFilters({
 
   const sortOptions = [
     {
-      value: "createdAt",
+      value: "created_at",
       label: "Oluşturma Tarihi",
       icon: <Calendar size={14} />,
     },
     {
-      value: "updatedAt",
+      value: "updated_at",
       label: "Güncelleme Tarihi",
       icon: <RefreshCw size={14} />,
     },
@@ -56,8 +42,12 @@ export function BlogFilters({
   ];
 
   const directionOptions = [
-    { value: "desc", label: "Azalan", icon: <ArrowDownAZ size={14} /> },
-    { value: "asc", label: "Artan", icon: <ArrowUpAZ size={14} /> },
+    {
+      value: "desc",
+      label: "Normal Sıralama",
+      icon: <ArrowDownAZ size={14} />,
+    },
+    { value: "asc", label: "Tersten Sıralama", icon: <ArrowUpAZ size={14} /> },
   ];
 
   // Filtrelerin değerleri için lokal state
@@ -70,7 +60,7 @@ export function BlogFilters({
     featured: blogPostsQuery.featured || false,
     sortBy: blogPostsQuery.sortBy || "createdAt",
     sortDirection: blogPostsQuery.sortDirection || "desc",
-    limit: blogPostsQuery.limit || 10,
+    limit: blogPostsQuery.limit || 20,
   });
 
   // Değişiklikler yapıldığında takip et
@@ -106,7 +96,6 @@ export function BlogFilters({
     setBlogPostsQuery({
       ...filters,
       status: filters.status as BlogStatus,
-      offset: 0,
     });
     onApplyFilters();
   };
@@ -120,15 +109,14 @@ export function BlogFilters({
       tagValue: "",
       status: "",
       featured: false,
+      limit: 20,
       sortBy: "createdAt",
       sortDirection: "desc",
-      limit: 10,
     };
 
     setFilters(defaultFilters as any);
     setBlogPostsQuery({
       ...(defaultFilters as any),
-      offset: 0,
     });
     onResetFilters();
   };

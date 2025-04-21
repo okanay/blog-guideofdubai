@@ -7,7 +7,7 @@ import { useNavigate } from "@/i18n/navigate";
 
 export const CreateBlogAction = (props: { initialData: BlogFormSchema }) => {
   const { editor } = useTiptapContext();
-  const { createBlog, createStatus } = useEditorContext();
+  const { createBlog, statusStates } = useEditorContext();
   const navigate = useNavigate();
 
   const handleCreateForm = async (values: BlogFormSchema) => {
@@ -22,7 +22,7 @@ export const CreateBlogAction = (props: { initialData: BlogFormSchema }) => {
   return (
     <>
       <LoadingBlocker
-        loading={createStatus.loading}
+        loading={statusStates.create.loading}
         label="Blog Oluşturuluyor..."
       />
 

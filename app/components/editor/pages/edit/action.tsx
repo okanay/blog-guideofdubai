@@ -8,8 +8,7 @@ import { LoadingBlocker } from "@/components/editor/ui/loading-blocker";
 export const EditBlogAction = (props: { initialData: BlogSchema }) => {
   const navigate = useNavigate();
   const { editor } = useTiptapContext();
-  const { updateBlog, updateStatus, refreshCategories, refreshTags } =
-    useEditorContext();
+  const { updateBlog, statusStates } = useEditorContext();
 
   const handleUpdateForm = async (values: BlogFormSchema) => {
     const status = await updateBlog({
@@ -23,7 +22,7 @@ export const EditBlogAction = (props: { initialData: BlogSchema }) => {
   return (
     <>
       <LoadingBlocker
-        loading={updateStatus.loading}
+        loading={statusStates.update.loading}
         label="Blog Güncelleniyor..."
       />
 

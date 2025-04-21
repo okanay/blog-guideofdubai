@@ -1,69 +1,129 @@
-// app/components/editor/create/store.tsx
 import { createContext, PropsWithChildren, useContext, useState } from "react";
 import { toast } from "sonner";
 import { createStore, StoreApi, useStore } from "zustand";
 import { immer } from "zustand/middleware/immer";
+import { API_URL, createStatusState } from "./helper";
 
-const API_URL =
-  import.meta.env.VITE_APP_BACKEND_URL || "http://localhost:8080/";
+// HTTP İstek Yardımcıları
+// ------------------------------------
+type HttpMethod = "GET" | "POST" | "PATCH" | "DELETE";
 
-const createStatusState = (
-  status: StatusState["status"] = "idle",
-  message?: string,
-): StatusState => ({
-  status,
-  message,
-  loading: status === "loading",
-  error: status === "error" ? message || null : null,
-});
+interface FetchOptions {
+  method: HttpMethod;
+  endpoint: string;
+  body?: any;
+  credentials?: RequestCredentials;
+  successMessage?: string;
+  errorMessage?: string;
+}
 
-type Props = PropsWithChildren & {
-  children: React.ReactNode;
-};
+async function apiFetch<T = any>({
+  method,
+  endpoint,
+  body,
+  credentials = "include",
+  successMessage,
+  errorMessage,
+}: FetchOptions): Promise<{ success: boolean; data?: T; error?: string }> {
+  try {
+    const url = `${API_URL}${endpoint}`;
+    const options: RequestInit = {
+      method,
+      headers: { "Content-Type": "application/json" },
+      credentials,
+    };
 
+    if (body && method !== "GET") {
+      options.body = JSON.stringify(body);
+    }
+
+    const response = await fetch(url, options);
+    const data = await response.json();
+
+    if (!response.ok) {
+      const message =
+        data.message ||
+        data.error ||
+        errorMessage ||
+        "İşlem sırasında bir hata oluştu";
+      if (errorMessage) {
+        toast.error(errorMessage, { description: message });
+      }
+      return { success: false, error: message };
+    }
+
+    if (successMessage) {
+      toast.success(successMessage, {
+        description: "İşlem başarıyla tamamlandı",
+      });
+    }
+
+    return { success: true, data };
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Beklenmedik bir hata oluştu";
+    if (errorMessage) {
+      toast.error(errorMessage, { description: message });
+    }
+    return { success: false, error: message };
+  }
+}
+
+// Store Tipleri
+// ------------------------------------
 interface DataState {
-  // Mevcut durum özellikleri
+  // Blog Görünüm Modu
   view: {
     mode: BlogViewMode;
     setMode: (mode: BlogViewMode) => void;
   };
 
+  // Status durumları
+  statusStates: {
+    create: StatusState;
+    update: StatusState;
+    delete: StatusState;
+    changeStatus: StatusState;
+    categories: StatusState;
+    tags: StatusState;
+    blogPosts: StatusState;
+  };
+
+  // Blog İşlemleri
   createBlog: (blog: any) => Promise<boolean>;
-  createStatus: StatusState;
+  updateBlog: (blog: any) => Promise<boolean>;
+  deleteBlog: (id: string) => Promise<boolean>;
+  changeBlogStatus: (id: string, status: BlogStatus) => Promise<boolean>;
 
+  // Kategori İşlemleri
   categories: Category[];
-  addCategory: (category: Category) => Promise<void>;
-  refreshCategories: () => Promise<void>;
-  categoryStatus: StatusState;
+  addCategory: (category: SelectOption) => Promise<Category | undefined>;
+  refreshCategories: () => Promise<Category[] | undefined>;
 
+  // Etiket İşlemleri
   tags: Tag[];
-  addTag: (tag: Tag) => Promise<void>;
-  refreshTags: () => Promise<void>;
-  tagStatus: StatusState;
+  addTag: (tag: SelectOption) => Promise<Tag | undefined>;
+  refreshTags: () => Promise<Tag[] | undefined>;
 
-  // Yeni blog post listesi özellikleri
-  blogPosts: BlogPostCardView[];
-  blogPostsTotal: number;
-  blogPostsStatus: StatusState;
+  // Blog Listesi
+  fetchedBlogs: { [key: string]: BlogPostCardView }; // Tüm fetch edilmiş bloglar (ID bazlı)
+  visibleBlogIds: string[]; // Görüntülenen blog ID'leri
+  totalBlogCount: number; // Toplam blog sayısı
+  lastFetchCount: number; // Son fetch işleminde kaç blog getirdiği
+  hasMoreBlogs: boolean; // Daha fazla blog var mı
   blogPostsQuery: BlogCardQueryOptions;
   setBlogPostsQuery: (query: Partial<BlogCardQueryOptions>) => void;
   fetchBlogPosts: () => Promise<void>;
   clearBlogPosts: () => void;
-
-  updateBlog: (blog: any) => Promise<boolean>;
-  updateStatus: StatusState;
-
-  deleteBlogStatus: StatusState;
-  deleteBlog: (id: string) => Promise<boolean>;
-
-  changeBlogStatusStatus: StatusState;
-  changeBlogStatus: (id: string, status: BlogStatus) => Promise<boolean>;
 }
 
-export function EditorProvider({ children }: Props) {
+// Store İmplementasyonu
+// ------------------------------------
+export function EditorProvider({ children }: PropsWithChildren) {
   const [store] = useState(() =>
     createStore<DataState>()(
       immer((set, get) => ({
+        // Görünüm Modu
         view: {
           mode: "form",
           setMode: (mode: BlogViewMode) =>
@@ -72,263 +132,290 @@ export function EditorProvider({ children }: Props) {
             }),
         },
 
-        createStatus: createStatusState(),
-        categoryStatus: createStatusState(),
-        tagStatus: createStatusState(),
-        blogPostsStatus: createStatusState(),
-        deleteBlogStatus: createStatusState(),
-        changeBlogStatusStatus: createStatusState(),
-        updateStatus: createStatusState(),
+        // Status durumları
+        statusStates: {
+          create: createStatusState(),
+          update: createStatusState(),
+          delete: createStatusState(),
+          changeStatus: createStatusState(),
+          categories: createStatusState(),
+          tags: createStatusState(),
+          blogPosts: createStatusState(),
+        },
 
+        // Veri durumları
         categories: [],
         tags: [],
-        blogPosts: [],
-        blogPostsTotal: 0,
+        fetchedBlogs: {},
+        visibleBlogIds: [],
+        totalBlogCount: 0,
+        lastFetchCount: 0,
+        hasMoreBlogs: true,
+
+        // Varsayılan blog sorgusu
         blogPostsQuery: {
-          limit: 10,
+          limit: 20,
           offset: 0,
           sortBy: "createdAt",
           sortDirection: "desc",
         },
 
+        // Blog oluşturma
         createBlog: async (blog: any) => {
           set((state) => {
-            state.createStatus = createStatusState("loading");
+            state.statusStates.create = createStatusState("loading");
           });
 
-          try {
-            const response = await fetch(`${API_URL}/auth/blog`, {
-              method: "POST",
-              body: JSON.stringify(blog),
-              headers: { "Content-Type": "application/json" },
-              credentials: "include",
-            });
+          const result = await apiFetch({
+            method: "POST",
+            endpoint: "/auth/blog",
+            body: blog,
+            successMessage: "Blog Başarıyla Oluşturuldu",
+            errorMessage: "Blog Oluşturulamadı",
+          });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-              const errorMessage =
-                data.message || "Blog oluşturulurken bir hata oluştu";
-
-              set((state) => {
-                state.createStatus = createStatusState("error", errorMessage);
-              });
-
-              toast.error("Blog Oluşturulamadı", {
-                description: errorMessage,
-              });
-
-              return false;
-            }
-
-            set((state) => {
-              state.createStatus = createStatusState("success");
-            });
-
-            toast.success("Blog Başarıyla Oluşturuldu", {
-              description: "Blog içeriğiniz başarıyla kaydedildi.",
-            });
-
-            return true;
-          } catch (error) {
-            const errorMessage =
-              error instanceof Error
-                ? error.message
-                : "Beklenmedik bir hata oluştu lütfen tekrar deneyin.";
-
-            set((state) => {
-              state.createStatus = createStatusState("error", errorMessage);
-            });
-
-            toast.error("Blog Oluşturulamadı", {
-              description: errorMessage,
-            });
-
-            return false;
-          }
-        },
-
-        addCategory: async (category: Category) => {
           set((state) => {
-            state.categoryStatus = createStatusState("loading");
+            state.statusStates.create = createStatusState(
+              result.success ? "success" : "error",
+              result.error,
+            );
+
+            // Başarılı ise cache'i temizle
+            if (result.success) {
+              state.fetchedBlogs = {};
+              state.visibleBlogIds = [];
+            }
           });
 
-          try {
-            const response = await fetch(`${API_URL}/auth/blog/category`, {
-              method: "POST",
-              body: JSON.stringify(category),
-              headers: { "Content-Type": "application/json" },
-              credentials: "include",
-            });
-
-            if (!response.ok) {
-              const errorMessage = "Kategori eklerken bir hata oluştu";
-              throw new Error(errorMessage);
-            }
-
-            const newCategory = await response.json();
-
-            set((state) => {
-              state.categories.push(newCategory);
-              state.categoryStatus = createStatusState("success");
-            });
-
-            return newCategory;
-          } catch (error) {
-            console.error("Failed to add category:", error);
-
-            const errorMessage =
-              error instanceof Error
-                ? error.message
-                : "Kategori eklerken bir hata oluştu";
-
-            set((state) => {
-              state.categoryStatus = createStatusState("error", errorMessage);
-            });
-
-            throw error;
-          }
+          return result.success;
         },
 
-        addTag: async (tag: Tag) => {
+        // Blog güncelleme
+        updateBlog: async (blog: any) => {
           set((state) => {
-            state.tagStatus = createStatusState("loading");
+            state.statusStates.update = createStatusState("loading");
           });
 
-          try {
-            const response = await fetch(`${API_URL}/auth/blog/tag`, {
-              method: "POST",
-              body: JSON.stringify(tag),
-              headers: { "Content-Type": "application/json" },
-              credentials: "include",
-            });
+          const result = await apiFetch({
+            method: "PATCH",
+            endpoint: "/auth/blog",
+            body: blog,
+            successMessage: "Blog Başarıyla Güncellendi",
+            errorMessage: "Blog Güncellenemedi",
+          });
 
-            if (!response.ok) {
-              const errorMessage = "Etiket eklerken bir hata oluştu";
-              throw new Error(errorMessage);
+          set((state) => {
+            state.statusStates.update = createStatusState(
+              result.success ? "success" : "error",
+              result.error,
+            );
+
+            // Eğer başarılı ise ve blog ID'si tanımlıysa, fetchedBlogs'da güncelle
+            if (result.success && blog.id && state.fetchedBlogs[blog.id]) {
+              state.fetchedBlogs[blog.id] = {
+                ...state.fetchedBlogs[blog.id],
+                ...blog,
+              };
             }
+          });
 
-            const newTag = await response.json();
-
-            set((state) => {
-              state.tags.push(newTag);
-              state.tagStatus = createStatusState("success");
-            });
-
-            return newTag;
-          } catch (error) {
-            const errorMessage =
-              error instanceof Error
-                ? error.message
-                : "Etiket eklerken bir hata oluştu";
-
-            set((state) => {
-              state.tagStatus = createStatusState("error", errorMessage);
-            });
-
-            throw error;
-          }
+          return result.success;
         },
 
+        // Blog durumu değiştirme
+        changeBlogStatus: async (id: string, status: BlogStatus) => {
+          set((state) => {
+            state.statusStates.changeStatus = createStatusState("loading");
+          });
+
+          const result = await apiFetch({
+            method: "PATCH",
+            endpoint: "/auth/blog/status",
+            body: { id, status },
+            successMessage: "Blog durumu başarıyla güncellendi",
+            errorMessage: "Blog Durumu Değiştirilemedi",
+          });
+
+          set((state) => {
+            state.statusStates.changeStatus = createStatusState(
+              result.success ? "success" : "error",
+              result.error,
+            );
+
+            // Başarılı ise blog durumunu güncelle
+            if (result.success && state.fetchedBlogs[id]) {
+              state.fetchedBlogs[id].status = status;
+            }
+          });
+
+          return result.success;
+        },
+
+        // Blog silme
+        deleteBlog: async (id: string) => {
+          set((state) => {
+            state.statusStates.delete = createStatusState("loading");
+          });
+
+          const result = await apiFetch({
+            method: "DELETE",
+            endpoint: `/auth/blog/${id}`,
+            successMessage: "Blog başarıyla silindi",
+            errorMessage: "Blog Silinemedi",
+          });
+
+          set((state) => {
+            state.statusStates.delete = createStatusState(
+              result.success ? "success" : "error",
+              result.error,
+            );
+          });
+
+          // Başarılı ise blog listesini yenile
+          if (result.success) {
+            await get().fetchBlogPosts();
+          }
+
+          return result.success;
+        },
+
+        // Kategori ekleme
+        addCategory: async (category: SelectOption) => {
+          set((state) => {
+            state.statusStates.categories = createStatusState("loading");
+          });
+
+          const result = await apiFetch<Category>({
+            method: "POST",
+            endpoint: "/auth/blog/category",
+            body: category,
+            errorMessage: "Kategori eklenirken bir hata oluştu",
+          });
+
+          set((state) => {
+            state.statusStates.categories = createStatusState(
+              result.success ? "success" : "error",
+              result.error,
+            );
+
+            if (result.success && result.data) {
+              state.categories.push(result.data);
+            }
+          });
+
+          return result.data;
+        },
+
+        // Kategorileri yenileme
         refreshCategories: async () => {
           set((state) => {
-            state.categoryStatus = createStatusState("loading");
+            state.statusStates.categories = createStatusState("loading");
           });
 
-          try {
-            const response = await fetch(`${API_URL}/auth/blog/categories`, {
-              headers: { "Content-Type": "application/json" },
-              method: "GET",
-              credentials: "include",
-            });
+          const result = await apiFetch<{ categories: Category[] }>({
+            method: "GET",
+            endpoint: "/auth/blog/categories",
+            errorMessage: "Kategori listesi yenilenirken bir hata oluştu",
+          });
 
-            if (!response.ok) {
-              const errorMessage =
-                "Kategori listesi yenilenirken bir hata oluştu";
-              throw new Error(errorMessage);
+          set((state) => {
+            state.statusStates.categories = createStatusState(
+              result.success ? "success" : "error",
+              result.error,
+            );
+
+            if (result.success && result.data) {
+              state.categories = result.data.categories || [];
             }
+          });
 
-            const data = await response.json();
-
-            set((state) => {
-              state.categories = data.categories ?? [];
-              state.categoryStatus = createStatusState("success");
-            });
-
-            return data.categories;
-          } catch (error) {
-            const errorMessage =
-              error instanceof Error
-                ? error.message
-                : "Kategori listesi yenilenirken bir hata oluştu";
-
-            set((state) => {
-              state.categoryStatus = createStatusState("error", errorMessage);
-            });
-
-            throw error;
-          }
+          return result.success ? result.data?.categories : undefined;
         },
 
+        // Etiket ekleme
+        addTag: async (tag: SelectOption) => {
+          set((state) => {
+            state.statusStates.tags = createStatusState("loading");
+          });
+
+          const result = await apiFetch<Tag>({
+            method: "POST",
+            endpoint: "/auth/blog/tag",
+            body: tag,
+            errorMessage: "Etiket eklerken bir hata oluştu",
+          });
+
+          set((state) => {
+            state.statusStates.tags = createStatusState(
+              result.success ? "success" : "error",
+              result.error,
+            );
+
+            if (result.success && result.data) {
+              state.tags.push(result.data);
+            }
+          });
+
+          return result.data;
+        },
+
+        // Etiketleri yenileme
         refreshTags: async () => {
           set((state) => {
-            state.tagStatus = createStatusState("loading");
+            state.statusStates.tags = createStatusState("loading");
           });
 
-          try {
-            const response = await fetch(`${API_URL}/auth/blog/tags`, {
-              headers: { "Content-Type": "application/json" },
-              credentials: "include",
-            });
+          const result = await apiFetch<{ tags: Tag[] }>({
+            method: "GET",
+            endpoint: "/auth/blog/tags",
+            errorMessage: "Etiket listesi yenilenirken bir hata oluştu",
+          });
 
-            if (!response.ok) {
-              const errorMessage =
-                "Etiket listesi yenilenirken bir hata oluştu";
-              throw new Error(errorMessage);
+          set((state) => {
+            state.statusStates.tags = createStatusState(
+              result.success ? "success" : "error",
+              result.error,
+            );
+
+            if (result.success && result.data) {
+              state.tags = result.data.tags || [];
             }
+          });
 
-            const data = await response.json();
+          return result.success ? result.data?.tags : undefined;
+        },
 
+        // Blog sorgu parametrelerini ayarlama
+        setBlogPostsQuery: (query: Partial<BlogCardQueryOptions>) => {
+          const currentQuery = get().blogPostsQuery;
+          const newQuery = { ...currentQuery, ...query };
+
+          // Offset dışında bir filtre değişimi olduysa, veri temizlenir
+          if (
+            Object.keys(query).some(
+              (key) =>
+                key !== "offset" &&
+                query[key as keyof BlogCardQueryOptions] !== undefined &&
+                query[key as keyof BlogCardQueryOptions] !==
+                  currentQuery[key as keyof BlogCardQueryOptions],
+            )
+          ) {
             set((state) => {
-              state.tags = data.tags ?? [];
-              state.tagStatus = createStatusState("success");
+              state.fetchedBlogs = {}; // Önbelleği temizle
+              state.visibleBlogIds = []; // Görüntülenen blogları temizle
+              state.blogPostsQuery = { ...newQuery, offset: 0 }; // Offset'i sıfırla
             });
-
-            return data.tags;
-          } catch (error) {
-            const errorMessage =
-              error instanceof Error
-                ? error.message
-                : "Etiket listesi yenilenirken bir hata oluştu";
-
+          } else {
             set((state) => {
-              state.tagStatus = createStatusState("error", errorMessage);
+              state.blogPostsQuery = newQuery;
             });
-
-            throw error;
           }
         },
 
-        setBlogPostsQuery: (query: Partial<BlogCardQueryOptions>) => {
-          set((state) => {
-            state.blogPostsQuery = { ...state.blogPostsQuery, ...query };
-
-            // Yeni sorgu yapıldığında offset'i sıfırla
-            if (
-              query.limit ||
-              query.language ||
-              query.title ||
-              query.status ||
-              query.featured
-            ) {
-              state.blogPostsQuery.offset = 0;
-            }
-          });
-        },
-
+        // Blog gönderilerini getirme
         fetchBlogPosts: async () => {
           set((state) => {
-            state.blogPostsStatus = createStatusState("loading");
+            state.statusStates.blogPosts = createStatusState("loading");
           });
 
           try {
@@ -353,34 +440,54 @@ export function EditorProvider({ children }: Props) {
               queryParams.append("sortDirection", query.sortDirection);
 
             const queryString = queryParams.toString();
-            const url = `${API_URL}/blog/cards${queryString ? `?${queryString}` : ""}`;
+            const endpoint = `/blog/cards${queryString ? `?${queryString}` : ""}`;
 
-            const response = await fetch(url, {
+            const result = await apiFetch<{
+              success: boolean;
+              blogs: BlogPostCardView[];
+              count: number;
+            }>({
               method: "GET",
-              headers: { "Content-Type": "application/json" },
-              credentials: "include",
+              endpoint,
+              errorMessage: "Blog listesi alınırken bir hata oluştu",
             });
 
-            if (!response.ok) {
-              throw new Error("Blog listesi alınırken bir hata oluştu");
-            }
-
-            const data = await response.json();
-
-            if (!data.success) {
+            if (!result.success || !result.data) {
               throw new Error(
-                data.error || "Blog listesi alınırken bir hata oluştu",
+                result.error || "Blog listesi alınırken bir hata oluştu",
               );
             }
 
+            // Gelen blogları işle
+            const blogs = result.data.blogs || []; // Eğer blogs null ise boş dizi kullan
+            const fetchedCount = blogs?.length || 0; // Güvenli erişim
+
             set((state) => {
-              // Eğer offset 0 ise mevcut listeyi temizle, değilse mevcut listeye ekle (sonsuz kaydırma için)
-              const isFirstPage = state.blogPostsQuery.offset === 0;
-              state.blogPosts = isFirstPage
-                ? data.blogs
-                : [...state.blogPosts, ...data.blogs];
-              state.blogPostsTotal = data.count;
-              state.blogPostsStatus = createStatusState("success");
+              // Yeni fetch edilen blogları, fetchedBlogs içine ekle
+              const updatedFetchedBlogs = { ...state.fetchedBlogs };
+
+              blogs.forEach((blog) => {
+                updatedFetchedBlogs[blog.id] = blog;
+              });
+
+              // Görünür blog ID'lerini güncelle (append yaparak)
+              const newBlogIds = blogs.map((blog) => blog.id);
+
+              // Eğer offset 0 ise (ilk sayfa), visible ID'leri sıfırla
+              const visibleIds =
+                query.offset === 0
+                  ? newBlogIds
+                  : [...state.visibleBlogIds, ...newBlogIds];
+
+              // Son fetch sayısını ve daha fazla blog olup olmadığını güncelle
+              const hasMore = fetchedCount === (query.limit || 10);
+
+              state.fetchedBlogs = updatedFetchedBlogs;
+              state.visibleBlogIds = visibleIds;
+              state.totalBlogCount = result.data.count;
+              state.lastFetchCount = fetchedCount;
+              state.hasMoreBlogs = hasMore;
+              state.statusStates.blogPosts = createStatusState("success");
             });
           } catch (error) {
             const errorMessage =
@@ -389,7 +496,10 @@ export function EditorProvider({ children }: Props) {
                 : "Blog listesi alınırken bir hata oluştu";
 
             set((state) => {
-              state.blogPostsStatus = createStatusState("error", errorMessage);
+              state.statusStates.blogPosts = createStatusState(
+                "error",
+                errorMessage,
+              );
             });
 
             toast.error("Blog Listesi Yüklenemedi", {
@@ -398,10 +508,14 @@ export function EditorProvider({ children }: Props) {
           }
         },
 
+        // Blog listesini temizleme
         clearBlogPosts: () => {
           set((state) => {
-            state.blogPosts = [];
-            state.blogPostsTotal = 0;
+            state.fetchedBlogs = {};
+            state.visibleBlogIds = [];
+            state.totalBlogCount = 0;
+            state.lastFetchCount = 0;
+            state.hasMoreBlogs = true;
             state.blogPostsQuery = {
               limit: 10,
               offset: 0,
@@ -409,163 +523,6 @@ export function EditorProvider({ children }: Props) {
               sortDirection: "desc",
             };
           });
-        },
-
-        updateBlog: async (blog: any) => {
-          set((state) => {
-            state.updateStatus = createStatusState("loading");
-          });
-
-          try {
-            const response = await fetch(`${API_URL}/auth/blog`, {
-              method: "PATCH",
-              body: JSON.stringify(blog),
-              headers: { "Content-Type": "application/json" },
-              credentials: "include",
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-              const errorMessage =
-                data.message || "Blog güncellenirken bir hata oluştu";
-
-              set((state) => {
-                state.updateStatus = createStatusState("error", errorMessage);
-              });
-
-              toast.error("Blog Güncellenemedi", {
-                description: errorMessage,
-              });
-
-              return false;
-            }
-
-            set((state) => {
-              state.updateStatus = createStatusState("success");
-            });
-
-            toast.success("Blog Başarıyla Güncellendi", {
-              description: "Blog içeriğiniz başarıyla güncellendi.",
-            });
-
-            return true;
-          } catch (error) {
-            const errorMessage =
-              error instanceof Error
-                ? error.message
-                : "Beklenmedik bir hata oluştu lütfen tekrar deneyin.";
-
-            set((state) => {
-              state.updateStatus = createStatusState("error", errorMessage);
-            });
-
-            toast.error("Blog Güncellenemedi", {
-              description: errorMessage,
-            });
-
-            return false;
-          }
-        },
-
-        changeBlogStatus: async (id: string, status: BlogStatus) => {
-          set((state) => {
-            state.changeBlogStatusStatus = createStatusState("loading");
-          });
-
-          try {
-            const response = await fetch(`${API_URL}/auth/blog/status`, {
-              method: "PATCH",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ id, status }),
-              credentials: "include",
-            });
-
-            if (!response.ok) {
-              throw new Error("Blog durumu değiştirilirken bir hata oluştu");
-            }
-
-            const data = await response.json();
-
-            if (!data.success) {
-              throw new Error(
-                data.error || "Blog durumu değiştirilirken bir hata oluştu",
-              );
-            }
-
-            get().fetchBlogPosts();
-            toast.success("Blog durumu başarıyla güncellendi");
-            return true;
-          } catch (error) {
-            const errorMessage =
-              error instanceof Error
-                ? error.message
-                : "Blog durumu değiştirilirken bir hata oluştu";
-
-            set((state) => {
-              state.changeBlogStatusStatus = createStatusState(
-                "error",
-                errorMessage,
-              );
-            });
-
-            toast.error("Blog Durumu Değiştirilemedi", {
-              description: errorMessage,
-            });
-
-            return false;
-          }
-        },
-
-        deleteBlog: async (id: string) => {
-          set((state) => {
-            state.deleteBlogStatus = createStatusState("loading");
-          });
-
-          try {
-            const response = await fetch(`${API_URL}/auth/blog/${id}`, {
-              method: "DELETE",
-              headers: { "Content-Type": "application/json" },
-              credentials: "include",
-            });
-
-            if (!response.ok) {
-              throw new Error("Blog silinirken bir hata oluştu");
-            }
-
-            const data = await response.json();
-
-            if (!data.success) {
-              throw new Error(data.error || "Blog silinirken bir hata oluştu");
-            }
-
-            set((state) => {
-              // Silinen blog'u listeden kaldır
-              state.blogPosts = state.blogPosts.filter(
-                (post) => post.id !== id,
-              );
-              state.blogPostsTotal = Math.max(0, state.blogPostsTotal - 1);
-              state.deleteBlogStatus = createStatusState("success");
-            });
-
-            toast.success("Blog başarıyla silindi");
-            return true;
-          } catch (error) {
-            const errorMessage =
-              error instanceof Error
-                ? error.message
-                : "Blog silinirken bir hata oluştu";
-
-            set((state) => {
-              state.deleteBlogStatus = createStatusState("error", errorMessage);
-            });
-
-            toast.error("Blog Silinemedi", {
-              description: errorMessage,
-            });
-
-            return false;
-          }
         },
       })),
     ),

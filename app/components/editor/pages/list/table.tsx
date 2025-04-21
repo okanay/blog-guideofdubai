@@ -1,4 +1,4 @@
-import { Eye, FileTextIcon, MoreHorizontal, CheckCircle2, Trash2, Star, Archive } from "lucide-react"; // prettier-ignore
+import { Eye, MoreHorizontal, CheckCircle2, Trash2, Star, Archive } from "lucide-react"; // prettier-ignore
 import { LANGUAGE_DICTONARY } from "@/i18n/config";
 import { Link } from "@/i18n/link";
 import { useState } from "react";
@@ -50,7 +50,13 @@ export function BlogTable({
               scope="col"
               className="hidden px-4 py-3 text-left text-xs font-medium tracking-wider text-zinc-500 uppercase md:table-cell"
             >
-              Tarih
+              Oluşturma
+            </th>
+            <th
+              scope="col"
+              className="hidden px-4 py-3 text-left text-xs font-medium tracking-wider text-zinc-500 uppercase md:table-cell"
+            >
+              Güncelleme
             </th>
             <th
               scope="col"
@@ -111,6 +117,9 @@ export function BlogTable({
               </td>
               <td className="hidden px-4 py-3 text-sm whitespace-nowrap text-zinc-600 md:table-cell">
                 {formatDate(blog.createdAt)}
+              </td>
+              <td className="hidden px-4 py-3 text-sm whitespace-nowrap text-zinc-600 md:table-cell">
+                {formatDate(blog.updatedAt)}
               </td>
               <td className="px-4 py-3 text-right text-sm font-medium whitespace-nowrap">
                 <div className="flex items-center justify-end gap-2">

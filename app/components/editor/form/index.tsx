@@ -23,7 +23,14 @@ export function CreateBlogForm({
   onSubmit,
 }: Props) {
   const { editor } = useTiptapContext();
-  const { refreshTags, tags, addTag, tagStatus, categories, addCategory, categoryStatus, refreshCategories } = useEditorContext(); // prettier-ignore
+  const {
+    tags,
+    addTag,
+    statusStates,
+    categories,
+    addCategory,
+    refreshCategories,
+  } = useEditorContext();
 
   // prettier-ignore
   const { handleSubmit, control, formState: { errors } } = useForm<BlogFormSchema>({
@@ -271,7 +278,7 @@ export function CreateBlogForm({
                 onAddCustomOption={addCategory}
                 onFetchOptions={refreshCategories}
                 onRefreshOptions={refreshCategories}
-                modalStatus={categoryStatus}
+                modalStatus={statusStates.categories}
                 value={field.value as any}
                 onChange={(newValue) => field.onChange(newValue)}
                 isRequired={true}
@@ -293,8 +300,8 @@ export function CreateBlogForm({
                 options={tags}
                 onAddCustomOption={addTag}
                 onFetchOptions={refreshCategories}
-                onRefreshOptions={refreshTags}
-                modalStatus={tagStatus}
+                onRefreshOptions={refreshCategories}
+                modalStatus={statusStates.tags}
                 value={field.value as any}
                 onChange={(newValue) => field.onChange(newValue)}
                 hint="İçerikle ilgili anahtar kelimeleri seçin, arama ve filtreleme işlemlerinde kullanılır"

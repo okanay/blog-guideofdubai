@@ -11,6 +11,11 @@ type Tag = {
   value: string;
 };
 
+type SelectOption = {
+  name: string;
+  value: string;
+};
+
 type StatusState = {
   status: "loading" | "success" | "error" | "idle";
   message: string | undefined;

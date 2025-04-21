@@ -25,9 +25,12 @@ function BlogListPage() {
 
   // Context'ten verileri ve fonksiyonları alma
   const {
-    blogPosts,
-    blogPostsTotal,
-    blogPostsStatus,
+    fetchedBlogs,
+    visibleBlogIds,
+    totalBlogCount,
+    lastFetchCount,
+    hasMoreBlogs,
+    statusStates: { blogPosts },
     blogPostsQuery,
     setBlogPostsQuery,
     fetchBlogPosts,
@@ -35,14 +38,33 @@ function BlogListPage() {
     deleteBlog,
   } = useEditorContext();
 
+  const limit = blogPostsQuery.limit || 10;
+  const currentPage = Math.floor((blogPostsQuery.offset || 0) / limit);
+  const startIndex = currentPage * limit;
+  const endIndex = startIndex + limit;
+  const totalPages = Math.ceil(totalBlogCount / limit);
+  const pageVisibleIds = visibleBlogIds.slice(startIndex, endIndex);
+
+  // ID'lere göre blog nesnelerini al
+  const visibleBlogs = pageVisibleIds
+    .map((id) => fetchedBlogs[id])
+    .filter(Boolean);
+
   // Sayfa yükleme durumlarını belirleyen değişkenler
-  const isLoading = blogPostsStatus.loading;
-  const isEmpty = !isLoading && blogPostsTotal === 0;
-  const hasData = !isLoading && blogPostsTotal > 0;
+  const isLoading = blogPosts.loading;
+  const isEmpty = !isLoading && totalBlogCount === 0;
+  const hasData = !isLoading && totalBlogCount > 0;
+
+  // Sayfa ilk yüklendiğinde verileri getir
+  useEffect(() => {
+    fetchBlogPosts();
+  }, []);
 
   // Sayfa değiştirme fonksiyonları
   const handleNextPage = () => {
-    if (isLoading) return;
+    if (isLoading || !hasMoreBlogs) return;
+
+    // Sonraki sayfa için offset değerini hesapla
     const newOffset =
       (blogPostsQuery.offset || 0) + (blogPostsQuery.limit || 10);
     setBlogPostsQuery({ offset: newOffset });
@@ -50,42 +72,45 @@ function BlogListPage() {
   };
 
   const handlePreviousPage = () => {
-    if ((blogPostsQuery.offset || 0) > 0) {
-      const newOffset = Math.max(
-        0,
-        (blogPostsQuery.offset || 0) - (blogPostsQuery.limit || 10),
-      );
-      setBlogPostsQuery({ offset: newOffset });
-      fetchBlogPosts();
-    }
+    if (isLoading || (blogPostsQuery.offset || 0) <= 0) return;
+
+    // Önceki sayfa için offset değerini hesapla
+    const newOffset = Math.max(
+      0,
+      (blogPostsQuery.offset || 0) - (blogPostsQuery.limit || 10),
+    );
+    setBlogPostsQuery({ offset: newOffset });
+    fetchBlogPosts();
   };
 
-  // Yenileme işlemi
   const handleRefresh = () => {
+    // Yenileme işleminde offset'i sıfırla ve temiz veri getir
     setBlogPostsQuery({ offset: 0 });
     fetchBlogPosts();
   };
 
   const handleApplyFilters = () => {
+    // Filtre uygulandığında yeni veri getir
+    // Offset otomatik olarak sıfırlanacak
     fetchBlogPosts();
   };
 
-  // Filtreleri sıfırlama işlemi
   const handleResetFilters = () => {
+    // Filtreler sıfırlandığında yeni veri getir
     fetchBlogPosts();
   };
 
-  // Tarih formatla
   const formatDate = (dateStr: string, lang: string = "tr") => {
     try {
       const date = new Date(dateStr);
-      return format(date, "d MMM yyyy", { locale: lang === "tr" ? tr : enUS });
+      return format(date, "d MMM yyyy HH:mm", {
+        locale: lang === "tr" ? tr : enUS,
+      });
     } catch (e) {
       return dateStr;
     }
   };
 
-  // Silme işlemi
   const handleDeleteBlog = async () => {
     try {
       const success = await deleteBlog(selectedId);
@@ -99,16 +124,10 @@ function BlogListPage() {
     }
   };
 
-  // Silme modalını açma
   const openDeleteModal = (id: string) => {
     setSelectedId(id);
     setDeleteModalOpen(true);
   };
-
-  // Blog listesini başlangıçta yükle
-  useEffect(() => {
-    fetchBlogPosts();
-  }, []);
 
   return (
     <div className="min-h-screen bg-white">
@@ -126,8 +145,8 @@ function BlogListPage() {
             {/* Blog sayısı ve yükleme durumu */}
             <div className="mb-2 flex items-center justify-between">
               <p className="text-sm text-zinc-500">
-                {blogPostsTotal > 0
-                  ? `${blogPostsTotal} blog bulundu`
+                {totalBlogCount > 0
+                  ? `${totalBlogCount} blog bulundu (${visibleBlogs.length} gösteriliyor)`
                   : "Blog bulunamadı"}
               </p>
               <div className="text-sm text-zinc-500">
@@ -136,7 +155,7 @@ function BlogListPage() {
             </div>
 
             {/* Duruma göre render etme */}
-            {isLoading && <LoadingState />}
+            {isLoading && visibleBlogs.length === 0 && <LoadingState />}
 
             {isEmpty && <EmptyState />}
 
@@ -144,7 +163,7 @@ function BlogListPage() {
               <>
                 {/* Blog Tablosu */}
                 <BlogTable
-                  blogs={blogPosts}
+                  blogs={visibleBlogs}
                   onChangeStatus={changeBlogStatus}
                   onDeleteClick={openDeleteModal}
                   formatDate={formatDate}
@@ -152,13 +171,17 @@ function BlogListPage() {
 
                 {/* Sayfalama */}
                 <Pagination
-                  total={blogPostsTotal}
+                  total={totalBlogCount}
                   offset={blogPostsQuery.offset || 0}
                   limit={blogPostsQuery.limit || 10}
-                  currentCount={blogPosts.length}
+                  currentCount={visibleBlogs.length}
                   onPrevious={handlePreviousPage}
                   onNext={handleNextPage}
                   isLoading={isLoading}
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  hasMoreBlogs={hasMoreBlogs}
+                  lastFetchCount={lastFetchCount}
                 />
               </>
             )}

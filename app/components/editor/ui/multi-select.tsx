@@ -40,9 +40,9 @@ interface MultiSelectProps {
   searchPlaceholder?: string;
 
   // Dışarıdan gelen fonksiyonlar ve durumlar
-  onAddCustomOption: (option: { name: string; value: string }) => Promise<void>;
-  onFetchOptions: () => Promise<void>;
-  onRefreshOptions: () => Promise<void>;
+  onAddCustomOption: (option: SelectOption) => Promise<any>;
+  onFetchOptions: () => Promise<any>;
+  onRefreshOptions: () => Promise<any>;
   modalStatus: StatusState;
 }
 

@@ -71,9 +71,9 @@ export const GroupIDSelector = ({
 
   const {
     fetchBlogPosts,
-    blogPosts,
-    blogPostsTotal,
-    blogPostsStatus,
+    fetchedBlogs,
+    totalBlogCount,
+    statusStates: { blogPosts },
     setBlogPostsQuery,
   } = useEditorContext();
 
@@ -235,9 +235,9 @@ export const GroupIDSelector = ({
 
   // UI durumları
   const status = isError ? "error" : "default";
-  const isLoading = blogPostsStatus.loading;
-  const isEmpty = !isLoading && blogPostsTotal === 0;
-  const hasData = !isLoading && blogPostsTotal > 0;
+  const isLoading = blogPosts.loading;
+  const isEmpty = !isLoading && totalBlogCount === 0;
+  const hasData = !isLoading && totalBlogCount > 0;
 
   // Input referansını birleştirme
   const handleRef = (element: HTMLInputElement | null) => {
@@ -471,54 +471,57 @@ export const GroupIDSelector = ({
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-zinc-200 bg-white">
-                      {blogPosts.map((blog) => (
-                        <tr
-                          key={blog.id}
-                          className={`hover:bg-zinc-50 ${
-                            selectedBlogId === blog.id ? "bg-primary-50" : ""
-                          }`}
-                        >
-                          <td className="px-4 py-3 whitespace-nowrap">
-                            <div className="flex items-center">
-                              <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-md bg-zinc-200">
-                                {blog.content.image ? (
-                                  <img
-                                    src={blog.content.image}
-                                    alt={blog.content.title}
-                                    className="h-full w-full object-cover"
-                                  />
-                                ) : null}
+                      {Object.keys(fetchedBlogs).map((key) => {
+                        const blog = fetchedBlogs[key];
+                        return (
+                          <tr
+                            key={blog.id}
+                            className={`hover:bg-zinc-50 ${
+                              selectedBlogId === blog.id ? "bg-primary-50" : ""
+                            }`}
+                          >
+                            <td className="px-4 py-3 whitespace-nowrap">
+                              <div className="flex items-center">
+                                <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-md bg-zinc-200">
+                                  {blog.content.image ? (
+                                    <img
+                                      src={blog.content.image}
+                                      alt={blog.content.title}
+                                      className="h-full w-full object-cover"
+                                    />
+                                  ) : null}
+                                </div>
+                                <div className="ml-3 max-w-xs">
+                                  <p className="max-w-50 truncate text-sm font-medium text-zinc-900">
+                                    {blog.content.title}
+                                  </p>
+                                  <p className="max-w-50 truncate text-sm text-zinc-500">
+                                    {blog.groupId}
+                                  </p>
+                                </div>
                               </div>
-                              <div className="ml-3 max-w-xs">
-                                <p className="max-w-50 truncate text-sm font-medium text-zinc-900">
-                                  {blog.content.title}
-                                </p>
-                                <p className="max-w-50 truncate text-sm text-zinc-500">
-                                  {blog.groupId}
-                                </p>
-                              </div>
-                            </div>
-                          </td>
+                            </td>
 
-                          <td className="px-4 py-3 text-center whitespace-nowrap">
-                            <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                              {LANGUAGE_DICTONARY.find(
-                                (lang) => lang.value === blog.language,
-                              )?.label || "Bilinmeyen Dil"}
-                            </span>
-                          </td>
+                            <td className="px-4 py-3 text-center whitespace-nowrap">
+                              <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                                {LANGUAGE_DICTONARY.find(
+                                  (lang) => lang.value === blog.language,
+                                )?.label || "Bilinmeyen Dil"}
+                              </span>
+                            </td>
 
-                          <td className="px-4 py-3 text-center text-sm font-medium whitespace-nowrap">
-                            <button
-                              type="button"
-                              onClick={() => selectBlog(blog.groupId)}
-                              className="bg-primary hover:bg-primary-dark inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium text-white"
-                            >
-                              Dili Bağla
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
+                            <td className="px-4 py-3 text-center text-sm font-medium whitespace-nowrap">
+                              <button
+                                type="button"
+                                onClick={() => selectBlog(blog.groupId)}
+                                className="bg-primary hover:bg-primary-dark inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium text-white"
+                              >
+                                Dili Bağla
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
