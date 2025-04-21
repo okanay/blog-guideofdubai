@@ -26,7 +26,7 @@ function EditorDashboard() {
       {/* Header her zaman görünür */}
       <Header user={user} logout={logout} />
 
-      <div className="flex min-h-[90vh]">
+      <div className="mx-auto flex min-h-[90vh] max-w-7xl">
         {/* Sidebar her zaman görünür */}
         <Sidebar />
 
