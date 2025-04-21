@@ -3,11 +3,6 @@ import { twMerge } from "tailwind-merge";
 import { Check, ChevronDown, Plus, Search, X } from "lucide-react";
 import RichButtonModal from "../tiptap/menu/ui/modal";
 
-interface SelectOption {
-  value: string;
-  label: string;
-}
-
 interface SelectProps {
   label?: string;
   id?: string;
@@ -87,23 +82,23 @@ export const Select = ({
     // Aynı değere sahip bir seçenek var mı kontrol et
     const exists = options.some(
       (option) =>
-        option.value.toLowerCase() === customOptionText.trim().toLowerCase(),
+        option.name.toLowerCase() === customOptionText.trim().toLowerCase(),
     );
 
     if (!exists) {
       const newOption: SelectOption = {
+        name: customOptionText.trim(),
         value: customOptionText.trim(),
-        label: customOptionText.trim(),
       };
 
       setOptions([newOption, ...options]);
-      handleValueChange(newOption.value);
+      handleValueChange(newOption.name);
       setIsModalOpen(false);
     } else {
       const existingValue = options.find(
         (option) =>
-          option.value.toLowerCase() === customOptionText.trim().toLowerCase(),
-      )?.value;
+          option.name.toLowerCase() === customOptionText.trim().toLowerCase(),
+      )?.name;
 
       if (existingValue) {
         handleValueChange(existingValue);
@@ -116,12 +111,12 @@ export const Select = ({
 
   // Arama sonucuna göre filtrelenmiş seçenekler
   const filteredOptions = options.filter((option) =>
-    option.label.toLowerCase().includes(searchText.toLowerCase()),
+    option.value.toLowerCase().includes(searchText.toLowerCase()),
   );
 
   // Seçili etiketi bul ve göster
   const selectedOption = options.find(
-    (option) => option.value === selectedValue,
+    (option) => option.name === selectedValue,
   );
 
   return (
@@ -146,7 +141,7 @@ export const Select = ({
         {selectedOption ? (
           <div className="flex w-full items-center justify-between">
             <span className="text-sm text-zinc-800">
-              {selectedOption.label}
+              {selectedOption.value}
             </span>
             <button
               type="button"
@@ -241,12 +236,12 @@ export const Select = ({
             {filteredOptions.length > 0 ? (
               <div className="flex flex-col divide-y divide-zinc-100">
                 {filteredOptions.map((option) => {
-                  const isSelected = selectedValue === option.value;
+                  const isSelected = selectedValue === option.name;
                   return (
                     <button
-                      key={option.value}
+                      key={option.name}
                       type="button"
-                      onClick={() => selectOption(option.value)}
+                      onClick={() => selectOption(option.name)}
                       className={twMerge(
                         "flex items-center gap-3 px-3 py-2 text-left text-sm transition-colors hover:bg-zinc-50",
                         isSelected && "bg-zinc-50",
@@ -262,7 +257,7 @@ export const Select = ({
                           <Check size={12} className="text-white" />
                         )}
                       </div>
-                      <span>{option.label}</span>
+                      <span>{option.value}</span>
                     </button>
                   );
                 })}

@@ -53,6 +53,7 @@ export const ConvertFormSchemaToUpdateData = (
     tags: data.tags.map((tag) => tag.name),
     categories: data.categories.map((category) => category.name),
     language: data.language,
+    status: data.status,
     featured: data.featured,
   };
 };

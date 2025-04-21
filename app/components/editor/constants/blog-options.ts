@@ -22,15 +22,6 @@ export const BLOG_OPTIONS = [
     },
   },
   {
-    value: "deleted",
-    label: "Sil",
-    label2: "Silindi",
-    config: {
-      label: "Silinmiş",
-      color: "text-red-600 bg-red-50 border-red-200",
-    },
-  },
-  {
     value: "archived",
     label: "Arşiv",
     label2: "Arşivlendi",

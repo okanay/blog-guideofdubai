@@ -8,6 +8,7 @@ import { extractErrorMessages } from "../helper";
 import { useEditorContext } from "../store";
 import { useTiptapContext } from "../tiptap/store";
 import { BlogFormSchema } from "../validations/blog-create";
+import { BLOG_OPTIONS } from "../constants";
 
 type Props = {
   initialData: BlogFormSchema;
@@ -138,7 +139,7 @@ export function CreateBlogForm({
             render={({ field }) => (
               <Textarea
                 {...field}
-                label="Meta Açıklama"
+                label="SEO Açıklaması"
                 id="metadata.description"
                 placeholder="Google ve diğer arama motorlarında görünecek açıklama metni"
                 hint="Kullanıcıyı tıklamaya yönlendirecek, anahtar kelimeler içeren etkili bir açıklama yazın"
@@ -332,7 +333,10 @@ export function CreateBlogForm({
               <Select
                 label="İçerik Dili"
                 id="language"
-                options={LANGUAGE_DICTONARY}
+                options={LANGUAGE_DICTONARY.map(({ label, value }) => ({
+                  name: value,
+                  value: label,
+                }))}
                 value={field.value}
                 onChange={(newValue) => field.onChange(newValue)}
                 hint="Doğru dil seçimi, içeriğin doğru hedef kitleye ulaşmasını sağlar"
@@ -341,6 +345,29 @@ export function CreateBlogForm({
                 placeholder="Yazı dilini seçin"
                 isError={!!errors.language}
                 errorMessage={errors.language?.message}
+              />
+            )}
+          />
+
+          <Controller
+            name="status"
+            control={control}
+            render={({ field }) => (
+              <Select
+                label="İçerik Durumu"
+                id="status"
+                options={BLOG_OPTIONS.map(({ label2, value }) => ({
+                  name: value,
+                  value: label2,
+                }))}
+                value={field.value}
+                onChange={(newValue) => field.onChange(newValue)}
+                hint="Blogun başlangıç durumunu seçin. Örneğin, taslak olarak başlatabilirsiniz."
+                isRequired={true}
+                allowCustomOption={false}
+                placeholder="İçerik durumunu seçin"
+                isError={!!errors.status}
+                errorMessage={errors.status?.message}
               />
             )}
           />
@@ -355,7 +382,7 @@ export function CreateBlogForm({
                 label="Blog Dil Bağlantısı"
                 id="groupId"
                 modalTitle="Blog Dil Bağlantısı."
-                hint="Dil versiyonları arasında ilişki kurmak için kullanılır"
+                hint="Eğer bu blog var olan bir bloğun farklı dildeki bir versiyonu ise, o blog ile eşleştirin."
                 isRequired={true}
                 isError={!!errors.groupId}
                 errorMessage={errors.groupId?.message}

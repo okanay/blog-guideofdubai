@@ -49,7 +49,7 @@
   }
 
   * {
-    @apply font-custom-sans focus:outline-none;
+    @apply font-custom-sans appearance-none focus:outline-none;
   }
 
   .custom-scrollbar {

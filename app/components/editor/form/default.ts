@@ -1,24 +1,24 @@
 export const DEFAULT_BLOG_FORM_VALUES: BlogFormSchema = {
-  groupId: "dubainin-simgesi-burj-khalifa-deneyimi",
-  slug: "dubainin-simgesi-burj-khalifa-deneyimi",
-  language: "en",
-  featured: true,
+  groupId: "dubai-de-arac-kiralama",
+  slug: "dubai-de-arac-kiralama",
+  language: "tr",
+  featured: false,
   status: "draft",
   metadata: {
-    title: "Dubai'nin Simgesi: Burj Khalifa Deneyimi",
+    title: "Dubai'de Araç Kiralama",
     description:
-      "Dünyanın en yüksek binası Burj Khalifa'yı ziyaret etmek için bilmeniz gereken her şey.",
+      "Dubai'de araç kiralama hakkında bilmeniz gereken her şey: fiyatlar, ipuçları ve en iyi kiralama şirketleri.",
     image: "https://images.project-test.info/1.webp",
   },
   content: {
-    title: "Burj Khalifa: Bulutların Üzerinde Bir Deneyim",
+    title: "Dubai'de Araç Kiralama Rehberi",
     description:
-      "828 metre yüksekliği ile dünyanın en yüksek binası Burj Khalifa, Dubai'nin en popüler turistik noktalarından biridir. Bu rehberde Burj Khalifa'yı nasıl ziyaret edeceğinizi, bilet fiyatlarını ve unutulmaz bir deneyim için önerilerimizi bulacaksınız.",
+      "Dubai'de araç kiralamak, şehri keşfetmenin en rahat yollarından biridir. Bu rehberde araç kiralama süreçlerini, fiyatları ve dikkat etmeniz gereken noktaları bulabilirsiniz.",
     image: "https://images.project-test.info/1.webp",
     readTime: 8,
     html: "",
     json: "",
   },
-  categories: [],
+  categories: [{ name: "rent-a-car", value: "Rent A Car" }],
   tags: [],
 };

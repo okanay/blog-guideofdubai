@@ -1,20 +1,10 @@
-import { Search, Filter, ChevronsUpDown, X, Star, RefreshCw, SlidersHorizontal, ArrowDownAZ, ArrowUpAZ, Layout, Tag, Calendar, Type } from "lucide-react"; // prettier-ignore
+import { Search, Filter, ChevronsUpDown, X, Star, RefreshCw, SlidersHorizontal, ArrowDownAZ, ArrowUpAZ, Layout, Tag, Calendar, Type, Languages, Layers } from "lucide-react"; // prettier-ignore
 import { useState, useEffect } from "react";
 import { LANGUAGE_DICTONARY } from "@/i18n/config";
 import { BLOG_OPTIONS } from "@/components/editor/constants";
 import { useEditorContext } from "@/components/editor/store";
 
-interface BlogFiltersProps {
-  onApplyFilters: () => void;
-  onResetFilters: () => void;
-  isLoading: boolean;
-}
-
-export function BlogFilters({
-  onApplyFilters,
-  onResetFilters,
-  isLoading,
-}: BlogFiltersProps) {
+export function BlogFilters() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [hasPendingChanges, setHasPendingChanges] = useState(false);
 
@@ -23,9 +13,13 @@ export function BlogFilters({
     setBlogPostsQuery,
     categories,
     tags,
-    refreshCategories,
+    fetchBlogPosts,
     refreshTags,
+    refreshCategories,
+    statusStates: { blogPosts },
   } = useEditorContext();
+
+  const isLoading = blogPosts.loading;
 
   const sortOptions = [
     {
@@ -47,10 +41,13 @@ export function BlogFilters({
       label: "Normal Sıralama",
       icon: <ArrowDownAZ size={14} />,
     },
-    { value: "asc", label: "Tersten Sıralama", icon: <ArrowUpAZ size={14} /> },
+    {
+      value: "asc",
+      label: "Tersten Sıralama",
+      icon: <ArrowUpAZ size={14} />,
+    },
   ];
 
-  // Filtrelerin değerleri için lokal state
   const [filters, setFilters] = useState({
     title: blogPostsQuery.title || "",
     language: blogPostsQuery.language || "",
@@ -58,12 +55,43 @@ export function BlogFilters({
     tagValue: blogPostsQuery.tagValue || "",
     status: blogPostsQuery.status || "",
     featured: blogPostsQuery.featured || false,
-    sortBy: blogPostsQuery.sortBy || "createdAt",
+    sortBy: blogPostsQuery.sortBy || "created_at",
     sortDirection: blogPostsQuery.sortDirection || "desc",
     limit: blogPostsQuery.limit || 20,
   });
 
-  // Değişiklikler yapıldığında takip et
+  const updateFilter = (key: string, value: any) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const applyFilters = () => {
+    setBlogPostsQuery({
+      ...filters,
+      status: filters.status as BlogStatus,
+    });
+    fetchBlogPosts();
+  };
+
+  const resetFilters = () => {
+    const defaultFilters = {
+      title: "",
+      language: "",
+      categoryValue: "",
+      tagValue: "",
+      status: "",
+      featured: false,
+      limit: 20,
+      sortBy: "created_at",
+      sortDirection: "desc",
+    };
+
+    setFilters(defaultFilters as any);
+    setBlogPostsQuery({
+      ...(defaultFilters as any),
+    });
+    fetchBlogPosts();
+  };
+
   useEffect(() => {
     const hasChanges =
       filters.title !== blogPostsQuery.title ||
@@ -79,47 +107,11 @@ export function BlogFilters({
     setHasPendingChanges(hasChanges);
   }, [filters, blogPostsQuery]);
 
-  // Kategoriler ve etiketleri başlangıçta yükle
   useEffect(() => {
     resetFilters();
-    refreshCategories();
     refreshTags();
+    refreshCategories();
   }, []);
-
-  // Filtre değerini güncelle
-  const updateFilter = (key: string, value: any) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
-  };
-
-  // Filtreleri uygula
-  const applyFilters = () => {
-    setBlogPostsQuery({
-      ...filters,
-      status: filters.status as BlogStatus,
-    });
-    onApplyFilters();
-  };
-
-  // Filtreleri sıfırla
-  const resetFilters = () => {
-    const defaultFilters = {
-      title: "",
-      language: "",
-      categoryValue: "",
-      tagValue: "",
-      status: "",
-      featured: false,
-      limit: 20,
-      sortBy: "createdAt",
-      sortDirection: "desc",
-    };
-
-    setFilters(defaultFilters as any);
-    setBlogPostsQuery({
-      ...(defaultFilters as any),
-    });
-    onResetFilters();
-  };
 
   return (
     <div className="mb-6 border border-zinc-200 bg-white">
@@ -239,22 +231,7 @@ export function BlogFilters({
             {/* Dil Filtresi */}
             <div className="space-y-1.5">
               <label className="flex items-center gap-1.5 text-xs font-medium text-zinc-700">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-zinc-500"
-                >
-                  <path d="m5 8 6 6" />
-                  <path d="m4 14 10-10" />
-                  <path d="M10.5 8.5a2.5 2.5 0 0 1 5 0c0 2.5-5 2.5-5 5a2.5 2.5 0 0 1 5 0" />
-                </svg>
+                <Languages size={14} />
                 Dil
               </label>
               <select
@@ -357,23 +334,7 @@ export function BlogFilters({
             {/* Gösterim Sayısı */}
             <div className="space-y-1.5">
               <label className="flex items-center gap-1.5 text-xs font-medium text-zinc-700">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-zinc-500"
-                >
-                  <rect width="18" height="18" x="3" y="3" rx="2" />
-                  <path d="M7 7h10" />
-                  <path d="M7 12h10" />
-                  <path d="M7 17h10" />
-                </svg>
+                <Layers size={14} />
                 Gösterim Sayısı
               </label>
               <div className="flex flex-wrap gap-2">

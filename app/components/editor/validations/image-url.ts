@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const imageUrlSchema = z
+export const simpleImageUrlSchema = z
   .string()
   .url({ message: "Lütfen geçerli bir URL girin." })
   .superRefine(async (url, ctx) => {
@@ -57,7 +57,7 @@ export const imageUrlSchema = z
     }
   });
 
-export const simpleImageUrlSchema = z
+export const imageUrlSchema = z
   .string()
   .url({ message: "Lütfen geçerli bir URL girin." })
   .superRefine((url, ctx) => {

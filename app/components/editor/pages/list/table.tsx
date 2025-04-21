@@ -1,27 +1,19 @@
-import { Eye, MoreHorizontal, CheckCircle2, Trash2, Star, Archive } from "lucide-react"; // prettier-ignore
+import { useEditorContext } from "@/components/editor/store";
 import { LANGUAGE_DICTONARY } from "@/i18n/config";
 import { Link } from "@/i18n/link";
-import { useState } from "react";
+
+import { Archive, ArrowUpFromLine, CheckCircle2, Edit, Eye, EyeIcon, EyeOff, MoreHorizontal, Star, Trash2 } from "lucide-react"; // prettier-ignore
+import { useState, useEffect, useRef } from "react";
 import { BLOG_OPTIONS } from "../../constants";
+import { formatDate } from "../../helper";
 
 interface BlogTableProps {
   blogs: BlogPostCardView[];
-  onChangeStatus: (id: string, status: string) => void;
   onDeleteClick: (id: string) => void;
-  formatDate: (date: string) => string;
 }
 
-export function BlogTable({
-  blogs,
-  onChangeStatus,
-  onDeleteClick,
-  formatDate,
-}: BlogTableProps) {
-  const [activeMenu, setActiveMenu] = useState<string>("empty");
-
-  const toggleActiveMenu = (id: string) => {
-    setActiveMenu(activeMenu === "empty" ? id : "empty");
-  };
+export function BlogTable({ blogs, onDeleteClick }: BlogTableProps) {
+  const { changeBlogStatus } = useEditorContext();
 
   return (
     <div className="border border-zinc-200">
@@ -82,7 +74,7 @@ export function BlogTable({
                   </div>
                   <div className="ml-3 max-w-xs">
                     <div className="flex items-center gap-1">
-                      <p className="truncate text-sm font-medium text-zinc-900">
+                      <p className="max-w-40 truncate text-sm font-medium text-zinc-900">
                         {blog.content.title}
                       </p>
                       {blog.featured && (
@@ -124,73 +116,47 @@ export function BlogTable({
               <td className="px-4 py-3 text-right text-sm font-medium whitespace-nowrap">
                 <div className="flex items-center justify-end gap-2">
                   <Link
-                    to={`/editor/edit/${blog.id}`}
+                    to={`/blog/${blog.slug}`}
+                    target="_blank"
                     className="rounded-lg bg-zinc-100 px-2.5 py-1.5 text-xs font-medium text-zinc-800 transition-colors hover:bg-zinc-200"
                   >
-                    Düzenle
+                    <EyeIcon size={16} className="mr-1 inline-block" />
                   </Link>
-                  <div className="relative">
+
+                  <Link
+                    to={`/editor/edit/${blog.id}`}
+                    className="rounded-lg bg-blue-100 px-2.5 py-1.5 text-xs font-medium text-blue-800 transition-colors hover:bg-blue-200"
+                  >
+                    <Edit size={16} className="mr-1 inline-block" />
+                  </Link>
+
+                  {/* Durum değiştirme butonu */}
+                  {blog.status !== "published" ? (
                     <button
-                      onClick={() => toggleActiveMenu(blog.id)}
-                      className="flex items-center justify-center rounded-full p-1.5 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
+                      onClick={() => changeBlogStatus(blog.id, "published")}
+                      className="rounded-lg bg-green-100 px-2.5 py-1.5 text-xs font-medium text-green-800 transition-colors hover:bg-green-200"
+                      title="Yayınla"
                     >
-                      <MoreHorizontal size={16} />
+                      <ArrowUpFromLine size={16} />
                     </button>
+                  ) : (
+                    <button
+                      onClick={() => changeBlogStatus(blog.id, "archived")}
+                      className="rounded-lg bg-purple-100 px-2.5 py-1.5 text-xs font-medium text-purple-800 transition-colors hover:bg-purple-200"
+                      title="Taslağa Çevir"
+                    >
+                      <Archive size={16} />
+                    </button>
+                  )}
 
-                    {/* İşlem Menüsü */}
-                    {activeMenu === blog.id && (
-                      <div className="absolute top-full right-0 z-10 mt-1 w-48 rounded-lg border border-zinc-200 bg-white py-1 shadow-lg">
-                        <Link
-                          to={`/blog/${blog.slug}`}
-                          target="_blank"
-                          className="flex w-full items-center gap-2 px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50"
-                        >
-                          <Eye size={16} />
-                          <span>Görüntüle</span>
-                        </Link>
-
-                        {/* Durum değiştirme seçenekleri */}
-                        {blog.status === "draft" && (
-                          <button
-                            onClick={() => onChangeStatus(blog.id, "published")}
-                            className="flex w-full items-center gap-2 px-4 py-2 text-sm text-green-600 hover:bg-green-50"
-                          >
-                            <CheckCircle2 size={16} />
-                            <span>Yayınla</span>
-                          </button>
-                        )}
-
-                        {blog.status === "archived" && (
-                          <button
-                            onClick={() => onChangeStatus(blog.id, "published")}
-                            className="flex w-full items-center gap-2 px-4 py-2 text-sm text-green-600 hover:bg-green-50"
-                          >
-                            <CheckCircle2 size={16} />
-                            <span>Yayınla</span>
-                          </button>
-                        )}
-
-                        {blog.status === "published" && (
-                          <button
-                            onClick={() => onChangeStatus(blog.id, "archived")}
-                            className="flex w-full items-center gap-2 px-4 py-2 text-sm text-purple-600 hover:bg-purple-50"
-                          >
-                            <Archive size={16} />
-                            <span>Arşivle</span>
-                          </button>
-                        )}
-
-                        {/* Silme butonu */}
-                        <button
-                          onClick={() => onDeleteClick(blog.id)}
-                          className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-                        >
-                          <Trash2 size={16} />
-                          <span>Sil</span>
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                  {/* Silme butonu */}
+                  <button
+                    onClick={() => onDeleteClick(blog.id)}
+                    className="rounded-lg bg-red-100 px-2.5 py-1.5 text-xs font-medium text-red-800 transition-colors hover:bg-red-200"
+                    title="Sil"
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 </div>
               </td>
             </tr>

@@ -1,13 +1,32 @@
 import { AlertTriangle } from "lucide-react";
+import { useEditorContext } from "@/components/editor/store";
+import { useState } from "react";
 
 interface DeleteModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  blogId: string;
 }
 
-export function DeleteModal({ isOpen, onClose, onConfirm }: DeleteModalProps) {
+export function DeleteModal({ isOpen, onClose, blogId }: DeleteModalProps) {
+  const { deleteBlog } = useEditorContext();
+  const [isDeleting, setIsDeleting] = useState(false);
+
   if (!isOpen) return null;
+
+  const handleDelete = async () => {
+    if (!blogId || blogId === "empty") return;
+
+    setIsDeleting(true);
+    try {
+      const success = await deleteBlog(blogId);
+      if (success) {
+        onClose();
+      }
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
@@ -31,14 +50,16 @@ export function DeleteModal({ isOpen, onClose, onConfirm }: DeleteModalProps) {
           <button
             onClick={onClose}
             className="rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50"
+            disabled={isDeleting}
           >
             İptal
           </button>
           <button
-            onClick={onConfirm}
+            onClick={handleDelete}
             className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700"
+            disabled={isDeleting}
           >
-            Sil
+            {isDeleting ? "Siliniyor..." : "Sil"}
           </button>
         </div>
       </div>

@@ -1,12 +1,22 @@
 import { ArrowLeft, Plus, RefreshCw } from "lucide-react";
 import { Link } from "@/i18n/link";
+import { useEditorContext } from "@/components/editor/store";
 
-interface HeaderProps {
-  onRefresh: () => void;
-  isLoading: boolean;
-}
+export function BlogListHeader() {
+  const {
+    statusStates: { blogPosts },
+    fetchBlogPosts,
+    setBlogPostsQuery,
+  } = useEditorContext();
 
-export function BlogListHeader({ onRefresh, isLoading }: HeaderProps) {
+  const isLoading = blogPosts.loading;
+
+  const handleRefresh = () => {
+    // Yenileme işleminde offset'i sıfırla ve temiz veri getir
+    setBlogPostsQuery({ offset: 0 });
+    fetchBlogPosts();
+  };
+
   return (
     <header className="border-b border-zinc-100 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
@@ -39,7 +49,7 @@ export function BlogListHeader({ onRefresh, isLoading }: HeaderProps) {
             </Link>
 
             <button
-              onClick={onRefresh}
+              onClick={handleRefresh}
               className="flex items-center justify-center rounded-lg border border-zinc-200 bg-white p-2 text-zinc-500 transition-colors hover:bg-zinc-50 hover:text-zinc-900"
               disabled={isLoading}
               title="Yenile"

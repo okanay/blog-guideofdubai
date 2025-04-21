@@ -1,3 +1,6 @@
+import { format } from "date-fns";
+import { enUS, tr } from "date-fns/locale";
+
 // app/components/editor/create/helpers.ts
 interface ContentStats {
   wordCount: number;
@@ -112,3 +115,14 @@ export const createStatusState = (
   loading: status === "loading",
   error: status === "error" ? message || null : null,
 });
+
+export const formatDate = (dateStr: string, lang: string = "tr") => {
+  try {
+    const date = new Date(dateStr);
+    return format(date, "d MMM yyyy HH:mm", {
+      locale: lang === "tr" ? tr : enUS,
+    });
+  } catch (e) {
+    return dateStr;
+  }
+};
