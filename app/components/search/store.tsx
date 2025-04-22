@@ -9,6 +9,7 @@ interface SearchQueryOptions {
   title?: string;
   language?: string;
   categoryValue?: string;
+  status?: string;
   tagValue?: string;
   limit?: number;
   offset?: number;
@@ -120,6 +121,7 @@ const DEFAULT_SEARCH_QUERY: SearchQueryOptions = {
   title: "",
   language: "",
   categoryValue: "",
+  status: "published",
   tagValue: "",
   limit: 10,
   offset: 0,
@@ -241,8 +243,6 @@ export function SearchProvider({ children }: PropsWithChildren) {
           if (categoriesLoaded) {
             return get().categories;
           }
-
-          console.log("Kategoriler yükleniyor...", categoriesLoaded);
 
           set((state) => {
             state.statusStates.categories = createStatusState("loading");
