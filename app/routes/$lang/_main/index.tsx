@@ -1,7 +1,8 @@
 import { ChevronLeft, BookOpenText, Search, ChevronRight, Heart, CalendarDays, Clock, SlidersHorizontal} from "lucide-react"; // prettier-ignore
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Link } from "@/i18n/link";
+import { SearchBarWithProvider } from "@/components/search";
 
 export const Route = createFileRoute("/$lang/_main/")({
   component: RouteComponent,
@@ -42,7 +43,7 @@ function HeroSection() {
             Get honest reviews, real photos, and community insights about Dubai
             attractions. Search by location or activity to start exploring.
           </p>
-          <HeroSearchForm />
+          <SearchBarWithProvider />
         </div>
       </div>
     </section>

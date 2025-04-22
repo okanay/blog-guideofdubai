@@ -314,7 +314,7 @@ export function EditorProvider({ children }: PropsWithChildren) {
 
           const result = await apiFetch<{ categories: Category[] }>({
             method: "GET",
-            endpoint: "/auth/blog/categories",
+            endpoint: "/blog/categories",
             errorMessage: "Kategori listesi yenilenirken bir hata oluştu",
           });
 
@@ -367,7 +367,7 @@ export function EditorProvider({ children }: PropsWithChildren) {
 
           const result = await apiFetch<{ tags: Tag[] }>({
             method: "GET",
-            endpoint: "/auth/blog/tags",
+            endpoint: "/blog/tags",
             errorMessage: "Etiket listesi yenilenirken bir hata oluştu",
           });
 

@@ -4,6 +4,7 @@ import { useLanguage } from "./use-language";
 
 interface Props extends Omit<LinkProps, "to"> {
   to: string;
+  onClick?: React.MouseEventHandler<HTMLAnchorElement>;
   className?: string;
   role?: string;
   "aria-current"?:
