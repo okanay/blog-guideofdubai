@@ -143,7 +143,7 @@ export function CreateBlogForm({
                 id="metadata.description"
                 placeholder="Google ve diğer arama motorlarında görünecek açıklama metni"
                 hint="Kullanıcıyı tıklamaya yönlendirecek, anahtar kelimeler içeren etkili bir açıklama yazın"
-                maxLength={160}
+                maxLength={120}
                 rows={3}
                 isRequired={true}
                 isError={!!errors.metadata?.description}
@@ -165,7 +165,7 @@ export function CreateBlogForm({
                 id="metadata.image"
                 label="Sosyal Medya Görseli"
                 hint="Sosyal medya platformlarında link olarak paylaşıldığında görünecek görsel (1200x630px önerilir)"
-                maxLength={160}
+                maxLength={120}
                 isRequired={true}
                 isError={!!errors.metadata?.image}
                 errorMessage={errors.metadata?.image?.message}
@@ -238,7 +238,7 @@ export function CreateBlogForm({
                 isError={!!errors.content?.description}
                 errorMessage={errors.content?.description?.message}
                 showCharCount={true}
-                maxLength={160}
+                maxLength={120}
                 rows={3}
                 isAutoMode={true}
                 initialAutoMode={initialAutoMode}
@@ -327,29 +327,6 @@ export function CreateBlogForm({
 
         <div className="space-y-4">
           <Controller
-            name="language"
-            control={control}
-            render={({ field }) => (
-              <Select
-                label="İçerik Dili"
-                id="language"
-                options={LANGUAGE_DICTONARY.map(({ label, value }) => ({
-                  name: value,
-                  value: label,
-                }))}
-                value={field.value}
-                onChange={(newValue) => field.onChange(newValue)}
-                hint="Doğru dil seçimi, içeriğin doğru hedef kitleye ulaşmasını sağlar"
-                isRequired={true}
-                allowCustomOption={false}
-                placeholder="Yazı dilini seçin"
-                isError={!!errors.language}
-                errorMessage={errors.language?.message}
-              />
-            )}
-          />
-
-          <Controller
             name="status"
             control={control}
             render={({ field }) => (
@@ -368,6 +345,29 @@ export function CreateBlogForm({
                 placeholder="İçerik durumunu seçin"
                 isError={!!errors.status}
                 errorMessage={errors.status?.message}
+              />
+            )}
+          />
+
+          <Controller
+            name="language"
+            control={control}
+            render={({ field }) => (
+              <Select
+                label="İçerik Dili"
+                id="language"
+                options={LANGUAGE_DICTONARY.map(({ label, value }) => ({
+                  name: value,
+                  value: label,
+                }))}
+                value={field.value}
+                onChange={(newValue) => field.onChange(newValue)}
+                hint="Doğru dil seçimi, içeriğin doğru hedef kitleye ulaşmasını sağlar"
+                isRequired={true}
+                allowCustomOption={false}
+                placeholder="Yazı dilini seçin"
+                isError={!!errors.language}
+                errorMessage={errors.language?.message}
               />
             )}
           />

@@ -3,7 +3,7 @@ export const DEFAULT_BLOG_FORM_VALUES: BlogFormSchema = {
   slug: "dubai-de-arac-kiralama",
   language: "tr",
   featured: false,
-  status: "draft",
+  status: "published",
   metadata: {
     title: "Dubai'de Araç Kiralama",
     description:

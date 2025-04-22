@@ -143,13 +143,6 @@ export const Select = ({
             <span className="text-sm text-zinc-800">
               {selectedOption.value}
             </span>
-            <button
-              type="button"
-              onClick={clearSelection}
-              className="mr-2 ml-2 flex items-center gap-1 rounded-full border border-red-200 bg-red-500 p-0.5 px-2 py-1 text-xs text-zinc-50 hover:bg-red-600 hover:text-red-100"
-            >
-              <X size={14} /> <span>Kaldır</span>
-            </button>
           </div>
         ) : (
           <span className="text-sm text-zinc-500">{placeholder}</span>
