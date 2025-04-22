@@ -1,6 +1,7 @@
 // app/routes/(languages)/route.tsx
 import { RootFooter } from "@/components/footer";
 import { RootHeader } from "@/components/header";
+import { SearchProvider } from "@/components/search";
 import { seoTranslations } from "@/i18n/languages";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { Fragment } from "react/jsx-runtime";
@@ -28,7 +29,9 @@ function RouteComponent() {
   return (
     <Fragment>
       <RootHeader />
-      <Outlet />
+      <SearchProvider>
+        <Outlet />
+      </SearchProvider>
       <RootFooter />
     </Fragment>
   );

@@ -43,7 +43,6 @@ export function AuthProvider({
               credentials: "include",
             });
             window.location.reload();
-            set({ user: null });
           } catch (error) {
             console.warn("Failed to logout:", error);
           }

@@ -7,9 +7,11 @@ import {
   GlobeIcon,
   RefreshCcw,
   TagIcon,
+  Loader2,
 } from "lucide-react";
 import { useSearch } from "./store";
 import useClickOutside from "@/hooks/use-click-outside";
+import { LANGUAGE_DICTONARY } from "@/i18n/config";
 
 export function SearchFilterModal() {
   const {
@@ -17,8 +19,10 @@ export function SearchFilterModal() {
     closeFilterModal,
     searchQuery,
     updateSearchQuery,
-    resetSearchQuery,
     search,
+    categories,
+    tags,
+    statusStates,
   } = useSearch();
 
   // Düzenlenen filtreler için geçici state
@@ -62,6 +66,10 @@ export function SearchFilterModal() {
     closeFilterModal();
   });
 
+  // Durum göstergeleri
+  const isCategoriesLoading = statusStates.categories.status === "loading";
+  const isTagsLoading = statusStates.tags.status === "loading";
+
   if (!isFilterModalOpen) {
     return null;
   }
@@ -86,8 +94,19 @@ export function SearchFilterModal() {
               <label className="text-sm font-medium text-zinc-700">Dil</label>
             </div>
             <div className="relative">
-              <select className="w-full appearance-none rounded-md border border-zinc-200 bg-white py-2 pr-8 pl-3 text-sm">
+              <select
+                className="w-full appearance-none rounded-md border border-zinc-200 bg-white py-2 pr-8 pl-3 text-sm"
+                value={filters.language}
+                onChange={(e) =>
+                  setFilters({ ...filters, language: e.target.value })
+                }
+              >
                 <option value="">Tüm Diller</option>
+                {LANGUAGE_DICTONARY.map((lang) => (
+                  <option key={lang.value} value={lang.value}>
+                    {lang.label}
+                  </option>
+                ))}
               </select>
               <ChevronDown
                 size={16}
@@ -102,10 +121,25 @@ export function SearchFilterModal() {
               <label className="text-sm font-medium text-zinc-700">
                 Kategori
               </label>
+              {isCategoriesLoading && (
+                <Loader2 size={14} className="animate-spin text-zinc-400" />
+              )}
             </div>
             <div className="relative">
-              <select className="w-full appearance-none rounded-md border border-zinc-200 bg-white py-2 pr-8 pl-3 text-sm">
+              <select
+                className="w-full appearance-none rounded-md border border-zinc-200 bg-white py-2 pr-8 pl-3 text-sm"
+                value={filters.categoryValue}
+                onChange={(e) =>
+                  setFilters({ ...filters, categoryValue: e.target.value })
+                }
+                disabled={isCategoriesLoading}
+              >
                 <option value="">Tüm Kategoriler</option>
+                {categories.map((category) => (
+                  <option key={category.name} value={category.value}>
+                    {category.value}
+                  </option>
+                ))}
               </select>
               <ChevronDown
                 size={16}
@@ -120,10 +154,25 @@ export function SearchFilterModal() {
               <label className="text-sm font-medium text-zinc-700">
                 Etiket
               </label>
+              {isTagsLoading && (
+                <Loader2 size={14} className="animate-spin text-zinc-400" />
+              )}
             </div>
             <div className="relative">
-              <select className="w-full appearance-none rounded-md border border-zinc-200 bg-white py-2 pr-8 pl-3 text-sm">
+              <select
+                className="w-full appearance-none rounded-md border border-zinc-200 bg-white py-2 pr-8 pl-3 text-sm"
+                value={filters.tagValue}
+                onChange={(e) =>
+                  setFilters({ ...filters, tagValue: e.target.value })
+                }
+                disabled={isTagsLoading}
+              >
                 <option value="">Tüm Etiketler</option>
+                {tags.map((tag) => (
+                  <option key={tag.name} value={tag.value}>
+                    {tag.value}
+                  </option>
+                ))}
               </select>
               <ChevronDown
                 size={16}
@@ -134,12 +183,18 @@ export function SearchFilterModal() {
         </div>
 
         <div className="mt-2 flex items-center justify-between border-t border-zinc-100 px-5 py-3">
-          <button className="flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-700">
+          <button
+            onClick={handleReset}
+            className="flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-700"
+          >
             <RefreshCcw size={14} />
             <span>Sıfırla</span>
           </button>
 
-          <button className="bg-primary-600 flex items-center gap-1.5 rounded-md px-4 py-1.5 text-sm font-medium text-white">
+          <button
+            onClick={applyFilters}
+            className="bg-primary-600 flex items-center gap-1.5 rounded-md px-4 py-1.5 text-sm font-medium text-white"
+          >
             <FilterIcon size={14} />
             <span>Uygula</span>
           </button>

@@ -125,10 +125,10 @@ function SearchBar({
 // Tam arama komponenti (Provider ile birlikte)
 export function SearchBarWithProvider(props: SearchBarProps) {
   return (
-    <SearchProvider>
+    <>
       <SearchBar {...props} />
       <SearchFilterModal />
-    </SearchProvider>
+    </>
   );
 }
 

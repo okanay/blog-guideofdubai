@@ -1,8 +1,11 @@
-import { ChevronLeft, BookOpenText, Search, ChevronRight, Heart, CalendarDays, Clock, SlidersHorizontal} from "lucide-react"; // prettier-ignore
+import { ChevronLeft, BookOpenText, Search, ChevronRight, Heart, CalendarDays, Clock, SlidersHorizontal, Loader2 } from "lucide-react"; // prettier-ignore
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "@/i18n/link";
 import { SearchBarWithProvider } from "@/components/search";
+import { useSearch } from "@/components/search/store";
+import { toast } from "sonner";
+import { useNavigate } from "@/i18n/navigate";
 
 export const Route = createFileRoute("/$lang/_main/")({
   component: RouteComponent,
@@ -27,15 +30,12 @@ function BackgroudGradient() {
   );
 }
 
-function HeroSection() {
+export function HeroSection() {
   return (
     <section id="#hero">
       <div className="relative z-21 mx-auto max-w-7xl px-4">
         <div className="mx-auto flex w-full max-w-xl flex-col gap-6 md:items-center md:justify-center md:text-center">
-          <button className="-mb-3 flex w-fit items-center gap-1.5 rounded-full border border-zinc-200 bg-zinc-50 px-4 py-1 text-xs font-medium tracking-wide shadow-inner ring shadow-zinc-200/5 ring-zinc-200 ring-offset-2 transition-[opacity] duration-500 ease-in-out hover:opacity-75 focus:opacity-75 focus:outline-none">
-            <span>Read Latest Blogs</span>
-            <BookOpenText className="text-primary-dark size-3 translate-y-[0.5px]" />
-          </button>
+          <LatestBlogButton />
           <h1 className="text-5xl sm:text-6xl">
             Find Your Perfect Dubai Experience
           </h1>
@@ -50,32 +50,58 @@ function HeroSection() {
   );
 }
 
-function HeroSearchForm() {
-  return (
-    <form className="group flex w-full rounded-full ring ring-zinc-200 ring-offset-2 focus-within:!border-zinc-200 focus-within:!ring-zinc-400">
-      <button
-        type="button"
-        className="relative flex flex-shrink-0 items-center justify-center gap-2 rounded-l-full border border-zinc-200 bg-zinc-100 px-4 transition-[opacity_colors] duration-300 hover:cursor-pointer hover:border-zinc-300 hover:bg-zinc-200 focus:opacity-75 focus:outline-none sm:w-24 sm:px-2"
-      >
-        <span className="hidden sm:block">Filter</span>
-        <SlidersHorizontal className="size-4" />
-      </button>
+export function LatestBlogButton() {
+  const { latestBlog, fetchLatestBlog, statusStates } = useSearch();
+  const navigate = useNavigate();
 
-      <input
-        type="text"
-        id="search-input"
-        name="search-param"
-        placeholder="Best Dubai Restaurant.."
-        className="w-full flex-grow border-y border-r border-zinc-200 bg-white px-4 py-3 focus:outline-none"
-      />
+  const isLoading = statusStates.latestBlog.status === "loading";
+  const isError = statusStates.latestBlog.status === "error";
+
+  useEffect(() => {
+    fetchLatestBlog().catch((error) => {
+      console.error("En son blog yüklenirken hata:", error);
+    });
+  }, [fetchLatestBlog]);
+
+  const handleClick = () => {
+    if (isLoading) {
+      return; // Yükleme sırasında tıklamayı engelle
+    }
+
+    if (isError) {
+      toast.error("Blog yüklenirken bir hata oluştu", {
+        description:
+          statusStates.latestBlog.error || "Lütfen daha sonra tekrar deneyin",
+      });
+      return;
+    }
+
+    if (latestBlog) {
+      // Blog sayfasına yönlendir
+      navigate({ to: `/blog/${latestBlog.slug}` });
+    } else {
+      // Hala yükleniyor veya blog bulunamadı
+      toast.info("Blog yükleniyor veya bulunamadı", {
+        description: "Lütfen biraz bekleyin veya daha sonra tekrar deneyin",
+      });
+    }
+  };
+
+  return (
+    <div className="relative">
       <button
-        type="submit"
-        className="bg-primary flex items-center gap-1.5 rounded-r-full px-4 py-2 font-medium tracking-wide text-white transition-[opacity] duration-500 ease-in-out hover:opacity-75 focus:outline-none"
+        onClick={handleClick}
+        disabled={isLoading}
+        className="flex w-fit items-center gap-1.5 rounded-full border border-zinc-200 bg-zinc-50 px-4 py-1 text-xs font-medium tracking-wide shadow-inner ring shadow-zinc-200/5 ring-zinc-200 ring-offset-2 transition-all duration-300 hover:bg-zinc-100 hover:shadow-md active:scale-95 disabled:cursor-wait disabled:opacity-70"
       >
-        <span className="hidden sm:block">Search</span>
-        <Search className="size-4 translate-x-[-10%] sm:translate-x-0" />
+        <span>Read Latest Blog</span>
+        {isLoading ? (
+          <Loader2 className="text-primary-dark size-3 animate-spin" />
+        ) : (
+          <BookOpenText className="text-primary-dark size-3 translate-y-[0.5px]" />
+        )}
       </button>
-    </form>
+    </div>
   );
 }
 
