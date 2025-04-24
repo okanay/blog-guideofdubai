@@ -7,6 +7,13 @@ import axios from "axios";
 // API URL'i
 const API_URL = import.meta.env.VITE_APP_BACKEND_URL || "http://localhost:3000";
 
+// Yükleme konfigürasyonu
+const UPLOAD_CONFIG = {
+  maxConcurrentUploads: 3,
+  retryAttempts: 2,
+  retryDelay: 1000,
+};
+
 // Axios instance oluşturuyoruz - cookie tabanlı JWT auth için withCredentials: true
 const api = axios.create({
   baseURL: API_URL + "/auth",
@@ -24,6 +31,7 @@ export function ImageProvider({ children }: PropsWithChildren) {
         // State
         images: [],
         selectedImage: null,
+        uploadQueue: [],
         isLoading: false,
         error: null,
 
@@ -61,7 +69,7 @@ export function ImageProvider({ children }: PropsWithChildren) {
           }
         },
 
-        // Yeni bir yükleme işlemi başlatmak için
+        // Yeni bir yükleme işlemi başlatmak için (tekli dosya)
         startUpload: (file: File) => {
           // Dosya önizlemesi oluştur
           const previewUrl = URL.createObjectURL(file);
@@ -81,7 +89,224 @@ export function ImageProvider({ children }: PropsWithChildren) {
           get().processUpload();
         },
 
-        // Yükleme işlemini işleyen yardımcı fonksiyon (internal)
+        // Birden fazla dosya yükleme sırasına ekler
+        addToUploadQueue: (files: File[]) => {
+          const newQueue = files.map((file) => ({
+            file,
+            previewUrl: URL.createObjectURL(file),
+            status: "idle" as const,
+            progress: 0,
+            error: null,
+            id: Math.random().toString(36).substring(2), // Basit bir unique ID
+          }));
+
+          set((state) => {
+            state.uploadQueue = [...state.uploadQueue, ...newQueue];
+          });
+        },
+
+        // Sıradaki tüm dosyaları yükler
+        processUploadQueue: async () => {
+          const { uploadQueue } = get();
+          const queue = [...uploadQueue];
+
+          if (queue.length === 0) {
+            toast.info("Yüklenecek dosya yok");
+            return;
+          }
+
+          // Dosyaları gruplar halinde işle (daha iyi performans için)
+          const processInChunks = async () => {
+            // Yükleme grupları oluştur
+            const chunks = [];
+            for (
+              let i = 0;
+              i < queue.length;
+              i += UPLOAD_CONFIG.maxConcurrentUploads
+            ) {
+              chunks.push(
+                queue.slice(i, i + UPLOAD_CONFIG.maxConcurrentUploads),
+              );
+            }
+
+            // Her grubu sırayla işle
+            for (let i = 0; i < chunks.length; i++) {
+              const chunk = chunks[i];
+              // Bu gruptaki dosyaları paralel olarak yükle
+              await Promise.all(
+                chunk.map((item) => get().uploadSingleFile(item.id)),
+              );
+            }
+          };
+
+          try {
+            await processInChunks();
+            // Tüm yüklemeler tamamlandığında
+            toast.success("Tüm dosyalar yüklendi");
+            // Yükleme tamamlandıktan sonra resimleri yenile
+            await get().fetchImages();
+          } catch (error) {
+            console.error("Toplu yükleme sırasında hata:", error);
+            toast.error("Bazı dosyalar yüklenemedi");
+          }
+        },
+
+        // Tek bir dosyayı yükle (kuyruktan)
+        uploadSingleFile: async (queueItemId: string) => {
+          const state = get();
+          const queueItem = state.uploadQueue.find(
+            (item) => item.id === queueItemId,
+          );
+
+          if (!queueItem) {
+            console.error("Yüklenecek dosya bulunamadı:", queueItemId);
+            return;
+          }
+
+          try {
+            // Durumu "uploading" olarak güncelle
+            set((state) => {
+              const itemIndex = state.uploadQueue.findIndex(
+                (item) => item.id === queueItemId,
+              );
+              if (itemIndex !== -1) {
+                state.uploadQueue[itemIndex].status = "uploading";
+              }
+            });
+
+            // 1. Presigned URL al
+            const presignData: PresignURLInput = {
+              filename: queueItem.file.name,
+              contentType: queueItem.file.type,
+              sizeInBytes: queueItem.file.size,
+            };
+
+            const presignResponse = await api.post<
+              ApiResponse<PresignedURLResponse>
+            >("/images/presign", presignData);
+
+            if (!presignResponse.data.success || !presignResponse.data.data) {
+              throw new Error(
+                presignResponse.data.message || "Presigned URL alınamadı",
+              );
+            }
+
+            const {
+              id: signatureId,
+              presignedUrl,
+              uploadUrl,
+            } = presignResponse.data.data;
+
+            // URL bilgilerini güncelle
+            set((state) => {
+              const itemIndex = state.uploadQueue.findIndex(
+                (item) => item.id === queueItemId,
+              );
+              if (itemIndex !== -1) {
+                state.uploadQueue[itemIndex].signatureId = signatureId;
+                state.uploadQueue[itemIndex].presignedUrl = presignedUrl;
+                state.uploadQueue[itemIndex].uploadUrl = uploadUrl;
+              }
+            });
+
+            // 2. Dosyayı Cloudflare R2'ye yükle
+            const uploadResponse = await axios.put(
+              presignedUrl,
+              queueItem.file,
+              {
+                headers: {
+                  "Content-Type": queueItem.file.type,
+                },
+                onUploadProgress: (progressEvent) => {
+                  if (progressEvent.total) {
+                    const progress = Math.round(
+                      (progressEvent.loaded * 100) / progressEvent.total,
+                    );
+                    set((state) => {
+                      const itemIndex = state.uploadQueue.findIndex(
+                        (item) => item.id === queueItemId,
+                      );
+                      if (itemIndex !== -1) {
+                        state.uploadQueue[itemIndex].progress = progress;
+                      }
+                    });
+                  }
+                },
+              },
+            );
+
+            if (uploadResponse.status !== 200) {
+              throw new Error("Dosya yüklenemedi");
+            }
+
+            // 3. Yükleme tamamlandı, görsel boyutlarını al
+            const dimensions = await get().getImageDimensions(
+              queueItem.previewUrl,
+            );
+
+            // 4. Yüklemeyi onayla
+            const confirmData: ConfirmUploadInput = {
+              signatureId: signatureId,
+              url: uploadUrl,
+              width: dimensions.width,
+              height: dimensions.height,
+              sizeInBytes: queueItem.file.size,
+              altText: "",
+            };
+
+            const confirmResponse = await api.post<
+              ApiResponse<ConfirmUploadResponse>
+            >("/images/confirm", confirmData);
+
+            if (!confirmResponse.data.success || !confirmResponse.data.data) {
+              throw new Error(
+                confirmResponse.data.message || "Yükleme onaylanamadı",
+              );
+            }
+
+            const { id, url } = confirmResponse.data.data;
+
+            // 5. Durumu başarılı olarak güncelle
+            set((state) => {
+              const itemIndex = state.uploadQueue.findIndex(
+                (item) => item.id === queueItemId,
+              );
+              if (itemIndex !== -1) {
+                state.uploadQueue[itemIndex].status = "success";
+                state.uploadQueue[itemIndex].progress = 100;
+                state.uploadQueue[itemIndex].imageData = {
+                  id: id,
+                  url: uploadUrl || url,
+                  width: dimensions.width,
+                  height: dimensions.height,
+                };
+              }
+            });
+
+            return id;
+          } catch (error) {
+            const errorMessage =
+              error instanceof Error
+                ? error.message
+                : "Bilinmeyen bir hata oluştu";
+
+            // Durumu hata olarak güncelle
+            set((state) => {
+              const itemIndex = state.uploadQueue.findIndex(
+                (item) => item.id === queueItemId,
+              );
+              if (itemIndex !== -1) {
+                state.uploadQueue[itemIndex].status = "error";
+                state.uploadQueue[itemIndex].error = errorMessage;
+              }
+            });
+
+            console.error(`Dosya yükleme hatası (${queueItemId}):`, error);
+            throw error;
+          }
+        },
+
+        // Yükleme işlemini işleyen yardımcı fonksiyon (internal) - Eski tek dosya yöntemi
         processUpload: async () => {
           const { selectedImage } = get();
 
@@ -178,7 +403,7 @@ export function ImageProvider({ children }: PropsWithChildren) {
             });
 
             // Resim hakkında diğer bilgileri almak için (genişlik, yükseklik vs)
-            await get().getImageDimensions();
+            await get().getImageDimensionsLegacy();
 
             // 5. Yükleme onayını al
             await get().completeUpload();
@@ -200,8 +425,34 @@ export function ImageProvider({ children }: PropsWithChildren) {
           }
         },
 
-        // Resim boyutlarını hesaplamak için yardımcı fonksiyon (internal)
-        getImageDimensions: () => {
+        // Görsel boyutlarını hesaplama (Promise döndürür)
+        getImageDimensions: (imageUrl: string) => {
+          return new Promise<{ width: number; height: number }>(
+            (resolve, reject) => {
+              if (!imageUrl) {
+                reject(new Error("Geçerli bir resim URL'i bulunamadı"));
+                return;
+              }
+
+              const img = new Image();
+              img.onload = () => {
+                resolve({
+                  width: img.width,
+                  height: img.height,
+                });
+              };
+
+              img.onerror = () => {
+                reject(new Error("Resim boyutları hesaplanamadı"));
+              };
+
+              img.src = imageUrl;
+            },
+          );
+        },
+
+        // Resim boyutlarını hesaplamak için yardımcı fonksiyon (internal) - Eski yöntem
+        getImageDimensionsLegacy: () => {
           return new Promise<void>((resolve, reject) => {
             const { selectedImage } = get();
 
@@ -232,7 +483,7 @@ export function ImageProvider({ children }: PropsWithChildren) {
           });
         },
 
-        // Yüklemeyi tamamla (confirm) endpoint'ini çağır
+        // Yüklemeyi tamamla (confirm) endpoint'ini çağır - Eski yöntem
         completeUpload: async () => {
           const { selectedImage } = get();
 
@@ -320,7 +571,42 @@ export function ImageProvider({ children }: PropsWithChildren) {
           }
         },
 
-        // Yüklemeyi iptal etmek için
+        // Kuyruktaki bir dosyayı kaldır
+        removeFromQueue: (queueItemId: string) => {
+          set((state) => {
+            // Önizleme URL'ini temizle
+            const item = state.uploadQueue.find(
+              (item) => item.id === queueItemId,
+            );
+            if (item?.previewUrl) {
+              URL.revokeObjectURL(item.previewUrl);
+            }
+
+            // Kuyruktan kaldır
+            state.uploadQueue = state.uploadQueue.filter(
+              (item) => item.id !== queueItemId,
+            );
+          });
+        },
+
+        // Tüm kuyruğu temizle
+        clearQueue: () => {
+          set((state) => {
+            // Tüm önizleme URL'lerini temizle
+            state.uploadQueue.forEach((item) => {
+              if (item.previewUrl) {
+                URL.revokeObjectURL(item.previewUrl);
+              }
+            });
+
+            // Kuyruğu temizle
+            state.uploadQueue = [];
+          });
+
+          toast.info("Yükleme kuyruğu temizlendi");
+        },
+
+        // Yüklemeyi iptal etmek için - Eski yöntem
         cancelUpload: () => {
           const { selectedImage } = get();
 
