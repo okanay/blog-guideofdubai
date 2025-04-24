@@ -3,6 +3,7 @@ import { seoTranslations } from "@/i18n/languages";
 import dragModuleStyles from "@/components/editor/tiptap/drag-styles.css?url";
 import { AuthProvider } from "@/providers/auth";
 import { InitialSessionControl } from "@/providers/auth/initial-session-control";
+import { ImageProvider } from "@/components/image/store";
 
 export const Route = createFileRoute("/$lang/_auth")({
   head: ({ params: { lang } }) => {
@@ -35,7 +36,9 @@ function RouteComponent() {
   return (
     <AuthProvider>
       <InitialSessionControl />
-      <Outlet />
+      <ImageProvider>
+        <Outlet />
+      </ImageProvider>
     </AuthProvider>
   );
 }

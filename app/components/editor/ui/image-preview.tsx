@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { Images, Eye, X, Lock, Unlock } from "lucide-react";
+import { Images, Eye, X, Lock, Unlock, Upload } from "lucide-react";
 import { twMerge } from "tailwind-merge";
+import ImageModal from "@/components/image";
 
 interface ImagePreviewProps extends React.ComponentProps<"input"> {
   label?: string;
@@ -43,6 +44,7 @@ export const ImagePreview = ({
   const [isImageLoading, setIsImageLoading] = useState(false);
   const [isAuto, setIsAuto] = useState(initialAutoMode);
   const [internalValue, setInternalValue] = useState<string>((value as string) || ""); // prettier-ignore
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const elementRef = useRef<HTMLInputElement | null>(null);
   const inputId = id || `image-input-${Math.random().toString(36).substring(2, 9)}`; // prettier-ignore
@@ -148,6 +150,30 @@ export const ImagePreview = ({
   const handleImageError = () => {
     setIsImageLoading(false);
     setImageError("Görsel yüklenemedi. URL'i kontrol edin.");
+  };
+
+  // Resim Yöneticisi için işlevler
+  const openImageManager = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleImageSelect = (image: ImageType | null) => {
+    if (image) {
+      setInternalValue(image.url);
+      setImageError(null);
+
+      // Orijinal onChange olayını simüle et
+      if (onChange) {
+        const simulatedEvent = {
+          target: {
+            name: props.name,
+            value: image.url,
+          },
+        } as React.ChangeEvent<HTMLInputElement>;
+
+        onChange(simulatedEvent);
+      }
+    }
   };
 
   useEffect(() => {
@@ -272,6 +298,16 @@ export const ImagePreview = ({
 
           <button
             type="button"
+            onClick={openImageManager}
+            className="flex items-center gap-0.5 rounded border border-blue-200 bg-blue-100 px-2 py-1 text-xs font-medium text-blue-600 hover:bg-blue-200 hover:text-blue-700"
+            title="Resim yöneticisini aç"
+          >
+            <Upload size={14} className="mr-1 inline-block" />{" "}
+            <span>Yükle</span>
+          </button>
+
+          <button
+            type="button"
             disabled={!internalValue || !isValidUrl(internalValue)}
             onClick={openPreview}
             className={twMerge(
@@ -307,6 +343,7 @@ export const ImagePreview = ({
                 Görsel Önizleme
               </h3>
               <button
+                type="button"
                 onClick={closePreview}
                 className="rounded-full p-1 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
               >
@@ -349,6 +386,14 @@ export const ImagePreview = ({
           </div>
         </div>
       )}
+
+      {/* Resim Yöneticisi Modalı */}
+      <ImageModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSelect={handleImageSelect}
+        singleSelect={true}
+      />
     </div>
   );
 };
