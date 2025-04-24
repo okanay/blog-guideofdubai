@@ -292,7 +292,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
                   {filteredImages.map((image) => (
                     <div
                       key={image.id}
-                      className={`group hover:border-primary-500 relative aspect-square cursor-pointer overflow-hidden rounded-md border-2 ${
+                      className={`group hover:border-primary-500 relative aspect-square size-full cursor-pointer overflow-hidden rounded-md border-2 ${
                         selectedImage?.imageData?.id === image.id
                           ? "border-primary-500"
                           : "border-zinc-200"
@@ -305,11 +305,6 @@ const ImageModal: React.FC<ImageModalProps> = ({
                           src={image.url}
                           alt={image.altText || image.filename}
                           className="h-full w-full object-cover"
-                          onError={(e) => {
-                            // Resim yüklenemezse placeholder göster
-                            (e.target as HTMLImageElement).src =
-                              "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f0f0f0'/%3E%3Cpath d='M30 40 L50 60 L70 40' stroke='%23cccccc' stroke-width='5' fill='none'/%3E%3C/svg%3E";
-                          }}
                         />
                       </div>
 
