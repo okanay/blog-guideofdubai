@@ -4,27 +4,27 @@ export const RootHeader = () => {
   const items = {
     main: [
       {
-        name: "HOTELS",
+        name: "Hotels",
         to: "/blog/hotels",
       },
       {
-        name: "DESERT SAFARI",
+        name: "Desert Safari",
         to: "/blog/desert-safari",
       },
       {
-        name: "CITY TOURS",
+        name: "City Tours",
         to: "/blog/city-tours",
       },
       {
-        name: "ACTIVITIES",
+        name: "Activities",
         to: "/blog/activities",
       },
       {
-        name: "RENT A CAR",
+        name: "Rent a Car",
         to: "/blog/rent-a-car",
       },
       {
-        name: "DUBAI VISA",
+        name: "Dubai Visa",
         to: "/blog/dubai-visa",
       },
     ],
