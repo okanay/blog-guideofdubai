@@ -4,53 +4,53 @@ export const RootHeader = () => {
   const items = {
     main: [
       {
-        name: "Hotels",
+        name: "HOTELS",
         to: "/blog/hotels",
       },
       {
-        name: "Desert Safari",
+        name: "DESERT SAFARI",
         to: "/blog/desert-safari",
       },
       {
-        name: "City Tours",
+        name: "CITY TOURS",
         to: "/blog/city-tours",
       },
       {
-        name: "Activities",
+        name: "ACTIVITIES",
         to: "/blog/activities",
       },
       {
-        name: "Rent a Car",
+        name: "RENT A CAR",
         to: "/blog/rent-a-car",
       },
       {
-        name: "Dubai Visa",
+        name: "DUBAI VISA",
         to: "/blog/dubai-visa",
       },
     ],
     sub: [
       {
-        name: "Museum of the Future",
+        name: "MUSEUM OF THE FUTURE",
         to: "/blog/museum-of-the-future",
       },
       {
-        name: "Burj Khalifa",
+        name: "BURJ KHALIFA",
         to: "/blog/burj-khalifa",
       },
       {
-        name: "Dubai Frame",
+        name: "DUBAI FRAME",
         to: "/blog/dubai-frame",
       },
       {
-        name: "Dubai City Tour",
+        name: "DUBAI CITY TOUR",
         to: "/blog/dubai-city-tour",
       },
       {
-        name: "Rent a Yacht",
+        name: "RENT A YACHT",
         to: "/blog/rent-a-yacht",
       },
       {
-        name: "Restaurants",
+        name: "RESTAURANTS",
         to: "/blog/restaurants",
       },
     ],
