@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Images, Eye, X, Upload } from "lucide-react";
+import { Images, Eye, X, Upload, ImagePlus } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import ImageModal from "@/components/image";
 
@@ -226,8 +226,8 @@ export const ImagePreview = ({
             className="flex items-center gap-0.5 rounded border border-blue-200 bg-blue-100 px-2 py-1 text-xs font-medium text-blue-600 hover:bg-blue-200 hover:text-blue-700"
             title="Resim yöneticisini aç"
           >
-            <Upload size={14} className="mr-1 inline-block" />{" "}
-            <span>Yükle</span>
+            <ImagePlus size={14} className="mr-1 inline-block" />{" "}
+            <span>Galeri</span>
           </button>
 
           <button

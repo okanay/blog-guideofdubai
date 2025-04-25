@@ -9,6 +9,8 @@ import {
 import RichButtonModal from "./ui/modal";
 import { useTiptapContext } from "../store";
 import MenuButton from "./ui/button";
+import { ImagePreview } from "@/components/editor/ui/image-preview";
+import ImageModal from "@/components/image";
 
 // Görsel boyut ve hizalama tipleri
 type ImageSize = "small" | "medium" | "large" | "fullscreen";
@@ -63,6 +65,9 @@ const EnhancedImageButton = () => {
   const [caption, setCaption] = useState("");
   const [validationError, setValidationError] = useState("");
 
+  // Galeri modalı için state
+  const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
+
   // URL güvenlik kontrolü
   const isValidUrl = (url: string): boolean => {
     try {
@@ -116,6 +121,33 @@ const EnhancedImageButton = () => {
     }
 
     setIsModalOpen(true);
+  };
+
+  // Galeri modalını açma
+  const handleOpenGalleryModal = () => {
+    // Önce tiptap modalını kapatıyoruz, galeri modalını açıyoruz
+    setIsModalOpen(false);
+    setIsGalleryModalOpen(true);
+  };
+
+  // Galeri modalından görsel seçildiğinde
+  const handleImageSelect = (image: ImageType | null) => {
+    if (image) {
+      setImageUrl(image.url);
+      setValidationError("");
+
+      // Alt metni de varsa kullan
+      if (image.altText) {
+        setAltText(image.altText);
+      }
+
+      // Galeri modalını kapatıp tekrar tiptap modalını açıyoruz
+      setTimeout(() => {
+        setIsModalOpen(true);
+      }, 100);
+    }
+
+    setIsGalleryModalOpen(false);
   };
 
   // Gelişmiş görsel ekle
@@ -173,6 +205,16 @@ const EnhancedImageButton = () => {
     };
   }, [editor]);
 
+  // Image URL için onChange handler
+  const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setImageUrl(e.target.value);
+    if (validationError) {
+      // Yeni bir URL girildiğinde validasyon hatasını sıfırla
+      // isValidUrl URL geçerli mi kontrol edecek zaten
+      setValidationError("");
+    }
+  };
+
   return (
     <>
       <MenuButton
@@ -190,26 +232,36 @@ const EnhancedImageButton = () => {
         maxWidth="max-w-xl"
       >
         <div className="flex flex-col gap-4 p-1">
-          {/* Görsel URL'i */}
+          {/* Görsel URL'i - ImagePreview bileşeni ile değiştirildi */}
           <div>
-            <h3 className="mb-1.5 text-sm font-medium text-zinc-700">
-              Görsel URL'i
-            </h3>
-            <input
-              type="text"
+            <ImagePreview
+              label="Görsel URL'i"
               value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
+              onChange={handleImageUrlChange}
               placeholder="https://example.com/image.jpg"
-              className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-zinc-300 px-3 py-2 focus:ring-1 focus:outline-none"
+              isError={!!validationError}
+              errorMessage={validationError}
               autoFocus
             />
-            {validationError && (
-              <p className="mt-1 text-sm text-red-600">{validationError}</p>
-            )}
+
+            {/* Galeri butonuna gerek yok çünkü ImagePreview bileşeni zaten bu butonu içeriyor */}
           </div>
 
           {/* Alt Text ve Başlık */}
           <div className="flex flex-col gap-4 p-1">
+            <div>
+              <h3 className="mb-1.5 text-sm font-medium text-zinc-700">
+                Alt Metin (SEO için gerekli)
+              </h3>
+              <input
+                type="text"
+                value={altText}
+                onChange={(e) => setAltText(e.target.value)}
+                placeholder="Görselin içeriğini tanımlayın"
+                className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-zinc-300 px-3 py-2 focus:ring-1 focus:outline-none"
+              />
+            </div>
+
             <div>
               <h3 className="mb-1.5 text-sm font-medium text-zinc-700">
                 Başlık (Opsiyonel)
@@ -336,6 +388,20 @@ const EnhancedImageButton = () => {
           </div>
         </div>
       </RichButtonModal>
+
+      {/* Galeri Modalı - Bu ModalButtonRich dışında oluşturulmalı */}
+      <ImageModal
+        isOpen={isGalleryModalOpen}
+        onClose={() => {
+          setIsGalleryModalOpen(false);
+          // Galeri kapandığında tekrar tiptap modalını aç
+          setTimeout(() => {
+            setIsModalOpen(true);
+          }, 100);
+        }}
+        onSelect={handleImageSelect}
+        singleSelect={true}
+      />
     </>
   );
 };
