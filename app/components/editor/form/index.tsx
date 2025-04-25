@@ -34,7 +34,7 @@ export function CreateBlogForm({
   } = useEditorContext();
 
   // prettier-ignore
-  const { handleSubmit, control, formState: { errors } } = useForm<BlogFormSchema>({
+  const { handleSubmit, control, formState: { errors }, getValues, setValue} = useForm<BlogFormSchema>({
     resolver: zodResolver(BlogFormSchema),
     mode: "onTouched",
     defaultValues: { ...initialData },
@@ -261,9 +261,6 @@ export function CreateBlogForm({
                 isRequired={true}
                 isError={!!errors.content?.image}
                 errorMessage={errors.content?.image?.message}
-                isAutoMode={true}
-                initialAutoMode={initialAutoMode}
-                followRef={seoImageRef}
               />
             )}
           />

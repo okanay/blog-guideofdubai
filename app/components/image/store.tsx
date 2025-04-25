@@ -98,11 +98,56 @@ export function ImageProvider({ children }: PropsWithChildren) {
             progress: 0,
             error: null,
             id: Math.random().toString(36).substring(2), // Basit bir unique ID
+            altText: "", // Boş alt metin ile başla
           }));
 
           set((state) => {
             state.uploadQueue = [...state.uploadQueue, ...newQueue];
           });
+        },
+
+        // Alt metin güncelleme fonksiyonu
+        updateQueueItemAltText: (queueItemId: string, altText: string) => {
+          set((state) => {
+            const itemIndex = state.uploadQueue.findIndex(
+              (item) => item.id === queueItemId,
+            );
+            if (itemIndex !== -1) {
+              state.uploadQueue[itemIndex].altText = altText;
+            }
+          });
+        },
+
+        // Yükleme işlemini iptal et (yükleme devam ederken)
+        cancelQueueItemUpload: (queueItemId: string) => {
+          set((state) => {
+            const itemIndex = state.uploadQueue.findIndex(
+              (item) => item.id === queueItemId,
+            );
+            if (itemIndex !== -1) {
+              // Sadece yükleme aşamasındaysa iptal et
+              if (state.uploadQueue[itemIndex].status === "uploading") {
+                state.uploadQueue[itemIndex].status = "error";
+                state.uploadQueue[itemIndex].error = "Yükleme iptal edildi";
+              }
+            }
+          });
+
+          // Bildirim göster
+          toast.info("Yükleme iptal edildi");
+        },
+
+        // Seçili görselin durumunu kontrol eden yardımcı fonksiyon
+        checkSelectedImageStatus: () => {
+          const { selectedImage } = get();
+
+          // Seçili görsel başarıyla yüklenmişse true döndür
+          return (
+            selectedImage !== null &&
+            selectedImage.status === "success" &&
+            selectedImage.imageData !== undefined &&
+            selectedImage.imageData.id !== undefined
+          );
         },
 
         // Sıradaki tüm dosyaları yükler
@@ -134,7 +179,13 @@ export function ImageProvider({ children }: PropsWithChildren) {
               const chunk = chunks[i];
               // Bu gruptaki dosyaları paralel olarak yükle
               await Promise.all(
-                chunk.map((item) => get().uploadSingleFile(item.id)),
+                chunk.map((item) => {
+                  // Sadece idle veya error durumundaki öğeleri yükle (başarılı olanları tekrar yükleme)
+                  if (item.status === "idle" || item.status === "error") {
+                    return get().uploadSingleFile(item.id);
+                  }
+                  return Promise.resolve();
+                }),
               );
             }
           };
@@ -161,6 +212,12 @@ export function ImageProvider({ children }: PropsWithChildren) {
           if (!queueItem) {
             console.error("Yüklenecek dosya bulunamadı:", queueItemId);
             return;
+          }
+
+          // Dosya zaten başarıyla yüklenmişse tekrar yükleme
+          if (queueItem.status === "success") {
+            console.log("Dosya zaten yüklenmiş, atlanıyor:", queueItemId);
+            return queueItem.imageData?.id;
           }
 
           try {
@@ -251,7 +308,7 @@ export function ImageProvider({ children }: PropsWithChildren) {
               width: dimensions.width,
               height: dimensions.height,
               sizeInBytes: queueItem.file.size,
-              altText: "",
+              altText: queueItem.altText || "", // Alt metni kullan
             };
 
             const confirmResponse = await api.post<
@@ -506,7 +563,7 @@ export function ImageProvider({ children }: PropsWithChildren) {
               width: selectedImage.imageData?.width || 0,
               height: selectedImage.imageData?.height || 0,
               sizeInBytes: selectedImage.file?.size || 0,
-              altText: "",
+              altText: "", // Burada alt metin eklenebilir
             };
 
             const confirmResponse = await api.post<

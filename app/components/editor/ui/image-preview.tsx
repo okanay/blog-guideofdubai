@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Images, Eye, X, Lock, Unlock, Upload } from "lucide-react";
+import { Images, Eye, X, Upload } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import ImageModal from "@/components/image";
 
@@ -9,10 +9,6 @@ interface ImagePreviewProps extends React.ComponentProps<"input"> {
   isError?: boolean;
   errorMessage?: string;
   hint?: string;
-
-  isAutoMode?: boolean;
-  initialAutoMode?: boolean;
-  followRef?: React.RefObject<HTMLInputElement>;
 
   containerClassName?: string;
 }
@@ -31,10 +27,6 @@ export const ImagePreview = ({
   errorMessage,
   hint,
 
-  isAutoMode = false,
-  initialAutoMode = false,
-  followRef,
-
   containerClassName,
   ...props
 }: ImagePreviewProps) => {
@@ -42,12 +34,14 @@ export const ImagePreview = ({
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [imageError, setImageError] = useState<string | null>(null);
   const [isImageLoading, setIsImageLoading] = useState(false);
-  const [isAuto, setIsAuto] = useState(initialAutoMode);
-  const [internalValue, setInternalValue] = useState<string>((value as string) || ""); // prettier-ignore
+  const [internalValue, setInternalValue] = useState<string>(
+    (value as string) || "",
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const elementRef = useRef<HTMLInputElement | null>(null);
-  const inputId = id || `image-input-${Math.random().toString(36).substring(2, 9)}`; // prettier-ignore
+  const inputId =
+    id || `image-input-${Math.random().toString(36).substring(2, 9)}`;
 
   const isValidUrl = (url: string): boolean => {
     if (!url) return true;
@@ -77,10 +71,8 @@ export const ImagePreview = ({
 
   // Referans birleştirme işlevi
   const setRefs = (element: HTMLInputElement | null) => {
-    // İç referans için atama
     elementRef.current = element;
 
-    // Dışarıdan gelen ref için atama
     if (typeof ref === "function") {
       ref(element);
     } else if (ref) {
@@ -89,17 +81,14 @@ export const ImagePreview = ({
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (isAuto) return; // Otomatik modda değişiklik engellenir
-
     const newValue = e.target.value;
     setInternalValue(newValue);
 
-    // URL değiştiğinde hata durumunu sıfırla
     if (imageError) {
       setImageError(null);
     }
 
-    // Orijinal onChange olayını simüle et
+    // Değişikliği form state'ine uygula
     if (onChange) {
       const simulatedEvent = {
         ...e,
@@ -114,8 +103,6 @@ export const ImagePreview = ({
   };
 
   const clearValue = () => {
-    if (isAuto) return; // Otomatik modda değişiklik engellenir
-
     setInternalValue("");
 
     if (onChange) {
@@ -128,6 +115,8 @@ export const ImagePreview = ({
 
       onChange(simulatedEvent);
     }
+
+    // Eğer ana input ise ve bağlı alanları temizleyelim
 
     setImageError(null);
   };
@@ -152,79 +141,33 @@ export const ImagePreview = ({
     setImageError("Görsel yüklenemedi. URL'i kontrol edin.");
   };
 
-  // Resim Yöneticisi için işlevler
   const openImageManager = () => {
     setIsModalOpen(true);
   };
 
   const handleImageSelect = (image: ImageType | null) => {
     if (image) {
-      setInternalValue(image.url);
+      const imageUrl = image.url;
+      setInternalValue(imageUrl);
       setImageError(null);
 
       // Orijinal onChange olayını simüle et
       if (onChange) {
         const simulatedEvent = {
           target: {
-            name: props.name,
-            value: image.url,
+            name: props.name || "",
+            value: imageUrl,
           },
         } as React.ChangeEvent<HTMLInputElement>;
 
         onChange(simulatedEvent);
       }
+
+      // Eğer bu bir ana input ise ve setValue prop'u varsa, bağlı form alanlarını güncelle
     }
+
+    setIsModalOpen(false);
   };
-
-  useEffect(() => {
-    if (!isAutoMode || !followRef?.current) return;
-
-    // Takip edilen input değiştiğinde dinleme işlevi
-    const handleFollowInputChange = () => {
-      if (!isAuto || !followRef.current) return;
-
-      const followValue = followRef.current.value;
-      if (followValue !== internalValue) {
-        setInternalValue(followValue);
-
-        // React Hook Form için onChange olayını tetikle
-        if (onChange) {
-          const simulatedEvent = {
-            target: {
-              name: props.name,
-              value: followValue,
-            },
-          } as React.ChangeEvent<HTMLInputElement>;
-
-          onChange(simulatedEvent);
-        }
-      }
-    };
-
-    // İlk yükleme için değeri al
-    if (isAuto && followRef.current) {
-      const initialFollowValue = followRef.current.value;
-      setInternalValue(initialFollowValue);
-      if (onChange && initialFollowValue !== internalValue) {
-        const simulatedEvent = {
-          target: {
-            name: props.name,
-            value: initialFollowValue,
-          },
-        } as React.ChangeEvent<HTMLInputElement>;
-
-        onChange(simulatedEvent);
-      }
-    }
-
-    // input event listener kullanarak gerçek zamanlı takip et
-    followRef.current.addEventListener("input", handleFollowInputChange);
-
-    // Temizleme fonksiyonu
-    return () => {
-      followRef.current?.removeEventListener("input", handleFollowInputChange);
-    };
-  }, [isAuto, followRef, onChange, props.name]);
 
   return (
     <div className={twMerge("flex flex-col gap-1.5", containerClassName)}>
@@ -237,23 +180,6 @@ export const ImagePreview = ({
             {label}
             {isRequired && <span className="ml-1 text-red-500">*</span>}
           </label>
-          {isAutoMode && (
-            <button
-              type="button"
-              onClick={() => setIsAuto(!isAuto)}
-              className="flex items-center gap-1 text-xs font-medium text-zinc-500 hover:text-zinc-700"
-            >
-              {isAuto ? (
-                <>
-                  <Lock size={12} /> Düzenlemeyi Aç
-                </>
-              ) : (
-                <>
-                  <Unlock size={12} /> Otomatik Düzenle
-                </>
-              )}
-            </button>
-          )}
         </div>
       )}
 
@@ -273,11 +199,9 @@ export const ImagePreview = ({
           value={internalValue}
           onChange={handleChange}
           placeholder={placeholder}
-          readOnly={isAuto}
           className={twMerge(
             "w-full rounded-md bg-transparent py-2 pr-20 pl-10 outline-none",
-            isAuto &&
-              "pointer-events-none cursor-not-allowed bg-zinc-50 text-zinc-500",
+
             className,
           )}
           onFocus={() => setFocused(true)}
@@ -285,7 +209,7 @@ export const ImagePreview = ({
         />
 
         <div className="absolute right-2 flex items-center gap-1.5">
-          {internalValue && !isAuto && (
+          {internalValue && (
             <button
               type="button"
               onClick={clearValue}

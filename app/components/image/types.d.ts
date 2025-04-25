@@ -2,7 +2,7 @@ interface DataState {
   // State
   images: ImageType[];
   selectedImage: SelectedImage | null;
-  uploadQueue: QueueItem[]; // Yeni eklenen - upload sırası için
+  uploadQueue: QueueItem[]; // Yükleme sırası için
   isLoading: boolean;
   error: string | null;
 
@@ -17,6 +17,10 @@ interface DataState {
   removeFromQueue: (queueItemId: string) => void;
   clearQueue: () => void;
 
+  // Yeni fonksiyonlar
+  updateQueueItemAltText: (queueItemId: string, altText: string) => void;
+  cancelQueueItemUpload: (queueItemId: string) => void;
+
   // Yardımcı işlemler
   processUpload: () => Promise<void>;
   getImageDimensions: (
@@ -28,12 +32,16 @@ interface DataState {
   selectImage: (imageId: string | null) => void;
   deleteImage: (imageId: string) => Promise<boolean>;
   resetError: () => void;
+
+  // Seçili görselin durumunu kontrol eden yeni yardımcı fonksiyon
+  checkSelectedImageStatus: () => boolean;
 }
 
 // Yükleme kuyruğundaki bir öğe
 interface QueueItem extends Omit<SelectedImage, "file"> {
   id: string; // Kuyruk öğesini tanımlayan benzersiz ID
   file: File;
+  altText?: string; // Alt metin ekledik
 }
 
 interface ImageType {
