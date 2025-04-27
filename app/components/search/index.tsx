@@ -10,6 +10,8 @@ interface SearchBarProps {
   placeholder?: string;
 }
 
+// app/components/search/index.tsx dosyasındaki SearchBar bileşeni güncellenmiş hali
+
 function SearchBar({
   className = "",
   placeholder = "Best Dubai Restaurant..",
@@ -21,6 +23,8 @@ function SearchBar({
     openDropdown,
     openFilterModal,
     isDropdownOpen,
+    closeDropdown,
+    resetSearchQuery, // Bu fonksiyonu kullanacağız
   } = useSearch();
 
   const [inputValue, setInputValue] = useState(searchQuery.title || "");
@@ -31,11 +35,17 @@ function SearchBar({
     const timer = setTimeout(() => {
       if (inputValue !== searchQuery.title) {
         updateSearchQuery({ title: inputValue });
+
+        // Eğer input boşsa, arama yapmayız ve sonuçları temizleriz
         if (inputValue) {
           search();
           if (!isDropdownOpen) {
             openDropdown();
           }
+        } else {
+          // Input boşsa sonuçları temizle
+          resetSearchQuery();
+          closeDropdown();
         }
       }
     }, 300);
@@ -48,21 +58,35 @@ function SearchBar({
     updateSearchQuery,
     openDropdown,
     isDropdownOpen,
+    closeDropdown,
+    resetSearchQuery,
   ]);
 
   // Form gönderildiğinde
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     updateSearchQuery({ title: inputValue });
-    search();
-    if (inputValue && !isDropdownOpen) {
-      openDropdown();
+
+    // Sadece inputta değer varsa arama yap
+    if (inputValue) {
+      search();
+      if (!isDropdownOpen) {
+        openDropdown();
+      }
+    } else {
+      // Input boşsa sonuçları temizle
+      resetSearchQuery();
+      closeDropdown();
     }
   };
 
   // Input temizleme
   const handleClearInput = () => {
     setInputValue("");
+    // Input temizlendiğinde sonuçları da temizle
+    resetSearchQuery();
+    closeDropdown();
+
     if (inputRef.current) {
       inputRef.current.focus();
     }
@@ -92,7 +116,12 @@ function SearchBar({
             placeholder={placeholder}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            onFocus={openDropdown}
+            onFocus={() => {
+              // Sadece inputta değer varsa dropdown'ı aç
+              if (inputValue) {
+                openDropdown();
+              }
+            }}
             className="w-full flex-grow border-y border-r border-zinc-200 bg-white px-4 py-3 focus:outline-none"
           />
 

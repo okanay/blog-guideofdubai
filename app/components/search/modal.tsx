@@ -13,6 +13,8 @@ import { useSearch } from "./store";
 import useClickOutside from "@/hooks/use-click-outside";
 import { LANGUAGE_DICTONARY } from "@/i18n/config";
 
+// app/components/search/modal.tsx dosyasındaki SearchFilterModal bileşeni güncellenmiş hali
+
 export function SearchFilterModal() {
   const {
     isFilterModalOpen,
@@ -49,7 +51,11 @@ export function SearchFilterModal() {
       tagValue: filters.tagValue,
     });
 
-    search();
+    // Eğer arama kutusunda bir değer varsa, ancak o zaman arama yap
+    if (searchQuery.title) {
+      search();
+    }
+
     closeFilterModal();
   };
 

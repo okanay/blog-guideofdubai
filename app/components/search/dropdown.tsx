@@ -5,6 +5,8 @@ import { Clock, Search, X, ArrowRight } from "lucide-react";
 import { LANGUAGE_DICTONARY } from "@/i18n/config";
 import { formatDate } from "@/components/editor/helper";
 
+// app/components/search/dropdown.tsx dosyasındaki SearchResultsDropdown bileşeni güncellenmiş hali
+
 export function SearchResultsDropdown() {
   const {
     isDropdownOpen,
@@ -58,7 +60,8 @@ export function SearchResultsDropdown() {
     };
   }, [isDropdownOpen, closeDropdown]);
 
-  if (!isDropdownOpen) return null;
+  // Eğer dropdown kapalıysa veya arama kutusu boşsa dropdown'ı gösterme
+  if (!isDropdownOpen || !searchQuery.title) return null;
 
   return (
     <div
