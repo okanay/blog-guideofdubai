@@ -1,4 +1,5 @@
 import { RenderJSON } from "@/components/editor/tiptap/renderer";
+import { BlogTOC } from "@/components/editor/tiptap/renderer/toc";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
 // Blog sayfasının ana route tanımlaması
@@ -44,13 +45,19 @@ export const Route = createFileRoute("/$lang/_main/blog/$slug")({
   component: BlogPage,
 });
 
-// Ana blog sayfası komponenti
 function BlogPage() {
-  const { blog, lang } = Route.useLoaderData();
+  const { blog } = Route.useLoaderData();
 
   return (
-    <div className="prose mx-auto max-w-5xl px-4 py-8">
-      <RenderJSON json={JSON.parse(blog.content.json) || {}} />
-    </div>
+    <main className="mx-auto flex max-w-7xl gap-8 px-4 py-8">
+      {/* İçerik */}
+      <article className="prose max-w-5xl flex-1">
+        <RenderJSON json={JSON.parse(blog.content.json) || {}} />
+      </article>
+      {/* TOC */}
+      <aside className="hidden w-64 flex-shrink-0 lg:block">
+        <BlogTOC htmlContainerSelector=".prose" />
+      </aside>
+    </main>
   );
 }

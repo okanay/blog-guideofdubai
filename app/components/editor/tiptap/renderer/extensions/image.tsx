@@ -59,7 +59,7 @@ const getImageClasses = ({
     ),
     image: twMerge("w-full rounded-lg", styles.objectFit[objectFit]),
     caption: twMerge(
-      "relative mt-4 text-center",
+      "relative -mt-4 text-center",
       size === "fullscreen" && "max-w-3xl mx-auto",
     ),
   };

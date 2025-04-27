@@ -80,97 +80,81 @@
 
   @layer components {
     .prose {
-      @apply text-color-font-dark;
-
+      @apply text-color-font-dark max-w-none;
+      /* Headings */
       & h1 {
-        @apply text-center text-balance;
-        @apply text-color-font-dark font-semibold tracking-tight;
-        @apply scroll-m-20;
+        @apply text-color-font mt-0 mb-8 scroll-m-20 text-center text-3xl font-bold tracking-tight text-balance md:text-4xl lg:text-5xl;
       }
-      /* Headings with improved spacing and responsive sizes */
-      & h2,
-      & h3,
-      & h4,
-      & h5,
-      & h6 {
-        @apply text-color-font-dark font-semibold tracking-tight text-pretty;
-        @apply scroll-m-20;
-      }
-
-      & h1 {
-        @apply mb-6 text-3xl md:text-4xl lg:text-5xl;
-      }
-
       & h2 {
-        @apply mb-4 border-b border-zinc-200 pb-2 text-2xl md:text-3xl;
+        @apply text-color-font mt-12 mb-6 scroll-m-20 border-b border-zinc-200 pb-2 text-2xl font-semibold tracking-tight text-pretty md:text-3xl;
       }
-
       & h3 {
-        @apply mb-2 text-xl md:text-2xl;
+        @apply text-color-font mt-10 mb-4 scroll-m-20 text-xl font-semibold tracking-tight text-pretty md:text-2xl;
       }
-
       & h4 {
-        @apply mb-2 text-lg md:text-xl;
+        @apply text-color-font mt-8 mb-3 scroll-m-20 text-lg font-semibold tracking-tight text-pretty md:text-xl;
       }
-
       & h5 {
-        @apply mb-2 text-base md:text-lg;
+        @apply text-color-font mt-6 mb-2 scroll-m-20 text-base font-semibold tracking-tight text-pretty md:text-lg;
       }
-
       & h6 {
-        @apply mb-2 text-sm md:text-base;
+        @apply text-color-font mt-4 mb-2 scroll-m-20 text-sm font-semibold tracking-tight text-pretty md:text-base;
       }
 
-      /* Paragraphs with better readability */
+      /* Paragraphs */
       & p {
-        @apply text-color-font-light mb-4 leading-7;
+        @apply text-color-font-light mt-0 mb-5 text-base leading-7 md:text-lg;
       }
 
-      /* Lists with improved spacing */
+      /* Lists */
       & ul,
       & ol {
-        @apply my-4 ml-6;
+        @apply my-6 ml-7;
       }
-
       & ul {
         @apply list-disc;
       }
-
       & ol {
         @apply list-decimal;
       }
-
       & li {
-        @apply my-1;
+        @apply my-2 pl-1;
         & p {
-          @apply my-1;
+          @apply my-0;
         }
       }
 
       /* Blockquotes */
       & blockquote {
-        @apply text-color-font my-6 border-l-4 border-zinc-200 pl-4 italic;
+        @apply text-color-font-dark my-8 border-l-4 border-zinc-200 bg-zinc-50 py-2 pl-6 italic;
       }
 
       /* Horizontal rule */
       & hr {
-        @apply my-8 border-t border-zinc-200;
+        @apply my-12 border-t border-zinc-200;
       }
 
-      /* Text formatting */
+      /* Inline code & code blocks */
+      & code {
+        @apply text-color-font-dark rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-sm;
+      }
+      & pre {
+        @apply my-6 overflow-x-auto rounded-lg bg-zinc-900 p-4 text-sm text-zinc-100;
+      }
+
+      /* Marked text */
       & mark {
-        @apply bg-yellow-100 px-1;
+        @apply text-color-font-dark rounded bg-yellow-200 px-1;
       }
 
+      /* Subscript & Superscript */
       & sub,
       & sup {
         @apply text-xs;
       }
-
       & sub {
         @apply align-sub;
       }
-
       & sup {
         @apply align-super;
       }
@@ -180,13 +164,30 @@
         @apply text-primary-600 hover:text-primary-700 font-medium transition-colors;
       }
 
+      /* Images & Figures */
       & img {
-        @apply mb-8 aspect-video rounded-lg object-cover;
+        @apply mt-4 mb-8 aspect-video rounded-xl object-cover shadow-sm;
+      }
+      & figure {
+        @apply my-8;
+      }
+      & figcaption {
+        @apply text-color-font-light mt-2 text-center text-sm;
       }
 
-      & img,
-      figcaption {
-        @apply mb-0;
+      /* Tables */
+      & table {
+        @apply my-8 w-full border-collapse;
+      }
+      & th,
+      & td {
+        @apply border border-zinc-200 px-4 py-2;
+      }
+      & th {
+        @apply bg-zinc-100 font-semibold;
+      }
+      & tr:nth-child(even) {
+        @apply bg-zinc-50;
       }
     }
   }
