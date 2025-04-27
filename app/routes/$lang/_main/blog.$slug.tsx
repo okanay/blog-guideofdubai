@@ -78,7 +78,7 @@ function BlogPage() {
   );
 }
 
-// İlgili Bloglar Komponenti
+// Related Blogs Component
 function RelatedBlogs({ blog, lang }) {
   const [relatedBlogs, setRelatedBlogs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -89,7 +89,7 @@ function RelatedBlogs({ blog, lang }) {
   const btnRightRef = useRef(null);
   const cardRefs = useRef([]);
 
-  // İlgili blogları API'den çekme
+  // Fetch related blogs from the API
   useEffect(() => {
     const fetchRelatedBlogs = async () => {
       if (!blog?.id) return;
@@ -98,7 +98,7 @@ function RelatedBlogs({ blog, lang }) {
         setIsLoading(true);
         setError(null);
 
-        // Blog kategorileri ve etiketleri parametrelere dönüştür
+        // Convert blog categories and tags into parameters
         const categories = blog.categories?.map((c) => c.name).join(",") || "";
         const tags = blog.tags?.map((t) => t.name).join(",") || "";
 
@@ -115,8 +115,8 @@ function RelatedBlogs({ blog, lang }) {
           setRelatedBlogs([]);
         }
       } catch (err) {
-        console.error("İlgili bloglar yüklenirken hata:", err);
-        setError("İlgili blogları yüklerken bir sorun oluştu");
+        console.error("Error while loading related blogs:", err);
+        setError("An issue occurred while loading related blogs");
         setRelatedBlogs([]);
       } finally {
         setIsLoading(false);
@@ -126,27 +126,27 @@ function RelatedBlogs({ blog, lang }) {
     fetchRelatedBlogs();
   }, [blog?.id, lang]);
 
-  // Kaydırma fonksiyonları
+  // Scroll functions
   const handleButtonClick = (direction) => {
     if (!containerRef.current || cardRefs.current.length === 0) return;
 
-    // İlk kartın genişliği ve margin değerini al
+    // Get the width and margin of the first card
     const firstCard = cardRefs.current[0];
     if (!firstCard) return;
 
     const cardWidth = firstCard.getBoundingClientRect().width;
-    const cardMargin = 12; // gap-3 className'inden gelen değer
+    const cardMargin = 12; // Value from the gap-3 className
     const scrollAmount = cardWidth + cardMargin;
 
     const scrollOffset = direction === "Left" ? -scrollAmount : scrollAmount;
     const currentScroll = containerRef.current.scrollLeft;
 
-    // Scroll sınırlarını kontrol et
+    // Check scroll boundaries
     const maxScroll =
       containerRef.current.scrollWidth - containerRef.current.clientWidth;
     const targetScroll = currentScroll + scrollOffset;
 
-    // Scroll değerini sınırlar içinde tut
+    // Keep the scroll value within bounds
     const boundedScroll = Math.max(0, Math.min(targetScroll, maxScroll));
 
     containerRef.current.scrollTo({
@@ -169,7 +169,7 @@ function RelatedBlogs({ blog, lang }) {
     btnRightRef.current.ariaDisabled = isAtEnd.toString();
   };
 
-  // Scroll olaylarını dinleme
+  // Listen to scroll events
   useEffect(() => {
     const currentContainer = containerRef.current;
     if (!currentContainer) return;
@@ -181,7 +181,7 @@ function RelatedBlogs({ blog, lang }) {
     // Scroll event listener
     currentContainer.addEventListener("scroll", handleScroll);
 
-    // Resize event listener için debounce fonksiyonu
+    // Debounce function for resize event listener
     let resizeTimer;
     const handleResize = () => {
       clearTimeout(resizeTimer);
@@ -200,7 +200,7 @@ function RelatedBlogs({ blog, lang }) {
     };
   }, [relatedBlogs]);
 
-  // İçerik yoksa gösterme
+  // Do not display if there is no content
   if (!isLoading && relatedBlogs.length === 0 && !error) {
     return null;
   }
@@ -212,7 +212,7 @@ function RelatedBlogs({ blog, lang }) {
           <h2 className="text-2xl font-semibold">Related Posts</h2>
         </div>
 
-        {/* Hata durumu */}
+        {/* Error state */}
         {error && (
           <div className="flex flex-col items-center justify-center py-10 text-center">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
@@ -222,7 +222,7 @@ function RelatedBlogs({ blog, lang }) {
           </div>
         )}
 
-        {/* Yükleme durumu */}
+        {/* Loading state */}
         {isLoading && (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             {Array.from({ length: 4 }).map((_, index) => (
@@ -231,13 +231,13 @@ function RelatedBlogs({ blog, lang }) {
           </div>
         )}
 
-        {/* İlgili bloglar listesi */}
+        {/* Related blogs list */}
         {!isLoading && relatedBlogs.length > 0 && (
           <div className="relative">
             <button
               ref={btnLeftRef}
               aria-disabled="true"
-              aria-label="Sola Kaydır"
+              aria-label="Scroll Left"
               onClick={() => handleButtonClick("Left")}
               className="border-primary-cover bg-primary absolute top-[50%] left-1 z-20 size-10 translate-y-[-50%] rounded-full border p-1 shadow-md transition-opacity duration-300 focus:opacity-75 focus:outline-none aria-disabled:cursor-not-allowed aria-disabled:opacity-0"
             >
@@ -247,7 +247,7 @@ function RelatedBlogs({ blog, lang }) {
             <button
               ref={btnRightRef}
               aria-disabled="false"
-              aria-label="Sağa Kaydır"
+              aria-label="Scroll Right"
               onClick={() => handleButtonClick("Right")}
               className="border-primary-cover bg-primary absolute top-[50%] right-1 z-20 size-10 translate-y-[-50%] rounded-full border p-1 shadow-md transition-opacity duration-300 focus:opacity-75 focus:outline-none aria-disabled:cursor-not-allowed aria-disabled:opacity-0"
             >
@@ -280,14 +280,14 @@ function RelatedBlogs({ blog, lang }) {
   );
 }
 
-// İlgili Blog Kart Komponenti
+// Related Blog Card Component
 function RelatedBlogCard({ blog, index }) {
   return (
     <Link
       to={`/blog/${blog.slug}`}
       className="group flex h-full flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white ring ring-zinc-50 transition-all hover:ring-zinc-300 hover:ring-offset-2 focus:ring-zinc-300 focus:ring-offset-2 focus:outline-none"
     >
-      {/* Resim */}
+      {/* Image */}
       <div className="relative h-48 w-full overflow-hidden">
         <img
           src={
@@ -299,7 +299,7 @@ function RelatedBlogCard({ blog, index }) {
         />
       </div>
 
-      {/* İçerik */}
+      {/* Content */}
       <div className="flex flex-1 flex-col p-5">
         <h3 className="mb-3 line-clamp-2 text-xl font-semibold">
           {blog.content?.title}
@@ -308,7 +308,7 @@ function RelatedBlogCard({ blog, index }) {
           {blog.content?.description}
         </p>
 
-        {/* Alt bilgiler */}
+        {/* Footer info */}
         <div className="flex items-center justify-between">
           <span className="mr-3 text-sm font-medium">
             {LANGUAGE_DICTONARY.find((l) => l.value === blog.language)?.label ||
@@ -317,7 +317,7 @@ function RelatedBlogCard({ blog, index }) {
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1 text-xs text-zinc-500">
               <Clock size={12} />
-              {blog.content?.readTime || 3} dk
+              {blog.content?.readTime || 3} min
             </span>
             <span className="flex items-center gap-1 text-xs text-zinc-500">
               <CalendarDays size={12} />
@@ -330,20 +330,20 @@ function RelatedBlogCard({ blog, index }) {
   );
 }
 
-// İskelet yükleme komponenti
+// Skeleton loading component
 function RelatedBlogSkeleton() {
   return (
     <div className="flex animate-pulse flex-col rounded-lg border border-zinc-200 bg-white">
-      {/* Resim iskeleti */}
+      {/* Image skeleton */}
       <div className="h-48 w-full bg-zinc-200"></div>
 
-      {/* İçerik iskeleti */}
+      {/* Content skeleton */}
       <div className="flex flex-1 flex-col p-5">
         <div className="mb-3 h-6 w-3/4 rounded bg-zinc-200"></div>
         <div className="mb-2 h-4 w-full rounded bg-zinc-200"></div>
         <div className="mb-5 h-4 w-2/3 rounded bg-zinc-200"></div>
 
-        {/* Alt bilgiler iskeleti */}
+        {/* Footer info skeleton */}
         <div className="mt-auto flex items-center justify-between">
           <div className="h-4 w-16 rounded bg-zinc-200"></div>
           <div className="flex gap-2">
