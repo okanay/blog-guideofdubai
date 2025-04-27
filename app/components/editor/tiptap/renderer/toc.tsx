@@ -120,9 +120,13 @@ export const BlogTOC: React.FC<BlogTOCProps> = ({ htmlContainerSelector }) => {
     }[]
   >([]);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  // Yeni state: tıklama ile kilitlenecek başlık indeksi.
+  const [lockedHeading, setLockedHeading] = useState<number | null>(null);
+
   const scrollDirectionRef = useRef<"up" | "down">("down");
   const lastScrollTopRef = useRef(0);
   const timerRef = useRef<number | null>(null);
+  const lockTimerRef = useRef<number | null>(null);
 
   // Render edilmiş DOM'dan başlıkları bul
   useEffect(() => {
@@ -163,6 +167,28 @@ export const BlogTOC: React.FC<BlogTOCProps> = ({ htmlContainerSelector }) => {
     if (headings.length === 0) return;
 
     const updateActiveHeading = () => {
+      // Eğer kilit aktifse, scroll ile güncelleme yapma;
+      // ayrıca eğer scroll pozisyonu tıklanan başlığa yakınsa kilidi serbest bırak.
+      if (lockedHeading !== null) {
+        const locked = headings.find((h) => h.index === lockedHeading);
+        if (locked) {
+          const scrollTop =
+            window.scrollY || document.documentElement.scrollTop;
+          if (
+            // Tıklanan başlık biraz üstte de olsa gelse,
+            Math.abs(locked.offsetTop - scrollTop) < 30
+          ) {
+            setLockedHeading(null);
+            if (lockTimerRef.current !== null) {
+              clearTimeout(lockTimerRef.current);
+              lockTimerRef.current = null;
+            }
+          }
+        }
+        // Kilit aktifken scroll güncellemesi yapılmasın.
+        return;
+      }
+
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
 
       // Tüm başlıklar içinden görünür olanları filtrele
@@ -183,11 +209,9 @@ export const BlogTOC: React.FC<BlogTOCProps> = ({ htmlContainerSelector }) => {
 
       if (scrollDirectionRef.current === "down") {
         // Aşağı kaydırırken: Görünür başlıkların en AŞAĞIDA olanını seç
-        // (offsetTop değeri en yüksek olan)
         visibleHeadings.sort((a, b) => b.offsetTop - a.offsetTop);
 
         // Ekranın üst kısmında tamamen görünür olan ilk başlığı seç
-        // (başlığın üst kısmı viewport içinde)
         const fullyVisibleHeadings = visibleHeadings.filter(
           (h) => h.offsetTop > scrollTop - 50,
         );
@@ -229,7 +253,7 @@ export const BlogTOC: React.FC<BlogTOCProps> = ({ htmlContainerSelector }) => {
         clearTimeout(timerRef.current);
       }
     };
-  }, [headings]);
+  }, [headings, lockedHeading]);
 
   // Scroll fonksiyonu (aynı başlık metni birden fazla ise index ile bul)
   const handleTOCClick = (index: number) => {
@@ -240,7 +264,20 @@ export const BlogTOC: React.FC<BlogTOCProps> = ({ htmlContainerSelector }) => {
         top: heading.offsetTop - 20,
         behavior: "smooth",
       });
-      setActiveIndex(index); // Seçili başlığı hemen güncelle (scroll beklemeden)
+      // Tıklanınca aktif başlığı hemen güncelle
+      setActiveIndex(index);
+      // Kilidi tıklanan başlık için aktifleştir
+      setLockedHeading(index);
+
+      // Eğer varsa daha önceki lock timer'ı iptal et
+      if (lockTimerRef.current !== null) {
+        clearTimeout(lockTimerRef.current);
+      }
+      // 2 saniye sonra kilidi otomatik serbest bırak
+      lockTimerRef.current = window.setTimeout(() => {
+        setLockedHeading(null);
+        lockTimerRef.current = null;
+      }, 1500);
     }
   };
 
