@@ -61,6 +61,7 @@ export const Route = createFileRoute("/$lang/_main/blog/$slug")({
       title,
       meta: [
         { charSet: "utf-8" },
+        { title: title },
         { name: "description", content: description },
         { property: "og:type", content: "article" },
         { property: "og:title", content: title },
