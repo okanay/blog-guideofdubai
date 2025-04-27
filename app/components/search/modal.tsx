@@ -13,8 +13,6 @@ import { useSearch } from "./store";
 import useClickOutside from "@/hooks/use-click-outside";
 import { LANGUAGE_DICTONARY } from "@/i18n/config";
 
-// app/components/search/modal.tsx dosyasındaki SearchFilterModal bileşeni güncellenmiş hali
-
 export function SearchFilterModal() {
   const {
     isFilterModalOpen,
@@ -30,16 +28,16 @@ export function SearchFilterModal() {
   // Düzenlenen filtreler için geçici state
   const [filters, setFilters] = useState({
     language: searchQuery.language || "",
-    categoryValue: searchQuery.categoryValue || "",
-    tagValue: searchQuery.tagValue || "",
+    category: searchQuery.category || "",
+    tag: searchQuery.tag || "",
   });
 
   // Filtre değişikliklerini yakala
   useEffect(() => {
     setFilters({
       language: searchQuery.language || "",
-      categoryValue: searchQuery.categoryValue || "",
-      tagValue: searchQuery.tagValue || "",
+      category: searchQuery.category || "",
+      tag: searchQuery.tag || "",
     });
   }, [searchQuery, isFilterModalOpen]);
 
@@ -47,11 +45,10 @@ export function SearchFilterModal() {
   const applyFilters = () => {
     updateSearchQuery({
       language: filters.language,
-      categoryValue: filters.categoryValue,
-      tagValue: filters.tagValue,
+      category: filters.category,
+      tag: filters.tag,
     });
 
-    // Eğer arama kutusunda bir değer varsa, ancak o zaman arama yap
     if (searchQuery.title) {
       search();
     }
@@ -63,8 +60,8 @@ export function SearchFilterModal() {
   const handleReset = () => {
     setFilters({
       language: "",
-      categoryValue: "",
-      tagValue: "",
+      category: "",
+      tag: "",
     });
   };
 
@@ -136,15 +133,15 @@ export function SearchFilterModal() {
             <div className="relative">
               <select
                 className="w-full appearance-none rounded-md border border-zinc-200 bg-white py-2 pr-8 pl-3 text-sm"
-                value={filters.categoryValue}
+                value={filters.category}
                 onChange={(e) =>
-                  setFilters({ ...filters, categoryValue: e.target.value })
+                  setFilters({ ...filters, category: e.target.value })
                 }
                 disabled={isCategoriesLoading}
               >
                 <option value="">All Categories</option>
                 {categories.map((category) => (
-                  <option key={category.name} value={category.value}>
+                  <option key={category.name} value={category.name}>
                     {category.value}
                   </option>
                 ))}
@@ -167,15 +164,15 @@ export function SearchFilterModal() {
             <div className="relative">
               <select
                 className="w-full appearance-none rounded-md border border-zinc-200 bg-white py-2 pr-8 pl-3 text-sm"
-                value={filters.tagValue}
+                value={filters.tag}
                 onChange={(e) =>
-                  setFilters({ ...filters, tagValue: e.target.value })
+                  setFilters({ ...filters, tag: e.target.value })
                 }
                 disabled={isTagsLoading}
               >
                 <option value="">All Tags</option>
                 {tags.map((tag) => (
-                  <option key={tag.name} value={tag.value}>
+                  <option key={tag.name} value={tag.name}>
                     {tag.value}
                   </option>
                 ))}

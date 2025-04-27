@@ -8,9 +8,9 @@ const API_URL = import.meta.env.VITE_APP_BACKEND_URL || "http://localhost:3000";
 interface SearchQueryOptions {
   title?: string;
   language?: string;
-  categoryValue?: string;
+  category?: string;
   status?: string;
-  tagValue?: string;
+  tag?: string;
   limit?: number;
   offset?: number;
 }
@@ -123,9 +123,9 @@ async function apiFetch<T = any>(
 const DEFAULT_SEARCH_QUERY: SearchQueryOptions = {
   title: "",
   language: "",
-  categoryValue: "",
+  category: "",
   status: "published",
-  tagValue: "",
+  tag: "",
   limit: 10,
   offset: 0,
 };
