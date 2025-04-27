@@ -13,7 +13,6 @@ import { Link } from "@/i18n/link";
 import { formatDate } from "@/components/editor/helper";
 import { LANGUAGE_DICTONARY } from "@/i18n/config";
 
-// Blog sayfasının ana route tanımlaması
 export const Route = createFileRoute("/$lang/_main/blog/$slug")({
   loader: async ({ params }) => {
     const slug = params.slug;
@@ -44,13 +43,38 @@ export const Route = createFileRoute("/$lang/_main/blog/$slug")({
       throw redirect({ replace: true, to: `/${lang}/not-found` });
     }
   },
-  head: ({ loaderData: { blog } }) => {
+  head: ({ loaderData: { blog, lang, slug } }) => {
+    const API_URL = import.meta.env.VITE_APP_FRONTEND_URL || "http://localhost:3000"; // prettier-ignore
+    const sitename = import.meta.env.VITE_APP_SITE_NAME || "Guide of Dubai"; // prettier-ignore
+
+    // Metadata
+    const metadata = blog?.metadata || {};
+    const content = blog?.content || {};
+
+    const title = metadata.title ? `${metadata.title} | ${sitename}` : sitename;
+    const description =  metadata.description || content.description || ""; // prettier-ignore
+    const image = metadata.image || content.image || `https://images.project-test.info/1.webp`; // prettier-ignore
+    const url = `${API_URL}/${lang}/blog/${slug}`;
+    const locale =  LANGUAGE_DICTONARY.find((l) => l.value === blog?.language)?.seo.locale || "en_US"; // prettier-ignore
+
     return {
+      title,
       meta: [
-        {
-          charSet: "utf-8",
-        },
+        { charSet: "utf-8" },
+        { name: "description", content: description },
+        { property: "og:type", content: "article" },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:image", content: image },
+        { property: "og:url", content: url },
+        { property: "og:locale", content: locale },
+        { property: "og:site_name", content: sitename },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+        { name: "twitter:image", content: image },
       ],
+      link: [{ rel: "canonical", href: url }],
     };
   },
   component: BlogPage,
@@ -58,6 +82,8 @@ export const Route = createFileRoute("/$lang/_main/blog/$slug")({
 
 function BlogPage() {
   const { blog, lang } = Route.useLoaderData();
+
+  console.log(blog);
 
   return (
     <div className="flex flex-col">

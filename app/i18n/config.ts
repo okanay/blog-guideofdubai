@@ -15,8 +15,8 @@ export const LANGUAGE_DIRECTIONS: Record<Language, Direction> = {
 };
 
 export const LANGUAGE_DICTONARY = [
-  { value: "tr", label: "Türkçe" },
-  { value: "en", label: "English" },
+  { value: "tr", label: "Türkçe", seo: { locale: "tr_TR" } },
+  { value: "en", label: "English", seo: { locale: "en_US" } },
 ];
 
 export const SUPPORTED_LANGUAGES: Language[] = Object.values(LANGUAGES);
