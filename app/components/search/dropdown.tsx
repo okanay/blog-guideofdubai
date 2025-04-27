@@ -68,7 +68,7 @@ export function SearchResultsDropdown() {
       ref={dropdownRef}
       className="animate-in fade-in-0 slide-in-from-top-4 absolute right-0 left-0 z-50 mt-2 max-h-[75vh] overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-xl transition-all duration-300"
     >
-      {/* Başlık */}
+      {/* Header */}
       <div className="sticky top-0 z-10 border-b border-zinc-100 bg-white/95 backdrop-blur-sm">
         <div className="flex items-center justify-between p-3">
           <div>
@@ -76,16 +76,16 @@ export function SearchResultsDropdown() {
               <div className="text-sm font-medium text-zinc-800">
                 <span className="text-primary-600">"{searchQuery.title}"</span>
                 <span className="ml-1.5 text-zinc-500">
-                  için{" "}
+                  for{" "}
                   <span className="font-semibold text-zinc-700">
                     {totalResults}
                   </span>{" "}
-                  sonuç
+                  results
                 </span>
               </div>
             ) : (
               <div className="text-sm text-zinc-500">
-                Arama yapmak için yukarıdaki arama kutusunu kullanın
+                Use the search box above to search
               </div>
             )}
           </div>
@@ -99,7 +99,7 @@ export function SearchResultsDropdown() {
       </div>
 
       <div className="max-h-[calc(75vh-120px)] overflow-auto">
-        {/* Yükleniyor */}
+        {/* Loading */}
         {isLoading && searchResults.length === 0 && (
           <div className="flex h-44 items-center justify-center">
             <div className="flex flex-col items-center gap-3">
@@ -108,13 +108,13 @@ export function SearchResultsDropdown() {
                 <div className="border-primary-500 absolute inset-0 h-full w-full animate-spin rounded-full border-t-2"></div>
               </div>
               <span className="text-sm font-medium text-zinc-600">
-                Arama yapılıyor...
+                Searching...
               </span>
             </div>
           </div>
         )}
 
-        {/* Sonuç bulunamadı */}
+        {/* No results found */}
         {searchResults.length === 0 && !isLoading && searchQuery.title && (
           <div className="flex h-44 flex-col items-center justify-center gap-3 p-4 text-center">
             <div className="rounded-full bg-zinc-100 p-3">
@@ -122,16 +122,16 @@ export function SearchResultsDropdown() {
             </div>
             <div>
               <p className="font-medium text-zinc-700">
-                "{searchQuery.title}" için sonuç bulunamadı
+                No results found for "{searchQuery.title}"
               </p>
               <p className="mt-1 text-sm text-zinc-500">
-                Farklı anahtar kelimelerle tekrar deneyin
+                Try again with different keywords
               </p>
             </div>
           </div>
         )}
 
-        {/* Hata durumu */}
+        {/* Error state */}
         {searchStatus.error && !isLoading && (
           <div className="flex h-44 flex-col items-center justify-center gap-3 p-4 text-center">
             <div className="rounded-full bg-red-50 p-3">
@@ -139,17 +139,17 @@ export function SearchResultsDropdown() {
             </div>
             <div>
               <p className="font-medium text-zinc-700">
-                Arama yapılırken bir sorun oluştu
+                An error occurred while searching
               </p>
               <p className="mt-1 text-sm text-red-500">{searchStatus.error}</p>
             </div>
           </div>
         )}
 
-        {/* Sonuçlar - Mobil ve Masaüstü için ayrı görünümler */}
+        {/* Results - Separate views for mobile and desktop */}
         {searchResults.length > 0 && (
           <>
-            {/* Mobil görünüm */}
+            {/* Mobile view */}
             <div className="divide-y divide-zinc-100 md:hidden">
               {searchResults.map((blog) => (
                 <div
@@ -162,7 +162,7 @@ export function SearchResultsDropdown() {
                     className="block p-3"
                   >
                     <div className="flex items-start gap-3">
-                      {/* Küçük resim */}
+                      {/* Thumbnail */}
                       <div className="h-12 w-12 shrink-0 overflow-hidden rounded-md">
                         {blog.content.image ? (
                           <img
@@ -173,23 +173,23 @@ export function SearchResultsDropdown() {
                         ) : (
                           <div className="flex h-full w-full items-center justify-center bg-zinc-100">
                             <span className="text-[10px] text-zinc-400">
-                              Resim
+                              Image
                             </span>
                           </div>
                         )}
                       </div>
 
                       <div className="flex-1 space-y-1">
-                        {/* Başlık */}
+                        {/* Title */}
                         <p className="group-hover:text-primary-600 line-clamp-2 font-medium text-zinc-900">
                           {blog.content.title}
                         </p>
 
-                        {/* Alt bilgiler */}
+                        {/* Metadata */}
                         <div className="flex items-center gap-3 text-xs text-zinc-500">
                           <span className="flex items-center gap-1">
                             <Clock size={10} />
-                            {blog.content.readTime} dk
+                            {blog.content.readTime} min
                           </span>
                           <span>
                             {LANGUAGE_DICTONARY.find(
@@ -209,7 +209,7 @@ export function SearchResultsDropdown() {
               ))}
             </div>
 
-            {/* Masaüstü görünüm - Tablo */}
+            {/* Desktop view - Table */}
             <div className="hidden md:block">
               <div className="overflow-x-auto">
                 <table className="w-full">
@@ -219,13 +219,13 @@ export function SearchResultsDropdown() {
                         Blog
                       </th>
                       <th className="px-4 py-2.5 text-left text-xs font-medium tracking-wider whitespace-nowrap text-zinc-500 uppercase">
-                        Dil
+                        Language
                       </th>
                       <th className="px-4 py-2.5 text-left text-xs font-medium tracking-wider whitespace-nowrap text-zinc-500 uppercase">
-                        Tarih
+                        Date
                       </th>
                       <th className="px-4 py-2.5 text-left text-xs font-medium tracking-wider whitespace-nowrap text-zinc-500 uppercase">
-                        Okuma
+                        Read Time
                       </th>
                     </tr>
                   </thead>
@@ -241,7 +241,7 @@ export function SearchResultsDropdown() {
                             onClick={closeDropdown}
                             className="group flex items-center"
                           >
-                            {/* Küçük resim */}
+                            {/* Thumbnail */}
                             <div className="h-10 w-10 shrink-0 overflow-hidden rounded-md">
                               {blog.content.image ? (
                                 <img
@@ -252,13 +252,13 @@ export function SearchResultsDropdown() {
                               ) : (
                                 <div className="flex h-full w-full items-center justify-center bg-zinc-100">
                                   <span className="text-[8px] text-zinc-400">
-                                    Resim
+                                    Image
                                   </span>
                                 </div>
                               )}
                             </div>
 
-                            {/* Başlık */}
+                            {/* Title */}
                             <p className="group-hover:text-primary-600 ml-3 max-w-xs truncate text-sm font-medium text-zinc-900 transition-colors duration-200">
                               {blog.content.title}
                             </p>
@@ -278,7 +278,7 @@ export function SearchResultsDropdown() {
                         <td className="px-4 py-3 text-sm whitespace-nowrap text-zinc-600">
                           <span className="flex items-center gap-1">
                             <Clock size={12} />
-                            {blog.content.readTime} dk
+                            {blog.content.readTime} min
                           </span>
                         </td>
                       </tr>
@@ -290,14 +290,14 @@ export function SearchResultsDropdown() {
           </>
         )}
 
-        {/* Daha fazla yükleme */}
+        {/* Load more */}
         {hasMoreResults && searchResults.length > 0 && (
           <div className="border-t border-zinc-100 p-3 text-center">
             {isLoading ? (
               <div className="flex items-center justify-center gap-2 py-1">
                 <div className="border-t-primary-500 h-4 w-4 animate-spin rounded-full border-2 border-zinc-200"></div>
                 <span className="text-xs font-medium text-zinc-600">
-                  Yükleniyor...
+                  Loading...
                 </span>
               </div>
             ) : (
@@ -305,20 +305,20 @@ export function SearchResultsDropdown() {
                 onClick={loadMoreResults}
                 className="w-full rounded-md bg-zinc-50 py-2 text-xs font-medium text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 active:bg-zinc-200"
               >
-                Daha fazla sonuç göster
+                Show more results
               </button>
             )}
           </div>
         )}
       </div>
 
-      {/* Filtreleme butonu */}
+      {/* Filter button */}
       <div className="sticky bottom-0 border-t border-zinc-100 bg-white p-3 shadow-md">
         <button
           onClick={openFilterModal}
           className="bg-primary-50 text-primary-600 hover:bg-primary-100 active:bg-primary-200 w-full rounded-md py-2 text-xs font-medium transition-colors duration-200"
         >
-          Filtreleri Düzenle
+          Edit Filters
         </button>
       </div>
     </div>

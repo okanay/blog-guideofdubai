@@ -83,7 +83,7 @@ async function apiFetch<T = any>(
   error?: string;
 }> {
   try {
-    // Query parametrelerini URL'ye ekle
+    // Add query parameters to the URL
     const queryParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== "") {
@@ -104,14 +104,17 @@ async function apiFetch<T = any>(
     if (!response.ok) {
       return {
         success: false,
-        error: data.message || data.error || "İşlem sırasında bir hata oluştu",
+        error:
+          data.message ||
+          data.error ||
+          "An error occurred during the operation",
       };
     }
 
     return { success: true, data };
   } catch (error) {
     const message =
-      error instanceof Error ? error.message : "Beklenmedik bir hata oluştu";
+      error instanceof Error ? error.message : "An unexpected error occurred";
     return { success: false, error: message };
   }
 }
@@ -165,11 +168,11 @@ export function SearchProvider({ children }: PropsWithChildren) {
           latestBlog: createStatusState(),
         },
 
-        // Modal ve dropdown kontrolleri
+        // Modal and dropdown controls
         openDropdown: () => set({ isDropdownOpen: true }),
         closeDropdown: () => set({ isDropdownOpen: false }),
         openFilterModal: () => {
-          // Filtreleme modalı açılırken kategorileri ve etiketleri yükle (eğer daha önce yüklenmediyse)
+          // Load categories and tags when opening the filter modal (if not already loaded)
           const state = get();
           if (!state.categoriesLoaded) {
             state.loadCategories();
@@ -182,9 +185,9 @@ export function SearchProvider({ children }: PropsWithChildren) {
         },
         closeFilterModal: () => set({ isFilterModalOpen: false }),
 
-        // En son blog gönderisini çekme
+        // Fetch the latest blog post
         fetchLatestBlog: async () => {
-          // Eğer zaten çekilmişse ve başarılıysa, tekrar çekmeye gerek yok
+          // If already fetched and successful, no need to fetch again
           const { latestBlog, statusStates } = get();
           if (latestBlog && statusStates.latestBlog.status === "success") {
             return latestBlog;
@@ -203,11 +206,11 @@ export function SearchProvider({ children }: PropsWithChildren) {
               limit: 1,
               sortBy: "createdAt",
               sortDirection: "desc",
-              status: "published", // Sadece yayınlanmış blog gönderilerini al
+              status: "published", // Fetch only published blog posts
             });
 
             if (!result.success || !result.data || !result.data.blogs?.length) {
-              throw new Error(result.error || "En son blog yüklenemedi");
+              throw new Error(result.error || "Failed to load the latest blog");
             }
 
             const latestBlogPost = result.data.blogs[0];
@@ -222,7 +225,7 @@ export function SearchProvider({ children }: PropsWithChildren) {
             const errorMessage =
               error instanceof Error
                 ? error.message
-                : "En son blog yüklenemedi";
+                : "Failed to load the latest blog";
 
             set((state) => {
               state.statusStates.latestBlog = createStatusState(
@@ -235,11 +238,11 @@ export function SearchProvider({ children }: PropsWithChildren) {
           }
         },
 
-        // Kategorileri yükleme
+        // Load categories
         loadCategories: async () => {
           const { categoriesLoaded } = get();
 
-          // Eğer kategoriler zaten yüklendiyse, tekrar yüklemeye gerek yok
+          // If categories are already loaded, no need to load again
           if (categoriesLoaded) {
             return get().categories;
           }
@@ -260,7 +263,7 @@ export function SearchProvider({ children }: PropsWithChildren) {
             } else {
               state.statusStates.categories = createStatusState(
                 "error",
-                result.error || "Kategoriler yüklenemedi",
+                result.error || "Failed to load categories",
               );
             }
           });
@@ -268,11 +271,11 @@ export function SearchProvider({ children }: PropsWithChildren) {
           return result.success ? result.data?.categories : undefined;
         },
 
-        // Etiketleri yükleme
+        // Load tags
         loadTags: async () => {
           const { tagsLoaded } = get();
 
-          // Eğer etiketler zaten yüklendiyse, tekrar yüklemeye gerek yok
+          // If tags are already loaded, no need to load again
           if (tagsLoaded) {
             return get().tags;
           }
@@ -291,7 +294,7 @@ export function SearchProvider({ children }: PropsWithChildren) {
             } else {
               state.statusStates.tags = createStatusState(
                 "error",
-                result.error || "Etiketler yüklenemedi",
+                result.error || "Failed to load tags",
               );
             }
           });
@@ -299,18 +302,18 @@ export function SearchProvider({ children }: PropsWithChildren) {
           return result.success ? result.data?.tags : undefined;
         },
 
-        // Sorgu güncelleme
+        // Update search query
         updateSearchQuery: (query: Partial<SearchQueryOptions>) => {
           set((state) => {
             state.searchQuery = { ...state.searchQuery, ...query };
-            // Eğer offset harici bir değer değiştiyse, offset'i sıfırla
+            // Reset offset if any value other than offset changes
             if (Object.keys(query).some((key) => key !== "offset")) {
               state.searchQuery.offset = 0;
             }
           });
         },
 
-        // Sorgu sıfırlama
+        // Reset search query
         resetSearchQuery: () => {
           set((state) => {
             state.searchQuery = { ...DEFAULT_SEARCH_QUERY };
@@ -320,14 +323,14 @@ export function SearchProvider({ children }: PropsWithChildren) {
           });
         },
 
-        // Arama işlemi
+        // Perform search
         search: async (query?: string) => {
           try {
-            // Eğer bir query dizesi verilmişse, title olarak ayarla
+            // If a query string is provided, set it as the title
             if (query !== undefined) {
               set((state) => {
                 state.searchQuery.title = query;
-                state.searchQuery.offset = 0; // Yeni arama için offset'i sıfırla
+                state.searchQuery.offset = 0; // Reset offset for new search
               });
             }
 
@@ -339,7 +342,7 @@ export function SearchProvider({ children }: PropsWithChildren) {
 
             const searchQuery = get().searchQuery;
 
-            // API isteği
+            // API request
             const result = await apiFetch<{
               success: boolean;
               blogs: BlogPostCardView[];
@@ -348,7 +351,7 @@ export function SearchProvider({ children }: PropsWithChildren) {
 
             if (!result.success || !result.data) {
               throw new Error(
-                result.error || "Arama yapılırken bir hata oluştu",
+                result.error || "An error occurred during the search",
               );
             }
 
@@ -357,7 +360,7 @@ export function SearchProvider({ children }: PropsWithChildren) {
             const limit = searchQuery.limit || 10;
 
             set((state) => {
-              // Eğer offset 0 ise yeni arama, değilse ekleme
+              // If offset is 0, it's a new search; otherwise, append results
               if (searchQuery.offset === 0) {
                 state.searchResults = blogs;
               } else {
@@ -373,7 +376,7 @@ export function SearchProvider({ children }: PropsWithChildren) {
             const errorMessage =
               error instanceof Error
                 ? error.message
-                : "Arama yapılırken bir hata oluştu";
+                : "An error occurred during the search";
 
             set((state) => {
               state.searchStatus.loading = false;
@@ -386,15 +389,15 @@ export function SearchProvider({ children }: PropsWithChildren) {
           }
         },
 
-        // Daha fazla sonuç yükleme
+        // Load more results
         loadMoreResults: async () => {
           const { searchQuery, searchStatus, hasMoreResults } = get();
 
-          // Yükleme yapılıyorsa veya daha fazla sonuç yoksa işlemi iptal et
+          // Cancel operation if loading or no more results
           if (searchStatus.loading || !hasMoreResults) return;
 
           try {
-            // Offset değerini güncelle
+            // Update offset value
             const newOffset =
               (searchQuery.offset || 0) + (searchQuery.limit || 10);
 
@@ -402,13 +405,13 @@ export function SearchProvider({ children }: PropsWithChildren) {
               state.searchQuery.offset = newOffset;
             });
 
-            // Arama işlemini başlat
+            // Start search operation
             await get().search();
           } catch (error) {
             const errorMessage =
               error instanceof Error
                 ? error.message
-                : "Daha fazla sonuç yüklenirken bir hata oluştu";
+                : "An error occurred while loading more results";
 
             set((state) => {
               state.searchStatus.error = errorMessage;

@@ -84,7 +84,7 @@ export function SearchFilterModal() {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4 backdrop-blur-sm">
       <div ref={ref} className="w-full max-w-md rounded-xl bg-white shadow-xl">
         <div className="flex items-center justify-between px-5 py-4">
-          <h3 className="text-base font-medium text-zinc-900">Filtreleme</h3>
+          <h3 className="text-base font-medium text-zinc-900">Filtering</h3>
           <button
             onClick={closeFilterModal}
             className="text-zinc-400 hover:text-zinc-600"
@@ -97,7 +97,9 @@ export function SearchFilterModal() {
           <div>
             <div className="mb-1.5 flex items-center gap-2">
               <GlobeIcon size={16} className="text-zinc-500" />
-              <label className="text-sm font-medium text-zinc-700">Dil</label>
+              <label className="text-sm font-medium text-zinc-700">
+                Language
+              </label>
             </div>
             <div className="relative">
               <select
@@ -107,7 +109,7 @@ export function SearchFilterModal() {
                   setFilters({ ...filters, language: e.target.value })
                 }
               >
-                <option value="">Tüm Diller</option>
+                <option value="">All Languages</option>
                 {LANGUAGE_DICTONARY.map((lang) => (
                   <option key={lang.value} value={lang.value}>
                     {lang.label}
@@ -125,7 +127,7 @@ export function SearchFilterModal() {
             <div className="mb-1.5 flex items-center gap-2">
               <FolderIcon size={16} className="text-zinc-500" />
               <label className="text-sm font-medium text-zinc-700">
-                Kategori
+                Category
               </label>
               {isCategoriesLoading && (
                 <Loader2 size={14} className="animate-spin text-zinc-400" />
@@ -140,7 +142,7 @@ export function SearchFilterModal() {
                 }
                 disabled={isCategoriesLoading}
               >
-                <option value="">Tüm Kategoriler</option>
+                <option value="">All Categories</option>
                 {categories.map((category) => (
                   <option key={category.name} value={category.value}>
                     {category.value}
@@ -157,9 +159,7 @@ export function SearchFilterModal() {
           <div>
             <div className="mb-1.5 flex items-center gap-2">
               <TagIcon size={16} className="text-zinc-500" />
-              <label className="text-sm font-medium text-zinc-700">
-                Etiket
-              </label>
+              <label className="text-sm font-medium text-zinc-700">Tag</label>
               {isTagsLoading && (
                 <Loader2 size={14} className="animate-spin text-zinc-400" />
               )}
@@ -173,7 +173,7 @@ export function SearchFilterModal() {
                 }
                 disabled={isTagsLoading}
               >
-                <option value="">Tüm Etiketler</option>
+                <option value="">All Tags</option>
                 {tags.map((tag) => (
                   <option key={tag.name} value={tag.value}>
                     {tag.value}
@@ -194,7 +194,7 @@ export function SearchFilterModal() {
             className="flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-700"
           >
             <RefreshCcw size={14} />
-            <span>Sıfırla</span>
+            <span>Reset</span>
           </button>
 
           <button
@@ -202,7 +202,7 @@ export function SearchFilterModal() {
             className="bg-primary-600 flex items-center gap-1.5 rounded-md px-4 py-1.5 text-sm font-medium text-white"
           >
             <FilterIcon size={14} />
-            <span>Uygula</span>
+            <span>Apply</span>
           </button>
         </div>
       </div>

@@ -117,7 +117,7 @@ function SearchBar({
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onFocus={() => {
-              // Sadece inputta değer varsa dropdown'ı aç
+              // Open dropdown only if input has a value
               if (inputValue) {
                 openDropdown();
               }
@@ -145,7 +145,7 @@ function SearchBar({
         </button>
       </form>
 
-      {/* Arama Sonuçları Dropdown */}
+      {/* Search Results Dropdown */}
       <SearchResultsDropdown />
     </div>
   );
