@@ -257,27 +257,27 @@ export const BlogTOC: React.FC<BlogTOCProps> = ({ htmlContainerSelector }) => {
 
   // Scroll fonksiyonu (aynı başlık metni birden fazla ise index ile bul)
   const handleTOCClick = (index: number) => {
+    // Eğer lock aktifse, yeni tıklamayı işleme
+    if (lockedHeading !== null) return;
+
     const heading = headings.find((h) => h.index === index);
     if (heading && heading.element) {
-      // Smooth scroll ve offset için biraz üstte dursun
       window.scrollTo({
         top: heading.offsetTop - 20,
         behavior: "smooth",
       });
-      // Tıklanınca aktif başlığı hemen güncelle
       setActiveIndex(index);
-      // Kilidi tıklanan başlık için aktifleştir
       setLockedHeading(index);
 
-      // Eğer varsa daha önceki lock timer'ı iptal et
       if (lockTimerRef.current !== null) {
         clearTimeout(lockTimerRef.current);
-      }
-      // 2 saniye sonra kilidi otomatik serbest bırak
-      lockTimerRef.current = window.setTimeout(() => {
-        setLockedHeading(null);
         lockTimerRef.current = null;
-      }, 1500);
+      }
+
+      lockTimerRef.current = window.setTimeout(() => {
+        setLockedHeading((current) => (current === index ? null : current));
+        lockTimerRef.current = null;
+      }, 1000); // Süreyi ihtiyacına göre ayarlayabilirsin
     }
   };
 
