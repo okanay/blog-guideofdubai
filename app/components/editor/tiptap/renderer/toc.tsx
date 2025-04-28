@@ -1,19 +1,27 @@
-import React, { useEffect, useMemo, useState, useRef } from "react";
 import { twMerge } from "tailwind-merge";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 
-// Yardımcı: Render edilmiş DOM'dan başlıkları (h1-h6) ve indexlerini bul
-function getHeadingsFromDOM(container: HTMLElement | null) {
+type Heading = {
+  text: string;
+  level: number;
+  element: HTMLElement;
+  index: number;
+  offsetTop: number;
+};
+
+type TOCItem = {
+  text: string;
+  level: number;
+  index: number;
+  children: TOCItem[];
+};
+
+// DOM'dan başlıkları bul
+function getHeadingsFromDOM(container: HTMLElement | null): Heading[] {
   if (!container) return [];
   const headingTags = ["H1", "H2", "H3", "H4", "H5", "H6"];
-  const headings: {
-    text: string;
-    level: number;
-    element: HTMLElement;
-    index: number;
-    offsetTop: number; // DOM'daki y pozisyonu
-  }[] = [];
   let globalIndex = 0;
-
+  const headings: Heading[] = [];
   container.querySelectorAll(headingTags.join(",")).forEach((el) => {
     headings.push({
       text: el.textContent || "",
@@ -23,25 +31,15 @@ function getHeadingsFromDOM(container: HTMLElement | null) {
       offsetTop: (el as HTMLElement).offsetTop,
     });
   });
-
-  // Y pozisyonuna göre başlıkları sırala (yukarıdan aşağıya)
   return headings.sort((a, b) => a.offsetTop - b.offsetTop);
 }
 
-// Yardımcı: Hiyerarşik TOC ağacı oluştur
-type TOCItem = {
-  text: string;
-  level: number;
-  index: number;
-  children: TOCItem[];
-};
-
+// Hiyerarşik TOC ağacı
 function buildTOCTree(
   headings: { text: string; level: number; index: number }[],
-) {
+): TOCItem[] {
   const root: TOCItem = { text: "", level: 0, index: -1, children: [] };
   const stack: TOCItem[] = [root];
-
   for (const heading of headings) {
     const item: TOCItem = { ...heading, children: [] };
     while (stack.length > 1 && heading.level <= stack[stack.length - 1].level) {
@@ -106,29 +104,16 @@ function TOCList({
 }
 
 interface BlogTOCProps {
-  htmlContainerSelector: string; // örn: "#blog-content"
+  htmlContainerSelector: string;
 }
 
 export const BlogTOC: React.FC<BlogTOCProps> = ({ htmlContainerSelector }) => {
-  const [headings, setHeadings] = useState<
-    {
-      text: string;
-      level: number;
-      element: HTMLElement;
-      index: number;
-      offsetTop: number;
-    }[]
-  >([]);
+  const [headings, setHeadings] = useState<Heading[]>([]);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  // Yeni state: tıklama ile kilitlenecek başlık indeksi.
-  const [lockedHeading, setLockedHeading] = useState<number | null>(null);
-
-  const scrollDirectionRef = useRef<"up" | "down">("down");
-  const lastScrollTopRef = useRef(0);
-  const timerRef = useRef<number | null>(null);
+  const [locked, setLocked] = useState(false);
   const lockTimerRef = useRef<number | null>(null);
 
-  // Render edilmiş DOM'dan başlıkları bul
+  // Başlıkları DOM'dan çek
   useEffect(() => {
     const container = document.querySelector(
       htmlContainerSelector,
@@ -136,130 +121,46 @@ export const BlogTOC: React.FC<BlogTOCProps> = ({ htmlContainerSelector }) => {
     if (!container) return;
     const found = getHeadingsFromDOM(container);
     setHeadings(found);
+    if (found.length > 0) setActiveIndex(found[0].index);
+  }, [htmlContainerSelector, document.location.pathname]);
 
-    // İlk başlığı aktif yap
-    if (found.length > 0) {
-      setActiveIndex(found[0].index);
-    }
-  }, [htmlContainerSelector, document.location.pathname]); // pathname değişirse tekrar tara
-
-  // Scroll yönünü algıla
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollTop =
-        window.scrollY || document.documentElement.scrollTop;
-
-      if (currentScrollTop > lastScrollTopRef.current) {
-        scrollDirectionRef.current = "down";
-      } else {
-        scrollDirectionRef.current = "up";
-      }
-
-      lastScrollTopRef.current = currentScrollTop;
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Scroll pozisyonuna göre en uygun başlığı seç (throttled)
+  // Scroll ile aktif başlık güncelle
   useEffect(() => {
     if (headings.length === 0) return;
 
-    const updateActiveHeading = () => {
-      // Eğer kilit aktifse, scroll ile güncelleme yapma;
-      // ayrıca eğer scroll pozisyonu tıklanan başlığa yakınsa kilidi serbest bırak.
-      if (lockedHeading !== null) {
-        const locked = headings.find((h) => h.index === lockedHeading);
-        if (locked) {
-          const scrollTop =
-            window.scrollY || document.documentElement.scrollTop;
-          if (
-            // Tıklanan başlık biraz üstte de olsa gelse,
-            Math.abs(locked.offsetTop - scrollTop) < 30
-          ) {
-            setLockedHeading(null);
-            if (lockTimerRef.current !== null) {
-              clearTimeout(lockTimerRef.current);
-              lockTimerRef.current = null;
-            }
-          }
-        }
-        // Kilit aktifken scroll güncellemesi yapılmasın.
-        return;
-      }
-
-      const scrollTop = window.scrollY || document.documentElement.scrollTop;
-
-      // Tüm başlıklar içinden görünür olanları filtrele
-      let visibleHeadings = headings.filter((heading) => {
-        const { offsetTop } = heading;
-        const elementHeight = heading.element.offsetHeight;
-
-        // Viewport içinde mi?
-        return (
-          offsetTop < scrollTop + window.innerHeight * 0.8 &&
-          offsetTop + elementHeight > scrollTop - window.innerHeight * 0.2
-        );
-      });
-
-      if (visibleHeadings.length === 0) return;
-
-      let activeHeading;
-
-      if (scrollDirectionRef.current === "down") {
-        // Aşağı kaydırırken: Görünür başlıkların en AŞAĞIDA olanını seç
-        visibleHeadings.sort((a, b) => b.offsetTop - a.offsetTop);
-
-        // Ekranın üst kısmında tamamen görünür olan ilk başlığı seç
-        const fullyVisibleHeadings = visibleHeadings.filter(
-          (h) => h.offsetTop > scrollTop - 50,
-        );
-
-        activeHeading =
-          fullyVisibleHeadings.length > 0
-            ? fullyVisibleHeadings[fullyVisibleHeadings.length - 1]
-            : visibleHeadings[visibleHeadings.length - 1];
-      } else {
-        // Yukarı kaydırırken: Görünür başlıkların en ÜSTTE olanını seç
-        visibleHeadings.sort((a, b) => a.offsetTop - b.offsetTop);
-        activeHeading = visibleHeadings[0];
-      }
-
-      if (activeHeading) {
-        setActiveIndex(activeHeading.index);
-      }
-    };
-
-    // Throttled scroll işleyici
     const handleScroll = () => {
-      if (timerRef.current !== null) {
-        return;
-      }
-
-      timerRef.current = window.setTimeout(() => {
-        updateActiveHeading();
-        timerRef.current = null;
-      }, 100); // 100ms throttle
+      if (locked) return;
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      // En yakın başlığı bul (offsetTop - 20 ile scrollTop karşılaştır)
+      const current = headings
+        .slice()
+        .reverse()
+        .find((h) => h.offsetTop - 20 <= scrollTop);
+      if (current) setActiveIndex(current.index);
     };
-
-    // İlk yükleme için bir kez çalıştır
-    updateActiveHeading();
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      if (timerRef.current !== null) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, [headings, lockedHeading]);
+    // İlk render'da da çalıştır
+    handleScroll();
 
-  // Scroll fonksiyonu (aynı başlık metni birden fazla ise index ile bul)
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [headings, locked]);
+
+  // Lock bittiğinde scroll pozisyonuna göre aktif başlığı güncelle
+  useEffect(() => {
+    if (!locked && headings.length > 0) {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const current = headings
+        .slice()
+        .reverse()
+        .find((h) => h.offsetTop - 20 <= scrollTop);
+      if (current) setActiveIndex(current.index);
+    }
+  }, [locked, headings]);
+
+  // TOC tıklama
   const handleTOCClick = (index: number) => {
-    // Eğer lock aktifse, yeni tıklamayı işleme
-    if (lockedHeading !== null) return;
-
+    if (locked) return;
     const heading = headings.find((h) => h.index === index);
     if (heading && heading.element) {
       window.scrollTo({
@@ -267,19 +168,27 @@ export const BlogTOC: React.FC<BlogTOCProps> = ({ htmlContainerSelector }) => {
         behavior: "smooth",
       });
       setActiveIndex(index);
-      setLockedHeading(index);
+      setLocked(true);
 
       if (lockTimerRef.current !== null) {
         clearTimeout(lockTimerRef.current);
         lockTimerRef.current = null;
       }
-
       lockTimerRef.current = window.setTimeout(() => {
-        setLockedHeading((current) => (current === index ? null : current));
+        setLocked(false);
         lockTimerRef.current = null;
-      }, 1000); // Süreyi ihtiyacına göre ayarlayabilirsin
+      }, 1000); // 1 saniye lock
     }
   };
+
+  // Unmount'ta timer temizliği
+  useEffect(() => {
+    return () => {
+      if (lockTimerRef.current !== null) {
+        clearTimeout(lockTimerRef.current);
+      }
+    };
+  }, []);
 
   // Hiyerarşik TOC ağacı
   const tocTree = useMemo(
