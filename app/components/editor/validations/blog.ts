@@ -103,7 +103,8 @@ export const BlogSchema = z.object({
         value: z.string().min(1, "Etiket değeri boş bırakılamaz."),
       }),
     )
-    .default([]),
+    .default([])
+    .nullable(),
 
   // İsteğe bağlı: Tarih alanları için validasyon
   createdAt: z.string().datetime().optional(),

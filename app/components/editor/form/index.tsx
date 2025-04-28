@@ -31,6 +31,7 @@ export function CreateBlogForm({
     categories,
     addCategory,
     refreshCategories,
+    refreshTags,
   } = useEditorContext();
 
   // prettier-ignore
@@ -297,8 +298,8 @@ export function CreateBlogForm({
                 id="tags"
                 options={tags}
                 onAddCustomOption={addTag}
-                onFetchOptions={refreshCategories}
-                onRefreshOptions={refreshCategories}
+                onFetchOptions={refreshTags}
+                onRefreshOptions={refreshTags}
                 modalStatus={statusStates.tags}
                 value={field.value as any}
                 onChange={(newValue) => field.onChange(newValue)}

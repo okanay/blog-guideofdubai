@@ -96,5 +96,6 @@ export const BlogFormSchema = z.object({
         value: z.string().min(1, "Etiket değeri boş bırakılamaz."),
       }),
     )
-    .default([]),
+    .default([])
+    .nullable(),
 });

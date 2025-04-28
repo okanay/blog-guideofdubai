@@ -57,8 +57,12 @@ export const Route = createFileRoute("/$lang/_main/blog/$slug")({
     const url = `${API_URL}/${lang}/blog/${slug}`;
     const locale =  LANGUAGE_DICTONARY.find((l) => l.value === blog?.language)?.seo.locale || "en_US"; // prettier-ignore
 
-    const tags = blog.tags || [];
-    const categories = (blog.categories || []).map((c) => c.value);
+    const tags = (blog.tags || []).map(
+      (c: { value?: string }) => c.value || "Activities",
+    );
+    const categories = (blog.categories || []).map(
+      (c: { value?: string }) => c.value || "Activities",
+    );
     const keywords = [...tags, ...categories].join(", ");
 
     return {
@@ -88,8 +92,6 @@ export const Route = createFileRoute("/$lang/_main/blog/$slug")({
 
 function BlogPage() {
   const { blog, lang } = Route.useLoaderData();
-
-  console.log(blog);
 
   return (
     <div className="flex flex-col">
