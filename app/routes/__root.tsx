@@ -95,7 +95,7 @@ export const Route = createRootRoute({
         {
           rel: "preload",
           as: "image",
-          type: "image/svg",
+          type: "image/svg+xml",
           href: `/images/brand.svg`,
         },
         {
