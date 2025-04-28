@@ -84,7 +84,12 @@ export const Route = createFileRoute("/$lang/_main/blog/$slug")({
         { name: "twitter:description", content: description },
         { name: "twitter:image", content: image },
       ],
-      link: [{ rel: "canonical", href: url }],
+      links: [
+        {
+          rel: "canonical",
+          href: url,
+        },
+      ],
     };
   },
   component: BlogPage,
