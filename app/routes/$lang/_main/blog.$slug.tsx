@@ -57,12 +57,17 @@ export const Route = createFileRoute("/$lang/_main/blog/$slug")({
     const url = `${API_URL}/${lang}/blog/${slug}`;
     const locale =  LANGUAGE_DICTONARY.find((l) => l.value === blog?.language)?.seo.locale || "en_US"; // prettier-ignore
 
+    const tags = blog.tags || [];
+    const categories = (blog.categories || []).map((c) => c.value);
+    const keywords = [...tags, ...categories].join(", ");
+
     return {
       title,
       meta: [
         { charSet: "utf-8" },
         { title: title },
         { name: "description", content: description },
+        { name: "keywords", content: keywords },
         { property: "og:type", content: "article" },
         { property: "og:title", content: title },
         { property: "og:description", content: description },
