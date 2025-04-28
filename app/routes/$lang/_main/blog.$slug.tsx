@@ -148,8 +148,6 @@ function RelatedBlogs({ blog, lang }) {
         const response = await fetch(url);
         const data = await response.json();
 
-        console.log(data);
-
         if (data.success && data.blogs) {
           setRelatedBlogs(data.blogs);
         } else {
