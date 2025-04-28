@@ -50,11 +50,13 @@ export const Route = createFileRoute("/$lang/_main/blog/$slug")({
     // Metadata
     const metadata = blog?.metadata || {};
     const content = blog?.content || {};
+    const blogLanguage = blog?.language || lang || "en";
+
+    const url = `${API_URL}/${blogLanguage}/blog/${slug}`;
 
     const title = metadata.title ? `${metadata.title} | ${sitename}` : sitename;
     const description =  metadata.description || content.description || ""; // prettier-ignore
     const image = metadata.image || content.image || `https://images.project-test.info/1.webp`; // prettier-ignore
-    const url = `${API_URL}/${lang}/blog/${slug}`;
     const locale =  LANGUAGE_DICTONARY.find((l) => l.value === blog?.language)?.seo.locale || "en_US"; // prettier-ignore
 
     const tags = (blog.tags || []).map(
