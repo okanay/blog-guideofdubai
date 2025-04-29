@@ -1,4 +1,5 @@
 import { Link } from "@/i18n/link";
+import LanguageSwitcher from "./language-switcher";
 
 export const RootHeader = () => {
   const items = {
@@ -58,12 +59,12 @@ export const RootHeader = () => {
 
   return (
     <header
-      className="relative z-20 w-full border-b border-zinc-200 bg-white py-1 md:border-b-0 md:pb-0"
+      className="relative w-full border-b border-zinc-200 bg-white py-1 md:border-b-0 md:pb-0"
       role="banner"
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-1.5">
         <Link
-          to=""
+          to="/"
           aria-label="Guide of Dubai - Return to homepage"
           className="transition-opacity duration-300 focus:opacity-75 focus:outline-none"
         >
@@ -104,15 +105,18 @@ export const RootHeader = () => {
           </ul>
         </nav>
 
-        <a
-          href="https://guideofdubai.com/"
-          className="text-color-primary border-primary-cover bg-primary flex h-11 items-center justify-center rounded-xs border px-6 text-center text-sm font-bold tracking-wide transition-opacity duration-300 ease-in-out hover:opacity-75 focus:opacity-75 focus:outline-none"
-          aria-label="Visit Guide of Dubai main website"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          Visit Now
-        </a>
+        <div className="flex items-center gap-4">
+          <LanguageSwitcher />
+          <a
+            href="https://guideofdubai.com/"
+            className="text-color-primary border-primary-cover bg-primary flex h-11 items-center justify-center rounded-xs border px-6 text-center text-sm font-bold tracking-wide transition-opacity duration-300 ease-in-out hover:opacity-75 focus:opacity-75 focus:outline-none"
+            aria-label="Visit Guide of Dubai main website"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Visit Now
+          </a>
+        </div>
       </div>
 
       {/* Sub Menu Navigation */}

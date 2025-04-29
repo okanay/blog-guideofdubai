@@ -1,4 +1,4 @@
-import { getHeaders } from "@tanstack/react-start/server";
+import { getHeaders, setCookie, getCookie } from "@tanstack/react-start/server";
 import { DEFAULT_LANGUAGE, LANGUAGE_DICTONARY, SUPPORTED_LANGUAGES } from "@/i18n/config"; // prettier-ignore
 import { HeadContent, Outlet, Scripts, createRootRoute, redirect } from "@tanstack/react-router"; // prettier-ignore
 import { RootProviders } from "@/providers";
@@ -7,6 +7,7 @@ import globals from "@/globals.css?url";
 import LanguageProvider from "@/i18n/provider";
 import { createServerFn } from "@tanstack/react-start";
 import { getLanguageFromCookie, getLanguageFromHeader } from "@/i18n/action";
+import LanguageSynchronizer from "@/i18n/language-synchronizer";
 
 export const getRequestHeaders = createServerFn({
   method: "GET",
@@ -29,16 +30,16 @@ export const Route = createRootRoute<{}>({
       const searchParams = new URLSearchParams(ctx.location.search);
       const langParam = searchParams.get("lang");
 
-      const { headers } = await getRequestHeaders();
-      const cookieLang = getLanguageFromCookie(headers["cookie"] || "");
-      const headerLang = getLanguageFromHeader(headers["accept-language"]);
-
       // 1. Search Param doğru ise onu döndür.
       if (langParam && SUPPORTED_LANGUAGES.includes(langParam as Language)) {
         return {
           lang: langParam,
         };
       }
+
+      const { headers } = await getRequestHeaders();
+      const cookieLang = getLanguageFromCookie(headers["cookie"] || "");
+      const headerLang = getLanguageFromHeader(headers["accept-language"]);
 
       // 2. Cookie'de varsa, redirect ile lang paramı ekle
       if (cookieLang) {
@@ -180,6 +181,7 @@ function RootComponent() {
   return (
     <RootDocument>
       <LanguageProvider serverLanguage={lang}>
+        <LanguageSynchronizer />
         <RootProviders>
           <Outlet />
         </RootProviders>

@@ -3,6 +3,8 @@ import Cookies from "js-cookie";
 import { I18nextProvider } from "react-i18next";
 import { DEFAULT_LANGUAGE, I18N_COOKIE_NAME, I18N_COOKIE_OPTIONS, I18N_STORAGE_KEY, SUPPORTED_LANGUAGES } from "./config"; // prettier-ignore
 import React, { createContext, useCallback, useEffect, useState } from "react"; // prettier-ignore
+import { useNavigate } from "@tanstack/react-router";
+import { buildSearchParams } from "./action";
 
 interface LanguageContextType {
   language: Language;
@@ -25,6 +27,7 @@ export const LanguageProvider: React.FC<Props> = ({
 }) => {
   const [isReady, setIsReady] = useState(false);
   const [language, setLanguage] = useState<Language>(serverLanguage);
+  const navigate = useNavigate();
 
   const i18n = i18nConfig(serverLanguage);
 
@@ -49,22 +52,24 @@ export const LanguageProvider: React.FC<Props> = ({
       i18n.changeLanguage(lng).then(() => {
         setLanguage(lng);
 
-        // URL'deki dil parametresini güncelle ve sayfayı yenile
+        // URL'deki search parametresini güncelle ve yönlendir
         if (typeof window !== "undefined") {
-          const pathParts = window.location.pathname.split("/");
-          if (pathParts.length >= 2) {
-            // Mevcut dil parametresini yeni dil ile değiştir
-            pathParts[1] = lng;
-            const newPath = pathParts.join("/");
-            window.location.href = newPath;
-          } else {
-            // Eğer URL'de dil parametresi yoksa, ekle
-            window.location.href = `/${lng}`;
-          }
+          const currentUrl = new URL(window.location.href);
+          const searchParams = new URLSearchParams(currentUrl.search);
+
+          // Mevcut URL'den arama parametrelerini al
+          const params = buildSearchParams(searchParams, lng);
+
+          // Aynı sayfada kal, sadece dil parametresini güncelle
+          navigate({
+            to: window.location.pathname,
+            search: params as any,
+            replace: true,
+          });
         }
       });
     },
-    [language, i18n],
+    [language, i18n, navigate],
   );
 
   useEffect(() => {

@@ -58,17 +58,3 @@ export function buildSearchParams(
   params.lang = lang;
   return params;
 }
-
-export function setLangCookie(lang: string): { "Set-Cookie": string } {
-  const expires = new Date();
-  expires.setDate(expires.getDate() + (I18N_COOKIE_OPTIONS.expires || 365));
-  return {
-    "Set-Cookie": `${I18N_COOKIE_NAME}=${lang}; Path=${I18N_COOKIE_OPTIONS.path || "/"}; Expires=${expires.toUTCString()}; SameSite=${I18N_COOKIE_OPTIONS.sameSite || "Lax"}`,
-  };
-}
-
-export function getCookieLang(
-  headers: Record<string, string>,
-): Language | null {
-  return getLanguageFromCookie(headers["cookie"] || "");
-}
