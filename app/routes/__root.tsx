@@ -12,10 +12,10 @@ export const Route = createRootRoute({
     const searchParams = new URLSearchParams(ctx.location.search);
     const langParam = searchParams.get("lang") as Language;
 
-    // "/" kontrolü.
-    if (ctx.location.href === "/") {
+    // "/blog" ile başlamıyorsa kontrolü.
+    if (!ctx.location.pathname.startsWith("/blog")) {
       throw redirect({
-        to: `/blog`,
+        to: "blog",
         replace: true,
       });
     }

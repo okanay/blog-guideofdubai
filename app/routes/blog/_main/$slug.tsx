@@ -49,15 +49,15 @@ export const Route = createFileRoute("/blog/_main/$slug")({
     }
   },
   head: ({ loaderData: { blog, lang, slug } }) => {
-    const API_URL = import.meta.env.VITE_APP_FRONTEND_URL || "http://localhost:3000"; // prettier-ignore
-    const sitename = import.meta.env.VITE_APP_SITE_NAME || "Guide of Dubai"; // prettier-ignore
+    const API_URL = import.meta.env.VITE_APP_CANONICAL_URL;
+    const sitename = import.meta.env.VITE_APP_SITE_NAME;
 
     // Metadata
     const metadata = blog?.metadata || {};
     const content = blog?.content || {};
     const blogLanguage = blog?.language || lang || "en";
 
-    const url = `${API_URL}/${blogLanguage}/blog/${slug}`;
+    const url = `${API_URL}/blog/${slug}?lang=${blogLanguage}`;
 
     const title = metadata.title ? `${metadata.title} | ${sitename}` : sitename;
     const description =  metadata.description || content.description || ""; // prettier-ignore
