@@ -4,9 +4,14 @@ import dragModuleStyles from "@/components/editor/tiptap/drag-styles.css?url";
 import { AuthProvider } from "@/providers/auth";
 import { InitialSessionControl } from "@/providers/auth/initial-session-control";
 import { ImageProvider } from "@/components/image/store";
+import { getLanguageFromSearch } from "@/i18n/action";
 
-export const Route = createFileRoute("/$lang/_auth")({
-  head: ({ params: { lang } }) => {
+export const Route = createFileRoute("/blog/_auth")({
+  loader: async ({ location: { search } }) => {
+    const lang = getLanguageFromSearch(search);
+    return { lang };
+  },
+  head: ({ loaderData: { lang } }) => {
     const seoData = seoTranslations[lang];
     return {
       meta: [

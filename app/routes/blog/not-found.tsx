@@ -4,10 +4,11 @@ import { useTranslation } from "react-i18next";
 import { Link } from "@/i18n/link";
 import { useEffect } from "react";
 import { useNavigate } from "@/i18n/navigate";
+import { getLanguageFromSearch } from "@/i18n/action";
 
-export const Route = createFileRoute("/$lang/not-found")({
-  loader: async ({ params }) => {
-    const lang = params.lang;
+export const Route = createFileRoute("/blog/not-found")({
+  loader: async ({ location: { search } }) => {
+    const lang = getLanguageFromSearch(search);
     return { lang };
   },
   head: ({ loaderData: { lang } }) => {
@@ -29,14 +30,6 @@ export const Route = createFileRoute("/$lang/not-found")({
 
 export function DefaultNotFound() {
   const { t } = useTranslation();
-  const { pathname } = useLocation();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (pathname.split("/")[1] !== "not-found") {
-      navigate({ to: "/not-found", replace: true });
-    }
-  }, []);
 
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">

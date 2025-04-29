@@ -1,3 +1,4 @@
+import { getLanguageFromSearch } from "@/i18n/action";
 import { seoTranslations } from "@/i18n/languages";
 import { Link } from "@/i18n/link";
 import { useAuth } from "@/providers/auth";
@@ -6,8 +7,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AlertCircle, Eye, EyeOff, Lock, LogIn, Mail } from "lucide-react";
 import { useState } from "react";
 
-export const Route = createFileRoute("/$lang/_auth/login")({
-  head: ({ params: { lang } }) => {
+export const Route = createFileRoute("/blog/_auth/login")({
+  loader: async ({ location: { search } }) => {
+    const lang = getLanguageFromSearch(search);
+    return { lang };
+  },
+  head: ({ loaderData: { lang } }) => {
     const seoData = seoTranslations[lang];
     return {
       meta: [

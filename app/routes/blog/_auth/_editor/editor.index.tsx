@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/providers/auth";
 
-export const Route = createFileRoute("/$lang/_auth/_editor/editor/")({
+export const Route = createFileRoute("/blog/_auth/_editor/editor/")({
   component: EditorDashboard,
 });
 

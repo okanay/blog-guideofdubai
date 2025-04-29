@@ -12,7 +12,7 @@ import {
   BlogFilters,
 } from "@/components/editor/pages/list";
 
-export const Route = createFileRoute("/$lang/_auth/_editor/editor/list")({
+export const Route = createFileRoute("/blog/_auth/_editor/editor/list")({
   component: BlogListPage,
 });
 

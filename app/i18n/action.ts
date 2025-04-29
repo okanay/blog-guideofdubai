@@ -49,7 +49,24 @@ export function getLanguageFromCookie(cookieHeader: string): Language | null {
     : null;
 }
 
-function parseCookies(cookieString: string): Record<string, string> {
+export function getLanguageFromSearch(
+  search: Record<string, unknown>,
+): Language {
+  // Search objesi varsa ve lang parametresi varsa
+  if (search && typeof search.lang === "string") {
+    const langParam = search.lang as Language;
+
+    // Desteklenen diller içinde mi kontrol et
+    if (SUPPORTED_LANGUAGES.includes(langParam)) {
+      return langParam;
+    }
+  }
+
+  // Geçerli bir dil parametresi yoksa varsayılan dili döndür
+  return DEFAULT_LANGUAGE;
+}
+
+export function parseCookies(cookieString: string): Record<string, string> {
   const cookies: Record<string, string> = {};
 
   if (!cookieString) return cookies;

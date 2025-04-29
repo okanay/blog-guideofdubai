@@ -3,11 +3,12 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { TiptapProvider } from "@/components/editor/tiptap/store";
 import { EditBlogHeader } from "@/components/editor/pages/edit/header";
 import { EditBlogPage } from "@/components/editor/pages/edit";
+import { getLanguageFromSearch } from "@/i18n/action";
 
-export const Route = createFileRoute("/$lang/_auth/_editor/editor/edit/$id")({
-  loader: async ({ params }) => {
+export const Route = createFileRoute("/blog/_auth/_editor/editor/edit/$id")({
+  loader: async ({ params, location: { search } }) => {
     const id = params.id;
-    const lang = params.lang;
+    const lang = getLanguageFromSearch(search);
 
     if (id === "0" || id === "" || id === undefined || id === null) {
       throw redirect({ replace: true, to: `/${lang}/editor` });
@@ -40,7 +41,7 @@ export const Route = createFileRoute("/$lang/_auth/_editor/editor/edit/$id")({
       throw redirect({ replace: true, to: `/${lang}/editor` });
     }
   },
-  head: ({ params: { lang } }) => {
+  head: ({ loaderData: { lang } }) => {
     const seoData = seoTranslations[lang];
     return {
       meta: [

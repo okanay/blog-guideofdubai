@@ -7,7 +7,7 @@ import { useSearch } from "@/components/search/store";
 import { toast } from "sonner";
 import { useNavigate } from "@/i18n/navigate";
 
-export const Route = createFileRoute("/$lang/_main/")({
+export const Route = createFileRoute("/blog/_main/")({
   component: RouteComponent,
 });
 
@@ -76,17 +76,38 @@ export function LatestBlogButton() {
       return;
     }
 
-    if (latestBlog) {
-      // Blog sayfasına yönlendir
-      navigate({ to: `/blog/${latestBlog.slug}` });
-    } else {
-      // Hala yükleniyor veya blog bulunamadı
+    if (!latestBlog) {
       toast.info("Blog yükleniyor veya bulunamadı", {
         description: "Lütfen biraz bekleyin veya daha sonra tekrar deneyin",
       });
     }
+    // latestBlog varsa, Link ile yönlendirme yapılacak, burada ekstra bir şey gerekmez
   };
 
+  // Blog slug'ı varsa, Link olarak render et
+  if (latestBlog && latestBlog.slug) {
+    return (
+      <div className="relative">
+        <Link
+          to={`/${latestBlog.slug}`}
+          className="flex w-fit items-center gap-1.5 rounded-full border border-zinc-200 bg-zinc-50 px-4 py-1 text-xs font-medium tracking-wide shadow-inner ring shadow-zinc-200/5 ring-zinc-200 ring-offset-2 transition-all duration-300 hover:bg-zinc-100 hover:shadow-md active:scale-95 disabled:cursor-wait disabled:opacity-70"
+          aria-disabled={isLoading}
+          tabIndex={isLoading ? -1 : 0}
+          onClick={isLoading ? (e) => e.preventDefault() : undefined}
+          // Eğer loading ise tıklamayı engelle
+        >
+          <span>Read Latest Blog</span>
+          {isLoading ? (
+            <Loader2 className="text-primary-dark size-3 animate-spin" />
+          ) : (
+            <BookOpenText className="text-primary-dark size-3 translate-y-[0.5px]" />
+          )}
+        </Link>
+      </div>
+    );
+  }
+
+  // Blog yoksa, klasik button olarak render et
   return (
     <div className="relative">
       <button
@@ -266,7 +287,7 @@ export default PopularBlogSection;
 function BlogCard({ imageUrl, category, title, author, date, likes, index }) {
   return (
     <div className="group relative w-72 cursor-pointer overflow-hidden rounded-lg border border-zinc-300 sm:w-96 xl:w-[25vw]">
-      <Link to={"/blog"}>
+      <Link to={""}>
         {/* Card Image */}
         <div className="relative h-72 w-full sm:h-96">
           <img
@@ -352,7 +373,7 @@ function BlogPostLayout() {
 function SelectedFeaturePost() {
   return (
     <div className="group relative h-72 w-full overflow-hidden rounded-lg sm:h-[23.1rem]">
-      <Link to={"/blog"}>
+      <Link to={""}>
         <img
           src="https://images.project-test.info/1.webp"
           alt="Office workspace with computers"
@@ -408,7 +429,7 @@ function OtherFeaturedPosts() {
       <div className="flex flex-col gap-4">
         {featuredPosts.map((post) => (
           <Link
-            to={"/blog"}
+            to={""}
             key={post.id}
             className="flex gap-4 rounded border border-transparent bg-zinc-50 ring ring-zinc-50 transition-all duration-300 ease-in-out hover:bg-zinc-100 hover:ring-zinc-300 hover:ring-offset-2 focus:bg-zinc-100 focus:ring-zinc-300 focus:ring-offset-2 focus:outline-none"
           >
@@ -481,7 +502,7 @@ function RecentPosts() {
       <div className="border-l-primary-cover mb-6 flex items-center justify-between rounded border border-l-2 border-zinc-100 bg-zinc-100 px-2 py-1">
         <h2 className="text-2xl font-semibold">Recent Posts</h2>
         <Link
-          to="/blog"
+          to=""
           className="text-color-primary border-primary-cover bg-primary flex h-11 items-center justify-center rounded-xs border px-6 text-center text-sm font-bold tracking-wide transition-[opacity] duration-500 ease-in-out hover:opacity-75 focus:opacity-75 focus:outline-none"
         >
           All Posts
@@ -491,7 +512,7 @@ function RecentPosts() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {recentPosts.map((post) => (
           <Link
-            to={"/blog"}
+            to={""}
             key={post.id}
             className="group flex flex-col overflow-hidden rounded-lg border border-zinc-200 bg-zinc-50 ring ring-zinc-50 transition-all hover:ring-zinc-300 hover:ring-offset-2 focus:ring-zinc-300 focus:ring-offset-2 focus:outline-none"
           >

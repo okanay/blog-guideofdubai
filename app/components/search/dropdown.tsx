@@ -5,8 +5,6 @@ import { Clock, Search, X, ArrowRight } from "lucide-react";
 import { LANGUAGE_DICTONARY } from "@/i18n/config";
 import { formatDate } from "@/components/editor/helper";
 
-// app/components/search/dropdown.tsx dosyasındaki SearchResultsDropdown bileşeni güncellenmiş hali
-
 export function SearchResultsDropdown() {
   const {
     isDropdownOpen,
@@ -157,7 +155,7 @@ export function SearchResultsDropdown() {
                   className="group relative transition-colors duration-200 hover:bg-zinc-50"
                 >
                   <Link
-                    to={`/blog/${blog.slug}`}
+                    to={`/${blog.slug}`}
                     onClick={closeDropdown}
                     className="block p-3"
                   >
@@ -237,7 +235,7 @@ export function SearchResultsDropdown() {
                       >
                         <td className="max-w-md px-4 py-3 whitespace-nowrap">
                           <Link
-                            to={`/blog/${blog.slug}`}
+                            to={`/${blog.slug}`}
                             onClick={closeDropdown}
                             className="group flex items-center"
                           >

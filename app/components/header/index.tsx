@@ -63,7 +63,7 @@ export const RootHeader = () => {
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-1.5">
         <Link
-          to="/"
+          to=""
           aria-label="Guide of Dubai - Return to homepage"
           className="transition-opacity duration-300 focus:opacity-75 focus:outline-none"
         >

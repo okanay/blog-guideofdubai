@@ -3,9 +3,14 @@ import { seoTranslations } from "@/i18n/languages";
 import dragModuleStyles from "@/components/editor/tiptap/drag-styles.css?url";
 import ProtectedRoute from "@/providers/auth/protected-route";
 import { EditorProvider } from "@/components/editor/store";
+import { getLanguageFromSearch } from "@/i18n/action";
 
-export const Route = createFileRoute("/$lang/_auth/_editor")({
-  head: ({ params: { lang } }) => {
+export const Route = createFileRoute("/blog/_auth/_editor")({
+  loader: async ({ location: { search } }) => {
+    const lang = getLanguageFromSearch(search);
+    return { lang };
+  },
+  head: ({ loaderData: { lang } }) => {
     const seoData = seoTranslations[lang];
     return {
       meta: [

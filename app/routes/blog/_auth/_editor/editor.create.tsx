@@ -4,9 +4,16 @@ import { TiptapProvider } from "@/components/editor/tiptap/store";
 import { CreateBlogHeader } from "@/components/editor/pages/create/header";
 import { CreateBlogPage } from "@/components/editor/pages/create";
 import DummyText from "@/components/editor/tiptap/dummy";
+import { getLanguageFromSearch } from "@/i18n/action";
 
-export const Route = createFileRoute("/$lang/_auth/_editor/editor/create")({
-  head: ({ params: { lang } }) => {
+export const Route = createFileRoute("/blog/_auth/_editor/editor/create")({
+  loader: async ({ location: { search } }) => {
+    const lang = getLanguageFromSearch(search);
+    return {
+      lang: lang,
+    };
+  },
+  head: ({ loaderData: { lang } }) => {
     const seoData = seoTranslations[lang];
     return {
       meta: [

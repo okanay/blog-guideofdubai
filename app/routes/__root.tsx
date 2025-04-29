@@ -1,5 +1,5 @@
 import { HeadContent, Outlet, Scripts, createRootRoute, redirect } from "@tanstack/react-router"; // prettier-ignore
-import { LANGUAGE_DIRECTIONS, SUPPORTED_LANGUAGES } from "@/i18n/config";
+import { LANGUAGE_DICTONARY, SUPPORTED_LANGUAGES } from "@/i18n/config";
 import LanguageProvider from "@/i18n/provider";
 import { detectLanguage } from "@/i18n/action";
 
@@ -8,41 +8,41 @@ import { RootProviders } from "@/providers";
 
 export const Route = createRootRoute({
   loader: async (ctx) => {
-    // URL'den dil parametresini kontrol et
-    const pathSegments = ctx.location.pathname.split("/");
-    const langParam = pathSegments[1];
-    const isValidLangParam = SUPPORTED_LANGUAGES.includes(
-      langParam as Language,
-    );
+    // URL'den lang parametresini al
+    const searchParams = new URLSearchParams(ctx.location.search);
+    const langParam = searchParams.get("lang") as Language;
 
-    // Eğer URL içinde geçerli bir dil parametresi yoksa
-    if (ctx.location.pathname === "/" || !isValidLangParam) {
+    // "/" kontrolü.
+    if (ctx.location.href === "/") {
+      throw redirect({
+        to: `/blog`,
+        replace: true,
+      });
+    }
+
+    // Lang parametresi var mı ve desteklenen bir dil mi kontrol et
+    const isValidLangParam =
+      langParam && SUPPORTED_LANGUAGES.includes(langParam);
+
+    // Eğer lang parametresi yoksa veya geçersizse, dil algıla ve yönlendir
+    if (!isValidLangParam) {
+      // Sunucu tarafında dil algıla (mevcut metodu kullan)
       const detectedLanguage = await detectLanguage();
 
-      // Kök dizin ise dil yönlendirmesi yap
-      if (ctx.location.pathname === "/") {
-        throw redirect({
-          to: `/${detectedLanguage}`,
-        });
-      }
+      // Mevcut search parametrelerini koru ve lang ekle/güncelle
+      searchParams.set("lang", detectedLanguage);
 
-      // Geçersiz dil parametresi ise ve başka bir path ise
-      // Aynı pathi doğru dille yönlendir
-      if (!isValidLangParam && pathSegments.length > 1) {
-        const restOfPath = pathSegments.slice(1).join("/");
-        throw redirect({
-          to: `/${detectedLanguage}/${restOfPath}`,
-        });
-      }
-      return {
-        lang: detectedLanguage,
-      };
-    } else {
-      // Geçerli bir dil parametresi varsa, direkt kullan
-      return {
-        lang: langParam as Language,
-      };
+      // Aynı path'e lang parametresi eklenmiş halini yönlendir
+      throw redirect({
+        to: `${ctx.location.pathname}${searchParams.toString() ? "?" + searchParams.toString() : ""}`,
+        replace: true, // Tarayıcı geçmişinde eski URL'yi değiştir
+      });
     }
+
+    // Lang parametresi varsa ve geçerliyse, lang değerini dön
+    return {
+      lang: langParam,
+    };
   },
   head: () => {
     return {
@@ -140,9 +140,10 @@ export const Route = createRootRoute({
 
 function RootDocument({ children }: Readonly<{ children: React.ReactNode }>) {
   const { lang } = Route.useLoaderData();
+  const language = LANGUAGE_DICTONARY.find((entry) => entry.value === lang);
 
   return (
-    <html lang={lang} dir={LANGUAGE_DIRECTIONS[lang]}>
+    <html lang={language.seo.locale} dir={language.seo.direction}>
       <head>
         <HeadContent />
       </head>

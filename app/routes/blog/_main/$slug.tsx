@@ -12,11 +12,12 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "@/i18n/link";
 import { formatDate } from "@/components/editor/helper";
 import { LANGUAGE_DICTONARY } from "@/i18n/config";
+import { getLanguageFromSearch } from "@/i18n/action";
 
-export const Route = createFileRoute("/$lang/_main/blog/$slug")({
-  loader: async ({ params }) => {
+export const Route = createFileRoute("/blog/_main/$slug")({
+  loader: async ({ params, location: { search } }) => {
     const slug = params.slug;
-    const lang = params.lang;
+    const lang = getLanguageFromSearch(search);
 
     try {
       const response = await fetch(
@@ -31,7 +32,9 @@ export const Route = createFileRoute("/$lang/_main/blog/$slug")({
 
       const data = await response.json();
       if (data.blog === null || data.blog === undefined) {
-        throw redirect({ replace: true, to: `/${lang}/not-found` });
+        throw redirect({
+          to: `/blog/not-found`,
+        });
       }
 
       return {
@@ -40,7 +43,9 @@ export const Route = createFileRoute("/$lang/_main/blog/$slug")({
         blog: data.blog,
       };
     } catch (error) {
-      throw redirect({ replace: true, to: `/${lang}/not-found` });
+      throw redirect({
+        to: `/blog/not-found`,
+      });
     }
   },
   head: ({ loaderData: { blog, lang, slug } }) => {

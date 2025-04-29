@@ -13,108 +13,94 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as LangNotFoundImport } from './routes/$lang/not-found'
-import { Route as LangMainRouteImport } from './routes/$lang/_main/route'
-import { Route as LangAuthRouteImport } from './routes/$lang/_auth/route'
-import { Route as LangMainIndexImport } from './routes/$lang/_main/index'
-import { Route as LangAuthLoginImport } from './routes/$lang/_auth/login'
-import { Route as LangMainBlogRouteImport } from './routes/$lang/_main/blog.route'
-import { Route as LangAuthEditorRouteImport } from './routes/$lang/_auth/_editor/route'
-import { Route as LangMainBlogIndexImport } from './routes/$lang/_main/blog.index'
-import { Route as LangMainBlogSlugImport } from './routes/$lang/_main/blog.$slug'
-import { Route as LangAuthEditorEditorIndexImport } from './routes/$lang/_auth/_editor/editor.index'
-import { Route as LangAuthEditorEditorListImport } from './routes/$lang/_auth/_editor/editor.list'
-import { Route as LangAuthEditorEditorCreateImport } from './routes/$lang/_auth/_editor/editor.create'
-import { Route as LangAuthEditorEditorEditIdImport } from './routes/$lang/_auth/_editor/editor.edit.$id'
+import { Route as BlogNotFoundImport } from './routes/blog/not-found'
+import { Route as BlogMainRouteImport } from './routes/blog/_main/route'
+import { Route as BlogAuthRouteImport } from './routes/blog/_auth/route'
+import { Route as BlogMainIndexImport } from './routes/blog/_main/index'
+import { Route as BlogMainSlugImport } from './routes/blog/_main/$slug'
+import { Route as BlogAuthLoginImport } from './routes/blog/_auth/login'
+import { Route as BlogAuthEditorRouteImport } from './routes/blog/_auth/_editor/route'
+import { Route as BlogAuthEditorEditorIndexImport } from './routes/blog/_auth/_editor/editor.index'
+import { Route as BlogAuthEditorEditorListImport } from './routes/blog/_auth/_editor/editor.list'
+import { Route as BlogAuthEditorEditorCreateImport } from './routes/blog/_auth/_editor/editor.create'
+import { Route as BlogAuthEditorEditorEditIdImport } from './routes/blog/_auth/_editor/editor.edit.$id'
 
 // Create Virtual Routes
 
-const LangImport = createFileRoute('/$lang')()
+const BlogImport = createFileRoute('/blog')()
 
 // Create/Update Routes
 
-const LangRoute = LangImport.update({
-  id: '/$lang',
-  path: '/$lang',
+const BlogRoute = BlogImport.update({
+  id: '/blog',
+  path: '/blog',
   getParentRoute: () => rootRoute,
 } as any)
 
-const LangNotFoundRoute = LangNotFoundImport.update({
+const BlogNotFoundRoute = BlogNotFoundImport.update({
   id: '/not-found',
   path: '/not-found',
-  getParentRoute: () => LangRoute,
+  getParentRoute: () => BlogRoute,
 } as any)
 
-const LangMainRouteRoute = LangMainRouteImport.update({
+const BlogMainRouteRoute = BlogMainRouteImport.update({
   id: '/_main',
-  getParentRoute: () => LangRoute,
+  getParentRoute: () => BlogRoute,
 } as any)
 
-const LangAuthRouteRoute = LangAuthRouteImport.update({
+const BlogAuthRouteRoute = BlogAuthRouteImport.update({
   id: '/_auth',
-  getParentRoute: () => LangRoute,
+  getParentRoute: () => BlogRoute,
 } as any)
 
-const LangMainIndexRoute = LangMainIndexImport.update({
+const BlogMainIndexRoute = BlogMainIndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => LangMainRouteRoute,
+  getParentRoute: () => BlogMainRouteRoute,
 } as any)
 
-const LangAuthLoginRoute = LangAuthLoginImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => LangAuthRouteRoute,
-} as any)
-
-const LangMainBlogRouteRoute = LangMainBlogRouteImport.update({
-  id: '/blog',
-  path: '/blog',
-  getParentRoute: () => LangMainRouteRoute,
-} as any)
-
-const LangAuthEditorRouteRoute = LangAuthEditorRouteImport.update({
-  id: '/_editor',
-  getParentRoute: () => LangAuthRouteRoute,
-} as any)
-
-const LangMainBlogIndexRoute = LangMainBlogIndexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => LangMainBlogRouteRoute,
-} as any)
-
-const LangMainBlogSlugRoute = LangMainBlogSlugImport.update({
+const BlogMainSlugRoute = BlogMainSlugImport.update({
   id: '/$slug',
   path: '/$slug',
-  getParentRoute: () => LangMainBlogRouteRoute,
+  getParentRoute: () => BlogMainRouteRoute,
 } as any)
 
-const LangAuthEditorEditorIndexRoute = LangAuthEditorEditorIndexImport.update({
+const BlogAuthLoginRoute = BlogAuthLoginImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => BlogAuthRouteRoute,
+} as any)
+
+const BlogAuthEditorRouteRoute = BlogAuthEditorRouteImport.update({
+  id: '/_editor',
+  getParentRoute: () => BlogAuthRouteRoute,
+} as any)
+
+const BlogAuthEditorEditorIndexRoute = BlogAuthEditorEditorIndexImport.update({
   id: '/editor/',
   path: '/editor/',
-  getParentRoute: () => LangAuthEditorRouteRoute,
+  getParentRoute: () => BlogAuthEditorRouteRoute,
 } as any)
 
-const LangAuthEditorEditorListRoute = LangAuthEditorEditorListImport.update({
+const BlogAuthEditorEditorListRoute = BlogAuthEditorEditorListImport.update({
   id: '/editor/list',
   path: '/editor/list',
-  getParentRoute: () => LangAuthEditorRouteRoute,
+  getParentRoute: () => BlogAuthEditorRouteRoute,
 } as any)
 
-const LangAuthEditorEditorCreateRoute = LangAuthEditorEditorCreateImport.update(
+const BlogAuthEditorEditorCreateRoute = BlogAuthEditorEditorCreateImport.update(
   {
     id: '/editor/create',
     path: '/editor/create',
-    getParentRoute: () => LangAuthEditorRouteRoute,
+    getParentRoute: () => BlogAuthEditorRouteRoute,
   } as any,
 )
 
-const LangAuthEditorEditorEditIdRoute = LangAuthEditorEditorEditIdImport.update(
+const BlogAuthEditorEditorEditIdRoute = BlogAuthEditorEditorEditIdImport.update(
   {
     id: '/editor/edit/$id',
     path: '/editor/edit/$id',
-    getParentRoute: () => LangAuthEditorRouteRoute,
+    getParentRoute: () => BlogAuthEditorRouteRoute,
   } as any,
 )
 
@@ -122,275 +108,238 @@ const LangAuthEditorEditorEditIdRoute = LangAuthEditorEditorEditIdImport.update(
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/$lang': {
-      id: '/$lang'
-      path: '/$lang'
-      fullPath: '/$lang'
-      preLoaderRoute: typeof LangImport
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogImport
       parentRoute: typeof rootRoute
     }
-    '/$lang/_auth': {
-      id: '/$lang/_auth'
-      path: '/$lang'
-      fullPath: '/$lang'
-      preLoaderRoute: typeof LangAuthRouteImport
-      parentRoute: typeof LangRoute
-    }
-    '/$lang/_main': {
-      id: '/$lang/_main'
-      path: ''
-      fullPath: '/$lang'
-      preLoaderRoute: typeof LangMainRouteImport
-      parentRoute: typeof LangImport
-    }
-    '/$lang/not-found': {
-      id: '/$lang/not-found'
-      path: '/not-found'
-      fullPath: '/$lang/not-found'
-      preLoaderRoute: typeof LangNotFoundImport
-      parentRoute: typeof LangImport
-    }
-    '/$lang/_auth/_editor': {
-      id: '/$lang/_auth/_editor'
-      path: ''
-      fullPath: '/$lang'
-      preLoaderRoute: typeof LangAuthEditorRouteImport
-      parentRoute: typeof LangAuthRouteImport
-    }
-    '/$lang/_main/blog': {
-      id: '/$lang/_main/blog'
+    '/blog/_auth': {
+      id: '/blog/_auth'
       path: '/blog'
-      fullPath: '/$lang/blog'
-      preLoaderRoute: typeof LangMainBlogRouteImport
-      parentRoute: typeof LangMainRouteImport
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogAuthRouteImport
+      parentRoute: typeof BlogRoute
     }
-    '/$lang/_auth/login': {
-      id: '/$lang/_auth/login'
+    '/blog/_main': {
+      id: '/blog/_main'
+      path: ''
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogMainRouteImport
+      parentRoute: typeof BlogImport
+    }
+    '/blog/not-found': {
+      id: '/blog/not-found'
+      path: '/not-found'
+      fullPath: '/blog/not-found'
+      preLoaderRoute: typeof BlogNotFoundImport
+      parentRoute: typeof BlogImport
+    }
+    '/blog/_auth/_editor': {
+      id: '/blog/_auth/_editor'
+      path: ''
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogAuthEditorRouteImport
+      parentRoute: typeof BlogAuthRouteImport
+    }
+    '/blog/_auth/login': {
+      id: '/blog/_auth/login'
       path: '/login'
-      fullPath: '/$lang/login'
-      preLoaderRoute: typeof LangAuthLoginImport
-      parentRoute: typeof LangAuthRouteImport
+      fullPath: '/blog/login'
+      preLoaderRoute: typeof BlogAuthLoginImport
+      parentRoute: typeof BlogAuthRouteImport
     }
-    '/$lang/_main/': {
-      id: '/$lang/_main/'
-      path: '/'
-      fullPath: '/$lang/'
-      preLoaderRoute: typeof LangMainIndexImport
-      parentRoute: typeof LangMainRouteImport
-    }
-    '/$lang/_main/blog/$slug': {
-      id: '/$lang/_main/blog/$slug'
+    '/blog/_main/$slug': {
+      id: '/blog/_main/$slug'
       path: '/$slug'
-      fullPath: '/$lang/blog/$slug'
-      preLoaderRoute: typeof LangMainBlogSlugImport
-      parentRoute: typeof LangMainBlogRouteImport
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogMainSlugImport
+      parentRoute: typeof BlogMainRouteImport
     }
-    '/$lang/_main/blog/': {
-      id: '/$lang/_main/blog/'
+    '/blog/_main/': {
+      id: '/blog/_main/'
       path: '/'
-      fullPath: '/$lang/blog/'
-      preLoaderRoute: typeof LangMainBlogIndexImport
-      parentRoute: typeof LangMainBlogRouteImport
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogMainIndexImport
+      parentRoute: typeof BlogMainRouteImport
     }
-    '/$lang/_auth/_editor/editor/create': {
-      id: '/$lang/_auth/_editor/editor/create'
+    '/blog/_auth/_editor/editor/create': {
+      id: '/blog/_auth/_editor/editor/create'
       path: '/editor/create'
-      fullPath: '/$lang/editor/create'
-      preLoaderRoute: typeof LangAuthEditorEditorCreateImport
-      parentRoute: typeof LangAuthEditorRouteImport
+      fullPath: '/blog/editor/create'
+      preLoaderRoute: typeof BlogAuthEditorEditorCreateImport
+      parentRoute: typeof BlogAuthEditorRouteImport
     }
-    '/$lang/_auth/_editor/editor/list': {
-      id: '/$lang/_auth/_editor/editor/list'
+    '/blog/_auth/_editor/editor/list': {
+      id: '/blog/_auth/_editor/editor/list'
       path: '/editor/list'
-      fullPath: '/$lang/editor/list'
-      preLoaderRoute: typeof LangAuthEditorEditorListImport
-      parentRoute: typeof LangAuthEditorRouteImport
+      fullPath: '/blog/editor/list'
+      preLoaderRoute: typeof BlogAuthEditorEditorListImport
+      parentRoute: typeof BlogAuthEditorRouteImport
     }
-    '/$lang/_auth/_editor/editor/': {
-      id: '/$lang/_auth/_editor/editor/'
+    '/blog/_auth/_editor/editor/': {
+      id: '/blog/_auth/_editor/editor/'
       path: '/editor'
-      fullPath: '/$lang/editor'
-      preLoaderRoute: typeof LangAuthEditorEditorIndexImport
-      parentRoute: typeof LangAuthEditorRouteImport
+      fullPath: '/blog/editor'
+      preLoaderRoute: typeof BlogAuthEditorEditorIndexImport
+      parentRoute: typeof BlogAuthEditorRouteImport
     }
-    '/$lang/_auth/_editor/editor/edit/$id': {
-      id: '/$lang/_auth/_editor/editor/edit/$id'
+    '/blog/_auth/_editor/editor/edit/$id': {
+      id: '/blog/_auth/_editor/editor/edit/$id'
       path: '/editor/edit/$id'
-      fullPath: '/$lang/editor/edit/$id'
-      preLoaderRoute: typeof LangAuthEditorEditorEditIdImport
-      parentRoute: typeof LangAuthEditorRouteImport
+      fullPath: '/blog/editor/edit/$id'
+      preLoaderRoute: typeof BlogAuthEditorEditorEditIdImport
+      parentRoute: typeof BlogAuthEditorRouteImport
     }
   }
 }
 
 // Create and export the route tree
 
-interface LangAuthEditorRouteRouteChildren {
-  LangAuthEditorEditorCreateRoute: typeof LangAuthEditorEditorCreateRoute
-  LangAuthEditorEditorListRoute: typeof LangAuthEditorEditorListRoute
-  LangAuthEditorEditorIndexRoute: typeof LangAuthEditorEditorIndexRoute
-  LangAuthEditorEditorEditIdRoute: typeof LangAuthEditorEditorEditIdRoute
+interface BlogAuthEditorRouteRouteChildren {
+  BlogAuthEditorEditorCreateRoute: typeof BlogAuthEditorEditorCreateRoute
+  BlogAuthEditorEditorListRoute: typeof BlogAuthEditorEditorListRoute
+  BlogAuthEditorEditorIndexRoute: typeof BlogAuthEditorEditorIndexRoute
+  BlogAuthEditorEditorEditIdRoute: typeof BlogAuthEditorEditorEditIdRoute
 }
 
-const LangAuthEditorRouteRouteChildren: LangAuthEditorRouteRouteChildren = {
-  LangAuthEditorEditorCreateRoute: LangAuthEditorEditorCreateRoute,
-  LangAuthEditorEditorListRoute: LangAuthEditorEditorListRoute,
-  LangAuthEditorEditorIndexRoute: LangAuthEditorEditorIndexRoute,
-  LangAuthEditorEditorEditIdRoute: LangAuthEditorEditorEditIdRoute,
+const BlogAuthEditorRouteRouteChildren: BlogAuthEditorRouteRouteChildren = {
+  BlogAuthEditorEditorCreateRoute: BlogAuthEditorEditorCreateRoute,
+  BlogAuthEditorEditorListRoute: BlogAuthEditorEditorListRoute,
+  BlogAuthEditorEditorIndexRoute: BlogAuthEditorEditorIndexRoute,
+  BlogAuthEditorEditorEditIdRoute: BlogAuthEditorEditorEditIdRoute,
 }
 
-const LangAuthEditorRouteRouteWithChildren =
-  LangAuthEditorRouteRoute._addFileChildren(LangAuthEditorRouteRouteChildren)
+const BlogAuthEditorRouteRouteWithChildren =
+  BlogAuthEditorRouteRoute._addFileChildren(BlogAuthEditorRouteRouteChildren)
 
-interface LangAuthRouteRouteChildren {
-  LangAuthEditorRouteRoute: typeof LangAuthEditorRouteRouteWithChildren
-  LangAuthLoginRoute: typeof LangAuthLoginRoute
+interface BlogAuthRouteRouteChildren {
+  BlogAuthEditorRouteRoute: typeof BlogAuthEditorRouteRouteWithChildren
+  BlogAuthLoginRoute: typeof BlogAuthLoginRoute
 }
 
-const LangAuthRouteRouteChildren: LangAuthRouteRouteChildren = {
-  LangAuthEditorRouteRoute: LangAuthEditorRouteRouteWithChildren,
-  LangAuthLoginRoute: LangAuthLoginRoute,
+const BlogAuthRouteRouteChildren: BlogAuthRouteRouteChildren = {
+  BlogAuthEditorRouteRoute: BlogAuthEditorRouteRouteWithChildren,
+  BlogAuthLoginRoute: BlogAuthLoginRoute,
 }
 
-const LangAuthRouteRouteWithChildren = LangAuthRouteRoute._addFileChildren(
-  LangAuthRouteRouteChildren,
+const BlogAuthRouteRouteWithChildren = BlogAuthRouteRoute._addFileChildren(
+  BlogAuthRouteRouteChildren,
 )
 
-interface LangMainBlogRouteRouteChildren {
-  LangMainBlogSlugRoute: typeof LangMainBlogSlugRoute
-  LangMainBlogIndexRoute: typeof LangMainBlogIndexRoute
+interface BlogMainRouteRouteChildren {
+  BlogMainSlugRoute: typeof BlogMainSlugRoute
+  BlogMainIndexRoute: typeof BlogMainIndexRoute
 }
 
-const LangMainBlogRouteRouteChildren: LangMainBlogRouteRouteChildren = {
-  LangMainBlogSlugRoute: LangMainBlogSlugRoute,
-  LangMainBlogIndexRoute: LangMainBlogIndexRoute,
+const BlogMainRouteRouteChildren: BlogMainRouteRouteChildren = {
+  BlogMainSlugRoute: BlogMainSlugRoute,
+  BlogMainIndexRoute: BlogMainIndexRoute,
 }
 
-const LangMainBlogRouteRouteWithChildren =
-  LangMainBlogRouteRoute._addFileChildren(LangMainBlogRouteRouteChildren)
-
-interface LangMainRouteRouteChildren {
-  LangMainBlogRouteRoute: typeof LangMainBlogRouteRouteWithChildren
-  LangMainIndexRoute: typeof LangMainIndexRoute
-}
-
-const LangMainRouteRouteChildren: LangMainRouteRouteChildren = {
-  LangMainBlogRouteRoute: LangMainBlogRouteRouteWithChildren,
-  LangMainIndexRoute: LangMainIndexRoute,
-}
-
-const LangMainRouteRouteWithChildren = LangMainRouteRoute._addFileChildren(
-  LangMainRouteRouteChildren,
+const BlogMainRouteRouteWithChildren = BlogMainRouteRoute._addFileChildren(
+  BlogMainRouteRouteChildren,
 )
 
-interface LangRouteChildren {
-  LangAuthRouteRoute: typeof LangAuthRouteRouteWithChildren
-  LangMainRouteRoute: typeof LangMainRouteRouteWithChildren
-  LangNotFoundRoute: typeof LangNotFoundRoute
+interface BlogRouteChildren {
+  BlogAuthRouteRoute: typeof BlogAuthRouteRouteWithChildren
+  BlogMainRouteRoute: typeof BlogMainRouteRouteWithChildren
+  BlogNotFoundRoute: typeof BlogNotFoundRoute
 }
 
-const LangRouteChildren: LangRouteChildren = {
-  LangAuthRouteRoute: LangAuthRouteRouteWithChildren,
-  LangMainRouteRoute: LangMainRouteRouteWithChildren,
-  LangNotFoundRoute: LangNotFoundRoute,
+const BlogRouteChildren: BlogRouteChildren = {
+  BlogAuthRouteRoute: BlogAuthRouteRouteWithChildren,
+  BlogMainRouteRoute: BlogMainRouteRouteWithChildren,
+  BlogNotFoundRoute: BlogNotFoundRoute,
 }
 
-const LangRouteWithChildren = LangRoute._addFileChildren(LangRouteChildren)
+const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
 export interface FileRoutesByFullPath {
-  '/$lang': typeof LangAuthEditorRouteRouteWithChildren
-  '/$lang/not-found': typeof LangNotFoundRoute
-  '/$lang/blog': typeof LangMainBlogRouteRouteWithChildren
-  '/$lang/login': typeof LangAuthLoginRoute
-  '/$lang/': typeof LangMainIndexRoute
-  '/$lang/blog/$slug': typeof LangMainBlogSlugRoute
-  '/$lang/blog/': typeof LangMainBlogIndexRoute
-  '/$lang/editor/create': typeof LangAuthEditorEditorCreateRoute
-  '/$lang/editor/list': typeof LangAuthEditorEditorListRoute
-  '/$lang/editor': typeof LangAuthEditorEditorIndexRoute
-  '/$lang/editor/edit/$id': typeof LangAuthEditorEditorEditIdRoute
+  '/blog': typeof BlogAuthEditorRouteRouteWithChildren
+  '/blog/not-found': typeof BlogNotFoundRoute
+  '/blog/login': typeof BlogAuthLoginRoute
+  '/blog/$slug': typeof BlogMainSlugRoute
+  '/blog/': typeof BlogMainIndexRoute
+  '/blog/editor/create': typeof BlogAuthEditorEditorCreateRoute
+  '/blog/editor/list': typeof BlogAuthEditorEditorListRoute
+  '/blog/editor': typeof BlogAuthEditorEditorIndexRoute
+  '/blog/editor/edit/$id': typeof BlogAuthEditorEditorEditIdRoute
 }
 
 export interface FileRoutesByTo {
-  '/$lang': typeof LangMainIndexRoute
-  '/$lang/not-found': typeof LangNotFoundRoute
-  '/$lang/login': typeof LangAuthLoginRoute
-  '/$lang/blog/$slug': typeof LangMainBlogSlugRoute
-  '/$lang/blog': typeof LangMainBlogIndexRoute
-  '/$lang/editor/create': typeof LangAuthEditorEditorCreateRoute
-  '/$lang/editor/list': typeof LangAuthEditorEditorListRoute
-  '/$lang/editor': typeof LangAuthEditorEditorIndexRoute
-  '/$lang/editor/edit/$id': typeof LangAuthEditorEditorEditIdRoute
+  '/blog': typeof BlogMainIndexRoute
+  '/blog/not-found': typeof BlogNotFoundRoute
+  '/blog/login': typeof BlogAuthLoginRoute
+  '/blog/$slug': typeof BlogMainSlugRoute
+  '/blog/editor/create': typeof BlogAuthEditorEditorCreateRoute
+  '/blog/editor/list': typeof BlogAuthEditorEditorListRoute
+  '/blog/editor': typeof BlogAuthEditorEditorIndexRoute
+  '/blog/editor/edit/$id': typeof BlogAuthEditorEditorEditIdRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/$lang': typeof LangRouteWithChildren
-  '/$lang/_auth': typeof LangAuthRouteRouteWithChildren
-  '/$lang/_main': typeof LangMainRouteRouteWithChildren
-  '/$lang/not-found': typeof LangNotFoundRoute
-  '/$lang/_auth/_editor': typeof LangAuthEditorRouteRouteWithChildren
-  '/$lang/_main/blog': typeof LangMainBlogRouteRouteWithChildren
-  '/$lang/_auth/login': typeof LangAuthLoginRoute
-  '/$lang/_main/': typeof LangMainIndexRoute
-  '/$lang/_main/blog/$slug': typeof LangMainBlogSlugRoute
-  '/$lang/_main/blog/': typeof LangMainBlogIndexRoute
-  '/$lang/_auth/_editor/editor/create': typeof LangAuthEditorEditorCreateRoute
-  '/$lang/_auth/_editor/editor/list': typeof LangAuthEditorEditorListRoute
-  '/$lang/_auth/_editor/editor/': typeof LangAuthEditorEditorIndexRoute
-  '/$lang/_auth/_editor/editor/edit/$id': typeof LangAuthEditorEditorEditIdRoute
+  '/blog': typeof BlogRouteWithChildren
+  '/blog/_auth': typeof BlogAuthRouteRouteWithChildren
+  '/blog/_main': typeof BlogMainRouteRouteWithChildren
+  '/blog/not-found': typeof BlogNotFoundRoute
+  '/blog/_auth/_editor': typeof BlogAuthEditorRouteRouteWithChildren
+  '/blog/_auth/login': typeof BlogAuthLoginRoute
+  '/blog/_main/$slug': typeof BlogMainSlugRoute
+  '/blog/_main/': typeof BlogMainIndexRoute
+  '/blog/_auth/_editor/editor/create': typeof BlogAuthEditorEditorCreateRoute
+  '/blog/_auth/_editor/editor/list': typeof BlogAuthEditorEditorListRoute
+  '/blog/_auth/_editor/editor/': typeof BlogAuthEditorEditorIndexRoute
+  '/blog/_auth/_editor/editor/edit/$id': typeof BlogAuthEditorEditorEditIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/$lang'
-    | '/$lang/not-found'
-    | '/$lang/blog'
-    | '/$lang/login'
-    | '/$lang/'
-    | '/$lang/blog/$slug'
-    | '/$lang/blog/'
-    | '/$lang/editor/create'
-    | '/$lang/editor/list'
-    | '/$lang/editor'
-    | '/$lang/editor/edit/$id'
+    | '/blog'
+    | '/blog/not-found'
+    | '/blog/login'
+    | '/blog/$slug'
+    | '/blog/'
+    | '/blog/editor/create'
+    | '/blog/editor/list'
+    | '/blog/editor'
+    | '/blog/editor/edit/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/$lang'
-    | '/$lang/not-found'
-    | '/$lang/login'
-    | '/$lang/blog/$slug'
-    | '/$lang/blog'
-    | '/$lang/editor/create'
-    | '/$lang/editor/list'
-    | '/$lang/editor'
-    | '/$lang/editor/edit/$id'
+    | '/blog'
+    | '/blog/not-found'
+    | '/blog/login'
+    | '/blog/$slug'
+    | '/blog/editor/create'
+    | '/blog/editor/list'
+    | '/blog/editor'
+    | '/blog/editor/edit/$id'
   id:
     | '__root__'
-    | '/$lang'
-    | '/$lang/_auth'
-    | '/$lang/_main'
-    | '/$lang/not-found'
-    | '/$lang/_auth/_editor'
-    | '/$lang/_main/blog'
-    | '/$lang/_auth/login'
-    | '/$lang/_main/'
-    | '/$lang/_main/blog/$slug'
-    | '/$lang/_main/blog/'
-    | '/$lang/_auth/_editor/editor/create'
-    | '/$lang/_auth/_editor/editor/list'
-    | '/$lang/_auth/_editor/editor/'
-    | '/$lang/_auth/_editor/editor/edit/$id'
+    | '/blog'
+    | '/blog/_auth'
+    | '/blog/_main'
+    | '/blog/not-found'
+    | '/blog/_auth/_editor'
+    | '/blog/_auth/login'
+    | '/blog/_main/$slug'
+    | '/blog/_main/'
+    | '/blog/_auth/_editor/editor/create'
+    | '/blog/_auth/_editor/editor/list'
+    | '/blog/_auth/_editor/editor/'
+    | '/blog/_auth/_editor/editor/edit/$id'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  LangRoute: typeof LangRouteWithChildren
+  BlogRoute: typeof BlogRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  LangRoute: LangRouteWithChildren,
+  BlogRoute: BlogRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -403,86 +352,74 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/$lang"
+        "/blog"
       ]
     },
-    "/$lang": {
-      "filePath": "$lang/_auth",
+    "/blog": {
+      "filePath": "blog/_auth",
       "children": [
-        "/$lang/_auth",
-        "/$lang/_main",
-        "/$lang/not-found"
+        "/blog/_auth",
+        "/blog/_main",
+        "/blog/not-found"
       ]
     },
-    "/$lang/_auth": {
-      "filePath": "$lang/_auth/route.tsx",
-      "parent": "/$lang",
+    "/blog/_auth": {
+      "filePath": "blog/_auth/route.tsx",
+      "parent": "/blog",
       "children": [
-        "/$lang/_auth/_editor",
-        "/$lang/_auth/login"
+        "/blog/_auth/_editor",
+        "/blog/_auth/login"
       ]
     },
-    "/$lang/_main": {
-      "filePath": "$lang/_main/route.tsx",
-      "parent": "/$lang",
+    "/blog/_main": {
+      "filePath": "blog/_main/route.tsx",
+      "parent": "/blog",
       "children": [
-        "/$lang/_main/blog",
-        "/$lang/_main/"
+        "/blog/_main/$slug",
+        "/blog/_main/"
       ]
     },
-    "/$lang/not-found": {
-      "filePath": "$lang/not-found.tsx",
-      "parent": "/$lang"
+    "/blog/not-found": {
+      "filePath": "blog/not-found.tsx",
+      "parent": "/blog"
     },
-    "/$lang/_auth/_editor": {
-      "filePath": "$lang/_auth/_editor/route.tsx",
-      "parent": "/$lang/_auth",
+    "/blog/_auth/_editor": {
+      "filePath": "blog/_auth/_editor/route.tsx",
+      "parent": "/blog/_auth",
       "children": [
-        "/$lang/_auth/_editor/editor/create",
-        "/$lang/_auth/_editor/editor/list",
-        "/$lang/_auth/_editor/editor/",
-        "/$lang/_auth/_editor/editor/edit/$id"
+        "/blog/_auth/_editor/editor/create",
+        "/blog/_auth/_editor/editor/list",
+        "/blog/_auth/_editor/editor/",
+        "/blog/_auth/_editor/editor/edit/$id"
       ]
     },
-    "/$lang/_main/blog": {
-      "filePath": "$lang/_main/blog.route.tsx",
-      "parent": "/$lang/_main",
-      "children": [
-        "/$lang/_main/blog/$slug",
-        "/$lang/_main/blog/"
-      ]
+    "/blog/_auth/login": {
+      "filePath": "blog/_auth/login.tsx",
+      "parent": "/blog/_auth"
     },
-    "/$lang/_auth/login": {
-      "filePath": "$lang/_auth/login.tsx",
-      "parent": "/$lang/_auth"
+    "/blog/_main/$slug": {
+      "filePath": "blog/_main/$slug.tsx",
+      "parent": "/blog/_main"
     },
-    "/$lang/_main/": {
-      "filePath": "$lang/_main/index.tsx",
-      "parent": "/$lang/_main"
+    "/blog/_main/": {
+      "filePath": "blog/_main/index.tsx",
+      "parent": "/blog/_main"
     },
-    "/$lang/_main/blog/$slug": {
-      "filePath": "$lang/_main/blog.$slug.tsx",
-      "parent": "/$lang/_main/blog"
+    "/blog/_auth/_editor/editor/create": {
+      "filePath": "blog/_auth/_editor/editor.create.tsx",
+      "parent": "/blog/_auth/_editor"
     },
-    "/$lang/_main/blog/": {
-      "filePath": "$lang/_main/blog.index.tsx",
-      "parent": "/$lang/_main/blog"
+    "/blog/_auth/_editor/editor/list": {
+      "filePath": "blog/_auth/_editor/editor.list.tsx",
+      "parent": "/blog/_auth/_editor"
     },
-    "/$lang/_auth/_editor/editor/create": {
-      "filePath": "$lang/_auth/_editor/editor.create.tsx",
-      "parent": "/$lang/_auth/_editor"
+    "/blog/_auth/_editor/editor/": {
+      "filePath": "blog/_auth/_editor/editor.index.tsx",
+      "parent": "/blog/_auth/_editor"
     },
-    "/$lang/_auth/_editor/editor/list": {
-      "filePath": "$lang/_auth/_editor/editor.list.tsx",
-      "parent": "/$lang/_auth/_editor"
-    },
-    "/$lang/_auth/_editor/editor/": {
-      "filePath": "$lang/_auth/_editor/editor.index.tsx",
-      "parent": "/$lang/_auth/_editor"
-    },
-    "/$lang/_auth/_editor/editor/edit/$id": {
-      "filePath": "$lang/_auth/_editor/editor.edit.$id.tsx",
-      "parent": "/$lang/_auth/_editor"
+    "/blog/_auth/_editor/editor/edit/$id": {
+      "filePath": "blog/_auth/_editor/editor.edit.$id.tsx",
+      "parent": "/blog/_auth/_editor"
     }
   }
 }

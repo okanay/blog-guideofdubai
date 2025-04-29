@@ -1,12 +1,12 @@
-// app/router.tsx
+// @ts-ignore
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
-import { DefaultNotFound } from "./routes/$lang/not-found";
+import { DefaultNotFound } from "./routes/blog/not-found";
 
 export function createRouter() {
   const router = createTanStackRouter({
     routeTree,
-    defaultPreload: "intent",
+    defaultPreload: "false",
     defaultNotFoundComponent: () => <DefaultNotFound />,
     scrollRestoration: true,
   });

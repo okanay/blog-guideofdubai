@@ -1,33 +1,64 @@
 import React from "react";
-import { Link as ReactLink, type LinkProps } from "@tanstack/react-router";
+import { Link as RouterLink, type LinkProps } from "@tanstack/react-router";
 import { useLanguage } from "./use-language";
 
-interface Props extends Omit<LinkProps, "to"> {
-  to: string;
-  onClick?: React.MouseEventHandler<HTMLAnchorElement>;
-  className?: string;
-  role?: string;
-  "aria-current"?:
-    | boolean
-    | "date"
-    | "time"
-    | "true"
-    | "false"
-    | "page"
-    | "step"
-    | "location";
+interface Props
+  extends Omit<React.ComponentPropsWithoutRef<"a">, "children" | "target">,
+    Omit<LinkProps, "children" | "target"> {
+  target?: React.ComponentPropsWithoutRef<"a">["target"];
+  children?: React.ReactNode;
 }
 
-export const Link: React.FC<Props> = ({ to, children, className, ...rest }) => {
+// /blog ile başlamıyorsa başına ekle
+function ensureBlogPrefix(path: string): string {
+  return path.startsWith("/blog")
+    ? path
+    : `/blog${path.startsWith("/") ? "" : "/"}${path}`;
+}
+
+function addLangToStringTo(to: string, lang: string): string {
+  const [rawPath, query = ""] = to.split("?");
+  const path = ensureBlogPrefix(rawPath);
+  const params = new URLSearchParams(query);
+
+  if (!params.has("lang")) {
+    params.append("lang", lang);
+  }
+
+  const queryString = params.toString();
+  return queryString ? `${path}?${queryString}` : path;
+}
+
+function addLangToObjectTo(
+  to: LinkProps["to"] & { search?: Record<string, any> },
+  lang: string,
+) {
+  // pathname'i /blog ile başlat
+  const pathname = to.pathname ? ensureBlogPrefix(to.pathname) : "/blog";
+
+  // search objesine lang ekle
+  const search = { ...(to.search || {}) };
+  if (!("lang" in search)) {
+    search.lang = lang;
+  }
+  return { ...to, pathname, search };
+}
+
+export const Link: React.FC<Props> = ({ to, children, ...rest }) => {
   const { language } = useLanguage();
-  const localizedPath =
-    to === "/"
-      ? `/${language}`
-      : `/${language}${to.startsWith("/") ? to : `/${to}`}`;
+
+  let localizedTo = to;
+
+  if (typeof to === "string") {
+    localizedTo = addLangToStringTo(to, language);
+  } else if (typeof to === "object" && to !== null) {
+    localizedTo = addLangToObjectTo(to, language);
+  }
+
   return (
-    <ReactLink to={localizedPath} className={className} {...rest}>
+    <RouterLink {...rest} to={localizedTo} preload={false}>
       {children}
-    </ReactLink>
+    </RouterLink>
   );
 };
 
