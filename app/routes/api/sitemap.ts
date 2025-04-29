@@ -3,14 +3,14 @@ import { createAPIFileRoute } from "@tanstack/react-start/api";
 export const APIRoute = createAPIFileRoute("/api/sitemap")({
   GET: async () => {
     const frontendUrl =
-      process.env.VITE_APP_FRONTEND_URL || "http://localhost:3000";
+      process.env.VITE_APP_CANONICAL_URL || "http://localhost:3000";
     const backendUrl =
       process.env.VITE_APP_BACKEND_URL || "http://localhost:8080";
 
     // Temel sayfalar
     const pages = [
       {
-        url: "/",
+        url: "/blog",
         lastmod: new Date().toISOString(),
         priority: 1.0,
         changefreq: "daily",
@@ -27,8 +27,15 @@ export const APIRoute = createAPIFileRoute("/api/sitemap")({
         const data = await response.json();
 
         if (data.success && Array.isArray(data.pages)) {
-          // Backend'den gelen sayfaları ekle
-          pages.push(...data.pages);
+          console.log(data);
+          for (const blog of data.pages) {
+            pages.push({
+              url: `/blog/${blog.slug}?lang=${blog.language}`,
+              lastmod: new Date(blog.lastmod).toISOString(),
+              priority: blog.priority || 0.5,
+              changefreq: blog.changefreq || "weekly",
+            });
+          }
         }
       }
     } catch (error) {
