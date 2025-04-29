@@ -11,9 +11,7 @@ interface Props
 
 // /blog ile başlamıyorsa başına ekle
 function ensureBlogPrefix(path: string): string {
-  return path.startsWith("/blog")
-    ? path
-    : `/blog${path.startsWith("/") ? "" : "/"}${path}`;
+  return path.startsWith("/blog") ? path : `/blog/${path}`;
 }
 
 function addLangToStringTo(to: string, lang: string): string {
