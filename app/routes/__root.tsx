@@ -1,11 +1,19 @@
 import { getHeaders } from "@tanstack/react-start/server";
-import { getLanguageFromCookie, getLanguageFromHeader } from "@/i18n/action";
 import { DEFAULT_LANGUAGE, LANGUAGE_DICTONARY, SUPPORTED_LANGUAGES } from "@/i18n/config"; // prettier-ignore
 import { HeadContent, Outlet, Scripts, createRootRoute, redirect } from "@tanstack/react-router"; // prettier-ignore
 import { RootProviders } from "@/providers";
 
 import globals from "@/globals.css?url";
 import LanguageProvider from "@/i18n/provider";
+import { createServerFn } from "@tanstack/react-start";
+import { getLanguageFromCookie, getLanguageFromHeader } from "@/i18n/action";
+
+export const getRequestHeaders = createServerFn({
+  method: "GET",
+}).handler(async () => {
+  const headers = getHeaders();
+  return { headers };
+});
 
 export const Route = createRootRoute<{}>({
   beforeLoad: (ctx) => {
@@ -21,7 +29,7 @@ export const Route = createRootRoute<{}>({
       const searchParams = new URLSearchParams(ctx.location.search);
       const langParam = searchParams.get("lang");
 
-      const headers = getHeaders();
+      const { headers } = await getRequestHeaders();
       const cookieLang = getLanguageFromCookie(headers["cookie"] || "");
       const headerLang = getLanguageFromHeader(headers["accept-language"]);
 
