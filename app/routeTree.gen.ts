@@ -8,11 +8,10 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
-
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as BlogRouteImport } from './routes/blog/route'
 import { Route as BlogNotFoundImport } from './routes/blog/not-found'
 import { Route as BlogMainRouteImport } from './routes/blog/_main/route'
 import { Route as BlogAuthRouteImport } from './routes/blog/_auth/route'
@@ -25,13 +24,9 @@ import { Route as BlogAuthEditorEditorListImport } from './routes/blog/_auth/_ed
 import { Route as BlogAuthEditorEditorCreateImport } from './routes/blog/_auth/_editor/editor.create'
 import { Route as BlogAuthEditorEditorEditIdImport } from './routes/blog/_auth/_editor/editor.edit.$id'
 
-// Create Virtual Routes
-
-const BlogImport = createFileRoute('/blog')()
-
 // Create/Update Routes
 
-const BlogRoute = BlogImport.update({
+const BlogRouteRoute = BlogRouteImport.update({
   id: '/blog',
   path: '/blog',
   getParentRoute: () => rootRoute,
@@ -40,17 +35,17 @@ const BlogRoute = BlogImport.update({
 const BlogNotFoundRoute = BlogNotFoundImport.update({
   id: '/not-found',
   path: '/not-found',
-  getParentRoute: () => BlogRoute,
+  getParentRoute: () => BlogRouteRoute,
 } as any)
 
 const BlogMainRouteRoute = BlogMainRouteImport.update({
   id: '/_main',
-  getParentRoute: () => BlogRoute,
+  getParentRoute: () => BlogRouteRoute,
 } as any)
 
 const BlogAuthRouteRoute = BlogAuthRouteImport.update({
   id: '/_auth',
-  getParentRoute: () => BlogRoute,
+  getParentRoute: () => BlogRouteRoute,
 } as any)
 
 const BlogMainIndexRoute = BlogMainIndexImport.update({
@@ -112,29 +107,29 @@ declare module '@tanstack/react-router' {
       id: '/blog'
       path: '/blog'
       fullPath: '/blog'
-      preLoaderRoute: typeof BlogImport
+      preLoaderRoute: typeof BlogRouteImport
       parentRoute: typeof rootRoute
     }
     '/blog/_auth': {
       id: '/blog/_auth'
-      path: '/blog'
+      path: ''
       fullPath: '/blog'
       preLoaderRoute: typeof BlogAuthRouteImport
-      parentRoute: typeof BlogRoute
+      parentRoute: typeof BlogRouteImport
     }
     '/blog/_main': {
       id: '/blog/_main'
       path: ''
       fullPath: '/blog'
       preLoaderRoute: typeof BlogMainRouteImport
-      parentRoute: typeof BlogImport
+      parentRoute: typeof BlogRouteImport
     }
     '/blog/not-found': {
       id: '/blog/not-found'
       path: '/not-found'
       fullPath: '/blog/not-found'
       preLoaderRoute: typeof BlogNotFoundImport
-      parentRoute: typeof BlogImport
+      parentRoute: typeof BlogRouteImport
     }
     '/blog/_auth/_editor': {
       id: '/blog/_auth/_editor'
@@ -242,19 +237,21 @@ const BlogMainRouteRouteWithChildren = BlogMainRouteRoute._addFileChildren(
   BlogMainRouteRouteChildren,
 )
 
-interface BlogRouteChildren {
+interface BlogRouteRouteChildren {
   BlogAuthRouteRoute: typeof BlogAuthRouteRouteWithChildren
   BlogMainRouteRoute: typeof BlogMainRouteRouteWithChildren
   BlogNotFoundRoute: typeof BlogNotFoundRoute
 }
 
-const BlogRouteChildren: BlogRouteChildren = {
+const BlogRouteRouteChildren: BlogRouteRouteChildren = {
   BlogAuthRouteRoute: BlogAuthRouteRouteWithChildren,
   BlogMainRouteRoute: BlogMainRouteRouteWithChildren,
   BlogNotFoundRoute: BlogNotFoundRoute,
 }
 
-const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
+const BlogRouteRouteWithChildren = BlogRouteRoute._addFileChildren(
+  BlogRouteRouteChildren,
+)
 
 export interface FileRoutesByFullPath {
   '/blog': typeof BlogAuthEditorRouteRouteWithChildren
@@ -281,7 +278,7 @@ export interface FileRoutesByTo {
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/blog': typeof BlogRouteWithChildren
+  '/blog': typeof BlogRouteRouteWithChildren
   '/blog/_auth': typeof BlogAuthRouteRouteWithChildren
   '/blog/_main': typeof BlogMainRouteRouteWithChildren
   '/blog/not-found': typeof BlogNotFoundRoute
@@ -335,11 +332,11 @@ export interface FileRouteTypes {
 }
 
 export interface RootRouteChildren {
-  BlogRoute: typeof BlogRouteWithChildren
+  BlogRouteRoute: typeof BlogRouteRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  BlogRoute: BlogRouteWithChildren,
+  BlogRouteRoute: BlogRouteRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -356,7 +353,7 @@ export const routeTree = rootRoute
       ]
     },
     "/blog": {
-      "filePath": "blog/_auth",
+      "filePath": "blog/route.tsx",
       "children": [
         "/blog/_auth",
         "/blog/_main",

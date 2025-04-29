@@ -1,48 +1,59 @@
+import { getHeaders } from "@tanstack/react-start/server";
+import { getLanguageFromCookie, getLanguageFromHeader } from "@/i18n/action";
+import { DEFAULT_LANGUAGE, LANGUAGE_DICTONARY, SUPPORTED_LANGUAGES } from "@/i18n/config"; // prettier-ignore
 import { HeadContent, Outlet, Scripts, createRootRoute, redirect } from "@tanstack/react-router"; // prettier-ignore
-import { LANGUAGE_DICTONARY, SUPPORTED_LANGUAGES } from "@/i18n/config";
-import LanguageProvider from "@/i18n/provider";
-import { detectLanguage } from "@/i18n/action";
-
-import globals from "@/globals.css?url";
 import { RootProviders } from "@/providers";
 
-export const Route = createRootRoute({
-  loader: async (ctx) => {
-    // URL'den lang parametresini al
-    const searchParams = new URLSearchParams(ctx.location.search);
-    const langParam = searchParams.get("lang") as Language;
+import globals from "@/globals.css?url";
+import LanguageProvider from "@/i18n/provider";
 
-    // "/blog" ile başlamıyorsa kontrolü.
+export const Route = createRootRoute<{}>({
+  beforeLoad: (ctx) => {
     if (!ctx.location.pathname.startsWith("/blog")) {
       throw redirect({
-        to: "blog",
+        to: "/blog",
         replace: true,
       });
     }
+  },
+  loader: async (ctx) => {
+    try {
+      const searchParams = new URLSearchParams(ctx.location.search);
+      const langParam = searchParams.get("lang");
 
-    // Lang parametresi var mı ve desteklenen bir dil mi kontrol et
-    const isValidLangParam =
-      langParam && SUPPORTED_LANGUAGES.includes(langParam);
+      const headers = getHeaders();
+      const cookieLang = getLanguageFromCookie(headers["cookie"] || "");
+      const headerLang = getLanguageFromHeader(headers["accept-language"]);
 
-    // Eğer lang parametresi yoksa veya geçersizse, dil algıla ve yönlendir
-    if (!isValidLangParam) {
-      // Sunucu tarafında dil algıla (mevcut metodu kullan)
-      const detectedLanguage = await detectLanguage();
+      // 1. Search Param doğru ise onu döndür.
+      if (langParam && SUPPORTED_LANGUAGES.includes(langParam as Language)) {
+        return {
+          lang: langParam,
+        };
+      }
 
-      // Mevcut search parametrelerini koru ve lang ekle/güncelle
-      searchParams.set("lang", detectedLanguage);
+      // 2. Cookie'de varsa, redirect ile lang paramı ekle
+      if (cookieLang) {
+        return {
+          lang: cookieLang,
+        };
+      }
 
-      // Aynı path'e lang parametresi eklenmiş halini yönlendir
-      throw redirect({
-        to: `${ctx.location.pathname}${searchParams.toString() ? "?" + searchParams.toString() : ""}`,
-        replace: true, // Tarayıcı geçmişinde eski URL'yi değiştir
-      });
+      // 3. Header'dan tespit et, redirect ile lang paramı ekle ve cookie'yi set et
+      if (headerLang) {
+        return {
+          lang: headerLang,
+        };
+      }
+
+      return {
+        lang: DEFAULT_LANGUAGE,
+      };
+    } catch {
+      return {
+        lang: DEFAULT_LANGUAGE,
+      };
     }
-
-    // Lang parametresi varsa ve geçerliyse, lang değerini dön
-    return {
-      lang: langParam,
-    };
   },
   head: () => {
     return {
