@@ -17,14 +17,6 @@ export const getRequestHeaders = createServerFn({
 });
 
 export const Route = createRootRoute<{}>({
-  beforeLoad: (ctx) => {
-    if (!ctx.location.pathname.startsWith("/blog")) {
-      throw redirect({
-        to: "/blog",
-        replace: true,
-      });
-    }
-  },
   loader: async (ctx) => {
     try {
       const searchParams = new URLSearchParams(ctx.location.search);

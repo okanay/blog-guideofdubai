@@ -11,6 +11,12 @@ export default defineConfig({
     compressPublicAssets: true,
     preset: process.env.BUILD_PRESET,
     routeRules: {
+      "/": {
+        redirect: {
+          to: "/blog",
+          statusCode: 301,
+        },
+      },
       "/robots.txt": {
         redirect: {
           to: "/api/robots",
