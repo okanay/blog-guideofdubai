@@ -328,7 +328,7 @@ function RelatedBlogs({ blog, lang }) {
 function RelatedBlogCard({ blog, index }) {
   return (
     <Link
-      to={`/blog/${blog.slug}`}
+      to={`/blog/${blog.slug}?lang=${blog.language}`}
       className="group flex h-full flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white ring ring-zinc-50 transition-all hover:ring-zinc-300 hover:ring-offset-2 focus:ring-zinc-300 focus:ring-offset-2 focus:outline-none"
     >
       {/* Image */}
