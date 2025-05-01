@@ -54,7 +54,14 @@ export const Link: React.FC<Props> = ({ to, children, ...rest }) => {
   }
 
   return (
-    <RouterLink {...rest} to={localizedTo} preload={false}>
+    <RouterLink
+      {...rest}
+      to={localizedTo}
+      preload={false}
+      onClick={() => {
+        window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      }}
+    >
       {children}
     </RouterLink>
   );
