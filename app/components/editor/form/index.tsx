@@ -37,7 +37,7 @@ export function CreateBlogForm({
   // prettier-ignore
   const { handleSubmit, control, formState: { errors }, getValues, setValue} = useForm<BlogFormSchema>({
     resolver: zodResolver(BlogFormSchema),
-    mode: "onTouched",
+    mode: "onSubmit",
     defaultValues: { ...initialData },
   });
 
