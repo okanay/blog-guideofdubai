@@ -52,7 +52,6 @@ export function HeroSection() {
 
 export function LatestBlogButton() {
   const { latestBlog, fetchLatestBlog, statusStates } = useSearch();
-  const navigate = useNavigate();
 
   const isLoading = statusStates.latestBlog.status === "loading";
   const isError = statusStates.latestBlog.status === "error";

@@ -1,3 +1,4 @@
+import { DEFAULT_LANGUAGE } from "@/i18n/config";
 import { createContext, PropsWithChildren, useContext, useState } from "react";
 import { createStore, StoreApi, useStore } from "zustand";
 import { immer } from "zustand/middleware/immer";
@@ -130,8 +131,16 @@ const DEFAULT_SEARCH_QUERY: SearchQueryOptions = {
   offset: 0,
 };
 
+type Props = {
+  children: React.ReactNode;
+  language: string;
+};
+
 // Store oluşturma
-export function SearchProvider({ children }: PropsWithChildren) {
+export function SearchProvider({
+  children,
+  language = DEFAULT_LANGUAGE,
+}: Props) {
   const [store] = useState(() =>
     createStore<SearchState>()(
       immer((set, get) => ({
@@ -204,6 +213,7 @@ export function SearchProvider({ children }: PropsWithChildren) {
               count: number;
             }>("/blog/cards", {
               limit: 1,
+              language,
               sortBy: "createdAt",
               sortDirection: "desc",
               status: "published", // Fetch only published blog posts

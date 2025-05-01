@@ -4,6 +4,7 @@ import { RootHeader } from "@/components/header";
 import { SearchProvider } from "@/components/search";
 import { getLanguageFromSearch } from "@/i18n/action";
 import { seoTranslations } from "@/i18n/languages";
+import { useLanguage } from "@/i18n/use-language";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { Fragment } from "react/jsx-runtime";
 
@@ -31,10 +32,12 @@ export const Route = createFileRoute("/blog/_main")({
 });
 
 function RouteComponent() {
+  const { language } = useLanguage();
+
   return (
     <Fragment>
       <RootHeader />
-      <SearchProvider>
+      <SearchProvider language={language}>
         <Outlet />
       </SearchProvider>
       <RootFooter />
