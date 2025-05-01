@@ -19,6 +19,9 @@ export const Route = createFileRoute("/blog/_main/$slug")({
     const slug = params.slug;
     const lang = getLanguageFromSearch(search);
 
+    // Önceki sonuçları saklayacak değişken
+    let blogData = null;
+
     try {
       const response = await fetch(
         `${import.meta.env.VITE_APP_BACKEND_URL}/blog?slug=${slug}&lang=${lang}`,
@@ -31,24 +34,52 @@ export const Route = createFileRoute("/blog/_main/$slug")({
       );
 
       const data = await response.json();
-      if (data.blog === null || data.blog === undefined) {
-        throw redirect({
+
+      // Blog bulunamadıysa 404 sayfasına yönlendir
+      if (!data.success || !data.blog) {
+        throw new Error("Blog not found");
+      }
+
+      const blogSlug = data.blog.slug;
+      const blogLang = data.blog.language;
+
+      // Kullanıcı istenen dilde içerik yok, farklı dilde içerik gösteriliyor
+      // Eğer alternatifler arasında istenen dilde içerik varsa oraya yönlendir
+      if (blogSlug !== slug || blogLang !== lang) {
+        const alt = (data.alternatives || []).find((a) => a.language === lang);
+        if (alt) {
+          console.log("Redirecting to alternative:", alt);
+          return redirect({
+            to: `/blog/${alt.slug}?lang=${alt.language}`,
+          });
+        }
+      }
+
+      // Herşey normal, veriyi döndür
+      blogData = {
+        lang: lang,
+        slug: slug,
+        blog: data.blog,
+        alternatives: data.alternatives || [],
+      };
+
+      return blogData;
+    } catch (error) {
+      console.error("Blog fetch error:", error);
+
+      // Fetch hatası olduğunda, eğer blog verisi bulunamadıysa 404'e yönlendir
+      if (!blogData) {
+        return redirect({
           to: `/blog/not-found`,
         });
       }
 
-      return {
-        lang,
-        slug,
-        blog: data.blog,
-      };
-    } catch (error) {
-      throw redirect({
-        to: `/blog/not-found`,
-      });
+      // Blog verisi varsa, onu döndür
+      return blogData;
     }
   },
-  head: ({ loaderData: { blog, lang, slug } }) => {
+  head: ({ loaderData }) => {
+    const { blog, lang, alternatives } = loaderData;
     const API_URL = import.meta.env.VITE_APP_CANONICAL_URL;
     const sitename = import.meta.env.VITE_APP_SITE_NAME;
 
@@ -56,21 +87,34 @@ export const Route = createFileRoute("/blog/_main/$slug")({
     const metadata = blog?.metadata || {};
     const content = blog?.content || {};
     const blogLanguage = blog?.language || lang || "en";
+    const blogSlug = blog?.slug;
 
-    const url = `${API_URL}/blog/${slug}?lang=${blogLanguage}`;
-
+    // Canonical URL (her zaman gösterilen blogun kendi slug'ı ve dili)
+    const canonicalUrl = `${API_URL}/blog/${blogSlug}?lang=${blogLanguage}`;
     const title = metadata.title ? `${metadata.title} | ${sitename}` : sitename;
-    const description =  metadata.description || content.description || ""; // prettier-ignore
-    const image = metadata.image || content.image || `https://images.project-test.info/1.webp`; // prettier-ignore
-    const locale =  LANGUAGE_DICTONARY.find((l) => l.value === blog?.language)?.seo.locale || "en_US"; // prettier-ignore
+    const description = metadata.description || content.description || "";
+    const image =
+      metadata.image ||
+      content.image ||
+      `https://images.project-test.info/1.webp`;
 
-    const tags = (blog.tags || []).map(
-      (c: { value?: string }) => c.value || "Activities",
-    );
+    const locale =
+      LANGUAGE_DICTONARY.find((l) => l.value === blogLanguage)?.seo.locale ||
+      "en_US";
+
+    const tags = (blog.tags || []).map((c) => c.value || "Activities");
+
     const categories = (blog.categories || []).map(
-      (c: { value?: string }) => c.value || "Activities",
+      (c) => c.value || "Activities",
     );
+
     const keywords = [...tags, ...categories].join(", ");
+
+    const alternateLinks = (alternatives || []).map((alt) => ({
+      rel: "alternate",
+      href: `${API_URL}/blog/${alt.slug}?lang=${alt.language}`,
+      hrefLang: alt.language,
+    }));
 
     return {
       title,
@@ -83,7 +127,7 @@ export const Route = createFileRoute("/blog/_main/$slug")({
         { property: "og:title", content: title },
         { property: "og:description", content: description },
         { property: "og:image", content: image },
-        { property: "og:url", content: url },
+        { property: "og:url", content: canonicalUrl },
         { property: "og:locale", content: locale },
         { property: "og:site_name", content: sitename },
         { name: "twitter:card", content: "summary_large_image" },
@@ -94,8 +138,9 @@ export const Route = createFileRoute("/blog/_main/$slug")({
       links: [
         {
           rel: "canonical",
-          href: url,
+          href: canonicalUrl,
         },
+        ...alternateLinks,
       ],
     };
   },

@@ -62,9 +62,10 @@ export const LanguageProvider: React.FC<Props> = ({
 
           // Aynı sayfada kal, sadece dil parametresini güncelle
           navigate({
-            to: window.location.pathname,
+            href: window.location.pathname,
             search: params as any,
             replace: true,
+            reloadDocument: true,
           });
         }
       });
