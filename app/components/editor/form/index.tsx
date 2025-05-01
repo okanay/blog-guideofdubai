@@ -99,7 +99,7 @@ export function CreateBlogForm({
                 id="metadata.title"
                 label="SEO Başlığı"
                 isRequired={true}
-                maxLength={60}
+                maxLength={120}
                 showCharCount={true}
                 isError={!!errors.metadata?.title}
                 errorMessage={errors.metadata?.title?.message}
@@ -144,7 +144,7 @@ export function CreateBlogForm({
                 id="metadata.description"
                 placeholder="Google ve diğer arama motorlarında görünecek açıklama metni"
                 hint="Kullanıcıyı tıklamaya yönlendirecek, anahtar kelimeler içeren etkili bir açıklama yazın"
-                maxLength={120}
+                maxLength={200}
                 rows={3}
                 isRequired={true}
                 isError={!!errors.metadata?.description}
@@ -166,7 +166,6 @@ export function CreateBlogForm({
                 id="metadata.image"
                 label="Sosyal Medya Görseli"
                 hint="Sosyal medya platformlarında link olarak paylaşıldığında görünecek görsel (1200x630px önerilir)"
-                maxLength={120}
                 isRequired={true}
                 isError={!!errors.metadata?.image}
                 errorMessage={errors.metadata?.image?.message}
@@ -190,7 +189,7 @@ export function CreateBlogForm({
               value: "",
             }}
             defaultMode="google"
-            baseUrl="https://blog.guideofdubai.com/tr"
+            baseUrl="https://guideofdubai.com/blog"
           />
         </div>
       </div>
@@ -216,7 +215,7 @@ export function CreateBlogForm({
                 isError={!!errors.content?.title}
                 errorMessage={errors.content?.title?.message}
                 showCharCount={true}
-                maxLength={60}
+                maxLength={120}
                 isAutoMode={true}
                 initialAutoMode={initialAutoMode}
                 followRef={seoTitleRef}
@@ -239,7 +238,7 @@ export function CreateBlogForm({
                 isError={!!errors.content?.description}
                 errorMessage={errors.content?.description?.message}
                 showCharCount={true}
-                maxLength={120}
+                maxLength={200}
                 rows={3}
                 isAutoMode={true}
                 initialAutoMode={initialAutoMode}
