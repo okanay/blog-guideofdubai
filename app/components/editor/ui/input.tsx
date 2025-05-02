@@ -1,183 +1,120 @@
 import { Lock, Unlock } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { twMerge } from "tailwind-merge";
 
 interface InputProps extends React.ComponentProps<"input"> {
   label?: string;
   isRequired?: boolean;
-  isError?: boolean;
-  isSuccess?: boolean;
 
   isAutoMode?: boolean;
   initialAutoMode?: boolean;
   followRef?: React.RefObject<HTMLInputElement>;
 
   errorMessage?: string;
-  successMessage?: string;
   hint?: string;
 
-  startIcon?: React.ReactNode;
-  endIcon?: React.ReactNode;
-
-  showCharCount?: boolean;
-  enforceMaxLength?: boolean;
   maxLength?: number;
 }
 
 export const Input = ({
-  ref,
-  className,
   label,
-  id,
-  value,
-  defaultValue,
-  onChange,
-
   isRequired = false,
-  isError = false,
-  isSuccess = false,
-
   isAutoMode = false,
   initialAutoMode = false,
   followRef,
-
   errorMessage,
-  successMessage,
   hint,
-
-  startIcon,
-  endIcon,
-
-  showCharCount = false,
-  enforceMaxLength = true,
   maxLength,
   ...props
 }: InputProps) => {
-  const [focused, setFocused] = useState(false);
-  const [charCount, setCharCount] = useState(0);
-  const [internalValue, setInternalValue] = useState<string>((value as string) || (defaultValue as string) || ""); // prettier-ignore
-  const [isAuto, setIsAuto] = useState<boolean>(initialAutoMode);
-  const elementRef = useRef<HTMLInputElement | null>(null);
-  const inputId = id || `input-${Math.random().toString(36).substring(2, 9)}`;
+  const [autoMode, setAutoMode] = useState({
+    status: isAutoMode,
+    value: initialAutoMode,
+  });
 
-  const showCount = showCharCount || maxLength !== undefined;
-  const isLimitExceeded = maxLength !== undefined && charCount > maxLength;
+  const hasMaxLength = maxLength !== undefined && maxLength >= 1;
+  const [maxLengthState, setMaxLengthState] = useState("idle");
 
-  const status = isError
-    ? "error"
-    : isSuccess
-      ? "success"
-      : focused
-        ? "focused"
-        : "default";
-  const message = errorMessage || successMessage || hint;
-  const messageType = isError ? "error" : isSuccess ? "success" : "hint";
+  // Input değerini işleyen ve sadece görsel geri bildirim sağlayan fonksiyon
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (props.onChange) {
+      // MaxLength kontrolü - sadece durum değişikliği, değeri kırpmıyoruz
+      if (hasMaxLength) {
+        const inputValue = e.target.value;
 
-  // Referans birleştirme işlevi
-  const setRefs = (element: HTMLInputElement | null) => {
-    // İç referans için atama
-    elementRef.current = element;
+        // Maksimum uzunluğa göre sadece görsel geri bildirim için durum güncellemesi
+        const valuePercentage = (inputValue.length / maxLength) * 100;
+        if (valuePercentage >= 100) {
+          setMaxLengthState("reached");
+        } else if (valuePercentage >= 80) {
+          setMaxLengthState("warning");
+        } else {
+          setMaxLengthState("idle");
+        }
+      }
 
-    // Dışarıdan gelen ref için atama
-    if (typeof ref === "function") {
-      ref(element);
-    } else if (ref) {
-      (ref as React.MutableRefObject<HTMLInputElement | null>).current =
-        element;
+      // Normal onChange işlemi - değeri olduğu gibi iletiyoruz
+      props.onChange(e);
     }
   };
 
-  // onChange işleyicisi
-  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let newValue = e.target.value;
-
-    // Karakter sınırlaması uygula
-    if (enforceMaxLength && maxLength !== undefined) {
-      newValue = newValue.slice(0, maxLength);
-    }
-
-    setInternalValue(newValue);
-    setCharCount(newValue.length);
-
-    // Orijinal onChange olayını simüle et
-    if (onChange) {
-      const simulatedEvent = {
-        ...e,
-        target: {
-          ...e.target,
-          value: newValue,
-        },
-      } as React.ChangeEvent<HTMLInputElement>;
-
-      onChange(simulatedEvent);
-    }
-  };
-
+  // FollowRef'teki değişikliği takip etmek için
   useEffect(() => {
-    const initialValue = value ? (value as string).slice(0, maxLength) : "";
-    setInternalValue(initialValue);
-    setCharCount(initialValue?.length || 0);
-  }, [value, maxLength]);
+    if (autoMode.status && autoMode.value && followRef?.current) {
+      const handleFollowInputChange = () => {
+        const followValue = followRef.current.value;
 
-  useEffect(() => {
-    if (!isAutoMode || !followRef?.current) return;
-
-    // Takip edilen input değiştiğinde dinleme işlevi
-    const handleFollowInputChange = () => {
-      if (!isAuto || !followRef.current) return;
-
-      const followValue = followRef.current.value;
-      if (followValue !== internalValue) {
-        setInternalValue(followValue);
-        setCharCount(followValue.length);
-
-        // React Hook Form için onChange olayını tetikle
-        if (onChange) {
+        // Input değeri değiştiyse ve followRef'ten geliyorsa
+        if (props.onChange && followValue !== props.value) {
+          // Simulasyon event'i - değeri olduğu gibi iletiyoruz
           const simulatedEvent = {
             target: {
               name: props.name,
               value: followValue,
             },
-          } as React.ChangeEvent<HTMLInputElement>;
+          } as any;
 
-          onChange(simulatedEvent);
+          props.onChange(simulatedEvent);
         }
-      }
-    };
+      };
 
-    // İlk yükleme için değeri al
-    if (isAuto && followRef.current) {
-      const initialFollowValue = followRef.current.value;
-      setInternalValue(initialFollowValue);
-      setCharCount(initialFollowValue.length);
+      followRef.current.addEventListener("input", handleFollowInputChange);
 
-      if (onChange && initialFollowValue !== internalValue) {
-        const simulatedEvent = {
-          target: {
-            name: props.name,
-            value: initialFollowValue,
-          },
-        } as React.ChangeEvent<HTMLInputElement>;
-
-        onChange(simulatedEvent);
-      }
+      // Cleanup
+      return () => {
+        followRef.current?.removeEventListener(
+          "input",
+          handleFollowInputChange,
+        );
+      };
     }
+  }, [
+    autoMode.status,
+    autoMode.value,
+    followRef,
+    props.name,
+    props.onChange,
+    props.value,
+  ]);
 
-    // input event listener kullanarak gerçek zamanlı takip et
-    followRef.current.addEventListener("input", handleFollowInputChange);
-
-    // Temizleme fonksiyonu
-    return () => {
-      followRef.current?.removeEventListener("input", handleFollowInputChange);
-    };
-  }, [isAuto, followRef, onChange, props.name]);
+  // Karakter sayacı renk sınıfı
+  const getCounterColorClass = () => {
+    switch (maxLengthState) {
+      case "reached":
+        return "text-red-500";
+      case "warning":
+        return "text-yellow-500";
+      default:
+        return "text-zinc-500";
+    }
+  };
 
   return (
     <div className="flex flex-col gap-1.5">
       {label && (
         <div className="flex items-center justify-between">
           <label
-            htmlFor={inputId}
+            htmlFor={props.id}
             className="text-sm font-medium text-zinc-700"
           >
             {label}
@@ -186,16 +123,19 @@ export const Input = ({
           {isAutoMode && (
             <button
               type="button"
-              onClick={() => setIsAuto(!isAuto)}
-              className="flex items-center gap-1 text-xs font-medium text-zinc-500 hover:text-zinc-700"
+              onClick={() =>
+                setAutoMode((prev) => ({ ...prev, value: !prev.value }))
+              }
+              className="flex items-center gap-1.5 rounded-full bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600 transition-colors duration-200 hover:bg-zinc-200 hover:text-zinc-800"
             >
-              {isAuto ? (
+              {autoMode.value ? (
                 <>
-                  <Lock size={12} /> Düzenlemeyi Aç
+                  <Lock size={12} className="text-amber-500" /> Düzenlemeyi Aç
                 </>
               ) : (
                 <>
-                  <Unlock size={12} /> Otomatik Düzenle
+                  <Unlock size={12} className="text-green-500" /> Otomatik
+                  Düzenle
                 </>
               )}
             </button>
@@ -204,81 +144,39 @@ export const Input = ({
       )}
 
       <div
-        data-status={status}
+        data-status={"idle"}
         className={twMerge(
-          "relative flex items-center rounded-md border border-zinc-300 transition-all",
-          "data-[status=error]:border-red-500 data-[status=error]:ring-2 data-[status=error]:ring-red-100",
-          "data-[status=focused]:border-zinc-500 data-[status=focused]:ring-2 data-[status=focused]:ring-zinc-100",
-          "data-[status=success]:border-green-500 data-[status=success]:ring-2 data-[status=success]:ring-green-100",
-          isLimitExceeded &&
-            !enforceMaxLength &&
-            "border-red-500 ring-2 ring-red-100",
+          "group relative flex items-center rounded-md border border-zinc-300 transition-all focus-within:border-zinc-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-zinc-100",
+          autoMode.value &&
+            "pointer-events-none cursor-not-allowed bg-zinc-50 text-zinc-500",
+          errorMessage ? "border-red-500 bg-red-50" : "",
         )}
       >
-        {startIcon && (
-          <div className="absolute left-3 text-zinc-500">{startIcon}</div>
-        )}
-
         <input
           {...props}
-          id={inputId}
-          ref={setRefs}
-          value={internalValue}
-          onChange={handleOnChange}
+          readOnly={autoMode.value}
+          onChange={handleInputChange}
           className={twMerge(
-            "w-full rounded-md bg-transparent px-3 py-2 outline-none",
-            startIcon && "pl-9",
-            (endIcon || showCount) && "pr-9",
-            isAuto &&
-              "pointer-events-none cursor-not-allowed bg-zinc-50 text-zinc-500",
-            className,
+            "w-full resize-y rounded-md bg-transparent px-3 py-2 pr-14 outline-none",
+            props.className || "",
           )}
-          onFocus={(e) => {
-            setFocused(true);
-            props.onFocus?.(e);
-          }}
-          onBlur={(e) => {
-            setFocused(false);
-            props.onBlur?.(e);
-          }}
-          readOnly={isAuto}
         />
 
         <div className="absolute right-3 flex items-center gap-2">
-          {/* Karakter sayacı - input içinde sağda (opsiyonel) */}
-          {showCount && maxLength !== undefined && (
-            <span
-              className={twMerge(
-                "text-xs",
-                isLimitExceeded && !enforceMaxLength
-                  ? "font-medium text-red-500"
-                  : charCount >= maxLength * 0.9
-                    ? "text-amber-500"
-                    : "text-zinc-400",
-              )}
-            >
-              {charCount}/{maxLength}
+          {/* Karakter sayacı */}
+          {hasMaxLength && (
+            <span className={twMerge("text-xs", getCounterColorClass())}>
+              {String(props.value || "").length}/{maxLength}
             </span>
           )}
-
-          {/* Endicon*/}
-          {endIcon && <div className="text-zinc-500">{endIcon}</div>}
         </div>
       </div>
 
-      {message && (
-        <p
-          data-message-type={messageType}
-          className="text-xs data-[message-type=error]:text-red-500 data-[message-type=hint]:text-zinc-500 data-[message-type=success]:text-green-500"
-        >
-          {message}
-        </p>
-      )}
+      {/* Error */}
+      {errorMessage && <p className="text-xs text-red-500">{errorMessage}</p>}
 
-      {/* Limit aşıldı mesajı */}
-      {isLimitExceeded && !enforceMaxLength && !message && (
-        <p className="text-xs text-red-500">Karakter limiti aşıldı.</p>
-      )}
+      {/* Hint - Error yoksa göster */}
+      {!errorMessage && hint && <p className="text-xs text-zinc-500">{hint}</p>}
     </div>
   );
 };

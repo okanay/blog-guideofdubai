@@ -1,181 +1,154 @@
 import { Lock, Unlock } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { twMerge } from "tailwind-merge";
 
 interface TextareaProps extends React.ComponentProps<"textarea"> {
   label?: string;
   isRequired?: boolean;
-  isError?: boolean;
-  isSuccess?: boolean;
-  errorMessage?: string;
-  successMessage?: string;
-  hint?: string;
 
   isAutoMode?: boolean;
   initialAutoMode?: boolean;
   followRef?: React.RefObject<HTMLTextAreaElement>;
 
+  errorMessage?: string;
+  hint?: string;
+  successMessage?: string;
+
   maxLength?: number;
-  showCharCount?: boolean;
-  containerClassName?: string;
   enforceMaxLength?: boolean;
 }
 
 export const Textarea = ({
-  ref,
-  className,
   label,
-  id,
-  defaultValue,
-  value,
-  onChange,
-
   isRequired = false,
-  isError = false,
-  isSuccess = false,
-  errorMessage,
-  successMessage,
-  hint,
-
   isAutoMode = false,
   initialAutoMode = false,
   followRef,
-
+  errorMessage,
+  hint,
+  successMessage,
   maxLength,
-  showCharCount = false,
-  containerClassName,
   enforceMaxLength = true,
   ...props
 }: TextareaProps) => {
-  const [focused, setFocused] = useState(false);
-  const [charCount, setCharCount] = useState(0);
-  const [isAuto, setIsAuto] = useState(initialAutoMode);
-  const [internalValue, setInternalValue] = useState<string>((value as string) || (defaultValue as string) || ""); // prettier-ignore
+  // Input bileşenindeki gibi tek bir autoMode state kullanımı
+  const [autoMode, setAutoMode] = useState({
+    status: isAutoMode,
+    value: initialAutoMode,
+  });
 
-  const elementRef = useRef<HTMLTextAreaElement | null>(null);
-  const inputId = id || `textarea-${Math.random().toString(36).substring(2, 9)}` // prettier-ignore
+  const hasMaxLength = maxLength !== undefined && maxLength >= 1;
+  const [maxLengthState, setMaxLengthState] = useState("idle");
 
-  const showCount = showCharCount || maxLength !== undefined;
-  const isLimitExceeded = maxLength !== undefined && charCount > maxLength;
+  // Değer takibi için basit bir fonksiyon
+  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (props.onChange) {
+      // Karakter limiti kontrolü
+      if (hasMaxLength) {
+        const inputValue = e.target.value;
+        const valueLength = inputValue.length;
 
-  const status = isError
-    ? "error"
-    : isSuccess
-      ? "success"
-      : focused
-        ? "focused"
-        : "default";
-  const message = errorMessage || successMessage || hint;
-  const messageType = isError ? "error" : isSuccess ? "success" : "hint";
+        // MaxLength kontrolü - enforceMaxLength aktifse değeri kırp
+        if (enforceMaxLength && valueLength > maxLength) {
+          e.target.value = inputValue.slice(0, maxLength);
+        }
 
-  // Referans birleştirme işlevi
-  const setRefs = (element: HTMLTextAreaElement | null) => {
-    // İç referans için atama
-    elementRef.current = element;
+        // Görsel geri bildirim için durum güncellemesi
+        const valuePercentage = (valueLength / maxLength) * 100;
+        if (valuePercentage >= 100) {
+          setMaxLengthState("reached");
+        } else if (valuePercentage >= 80) {
+          setMaxLengthState("warning");
+        } else {
+          setMaxLengthState("idle");
+        }
+      }
 
-    // Dışarıdan gelen ref için atama
-    if (typeof ref === "function") {
-      ref(element);
-    } else if (ref) {
-      (ref as any).current = element;
+      // Normal onChange işlemi
+      props.onChange(e);
     }
   };
 
-  // onChange işleyicisi
-  const handleOnChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (isAuto) return; // Otomatik modda ise değişikliği engelle
-
-    let newValue = e.target.value;
-
-    // Karakter sınırlaması uygula
-    if (enforceMaxLength && maxLength !== undefined) {
-      newValue = newValue.slice(0, maxLength);
-    }
-
-    setInternalValue(newValue);
-    setCharCount(newValue.length);
-
-    // Orijinal onChange olayını simüle et
-    if (onChange) {
-      const simulatedEvent = {
-        ...e,
-        target: {
-          ...e.target,
-          value: newValue,
-        },
-      } as React.ChangeEvent<HTMLTextAreaElement>;
-
-      onChange(simulatedEvent);
-    }
-  };
-
-  // İlk render için karakter sayacını ayarla
+  // FollowRef'teki değişikliği takip etmek için
   useEffect(() => {
-    const initialValue = value ? (value as string).slice(0, maxLength) : "";
-    setInternalValue(initialValue);
-    setCharCount(initialValue.length);
-  }, [value, maxLength]);
+    if (autoMode.status && autoMode.value && followRef?.current) {
+      const handleFollowTextareaChange = () => {
+        const followValue = followRef.current.value;
 
-  // Auto mode için followRef yaklaşımı
-  useEffect(() => {
-    if (!isAutoMode || !followRef?.current) return;
-
-    // Takip edilen textarea değiştiğinde dinleme işlevi
-    const handleFollowInputChange = () => {
-      if (!isAuto || !followRef.current) return;
-
-      const followValue = followRef.current.value;
-      if (followValue !== internalValue) {
-        setInternalValue(followValue);
-        setCharCount(followValue.length);
-
-        // React Hook Form için onChange olayını tetikle
-        if (onChange) {
+        // Textarea değeri değiştiyse ve followRef'ten geliyorsa
+        if (props.onChange && followValue !== props.value) {
+          // Simulasyon event'i
           const simulatedEvent = {
             target: {
               name: props.name,
               value: followValue,
             },
-          } as React.ChangeEvent<HTMLTextAreaElement>;
+          } as any;
 
-          onChange(simulatedEvent);
+          props.onChange(simulatedEvent);
         }
-      }
-    };
+      };
 
-    // İlk yükleme için değeri al
-    if (isAuto && followRef.current) {
-      const initialFollowValue = followRef.current.value;
-      setInternalValue(initialFollowValue);
-      setCharCount(initialFollowValue.length);
+      followRef.current.addEventListener("input", handleFollowTextareaChange);
 
-      if (onChange && initialFollowValue !== internalValue) {
-        const simulatedEvent = {
-          target: {
-            name: props.name,
-            value: initialFollowValue,
-          },
-        } as React.ChangeEvent<HTMLTextAreaElement>;
+      // Cleanup
+      return () => {
+        followRef.current?.removeEventListener(
+          "input",
+          handleFollowTextareaChange,
+        );
+      };
+    }
+  }, [
+    autoMode.status,
+    autoMode.value,
+    followRef,
+    props.name,
+    props.onChange,
+    props.value,
+  ]);
 
-        onChange(simulatedEvent);
-      }
+  // Karakter sayacı renk sınıfı
+  const getCounterColorClass = () => {
+    switch (maxLengthState) {
+      case "reached":
+        return "text-red-500";
+      case "warning":
+        return "text-yellow-500";
+      default:
+        return "text-zinc-500";
+    }
+  };
+
+  // Mesaj durumuna göre sınıf belirleme
+  const getMessageClass = () => {
+    if (errorMessage) return "text-red-500";
+    if (successMessage) return "text-green-500";
+    return "text-zinc-500";
+  };
+
+  // Container için sınıf belirleme
+  const getContainerClass = () => {
+    let baseClass =
+      "relative overflow-hidden rounded-md border border-zinc-300 transition-all";
+
+    if (errorMessage) {
+      return twMerge(baseClass, "border-red-500 bg-red-50");
     }
 
-    // input event listener kullanarak gerçek zamanlı takip et
-    followRef.current.addEventListener("input", handleFollowInputChange);
+    if (successMessage) {
+      return twMerge(baseClass, "border-green-500 ring-2 ring-green-100");
+    }
 
-    // Temizleme fonksiyonu
-    return () => {
-      followRef.current?.removeEventListener("input", handleFollowInputChange);
-    };
-  }, [isAuto, followRef, onChange, props.name, internalValue]);
+    return baseClass;
+  };
 
   return (
-    <div className={twMerge("flex flex-col gap-1.5", containerClassName)}>
+    <div className="flex flex-col gap-1.5">
       {label && (
         <div className="flex items-center justify-between">
           <label
-            htmlFor={inputId}
+            htmlFor={props.id}
             className="text-sm font-medium text-zinc-700"
           >
             {label}
@@ -184,16 +157,19 @@ export const Textarea = ({
           {isAutoMode && (
             <button
               type="button"
-              onClick={() => setIsAuto(!isAuto)}
-              className="flex items-center gap-1 text-xs font-medium text-zinc-500 hover:text-zinc-700"
+              onClick={() =>
+                setAutoMode((prev) => ({ ...prev, value: !prev.value }))
+              }
+              className="flex items-center gap-1.5 rounded-full bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600 transition-colors duration-200 hover:bg-zinc-200 hover:text-zinc-800"
             >
-              {isAuto ? (
+              {autoMode.value ? (
                 <>
-                  <Lock size={12} /> Düzenlemeyi Aç
+                  <Lock size={12} className="text-amber-500" /> Düzenlemeyi Aç
                 </>
               ) : (
                 <>
-                  <Unlock size={12} /> Otomatik Düzenle
+                  <Unlock size={12} className="text-green-500" /> Otomatik
+                  Düzenle
                 </>
               )}
             </button>
@@ -202,72 +178,38 @@ export const Textarea = ({
       )}
 
       <div
-        data-status={status}
         className={twMerge(
-          "relative overflow-hidden rounded-md border border-zinc-300 transition-all",
-          "data-[status=error]:border-red-500 data-[status=error]:ring-2 data-[status=error]:ring-red-100",
-          "data-[status=focused]:border-zinc-500 data-[status=focused]:ring-2 data-[status=focused]:ring-zinc-100",
-          "data-[status=success]:border-green-500 data-[status=success]:ring-2 data-[status=success]:ring-green-100",
-          isLimitExceeded &&
-            !enforceMaxLength &&
-            "border-red-500 ring-2 ring-red-100",
+          "group relative flex items-center rounded-md border border-zinc-300 transition-all focus-within:border-zinc-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-zinc-100",
+          autoMode.value &&
+            "pointer-events-none cursor-not-allowed bg-zinc-50 text-zinc-500",
+          errorMessage ? "border-red-500 bg-red-50" : "",
         )}
       >
         <textarea
           {...props}
-          ref={setRefs}
-          id={inputId}
-          value={internalValue}
-          onFocus={(e) => {
-            setFocused(true);
-            props.onFocus?.(e);
-          }}
-          onBlur={(e) => {
-            setFocused(false);
-            props.onBlur?.(e);
-          }}
-          onChange={handleOnChange}
+          readOnly={autoMode.value}
+          onChange={handleTextareaChange}
           className={twMerge(
-            "w-full resize-y rounded-md bg-transparent px-3 py-2 outline-none",
-            maxLength !== undefined && "pr-12",
-            isAuto &&
-              "pointer-events-none cursor-not-allowed bg-zinc-50 text-zinc-500",
-            className,
+            "w-full resize-y rounded-md bg-transparent px-3 py-2 pr-14 outline-none",
+            props.className || "",
           )}
-          readOnly={isAuto}
         />
 
-        {/* Sağ alt köşede karakter sayacı (opsiyonel) */}
-        {showCount && (
-          <div className="absolute right-2 bottom-2 text-xs opacity-70">
-            <span
-              className={twMerge(
-                isLimitExceeded && !enforceMaxLength
-                  ? "font-medium text-red-500"
-                  : charCount >= (maxLength || 0) * 0.9
-                    ? "text-amber-500"
-                    : "text-zinc-500",
-              )}
-            >
-              {charCount}
-              {maxLength !== undefined && `/${maxLength}`}
+        <div className="absolute right-3 bottom-3 flex items-center gap-2">
+          {/* Karakter sayacı */}
+          {hasMaxLength && (
+            <span className={twMerge("text-xs", getCounterColorClass())}>
+              {String(props.value || "").length}/{maxLength}
             </span>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
-      {message && (
-        <p
-          data-message-type={messageType}
-          className="text-xs data-[message-type=error]:text-red-500 data-[message-type=hint]:text-zinc-500 data-[message-type=success]:text-green-500"
-        >
-          {message}
+      {/* Mesajlar - Birini göster */}
+      {(errorMessage || successMessage || hint) && (
+        <p className={twMerge("text-xs", getMessageClass())}>
+          {errorMessage || successMessage || hint}
         </p>
-      )}
-
-      {/* Limit aşıldı mesajı */}
-      {isLimitExceeded && !enforceMaxLength && !message && (
-        <p className="text-xs text-red-500">Karakter limiti aşıldı.</p>
       )}
     </div>
   );

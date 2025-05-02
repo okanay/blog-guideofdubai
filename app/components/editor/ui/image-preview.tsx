@@ -1,48 +1,30 @@
-import { useState, useRef, useEffect } from "react";
-import { Images, Eye, X, Upload, ImagePlus } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Images, Eye, X, ImagePlus } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import ImageModal from "@/components/image";
 
 interface ImagePreviewProps extends React.ComponentProps<"input"> {
   label?: string;
   isRequired?: boolean;
-  isError?: boolean;
   errorMessage?: string;
   hint?: string;
-
   containerClassName?: string;
 }
 
 export const ImagePreview = ({
-  ref,
-  className,
   label = "Görsel URL",
-  value = "",
-  onChange,
-  placeholder = "https://example.com/image.jpg",
-  id,
-
   isRequired = false,
-  isError = false,
   errorMessage,
   hint,
-
   containerClassName,
   ...props
 }: ImagePreviewProps) => {
-  const [focused, setFocused] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [imageError, setImageError] = useState<string | null>(null);
   const [isImageLoading, setIsImageLoading] = useState(false);
-  const [internalValue, setInternalValue] = useState<string>(
-    (value as string) || "",
-  );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const elementRef = useRef<HTMLInputElement | null>(null);
-  const inputId =
-    id || `image-input-${Math.random().toString(36).substring(2, 9)}`;
-
+  // URL doğrulama fonksiyonu
   const isValidUrl = (url: string): boolean => {
     if (!url) return true;
     try {
@@ -53,59 +35,18 @@ export const ImagePreview = ({
     }
   };
 
-  const urlIsInvalid = internalValue && !isValidUrl(internalValue);
-  const hasError = isError || urlIsInvalid;
+  // Mevcut değerin geçerli bir URL olup olmadığını kontrol et
+  const urlIsInvalid = props.value && !isValidUrl(props.value as string);
+  const hasError = errorMessage || urlIsInvalid || imageError;
 
-  const status = hasError
-    ? "error"
-    : imageError
-      ? "error"
-      : focused
-        ? "focused"
-        : "default";
+  // Gösterilecek mesajı belirle
   const displayMessage =
     errorMessage ||
     (imageError ? imageError : urlIsInvalid ? "Geçerli bir URL girin" : hint);
 
-  const messageType = hasError || imageError ? "error" : "hint";
-
-  // Referans birleştirme işlevi
-  const setRefs = (element: HTMLInputElement | null) => {
-    elementRef.current = element;
-
-    if (typeof ref === "function") {
-      ref(element);
-    } else if (ref) {
-      (ref as any).current = element;
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setInternalValue(newValue);
-
-    if (imageError) {
-      setImageError(null);
-    }
-
-    // Değişikliği form state'ine uygula
-    if (onChange) {
-      const simulatedEvent = {
-        ...e,
-        target: {
-          ...e.target,
-          value: newValue,
-        },
-      } as React.ChangeEvent<HTMLInputElement>;
-
-      onChange(simulatedEvent);
-    }
-  };
-
+  // Input değerini temizleme fonksiyonu
   const clearValue = () => {
-    setInternalValue("");
-
-    if (onChange) {
+    if (props.onChange) {
       const simulatedEvent = {
         target: {
           name: props.name,
@@ -113,16 +54,14 @@ export const ImagePreview = ({
         },
       } as React.ChangeEvent<HTMLInputElement>;
 
-      onChange(simulatedEvent);
+      props.onChange(simulatedEvent);
     }
-
-    // Eğer ana input ise ve bağlı alanları temizleyelim
-
     setImageError(null);
   };
 
+  // Önizleme işlemleri
   const openPreview = () => {
-    if (!internalValue || !isValidUrl(internalValue)) return;
+    if (!props.value || !isValidUrl(props.value as string)) return;
     setIsPreviewOpen(true);
     setIsImageLoading(true);
   };
@@ -141,18 +80,19 @@ export const ImagePreview = ({
     setImageError("Görsel yüklenemedi. URL'i kontrol edin.");
   };
 
+  // Resim yöneticisini açma
   const openImageManager = () => {
     setIsModalOpen(true);
   };
 
-  const handleImageSelect = (image: ImageType | null) => {
+  // Resim seçme fonksiyonu
+  const handleImageSelect = (image: any) => {
     if (image) {
       const imageUrl = image.url;
-      setInternalValue(imageUrl);
       setImageError(null);
 
       // Orijinal onChange olayını simüle et
-      if (onChange) {
+      if (props.onChange) {
         const simulatedEvent = {
           target: {
             name: props.name || "",
@@ -160,12 +100,9 @@ export const ImagePreview = ({
           },
         } as React.ChangeEvent<HTMLInputElement>;
 
-        onChange(simulatedEvent);
+        props.onChange(simulatedEvent);
       }
-
-      // Eğer bu bir ana input ise ve setValue prop'u varsa, bağlı form alanlarını güncelle
     }
-
     setIsModalOpen(false);
   };
 
@@ -174,7 +111,7 @@ export const ImagePreview = ({
       {label && (
         <div className="flex items-center justify-between">
           <label
-            htmlFor={inputId}
+            htmlFor={props.id}
             className="text-sm font-medium text-zinc-700"
           >
             {label}
@@ -184,8 +121,11 @@ export const ImagePreview = ({
       )}
 
       <div
-        data-status={status}
-        className="relative flex items-center rounded-md border border-zinc-300 transition-all data-[status=error]:border-red-500 data-[status=error]:ring-2 data-[status=error]:ring-red-100 data-[status=focused]:border-zinc-500 data-[status=focused]:ring-2 data-[status=focused]:ring-zinc-100"
+        className={twMerge(
+          "relative flex items-center rounded-md border border-zinc-300 transition-all",
+          "focus-within:border-zinc-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-zinc-100",
+          hasError ? "border-red-500 bg-red-50 ring-2 ring-red-100" : "",
+        )}
       >
         <div className="pointer-events-none absolute left-3 text-zinc-400">
           <Images size={18} />
@@ -193,23 +133,16 @@ export const ImagePreview = ({
 
         <input
           {...props}
-          id={inputId}
-          ref={setRefs}
           type="text"
-          value={internalValue}
-          onChange={handleChange}
-          placeholder={placeholder}
+          placeholder={props.placeholder || "https://example.com/image.jpg"}
           className={twMerge(
             "w-full rounded-md bg-transparent py-2 pr-20 pl-10 outline-none",
-
-            className,
+            props.className || "",
           )}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
         />
 
         <div className="absolute right-2 flex items-center gap-1.5">
-          {internalValue && (
+          {props.value && (
             <button
               type="button"
               onClick={clearValue}
@@ -232,11 +165,11 @@ export const ImagePreview = ({
 
           <button
             type="button"
-            disabled={!internalValue || !isValidUrl(internalValue)}
+            disabled={!props.value || !isValidUrl(props.value as string)}
             onClick={openPreview}
             className={twMerge(
               "flex items-center gap-0.5 rounded border border-zinc-200 bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-200 hover:text-zinc-700",
-              (!internalValue || !isValidUrl(internalValue)) &&
+              (!props.value || !isValidUrl(props.value as string)) &&
                 "cursor-not-allowed opacity-50",
             )}
             title="Görseli önizle"
@@ -247,10 +180,7 @@ export const ImagePreview = ({
       </div>
 
       {displayMessage && (
-        <p
-          data-message-type={messageType}
-          className="text-xs data-[message-type=error]:text-red-500 data-[message-type=hint]:text-zinc-500"
-        >
+        <p className={`text-xs ${hasError ? "text-red-500" : "text-zinc-500"}`}>
           {displayMessage}
         </p>
       )}
@@ -293,7 +223,7 @@ export const ImagePreview = ({
               )}
 
               <img
-                src={internalValue}
+                src={props.value as string}
                 alt="Önizleme"
                 className={twMerge(
                   "max-h-[70vh] max-w-full rounded-md",
@@ -305,7 +235,7 @@ export const ImagePreview = ({
             </div>
 
             <div className="mt-4 text-center text-xs text-zinc-500">
-              <p className="break-all">{internalValue}</p>
+              <p className="break-all">{props.value}</p>
             </div>
           </div>
         </div>

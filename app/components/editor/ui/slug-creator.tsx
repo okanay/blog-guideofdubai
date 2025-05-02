@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { Lock, Unlock, RotateCcw, CheckCircle } from "lucide-react";
 import { slugify } from "../helper";
@@ -6,10 +6,7 @@ import { slugify } from "../helper";
 interface SlugCreatorProps extends React.ComponentProps<"input"> {
   label?: string;
   isRequired?: boolean;
-  isError?: boolean;
-  isSuccess?: boolean;
   errorMessage?: string;
-  successMessage?: string;
   hint?: string;
 
   isAutoMode?: boolean;
@@ -17,22 +14,12 @@ interface SlugCreatorProps extends React.ComponentProps<"input"> {
   followRef?: React.RefObject<HTMLInputElement>;
 
   containerClassName?: string;
-  checkSlug?: (slug: string) => Promise<boolean>;
 }
 
 export const SlugCreator = ({
-  ref,
-  className,
   label = "Slug",
-  id,
-  value = "",
-  onChange,
-
   isRequired = false,
-  isError = false,
-  isSuccess = false,
   errorMessage,
-  successMessage,
   hint = "URL'de görünecek benzersiz tanımlayıcı",
 
   isAutoMode = true,
@@ -40,72 +27,27 @@ export const SlugCreator = ({
   followRef,
 
   containerClassName,
-  checkSlug,
   ...props
 }: SlugCreatorProps) => {
-  const [focused, setFocused] = useState(false);
-  const [isAuto, setIsAuto] = useState(initialAutoMode);
-  const [isChecking, setIsChecking] = useState(false);
-  const [checkResult, setCheckResult] = useState<boolean | null>(null);
-  const [localError, setLocalError] = useState<string | null>(null);
-  const [internalValue, setInternalValue] = useState<string>(
-    (value as string) || "",
-  );
-
-  const elementRef = useRef<HTMLInputElement | null>(null);
-  const inputId = id || `slug-${Math.random().toString(36).substring(2, 9)}`;
-
-  // Referans birleştirme işlevi
-  const setRefs = (element: HTMLInputElement | null) => {
-    // İç referans için atama
-    elementRef.current = element;
-
-    // Dışarıdan gelen ref için atama
-    if (typeof ref === "function") {
-      ref(element);
-    } else if (ref) {
-      (ref as React.MutableRefObject<HTMLInputElement | null>).current =
-        element;
-    }
-  };
+  const [autoMode, setAutoMode] = useState({
+    status: isAutoMode,
+    value: initialAutoMode,
+  });
 
   // Input değişikliği
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (isAuto) return; // Otomatik modda ise değişikliği engelle
+    if (autoMode.value) return;
 
     const newValue = slugify(e.target.value);
-    setInternalValue(newValue);
-    setCheckResult(null);
 
-    // Eğer dışarıdan bir onChange handler verilmişse çağır
-    if (onChange) {
-      const simulatedEvent = {
-        ...e,
-        target: {
-          ...e.target,
-          value: newValue,
-        },
-      } as React.ChangeEvent<HTMLInputElement>;
-
-      onChange(simulatedEvent);
+    if (e.target.value !== newValue) {
+      // Değeri slug formatına dönüştür
+      e.target.value = newValue;
     }
-  };
 
-  // Slug kontrolü
-  const handleCheckSlug = async () => {
-    if (!internalValue || !checkSlug) return;
-
-    setIsChecking(true);
-    setCheckResult(null);
-    setLocalError(null);
-
-    try {
-      const isAvailable = await checkSlug(internalValue);
-      setCheckResult(isAvailable);
-    } catch (error) {
-      setLocalError("Slug kontrolü sırasında bir hata oluştu.");
-    } finally {
-      setIsChecking(false);
+    // Orijinal onChange olayını çağır
+    if (props.onChange) {
+      props.onChange(e);
     }
   };
 
@@ -113,14 +55,11 @@ export const SlugCreator = ({
   const regenerateFromTitle = () => {
     if (!followRef?.current) return;
 
-    const sourceValue = followRef?.current?.value || "";
+    const sourceValue = followRef.current.value || "";
     const newSlug = slugify(sourceValue);
 
-    setInternalValue(newSlug);
-    setCheckResult(null);
-
-    // Eğer dışarıdan bir onChange handler verilmişse çağır
-    if (onChange) {
+    // Değişikliği ilet
+    if (props.onChange) {
       const simulatedEvent = {
         target: {
           name: props.name,
@@ -128,124 +67,61 @@ export const SlugCreator = ({
         },
       } as React.ChangeEvent<HTMLInputElement>;
 
-      onChange(simulatedEvent);
+      props.onChange(simulatedEvent);
     }
   };
 
-  // Auto mode için followRef yaklaşımı
+  // FollowRef'teki değişikliği takip etmek için
   useEffect(() => {
-    if (!isAutoMode || !followRef?.current) return;
+    if (autoMode.status && autoMode.value && followRef?.current) {
+      const handleFollowInputChange = () => {
+        const followValue = followRef.current.value;
+        const newSlug = slugify(followValue);
 
-    // Takip edilen input değiştiğinde dinleme işlevi
-    const handleFollowInputChange = () => {
-      if (!isAuto || !followRef.current) return;
-
-      const followValue = followRef.current.value;
-      const newSlug = slugify(followValue);
-
-      if (newSlug !== internalValue) {
-        setInternalValue(newSlug);
-        setCheckResult(null);
-
-        // React Hook Form için onChange olayını tetikle
-        if (onChange) {
+        // Değer değiştiyse ve followRef'ten geliyorsa
+        if (props.onChange && newSlug !== props.value) {
+          // Simulasyon event'i
           const simulatedEvent = {
             target: {
               name: props.name,
               value: newSlug,
             },
-          } as React.ChangeEvent<HTMLInputElement>;
+          } as any;
 
-          onChange(simulatedEvent);
+          props.onChange(simulatedEvent);
         }
+      };
+
+      followRef.current.addEventListener("input", handleFollowInputChange);
+
+      // İlk yükleme için değeri al
+      if (followRef.current.value) {
+        handleFollowInputChange();
       }
-    };
 
-    // İlk yükleme için değeri al
-    if (isAuto && followRef.current) {
-      const initialFollowValue = followRef.current.value;
-      const newSlug = slugify(initialFollowValue);
-
-      setInternalValue(newSlug);
-      setCheckResult(null);
-
-      if (onChange && newSlug !== internalValue) {
-        const simulatedEvent = {
-          target: {
-            name: props.name,
-            value: newSlug,
-          },
-        } as React.ChangeEvent<HTMLInputElement>;
-
-        onChange(simulatedEvent);
-      }
+      // Cleanup
+      return () => {
+        followRef.current?.removeEventListener(
+          "input",
+          handleFollowInputChange,
+        );
+      };
     }
-
-    // input event listener kullanarak gerçek zamanlı takip et
-    followRef.current.addEventListener("input", handleFollowInputChange);
-
-    // Temizleme fonksiyonu
-    return () => {
-      followRef.current?.removeEventListener("input", handleFollowInputChange);
-    };
   }, [
-    isAuto,
+    autoMode.status,
+    autoMode.value,
     followRef,
-    onChange,
     props.name,
-    internalValue,
-    slugify,
-    isAutoMode,
+    props.onChange,
+    props.value,
   ]);
-
-  // Değer değişikliğini izle
-  useEffect(() => {
-    // Otomatik modda değilse ve prop'dan gelen value değişirse
-    if (!isAuto && value !== undefined && value !== internalValue) {
-      setInternalValue(value as string);
-    }
-  }, [value, isAuto, internalValue]);
-
-  // İlk render için değeri ayarla
-  useEffect(() => {
-    const initialValue = (value as string) || "";
-    setInternalValue(initialValue);
-  }, []);
-
-  // Durum bilgisini hesapla
-  const status =
-    isError || localError
-      ? "error"
-      : checkResult === false
-        ? "error"
-        : isSuccess || checkResult === true
-          ? "success"
-          : focused
-            ? "focused"
-            : "default";
-
-  const message =
-    errorMessage || localError
-      ? errorMessage || localError
-      : checkResult === false
-        ? "Bu slug zaten kullanımda."
-        : checkResult === true
-          ? "Slug kullanılabilir."
-          : successMessage || hint;
-
-  const messageType =
-    isError || localError || checkResult === false
-      ? "error"
-      : isSuccess || checkResult === true
-        ? "success"
-        : "hint";
 
   return (
     <div className={twMerge("flex flex-col gap-1.5", containerClassName)}>
       {label && (
         <div className="flex items-center justify-between">
           <label
-            htmlFor={inputId}
+            htmlFor={props.id}
             className="text-sm font-medium text-zinc-700"
           >
             {label}
@@ -254,16 +130,19 @@ export const SlugCreator = ({
           {isAutoMode && (
             <button
               type="button"
-              onClick={() => setIsAuto(!isAuto)}
-              className="flex items-center gap-1 text-xs font-medium text-zinc-500 hover:text-zinc-700"
+              onClick={() =>
+                setAutoMode((prev) => ({ ...prev, value: !prev.value }))
+              }
+              className="flex items-center gap-1.5 rounded-full bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600 transition-colors duration-200 hover:bg-zinc-200 hover:text-zinc-800"
             >
-              {isAuto ? (
+              {autoMode.value ? (
                 <>
-                  <Lock size={12} /> Düzenlemeyi Aç
+                  <Lock size={12} className="text-amber-500" /> Düzenlemeyi Aç
                 </>
               ) : (
                 <>
-                  <Unlock size={12} /> Otomatik Düzenle
+                  <Unlock size={12} className="text-green-500" /> Otomatik
+                  Düzenle
                 </>
               )}
             </button>
@@ -272,8 +151,12 @@ export const SlugCreator = ({
       )}
 
       <div
-        data-status={status}
-        className="relative flex items-center rounded-md border border-zinc-300 transition-all data-[status=error]:border-red-500 data-[status=error]:ring-2 data-[status=error]:ring-red-100 data-[status=focused]:border-zinc-500 data-[status=focused]:ring-2 data-[status=focused]:ring-zinc-100 data-[status=success]:border-green-500 data-[status=success]:ring-2 data-[status=success]:ring-green-100"
+        className={twMerge(
+          "group relative flex items-center rounded-md border border-zinc-300 transition-all focus-within:border-zinc-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-zinc-100",
+          autoMode.value &&
+            "pointer-events-none cursor-not-allowed bg-zinc-50 text-zinc-500",
+          errorMessage ? "border-red-500 bg-red-50" : "",
+        )}
       >
         <div className="pointer-events-none absolute left-3 font-medium text-zinc-400 select-none">
           /
@@ -281,25 +164,12 @@ export const SlugCreator = ({
 
         <input
           {...props}
-          id={inputId}
-          ref={setRefs}
-          value={internalValue}
+          readOnly={autoMode.value}
           onChange={handleInputChange}
-          readOnly={isAuto}
           className={twMerge(
-            "w-full rounded-md bg-transparent py-2 pr-20 pl-6 outline-none",
-            isAuto &&
-              "pointer-events-none cursor-not-allowed bg-zinc-50 text-zinc-500",
-            className,
+            "w-full resize-y rounded-md bg-transparent py-2 pr-14 pl-6 outline-none",
+            props.className || "",
           )}
-          onFocus={(e) => {
-            setFocused(true);
-            props.onFocus?.(e);
-          }}
-          onBlur={(e) => {
-            setFocused(false);
-            props.onBlur?.(e);
-          }}
         />
 
         <div className="absolute right-2 flex items-center gap-1.5">
@@ -313,34 +183,15 @@ export const SlugCreator = ({
               <RotateCcw size={14} />
             </button>
           )}
-
-          {checkSlug && (
-            <button
-              type="button"
-              disabled={!internalValue || isChecking}
-              onClick={handleCheckSlug}
-              className={twMerge(
-                "rounded border border-zinc-200 bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-200 hover:text-zinc-700",
-                isChecking && "cursor-wait opacity-70",
-                !internalValue && "cursor-not-allowed opacity-50",
-              )}
-            >
-              {isChecking ? "Kontrol ediliyor..." : "Kontrol Et"}
-            </button>
-          )}
         </div>
       </div>
 
-      {message && (
+      {(errorMessage || hint) && (
         <div className="flex items-center gap-1.5">
-          {messageType === "success" && (
-            <CheckCircle size={12} className="text-green-500" />
-          )}
           <p
-            data-message-type={messageType}
-            className="text-xs data-[message-type=error]:text-red-500 data-[message-type=hint]:text-zinc-500 data-[message-type=success]:text-green-500"
+            className={`text-xs ${errorMessage ? "text-red-500" : "text-zinc-500"}`}
           >
-            {message}
+            {errorMessage || hint}
           </p>
         </div>
       )}

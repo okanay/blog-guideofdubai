@@ -3,8 +3,7 @@ import { twMerge } from "tailwind-merge";
 import { Globe, Share2 } from "lucide-react";
 import { ReactNode } from "react";
 
-type PreviewMode = "google" | "social";
-
+// Sabitler
 const SEO_LIMITS = {
   GOOGLE_TITLE: 60,
   GOOGLE_DESCRIPTION: 160,
@@ -12,60 +11,99 @@ const SEO_LIMITS = {
   SOCIAL_DESCRIPTION: 160,
 } as const;
 
-function getInputValueById(id: string | undefined): string {
+type PreviewMode = "google" | "social";
+
+// Arayüzler
+interface SeoPreviewProps {
+  title?: string;
+  description?: string;
+  slug?: string;
+  image?: string;
+  baseUrl?: string;
+  titleInput?: { id: string; value: string };
+  descriptionInput?: { id: string; value: string };
+  slugInput?: { id: string; value: string };
+  imageInput?: { id: string; value: string };
+  containerClassName?: string;
+  defaultMode?: PreviewMode;
+}
+
+interface PreviewData {
+  title: string;
+  description: string;
+  slug: string;
+  image: string;
+}
+
+interface PreviewModeButtonProps {
+  mode: PreviewMode;
+  currentMode: PreviewMode;
+  onClick: () => void;
+  icon: ReactNode;
+  label: string;
+}
+
+// Yardımcı fonksiyonlar
+const getInputValueById = (id: string | undefined): string => {
   if (!id) return "";
   const element = document.getElementById(id) as
     | HTMLInputElement
     | HTMLTextAreaElement
     | null;
   return element?.value || "";
-}
+};
 
-function truncateText(text: string, limit: number): string {
+const truncateText = (text: string, limit: number): string => {
   return text.length > limit ? `${text.substring(0, limit)}...` : text;
-}
+};
 
-function useSeoPreview({
-  initialTitle,
-  initialDescription,
-  initialSlug,
-  initialImage,
+// Ana bileşen
+export function SeoPreview({
+  title = "",
+  description = "",
+  slug = "",
+  image = "",
+  baseUrl = "example.com",
   titleInput,
   descriptionInput,
   slugInput,
   imageInput,
-}: UseSeoPreviewParams) {
-  const [previewData, setPreviewData] = useState({
-    title: initialTitle,
-    description: initialDescription,
-    slug: initialSlug,
-    image: initialImage,
+  containerClassName,
+  defaultMode = "google",
+}: SeoPreviewProps) {
+  const [mode, setMode] = useState<PreviewMode>(defaultMode);
+  const [previewData, setPreviewData] = useState<PreviewData>({
+    title,
+    description,
+    slug,
+    image,
   });
 
+  // Input değerlerini izle ve önizlemeyi güncelle
   useEffect(() => {
-    function updatePreview() {
-      const newData = {
+    const updatePreview = () => {
+      setPreviewData({
         title: titleInput
-          ? getInputValueById(titleInput.id) || titleInput.value || initialTitle
-          : initialTitle,
+          ? getInputValueById(titleInput.id) || titleInput.value || title
+          : title,
         description: descriptionInput
           ? getInputValueById(descriptionInput.id) ||
             descriptionInput.value ||
-            initialDescription
-          : initialDescription,
+            description
+          : description,
         slug: slugInput
-          ? getInputValueById(slugInput.id) || slugInput.value || initialSlug
-          : initialSlug,
+          ? getInputValueById(slugInput.id) || slugInput.value || slug
+          : slug,
         image: imageInput
-          ? getInputValueById(imageInput.id) || imageInput.value || initialImage
-          : initialImage,
-      };
+          ? getInputValueById(imageInput.id) || imageInput.value || image
+          : image,
+      });
+    };
 
-      setPreviewData(newData);
-    }
-
+    // İlk güncelleme
     updatePreview();
 
+    // DOM değişikliklerini izle
     const observer = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
         if (
@@ -77,6 +115,7 @@ function useSeoPreview({
       }
     });
 
+    // İzlenecek elementleri al
     const elements = [
       titleInput?.id,
       descriptionInput?.id,
@@ -87,6 +126,7 @@ function useSeoPreview({
       .map((id) => document.getElementById(id as string))
       .filter(Boolean);
 
+    // Elementleri izle ve event listener'ları ekle
     elements.forEach((element) => {
       observer.observe(element as Element, {
         attributes: true,
@@ -96,6 +136,7 @@ function useSeoPreview({
       element?.addEventListener("input", updatePreview);
     });
 
+    // Temizleme
     return () => {
       observer.disconnect();
       elements.forEach((element) => {
@@ -103,25 +144,99 @@ function useSeoPreview({
       });
     };
   }, [
-    initialTitle,
-    initialDescription,
-    initialSlug,
-    initialImage,
+    title,
+    description,
+    slug,
+    image,
     titleInput,
     descriptionInput,
     slugInput,
     imageInput,
   ]);
 
-  return previewData;
+  return (
+    <div className={twMerge("flex flex-col gap-3", containerClassName)}>
+      {/* Başlık ve mod seçici */}
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-medium text-zinc-700">SEO Önizleme</h3>
+        <div className="flex items-center gap-2">
+          <div className="flex overflow-hidden rounded-md border border-zinc-200">
+            <PreviewModeButton
+              mode="google"
+              currentMode={mode}
+              onClick={() => setMode("google")}
+              icon={<Globe size={12} />}
+              label="Google"
+            />
+            <PreviewModeButton
+              mode="social"
+              currentMode={mode}
+              onClick={() => setMode("social")}
+              icon={<Share2 size={12} />}
+              label="Sosyal Medya"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Önizleme içeriği */}
+      <div className="overflow-hidden bg-white">
+        {mode === "google" ? (
+          <GoogleSearchPreview
+            title={previewData.title}
+            description={previewData.description}
+            slug={previewData.slug}
+            baseUrl={baseUrl}
+          />
+        ) : (
+          <SocialMediaPreview
+            title={previewData.title}
+            description={previewData.description}
+            slug={previewData.slug}
+            baseUrl={baseUrl}
+            image={previewData.image}
+          />
+        )}
+      </div>
+    </div>
+  );
 }
 
-export function GoogleSearchPreview({
+// Alt bileşenler
+function PreviewModeButton({
+  mode,
+  currentMode,
+  onClick,
+  icon,
+  label,
+}: PreviewModeButtonProps) {
+  return (
+    <button
+      onClick={onClick}
+      className={twMerge(
+        "flex items-center gap-1 px-3 py-1.5 text-xs font-medium transition-colors",
+        currentMode === mode
+          ? "bg-primary text-white"
+          : "bg-zinc-50 text-zinc-700 hover:bg-zinc-100",
+      )}
+      type="button"
+    >
+      {icon} {label}
+    </button>
+  );
+}
+
+function GoogleSearchPreview({
   title,
   description,
   slug,
   baseUrl,
-}: GoogleSearchPreviewProps) {
+}: {
+  title: string;
+  description: string;
+  slug: string;
+  baseUrl: string;
+}) {
   const url = slug ? `${baseUrl}/${slug}` : baseUrl;
   const displayTitle = truncateText(
     title || "Sayfa Başlığı",
@@ -157,13 +272,19 @@ export function GoogleSearchPreview({
   );
 }
 
-export function SocialMediaPreview({
+function SocialMediaPreview({
   title,
   description,
   slug,
   baseUrl,
   image,
-}: SocialMediaPreviewProps) {
+}: {
+  title: string;
+  description: string;
+  slug: string;
+  baseUrl: string;
+  image?: string;
+}) {
   const [imageStatus, setImageStatus] = useState<
     "loading" | "error" | "success"
   >(image ? "loading" : "error");
@@ -215,146 +336,4 @@ export function SocialMediaPreview({
       </div>
     </div>
   );
-}
-
-export function SeoPreview({
-  title = "",
-  description = "",
-  slug = "",
-  image = "",
-  baseUrl = "example.com",
-  titleInput,
-  descriptionInput,
-  slugInput,
-  imageInput,
-  containerClassName,
-  defaultMode = "google",
-}: SeoPreviewProps) {
-  const [mode, setMode] = useState<PreviewMode>(defaultMode);
-
-  const previewData = useSeoPreview({
-    initialTitle: title,
-    initialDescription: description,
-    initialSlug: slug,
-    initialImage: image,
-    titleInput,
-    descriptionInput,
-    slugInput,
-    imageInput,
-  });
-
-  return (
-    <div className={twMerge("flex flex-col gap-3", containerClassName)}>
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium text-zinc-700">SEO Önizleme</h3>
-        <div className="flex items-center gap-2">
-          <div className="flex overflow-hidden rounded-md border border-zinc-200">
-            <PreviewModeButton
-              mode="google"
-              currentMode={mode}
-              onClick={() => setMode("google")}
-              icon={<Globe size={12} />}
-              label="Google"
-            />
-            <PreviewModeButton
-              mode="social"
-              currentMode={mode}
-              onClick={() => setMode("social")}
-              icon={<Share2 size={12} />}
-              label="Sosyal Medya"
-            />
-          </div>
-        </div>
-      </div>
-      <div className="overflow-hidden bg-white">
-        {mode === "google" ? (
-          <GoogleSearchPreview
-            title={previewData.title}
-            description={previewData.description}
-            slug={previewData.slug}
-            baseUrl={baseUrl}
-          />
-        ) : (
-          <SocialMediaPreview
-            title={previewData.title}
-            description={previewData.description}
-            slug={previewData.slug}
-            baseUrl={baseUrl}
-            image={previewData.image}
-          />
-        )}
-      </div>
-    </div>
-  );
-}
-
-function PreviewModeButton({
-  mode,
-  currentMode,
-  onClick,
-  icon,
-  label,
-}: PreviewModeButtonProps) {
-  return (
-    <button
-      onClick={onClick}
-      className={twMerge(
-        "flex items-center gap-1 px-3 py-1.5 text-xs font-medium transition-colors",
-        currentMode === mode
-          ? "bg-primary text-white"
-          : "bg-zinc-50 text-zinc-700 hover:bg-zinc-100",
-      )}
-      type="button"
-    >
-      {icon} {label}
-    </button>
-  );
-}
-
-interface SeoPreviewProps {
-  title?: string;
-  description?: string;
-  slug?: string;
-  image?: string;
-  baseUrl?: string;
-  titleInput?: { id: string; value: string };
-  descriptionInput?: { id: string; value: string };
-  slugInput?: { id: string; value: string };
-  imageInput?: { id: string; value: string };
-  containerClassName?: string;
-  defaultMode?: PreviewMode;
-}
-
-interface UseSeoPreviewParams {
-  initialTitle: string;
-  initialDescription: string;
-  initialSlug: string;
-  initialImage: string;
-  titleInput?: { id: string; value: string };
-  descriptionInput?: { id: string; value: string };
-  slugInput?: { id: string; value: string };
-  imageInput?: { id: string; value: string };
-}
-
-interface GoogleSearchPreviewProps {
-  title: string;
-  description: string;
-  slug: string;
-  baseUrl: string;
-}
-
-interface SocialMediaPreviewProps {
-  title: string;
-  description: string;
-  slug: string;
-  baseUrl: string;
-  image?: string;
-}
-
-interface PreviewModeButtonProps {
-  mode: PreviewMode;
-  currentMode: PreviewMode;
-  onClick: () => void;
-  icon: ReactNode;
-  label: string;
 }

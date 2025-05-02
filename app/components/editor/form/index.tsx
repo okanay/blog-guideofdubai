@@ -38,6 +38,7 @@ export function CreateBlogForm({
   const { handleSubmit, control, formState: { errors }, getValues, setValue} = useForm<BlogFormSchema>({
     resolver: zodResolver(BlogFormSchema),
     mode: "onSubmit",
+    reValidateMode: "onBlur",
     defaultValues: { ...initialData },
   });
 
@@ -98,10 +99,10 @@ export function CreateBlogForm({
                 {...field}
                 id="metadata.title"
                 label="SEO Başlığı"
+                placeholder="Google ve diğer arama motorlarında görünecek başlık."
+                hint="Blog içeriğini kısaca açıklayacak bir başlık belirleyin."
                 isRequired={true}
                 maxLength={120}
-                showCharCount={true}
-                isError={!!errors.metadata?.title}
                 errorMessage={errors.metadata?.title?.message}
                 ref={(e) => {
                   field.ref(e);
@@ -121,7 +122,6 @@ export function CreateBlogForm({
                 id="slug"
                 hint="Arama motorları ve kullanıcılar için kolay okunabilir URL"
                 isRequired={true}
-                isError={!!errors.slug}
                 errorMessage={errors.slug?.message}
                 isAutoMode={true}
                 initialAutoMode={initialAutoMode}
@@ -147,7 +147,6 @@ export function CreateBlogForm({
                 maxLength={200}
                 rows={3}
                 isRequired={true}
-                isError={!!errors.metadata?.description}
                 errorMessage={errors.metadata?.description?.message}
                 ref={(e) => {
                   field.ref(e);
@@ -167,7 +166,6 @@ export function CreateBlogForm({
                 label="Sosyal Medya Görseli"
                 hint="Sosyal medya platformlarında link olarak paylaşıldığında görünecek görsel (1200x630px önerilir)"
                 isRequired={true}
-                isError={!!errors.metadata?.image}
                 errorMessage={errors.metadata?.image?.message}
                 ref={(e) => {
                   field.ref(e);
@@ -212,9 +210,7 @@ export function CreateBlogForm({
                 placeholder="İlgi çekici ve konuyu net ifade eden başlık"
                 hint="Listeleme sayfalarında blog kartında büyük punto ile görünür"
                 isRequired={true}
-                isError={!!errors.content?.title}
                 errorMessage={errors.content?.title?.message}
-                showCharCount={true}
                 maxLength={120}
                 isAutoMode={true}
                 initialAutoMode={initialAutoMode}
@@ -235,9 +231,7 @@ export function CreateBlogForm({
                 placeholder="İçeriğin ana değerini ve faydalarını vurgulayan özet"
                 hint="Kullanıcıyı içeriği okumaya teşvik edecek kısa ve öz bir açıklama"
                 isRequired={true}
-                isError={!!errors.content?.description}
                 errorMessage={errors.content?.description?.message}
-                showCharCount={true}
                 maxLength={200}
                 rows={3}
                 isAutoMode={true}
@@ -259,7 +253,6 @@ export function CreateBlogForm({
                 placeholder="https://example.com/images/blog-image.jpg"
                 hint="Blog listelerinde gösterilecek kapak görseli (1200x630px önerilir)"
                 isRequired={true}
-                isError={!!errors.content?.image}
                 errorMessage={errors.content?.image?.message}
               />
             )}
@@ -381,7 +374,6 @@ export function CreateBlogForm({
                 modalTitle="Blog Dil Bağlantısı."
                 hint="Eğer bu blog var olan bir bloğun farklı dildeki bir versiyonu ise, o blog ile eşleştirin."
                 isRequired={true}
-                isError={!!errors.groupId}
                 errorMessage={errors.groupId?.message}
                 isAutoMode={initialAutoMode}
                 initialAutoMode={initialAutoMode}
@@ -405,7 +397,6 @@ export function CreateBlogForm({
                 name={field.name}
                 htmlContent={editor.getHTML()}
                 hint="İçeriğin tahmini okuma süresi (dakika cinsinden)"
-                isError={!!errors.content?.readTime}
                 errorMessage={errors.content?.readTime?.message}
               />
             )}

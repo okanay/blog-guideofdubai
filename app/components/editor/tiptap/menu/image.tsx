@@ -239,7 +239,6 @@ const EnhancedImageButton = () => {
               value={imageUrl}
               onChange={handleImageUrlChange}
               placeholder="https://example.com/image.jpg"
-              isError={!!validationError}
               errorMessage={validationError}
               autoFocus
             />

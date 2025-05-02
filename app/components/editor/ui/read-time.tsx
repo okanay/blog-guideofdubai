@@ -1,47 +1,54 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { twMerge } from "tailwind-merge";
 import { Clock, Lock, Unlock, RotateCcw } from "lucide-react";
 import { calculateContentStats } from "../helper";
 
 interface ReadTimeProps {
-  ref?: React.Ref<HTMLInputElement>;
   label?: string;
   id?: string;
   isRequired?: boolean;
-  isError?: boolean;
   errorMessage?: string;
   hint?: string;
   containerClassName?: string;
   value: number;
   onChange: (value: number) => void;
   onBlur?: () => void;
+  isAutoMode?: boolean;
   initialAutoMode?: boolean;
   name?: string;
   htmlContent?: string;
   defaultWordsPerMinute?: number;
 }
 
+interface ContentStats {
+  wordCount: number;
+  characterCount: number;
+  autoReadTime: number;
+}
+
 export const ReadTime = ({
-  ref,
   label = "Okuma Süresi",
   id,
   isRequired = false,
-  isError = false,
   errorMessage,
   hint = "Dakika cinsinden ortalama okuma süresi",
   containerClassName,
   value,
   onChange,
+  onBlur,
+  isAutoMode = true,
   initialAutoMode = false,
   htmlContent = "",
   defaultWordsPerMinute = 225,
+  ...props
 }: ReadTimeProps) => {
-  const [isAuto, setIsAuto] = useState(initialAutoMode);
-  const [stats, setStats] = useState<{
-    wordCount: number;
-    characterCount: number;
-    autoReadTime: number;
-  }>({
+  // State yönetimi
+  const [autoMode, setAutoMode] = useState({
+    status: isAutoMode,
+    value: initialAutoMode,
+  });
+
+  const [stats, setStats] = useState<ContentStats>({
     wordCount: 0,
     characterCount: 0,
     autoReadTime: value || 1,
@@ -49,16 +56,6 @@ export const ReadTime = ({
 
   const inputId =
     id || `read-time-${Math.random().toString(36).substring(2, 9)}`;
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  // forwardRef desteği için referansı ilet
-  useEffect(() => {
-    if (typeof ref === "function") {
-      ref(inputRef.current);
-    } else if (ref) {
-      ref.current = inputRef.current;
-    }
-  }, [ref]);
 
   // HTML içeriği değiştiğinde istatistikleri güncelle
   useEffect(() => {
@@ -66,6 +63,7 @@ export const ReadTime = ({
       htmlContent,
       defaultWordsPerMinute,
     );
+
     setStats({
       wordCount: contentStats.wordCount,
       characterCount: contentStats.characterCount,
@@ -73,11 +71,12 @@ export const ReadTime = ({
     });
 
     // Otomatik moddaysa, okuma süresini güncelle
-    if (isAuto) {
+    if (autoMode.value) {
       onChange(contentStats.readTime);
     }
-  }, [htmlContent, defaultWordsPerMinute, isAuto, onChange]);
+  }, [htmlContent, defaultWordsPerMinute, autoMode.value, onChange]);
 
+  // Manuel değişiklik işleme
   const handleManualChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value.trim();
     if (inputValue === "") {
@@ -91,17 +90,23 @@ export const ReadTime = ({
     }
   };
 
-  const toggleMode = () => {
-    if (isAuto) {
-      setIsAuto(false);
-    } else {
-      setIsAuto(true);
-      onChange(stats.autoReadTime);
-    }
+  // Otomatik modu değiştir
+  const toggleAutoMode = () => {
+    setAutoMode((prev) => {
+      const newValue = !prev.value;
+
+      // Otomatik moda geçildiğinde değeri güncelle
+      if (newValue) {
+        onChange(stats.autoReadTime);
+      }
+
+      return { ...prev, value: newValue };
+    });
   };
 
+  // Otomatik hesaplanan değere sıfırla
   const resetToAuto = () => {
-    setIsAuto(true);
+    setAutoMode((prev) => ({ ...prev, value: true }));
     onChange(stats.autoReadTime);
   };
 
@@ -116,28 +121,34 @@ export const ReadTime = ({
             {label}
             {isRequired && <span className="ml-1 text-red-500">*</span>}
           </label>
-          <button
-            type="button"
-            onClick={toggleMode}
-            className="flex items-center gap-1 text-xs font-medium text-zinc-500 hover:text-zinc-700"
-          >
-            {isAuto ? (
-              <>
-                <Lock size={12} /> Düzenlemeyi Aç
-              </>
-            ) : (
-              <>
-                <Unlock size={12} /> Otomatik Düzenle
-              </>
-            )}
-          </button>
+          {isAutoMode && (
+            <button
+              type="button"
+              onClick={() =>
+                setAutoMode((prev) => ({ ...prev, value: !prev.value }))
+              }
+              className="flex items-center gap-1.5 rounded-full bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600 transition-colors duration-200 hover:bg-zinc-200 hover:text-zinc-800"
+            >
+              {autoMode.value ? (
+                <>
+                  <Lock size={12} className="text-amber-500" /> Düzenlemeyi Aç
+                </>
+              ) : (
+                <>
+                  <Unlock size={12} className="text-green-500" /> Otomatik
+                  Düzenle
+                </>
+              )}
+            </button>
+          )}
         </div>
       )}
 
       <div
         className={twMerge(
           "relative flex items-center rounded-md border border-zinc-300 bg-white transition-colors",
-          isError && "border-red-500 ring-2 ring-red-100",
+          "focus-within:border-zinc-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-zinc-100",
+          errorMessage && "border-red-500 bg-red-50 ring-2 ring-red-100",
         )}
       >
         <div className="pointer-events-none absolute left-3 text-zinc-400">
@@ -145,17 +156,18 @@ export const ReadTime = ({
         </div>
 
         <input
+          {...props}
           id={inputId}
-          ref={inputRef}
           type="number"
           min="1"
-          value={isAuto ? stats.autoReadTime : value || ""}
+          value={autoMode.value ? stats.autoReadTime : value || ""}
           onChange={handleManualChange}
+          onBlur={onBlur}
           placeholder="Dakika"
-          disabled={isAuto}
+          readOnly={autoMode.value}
           className={twMerge(
             "w-full rounded-md bg-transparent py-2 pr-20 pl-9 outline-none",
-            isAuto &&
+            autoMode.value &&
               "pointer-events-none cursor-not-allowed bg-zinc-50 text-zinc-500",
           )}
         />
@@ -163,7 +175,7 @@ export const ReadTime = ({
         <div className="absolute right-2 flex items-center gap-1.5">
           <span className="text-xs text-zinc-500">dakika</span>
 
-          {!isAuto && (
+          {!autoMode.value && (
             <button
               type="button"
               onClick={resetToAuto}
@@ -178,20 +190,21 @@ export const ReadTime = ({
 
       {/* İstatistikler ve ipucu */}
       <div className="flex items-center justify-between">
-        <p
-          className={twMerge(
-            "text-xs text-zinc-500",
-            isError && "text-red-500",
-          )}
-        >
-          {isError ? errorMessage : hint}
-        </p>
+        {/* Hata mesajı veya ipucu */}
+        {(errorMessage || hint) && (
+          <p
+            className={`text-xs ${errorMessage ? "text-red-500" : "text-zinc-500"}`}
+          >
+            {errorMessage || hint}
+          </p>
+        )}
 
+        {/* İstatistikler */}
         <div className="flex items-center gap-2 text-xs text-zinc-500">
           <span title="Kelime sayısı">{stats.wordCount} kelime</span>
           <span>•</span>
           <span title="Karakter sayısı">{stats.characterCount} karakter</span>
-          {!isAuto && (
+          {!autoMode.value && (
             <>
               <span>•</span>
               <span title="Otomatik hesaplanan okuma süresi" className="italic">
