@@ -59,7 +59,7 @@ export const BlogPostCardViewSchema = z.object({
         10,
         "Blog başlığı en az 10 karakter olmalıdır. Bu alan boş bırakılamaz.",
       )
-      .max(100, "Blog başlığı en fazla 100 karakter olabilir."),
+      .max(120, "Blog başlığı en fazla 120 karakter olabilir."),
 
     description: z
       .string()
@@ -67,7 +67,7 @@ export const BlogPostCardViewSchema = z.object({
         40,
         "Blog açıklaması en az 40 karakter olmalıdır. Bu alan boş bırakılamaz.",
       )
-      .max(250, "Blog açıklaması en fazla 250 karakter olabilir."),
+      .max(200, "Blog açıklaması en fazla 200 karakter olabilir."),
 
     image: imageUrlSchema,
 

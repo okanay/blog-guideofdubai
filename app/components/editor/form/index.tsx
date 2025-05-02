@@ -35,7 +35,7 @@ export function CreateBlogForm({
   } = useEditorContext();
 
   // prettier-ignore
-  const { handleSubmit, control, formState: { errors }, getValues, setValue} = useForm<BlogFormSchema>({
+  const { handleSubmit, control, formState: { errors }, getValues, setValue, watch} = useForm<BlogFormSchema>({
     resolver: zodResolver(BlogFormSchema),
     mode: "onSubmit",
     reValidateMode: "onBlur",
@@ -253,6 +253,10 @@ export function CreateBlogForm({
                 placeholder="https://example.com/images/blog-image.jpg"
                 hint="Blog listelerinde gösterilecek kapak görseli (1200x630px önerilir)"
                 isRequired={true}
+                isAutoMode={true}
+                initialAutoMode={initialAutoMode}
+                followRef={seoImageRef}
+                followValue={watch("metadata.image")}
                 errorMessage={errors.content?.image?.message}
               />
             )}

@@ -1,11 +1,15 @@
-import { useState, useEffect } from "react";
-import { Images, Eye, X, ImagePlus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Images, Eye, X, ImagePlus, Unlock, Lock } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import ImageModal from "@/components/image";
 
 interface ImagePreviewProps extends React.ComponentProps<"input"> {
   label?: string;
   isRequired?: boolean;
+  isAutoMode?: boolean;
+  initialAutoMode?: boolean;
+  followRef?: React.RefObject<HTMLInputElement>;
+  followValue?: string; // Takip edilecek değer (watch ile gelecek)
   errorMessage?: string;
   hint?: string;
   containerClassName?: string;
@@ -14,6 +18,10 @@ interface ImagePreviewProps extends React.ComponentProps<"input"> {
 export const ImagePreview = ({
   label = "Görsel URL",
   isRequired = false,
+  isAutoMode,
+  initialAutoMode,
+  followRef,
+  followValue,
   errorMessage,
   hint,
   containerClassName,
@@ -23,6 +31,32 @@ export const ImagePreview = ({
   const [imageError, setImageError] = useState<string | null>(null);
   const [isImageLoading, setIsImageLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [autoMode, setAutoMode] = useState({
+    status: isAutoMode,
+    value: initialAutoMode,
+  });
+
+  // Takip edilen değer değiştiğinde ve auto mode açıksa, bizim değerimizi de güncelle
+  useEffect(() => {
+    if (autoMode.status && autoMode.value && followValue && props.onChange) {
+      // Değer değişimini tetikle
+      const simulatedEvent = {
+        target: {
+          name: props.name,
+          value: followValue,
+        },
+      } as React.ChangeEvent<HTMLInputElement>;
+
+      props.onChange(simulatedEvent);
+    }
+  }, [
+    followValue,
+    autoMode.status,
+    autoMode.value,
+    props.name,
+    props.onChange,
+  ]);
 
   // URL doğrulama fonksiyonu
   const isValidUrl = (url: string): boolean => {
@@ -87,24 +121,80 @@ export const ImagePreview = ({
 
   // Resim seçme fonksiyonu
   const handleImageSelect = (image: any) => {
-    if (image) {
-      const imageUrl = image.url;
-      setImageError(null);
+    if (!image || !image.url) return;
 
-      // Orijinal onChange olayını simüle et
-      if (props.onChange) {
-        const simulatedEvent = {
-          target: {
-            name: props.name || "",
-            value: imageUrl,
-          },
-        } as React.ChangeEvent<HTMLInputElement>;
+    // Normal onChange event'i
+    if (props.onChange) {
+      const simulatedEvent = {
+        target: {
+          name: props.name,
+          value: image.url,
+        },
+      } as React.ChangeEvent<HTMLInputElement>;
 
-        props.onChange(simulatedEvent);
-      }
+      props.onChange(simulatedEvent);
     }
+
     setIsModalOpen(false);
   };
+
+  useEffect(() => {
+    if (autoMode.status && autoMode.value && followRef?.current) {
+      // İnput değişikliğini dinle (klavyeden yazma)
+      const handleFollowInputChange = () => {
+        const followValue = followRef.current.value;
+        if (props.onChange && followValue !== props.value) {
+          const simulatedEvent = {
+            target: {
+              name: props.name,
+              value: followValue,
+            },
+          } as React.ChangeEvent<HTMLInputElement>;
+          props.onChange(simulatedEvent);
+        }
+      };
+
+      // Özel olayı dinle (galeri seçimi)
+      const handleCustomValueChange = (e: CustomEvent) => {
+        const followValue = e.detail.value;
+        if (props.onChange && followValue !== props.value) {
+          const simulatedEvent = {
+            target: {
+              name: props.name,
+              value: followValue,
+            },
+          } as React.ChangeEvent<HTMLInputElement>;
+          props.onChange(simulatedEvent);
+        }
+      };
+
+      // Event listener'ları ekle
+      followRef.current.addEventListener("input", handleFollowInputChange);
+      followRef.current.addEventListener(
+        "value-changed",
+        handleCustomValueChange as EventListener,
+      );
+
+      // Cleanup
+      return () => {
+        followRef.current?.removeEventListener(
+          "input",
+          handleFollowInputChange,
+        );
+        followRef.current?.removeEventListener(
+          "value-changed",
+          handleCustomValueChange as EventListener,
+        );
+      };
+    }
+  }, [
+    autoMode.status,
+    autoMode.value,
+    followRef,
+    props.name,
+    props.onChange,
+    props.value,
+  ]);
 
   return (
     <div className={twMerge("flex flex-col gap-1.5", containerClassName)}>
@@ -117,14 +207,35 @@ export const ImagePreview = ({
             {label}
             {isRequired && <span className="ml-1 text-red-500">*</span>}
           </label>
+          {isAutoMode && (
+            <button
+              type="button"
+              onClick={() =>
+                setAutoMode((prev) => ({ ...prev, value: !prev.value }))
+              }
+              className="flex items-center gap-1.5 rounded-full bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600 transition-colors duration-200 hover:bg-zinc-200 hover:text-zinc-800"
+            >
+              {autoMode.value ? (
+                <>
+                  <Lock size={12} className="text-amber-500" /> Düzenlemeyi Aç
+                </>
+              ) : (
+                <>
+                  <Unlock size={12} className="text-green-500" /> Otomatik
+                  Düzenle
+                </>
+              )}
+            </button>
+          )}
         </div>
       )}
 
       <div
         className={twMerge(
-          "relative flex items-center rounded-md border border-zinc-300 transition-all",
-          "focus-within:border-zinc-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-zinc-100",
-          hasError ? "border-red-500 bg-red-50 ring-2 ring-red-100" : "",
+          "group relative flex items-center rounded-md border border-zinc-300 transition-all focus-within:border-zinc-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-zinc-100",
+          autoMode.value &&
+            "pointer-events-none cursor-not-allowed bg-zinc-50 text-zinc-500",
+          errorMessage ? "border-red-500 bg-red-50" : "",
         )}
       >
         <div className="pointer-events-none absolute left-3 text-zinc-400">
@@ -136,7 +247,7 @@ export const ImagePreview = ({
           type="text"
           placeholder={props.placeholder || "https://example.com/image.jpg"}
           className={twMerge(
-            "w-full rounded-md bg-transparent py-2 pr-20 pl-10 outline-none",
+            "w-full resize-y rounded-md bg-transparent py-2 pr-14 pl-10 outline-none",
             props.className || "",
           )}
         />

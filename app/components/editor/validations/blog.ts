@@ -45,7 +45,7 @@ export const BlogSchema = z.object({
         10,
         "SEO başlığı en az 10 karakter olmalıdır. Bu alan boş bırakılamaz.",
       )
-      .max(60, "SEO başlığı en fazla 60 karakter olabilir."),
+      .max(120, "SEO başlığı en fazla 120 karakter olabilir."),
 
     description: z
       .string()
@@ -53,7 +53,7 @@ export const BlogSchema = z.object({
         40,
         "SEO açıklaması en az 40 karakter olmalıdır. Bu alan boş bırakılamaz.",
       )
-      .max(160, "SEO açıklaması en fazla 160 karakter olabilir."),
+      .max(200, "SEO açıklaması en fazla 200 karakter olabilir."),
 
     image: imageUrlSchema,
   }),
@@ -65,7 +65,7 @@ export const BlogSchema = z.object({
         10,
         "Blog başlığı en az 10 karakter olmalıdır. Bu alan boş bırakılamaz.",
       )
-      .max(100, "Blog başlığı en fazla 100 karakter olabilir."),
+      .max(120, "Blog başlığı en fazla 120 karakter olabilir."),
 
     description: z
       .string()
@@ -73,7 +73,7 @@ export const BlogSchema = z.object({
         40,
         "Blog açıklaması en az 40 karakter olmalıdır. Bu alan boş bırakılamaz.",
       )
-      .max(250, "Blog açıklaması en fazla 250 karakter olabilir."),
+      .max(200, "Blog açıklaması en fazla 200 karakter olabilir."),
 
     image: imageUrlSchema,
 
