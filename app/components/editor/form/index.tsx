@@ -405,24 +405,6 @@ export function CreateBlogForm({
               />
             )}
           />
-
-          <Controller
-            name="featured"
-            control={control}
-            render={({ field }) => (
-              <Toggle
-                ref={field.ref as any}
-                label="Öne Çıkarılmış İçerik"
-                description="Bu içerik ana sayfada ve kategori sayfalarında öncelikli olarak gösterilir"
-                checked={field.value}
-                onChange={field.onChange}
-                onBlur={field.onBlur}
-                name={field.name}
-                isError={!!errors.featured}
-                errorMessage={errors.featured?.message}
-              />
-            )}
-          />
         </div>
       </div>
 
