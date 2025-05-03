@@ -10,6 +10,7 @@ import {
   Loader2,
   AlertCircle,
   RefreshCw,
+  Star,
 } from "lucide-react";
 import { useAuth } from "@/providers/auth";
 
@@ -36,45 +37,7 @@ function EditorDashboard() {
             {/* Başlık her durumda görünür */}
             <DashboardTitle />
 
-            <div className="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {/* Blog Oluştur */}
-              <Link
-                to="/editor/create"
-                className="group border-primary-200 hover:border-primary-300 relative overflow-hidden rounded-xl border-2 border-dashed bg-white p-6 transition-all"
-              >
-                <div className="relative z-10 flex flex-col items-center text-center">
-                  <div className="bg-primary-50 text-primary-600 group-hover:bg-primary-100 flex h-14 w-14 items-center justify-center rounded-xl transition-colors">
-                    <PlusCircle className="h-8 w-8" />
-                  </div>
-                  <h3 className="text-primary-600 mt-4 text-lg font-medium">
-                    Yeni Blog Oluştur
-                  </h3>
-                  <p className="mt-1.5 text-sm text-zinc-500">
-                    Yeni bir blog yazısı oluşturmak için tıklayın
-                  </p>
-                </div>
-                <div className="bg-primary-50 absolute -right-14 -bottom-14 h-32 w-32 rounded-full opacity-50 transition-transform group-hover:scale-110"></div>
-              </Link>
-
-              {/* Tüm Blogları Görüntüle */}
-              <Link
-                to="/editor/list"
-                className="group relative overflow-hidden rounded-xl border border-zinc-100 bg-white p-6 transition-all hover:border-zinc-200"
-              >
-                <div className="relative z-10 flex flex-col items-center text-center">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-zinc-50 text-zinc-600 transition-colors group-hover:bg-zinc-100">
-                    <ListFilter className="h-7 w-7" />
-                  </div>
-                  <h3 className="mt-4 text-lg font-medium text-zinc-800">
-                    Tüm Bloglar
-                  </h3>
-                  <p className="mt-1.5 text-sm text-zinc-500">
-                    Tüm blog yazılarınızı görüntüleyin ve yönetin
-                  </p>
-                </div>
-                <div className="absolute -right-14 -bottom-14 h-32 w-32 rounded-full bg-zinc-50 opacity-50 transition-transform group-hover:scale-110"></div>
-              </Link>
-            </div>
+            <QuickAccessCards />
           </div>
         </main>
       </div>
@@ -164,6 +127,13 @@ const Sidebar = () => (
             <Folder className="mr-3 h-5 w-5" />
             <span>Tüm Bloglar</span>
           </Link>
+          <Link
+            to="/editor/featured"
+            className="group flex items-center rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900"
+          >
+            <Star className="mr-3 h-5 w-5" />
+            <span>Öne Çıkanlar</span>
+          </Link>
         </nav>
       </div>
     </div>
@@ -219,15 +189,22 @@ const QuickAccessCards = () => (
       <div className="absolute -right-14 -bottom-14 h-32 w-32 rounded-full bg-zinc-50 opacity-50 transition-transform group-hover:scale-110"></div>
     </Link>
 
-    {/* Son Düzenlenenler */}
-    <div className="rounded-xl border border-zinc-100 bg-white p-6">
-      <h3 className="mb-4 text-base font-medium text-zinc-800">
-        Son Düzenlenen
-      </h3>
-      <div className="space-y-3">
-        {/* Burada son düzenlenen bloglar listelenecek */}
+    {/* Featured Bloglar */}
+    <Link
+      to="/editor/featured"
+      className="group relative overflow-hidden rounded-xl border border-zinc-100 bg-white p-6 transition-all hover:border-zinc-200"
+    >
+      <div className="relative z-10 flex flex-col items-center text-center">
+        <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-yellow-50 text-yellow-600 transition-colors group-hover:bg-yellow-100">
+          <Star className="h-7 w-7" />
+        </div>
+        <h3 className="mt-4 text-lg font-medium text-zinc-800">Öne Çıkanlar</h3>
+        <p className="mt-1.5 text-sm text-zinc-500">
+          Öne çıkan blog yazılarınızı görüntüleyin ve yönetin
+        </p>
       </div>
-    </div>
+      <div className="absolute -right-14 -bottom-14 h-32 w-32 rounded-full bg-yellow-50 opacity-50 transition-transform group-hover:scale-110"></div>
+    </Link>
   </div>
 );
 

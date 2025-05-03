@@ -88,6 +88,7 @@ interface DataState {
     categories: StatusState;
     tags: StatusState;
     blogPosts: StatusState;
+    featured: StatusState;
   };
 
   // Blog İşlemleri
@@ -115,7 +116,17 @@ interface DataState {
   blogPostsQuery: BlogCardQueryOptions;
   setBlogPostsQuery: (query: Partial<BlogCardQueryOptions>) => void;
   fetchBlogPosts: () => Promise<void>;
+  featuredBlogs: { [language: string]: BlogPostCardView[] };
   clearBlogPosts: () => void;
+
+  fetchFeaturedBlogs: (language: string) => Promise<void>;
+  addToFeatured: (blogId: string, language: string) => Promise<boolean>;
+  removeFromFeatured: (blogId: string) => Promise<boolean>;
+  updateFeaturedOrdering: (
+    language: string,
+    blogIds: string[],
+  ) => Promise<boolean>;
+  checkFeaturedStatus: (blogId: string, language: string) => Promise<boolean>;
 }
 
 // Store İmplementasyonu
@@ -142,12 +153,14 @@ export function EditorProvider({ children }: PropsWithChildren) {
           categories: createStatusState(),
           tags: createStatusState(),
           blogPosts: createStatusState(),
+          featured: createStatusState(),
         },
 
         // Veri durumları
         categories: [],
         tags: [],
         fetchedBlogs: {},
+        featuredBlogs: {},
         visibleBlogIds: [],
         totalBlogCount: 0,
         lastFetchCount: 0,
@@ -507,6 +520,115 @@ export function EditorProvider({ children }: PropsWithChildren) {
               description: errorMessage,
             });
           }
+        },
+
+        fetchFeaturedBlogs: async (language: string) => {
+          set((state) => {
+            state.statusStates.featured = createStatusState("loading");
+          });
+
+          const result = await apiFetch<{
+            success: boolean;
+            blogs: BlogPostCardView[];
+            count: number;
+            cached: boolean;
+          }>({
+            method: "GET",
+            endpoint: `/blog/featured?language=${language}&limit=50`,
+            errorMessage: "Featured bloglar alınırken bir hata oluştu",
+          });
+
+          set((state) => {
+            state.statusStates.featured = createStatusState(
+              result.success ? "success" : "error",
+              result.error,
+            );
+
+            if (result.success && result.data) {
+              state.featuredBlogs[language] = result.data.blogs || [];
+            }
+          });
+        },
+
+        addToFeatured: async (blogId: string, language: string) => {
+          set((state) => {
+            state.statusStates.featured = createStatusState("loading");
+          });
+
+          const result = await apiFetch({
+            method: "POST",
+            endpoint: "/auth/blog/featured",
+            body: { blogId, language },
+            successMessage: "Blog featured listesine eklendi",
+            errorMessage: "Blog featured listesine eklenemedi",
+          });
+
+          set((state) => {
+            state.statusStates.featured = createStatusState(
+              result.success ? "success" : "error",
+              result.error,
+            );
+          });
+
+          return result.success;
+        },
+
+        removeFromFeatured: async (blogId: string) => {
+          set((state) => {
+            state.statusStates.featured = createStatusState("loading");
+          });
+
+          const result = await apiFetch({
+            method: "DELETE",
+            endpoint: `/auth/blog/featured/${blogId}`,
+            successMessage: "Blog featured listesinden çıkarıldı",
+            errorMessage: "Blog featured listesinden çıkarılamadı",
+          });
+
+          set((state) => {
+            state.statusStates.featured = createStatusState(
+              result.success ? "success" : "error",
+              result.error,
+            );
+          });
+
+          return result.success;
+        },
+
+        updateFeaturedOrdering: async (language: string, blogIds: string[]) => {
+          set((state) => {
+            state.statusStates.featured = createStatusState("loading");
+          });
+
+          const result = await apiFetch({
+            method: "PATCH",
+            endpoint: "/auth/blog/featured/ordering",
+            body: { language, blogIds },
+            successMessage: "Sıralama güncellendi",
+            errorMessage: "Sıralama güncellenemedi",
+          });
+
+          set((state) => {
+            state.statusStates.featured = createStatusState(
+              result.success ? "success" : "error",
+              result.error,
+            );
+          });
+
+          return result.success;
+        },
+
+        checkFeaturedStatus: async (blogId: string, language: string) => {
+          const result = await apiFetch<{
+            success: boolean;
+            isFeatured: boolean;
+          }>({
+            method: "GET",
+            endpoint: `/blog/featured/${blogId}/status?language=${language}`,
+            errorMessage: "Featured durumu alınamadı",
+          });
+
+          return result.data?.isFeatured || false;
         },
 
         // Blog listesini temizleme

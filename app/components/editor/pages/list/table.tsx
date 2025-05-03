@@ -2,17 +2,21 @@ import { useEditorContext } from "@/components/editor/store";
 import { LANGUAGE_DICTONARY } from "@/i18n/config";
 import { Link } from "@/i18n/link";
 
-import { Archive, ArrowUpFromLine, CheckCircle2, Edit, Eye, EyeIcon, EyeOff, MoreHorizontal, Star, Trash2 } from "lucide-react"; // prettier-ignore
-import { useState, useEffect, useRef } from "react";
+import { Archive, ArrowUpFromLine, CheckCircle2, Edit, Eye, EyeIcon, EyeOff, MoreHorizontal, Star, StarOff, Trash2 } from "lucide-react"; // prettier-ignore
 import { BLOG_OPTIONS } from "../../constants";
 import { formatDate } from "../../helper";
 
 interface BlogTableProps {
   blogs: BlogPostCardView[];
   onDeleteClick: (id: string) => void;
+  onFeaturedToggle: (blogId: string, currentStatus: boolean) => void;
 }
 
-export function BlogTable({ blogs, onDeleteClick }: BlogTableProps) {
+export function BlogTable({
+  blogs,
+  onDeleteClick,
+  onFeaturedToggle,
+}: BlogTableProps) {
   const { changeBlogStatus } = useEditorContext();
 
   return (
@@ -129,6 +133,21 @@ export function BlogTable({ blogs, onDeleteClick }: BlogTableProps) {
                   >
                     <Edit size={16} className="mr-1 inline-block" />
                   </Link>
+                  <button
+                    onClick={() => onFeaturedToggle(blog.id, blog.featured)}
+                    className={`rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors ${
+                      blog.featured
+                        ? "bg-amber-100 text-amber-800 hover:bg-amber-200"
+                        : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+                    }`}
+                    title={
+                      blog.featured
+                        ? "Öne çıkanlardan kaldır"
+                        : "Öne çıkanlara ekle"
+                    }
+                  >
+                    {blog.featured ? <StarOff size={16} /> : <Star size={16} />}
+                  </button>
 
                   {/* Durum değiştirme butonu */}
                   {blog.status !== "published" ? (

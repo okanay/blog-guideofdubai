@@ -24,10 +24,13 @@ function BlogListPage() {
   // Context'ten verileri alma
   const {
     fetchedBlogs,
+    fetchBlogPosts,
     visibleBlogIds,
     totalBlogCount,
     statusStates: { blogPosts },
     blogPostsQuery,
+    addToFeatured,
+    removeFromFeatured,
   } = useEditorContext();
 
   const limit = blogPostsQuery.limit || 10;
@@ -48,6 +51,23 @@ function BlogListPage() {
   const openDeleteModal = (id: string) => {
     setSelectedId(id);
     setDeleteModalOpen(true);
+  };
+
+  const handleFeaturedToggle = async (
+    blogId: string,
+    currentStatus: boolean,
+  ) => {
+    if (currentStatus) {
+      await removeFromFeatured(blogId);
+    } else {
+      // Blog'un dilini almak için
+      const blog = fetchedBlogs[blogId];
+      if (blog) {
+        await addToFeatured(blogId, blog.language);
+      }
+    }
+    // Listeyi yenile
+    fetchBlogPosts();
   };
 
   return (
@@ -82,6 +102,7 @@ function BlogListPage() {
                 <BlogTable
                   blogs={visibleBlogs}
                   onDeleteClick={openDeleteModal}
+                  onFeaturedToggle={handleFeaturedToggle}
                 />
 
                 {/* Sayfalama */}
