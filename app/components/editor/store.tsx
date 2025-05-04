@@ -91,6 +91,32 @@ interface DataState {
     featured: StatusState;
   };
 
+  blogStats: {
+    data: BlogStats[];
+    originalData: BlogStats[]; // Ana veri (değişmez)
+    filteredData: BlogStats[]; // Filtrelenmiş veri (gösterilen)
+    loading: boolean;
+    error: string | null;
+    cached: boolean;
+    lastFetch: number | null;
+    filters: {
+      language: string | null;
+      sortBy: keyof BlogStats;
+      sortOrder: "asc" | "desc";
+      searchQuery: string;
+      dateRange: {
+        start: Date | null;
+        end: Date | null;
+      };
+    };
+  };
+
+  fetchBlogStats: (forceRefresh?: boolean) => Promise<void>;
+  applyStatsFilters: () => void;
+  setStatsFilter: (key: string, value: any) => void;
+  clearStatsFilters: () => void;
+  refreshStats: () => Promise<void>;
+
   // Blog İşlemleri
   createBlog: (blog: any) => Promise<boolean>;
   updateBlog: (blog: any) => Promise<boolean>;
@@ -154,6 +180,185 @@ export function EditorProvider({ children }: PropsWithChildren) {
           tags: createStatusState(),
           blogPosts: createStatusState(),
           featured: createStatusState(),
+        },
+
+        blogStats: {
+          data: [],
+          originalData: [],
+          filteredData: [],
+          loading: false,
+          error: null,
+          cached: false,
+          lastFetch: null,
+          filters: {
+            language: null,
+            sortBy: "views",
+            sortOrder: "desc",
+            searchQuery: "",
+            dateRange: {
+              start: null,
+              end: null,
+            },
+          },
+        },
+
+        fetchBlogStats: async (forceRefresh = false) => {
+          const state = get();
+
+          // Cache kontrolü
+          if (state.blogStats.cached && !forceRefresh) {
+            const now = Date.now();
+            const lastFetch = state.blogStats.lastFetch || 0;
+            const cacheTime = 5 * 60 * 1000; // 5 dakika
+
+            if (now - lastFetch < cacheTime) {
+              return;
+            }
+          }
+
+          set((state) => {
+            state.blogStats.loading = true;
+            state.blogStats.error = null;
+          });
+
+          try {
+            const response = await fetch(
+              `${API_URL}/auth/blog/stats?limit=100&offset=0`,
+              {
+                method: "GET",
+                credentials: "include",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              },
+            );
+
+            if (!response.ok) {
+              throw new Error("İstatistikler alınamadı");
+            }
+
+            const data: BlogStatsResponse = await response.json();
+
+            if (data.success) {
+              set((state) => {
+                state.blogStats.originalData = data.stats; // Ana veriyi sakla
+                state.blogStats.cached = true;
+                state.blogStats.lastFetch = Date.now();
+                state.blogStats.loading = false;
+              });
+
+              // Filtreleri uygula
+              get().applyStatsFilters();
+            } else {
+              throw new Error("API yanıtı başarısız");
+            }
+          } catch (error) {
+            set((state) => {
+              state.blogStats.loading = false;
+              state.blogStats.error =
+                error instanceof Error ? error.message : "Bilinmeyen hata";
+            });
+            toast.error("İstatistikler yüklenemedi", {
+              description:
+                error instanceof Error ? error.message : "Bilinmeyen hata",
+            });
+          }
+        },
+
+        applyStatsFilters: () => {
+          const state = get();
+          // Ana verinin kopyasını al
+          let filtered = [...state.blogStats.originalData];
+          const filters = state.blogStats.filters;
+
+          // Dil filtresi
+          if (filters.language) {
+            filtered = filtered.filter(
+              (item) => item.language === filters.language,
+            );
+          }
+
+          // Arama filtresi
+          if (filters.searchQuery) {
+            const query = filters.searchQuery.toLowerCase();
+            filtered = filtered.filter(
+              (item) =>
+                item.title.toLowerCase().includes(query) ||
+                item.slug.toLowerCase().includes(query),
+            );
+          }
+
+          // Tarih aralığı filtresi
+          if (filters.dateRange.start || filters.dateRange.end) {
+            filtered = filtered.filter((item) => {
+              const itemDate = new Date(item.lastViewedAt);
+              if (filters.dateRange.start && itemDate < filters.dateRange.start)
+                return false;
+              if (filters.dateRange.end && itemDate > filters.dateRange.end)
+                return false;
+              return true;
+            });
+          }
+
+          // Sıralama
+          filtered.sort((a, b) => {
+            const aValue = a[filters.sortBy];
+            const bValue = b[filters.sortBy];
+
+            if (typeof aValue === "string") {
+              return filters.sortOrder === "asc"
+                ? aValue.localeCompare(bValue as string)
+                : (bValue as string).localeCompare(aValue);
+            } else {
+              return filters.sortOrder === "asc"
+                ? (aValue as number) - (bValue as number)
+                : (bValue as number) - (aValue as number);
+            }
+          });
+
+          // Sadece filtrelenmiş veriyi güncelle, ana veri aynı kalsın
+          set((state) => {
+            state.blogStats.filteredData = filtered;
+          });
+        },
+
+        setStatsFilter: (key: string, value: any) => {
+          set((state) => {
+            if (key.includes(".")) {
+              const keys = key.split(".");
+              let current: any = state.blogStats.filters;
+              for (let i = 0; i < keys.length - 1; i++) {
+                current = current[keys[i]];
+              }
+              current[keys[keys.length - 1]] = value;
+            } else {
+              state.blogStats.filters[key] = value;
+            }
+          });
+          // Her filtre değişikliğinde filtreleri uygula
+          get().applyStatsFilters();
+        },
+
+        clearStatsFilters: () => {
+          set((state) => {
+            state.blogStats.filters = {
+              language: null,
+              sortBy: "views",
+              sortOrder: "desc",
+              searchQuery: "",
+              dateRange: {
+                start: null,
+                end: null,
+              },
+            };
+          });
+          // Filtreleri temizledikten sonra tüm veriyi göster
+          get().applyStatsFilters();
+        },
+
+        refreshStats: async () => {
+          // Force refresh ile yeni veri çek
+          await get().fetchBlogStats(true);
         },
 
         // Veri durumları

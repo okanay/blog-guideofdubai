@@ -20,6 +20,7 @@ import { Route as BlogMainSlugImport } from './routes/blog/_main/$slug'
 import { Route as BlogAuthLoginImport } from './routes/blog/_auth/login'
 import { Route as BlogAuthEditorRouteImport } from './routes/blog/_auth/_editor/route'
 import { Route as BlogAuthEditorEditorIndexImport } from './routes/blog/_auth/_editor/editor.index'
+import { Route as BlogAuthEditorEditorStatsImport } from './routes/blog/_auth/_editor/editor.stats'
 import { Route as BlogAuthEditorEditorListImport } from './routes/blog/_auth/_editor/editor.list'
 import { Route as BlogAuthEditorEditorFeaturedImport } from './routes/blog/_auth/_editor/editor.featured'
 import { Route as BlogAuthEditorEditorCreateImport } from './routes/blog/_auth/_editor/editor.create'
@@ -75,6 +76,12 @@ const BlogAuthEditorRouteRoute = BlogAuthEditorRouteImport.update({
 const BlogAuthEditorEditorIndexRoute = BlogAuthEditorEditorIndexImport.update({
   id: '/editor/',
   path: '/editor/',
+  getParentRoute: () => BlogAuthEditorRouteRoute,
+} as any)
+
+const BlogAuthEditorEditorStatsRoute = BlogAuthEditorEditorStatsImport.update({
+  id: '/editor/stats',
+  path: '/editor/stats',
   getParentRoute: () => BlogAuthEditorRouteRoute,
 } as any)
 
@@ -188,6 +195,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogAuthEditorEditorListImport
       parentRoute: typeof BlogAuthEditorRouteImport
     }
+    '/blog/_auth/_editor/editor/stats': {
+      id: '/blog/_auth/_editor/editor/stats'
+      path: '/editor/stats'
+      fullPath: '/blog/editor/stats'
+      preLoaderRoute: typeof BlogAuthEditorEditorStatsImport
+      parentRoute: typeof BlogAuthEditorRouteImport
+    }
     '/blog/_auth/_editor/editor/': {
       id: '/blog/_auth/_editor/editor/'
       path: '/editor'
@@ -211,6 +225,7 @@ interface BlogAuthEditorRouteRouteChildren {
   BlogAuthEditorEditorCreateRoute: typeof BlogAuthEditorEditorCreateRoute
   BlogAuthEditorEditorFeaturedRoute: typeof BlogAuthEditorEditorFeaturedRoute
   BlogAuthEditorEditorListRoute: typeof BlogAuthEditorEditorListRoute
+  BlogAuthEditorEditorStatsRoute: typeof BlogAuthEditorEditorStatsRoute
   BlogAuthEditorEditorIndexRoute: typeof BlogAuthEditorEditorIndexRoute
   BlogAuthEditorEditorEditIdRoute: typeof BlogAuthEditorEditorEditIdRoute
 }
@@ -219,6 +234,7 @@ const BlogAuthEditorRouteRouteChildren: BlogAuthEditorRouteRouteChildren = {
   BlogAuthEditorEditorCreateRoute: BlogAuthEditorEditorCreateRoute,
   BlogAuthEditorEditorFeaturedRoute: BlogAuthEditorEditorFeaturedRoute,
   BlogAuthEditorEditorListRoute: BlogAuthEditorEditorListRoute,
+  BlogAuthEditorEditorStatsRoute: BlogAuthEditorEditorStatsRoute,
   BlogAuthEditorEditorIndexRoute: BlogAuthEditorEditorIndexRoute,
   BlogAuthEditorEditorEditIdRoute: BlogAuthEditorEditorEditIdRoute,
 }
@@ -279,6 +295,7 @@ export interface FileRoutesByFullPath {
   '/blog/editor/create': typeof BlogAuthEditorEditorCreateRoute
   '/blog/editor/featured': typeof BlogAuthEditorEditorFeaturedRoute
   '/blog/editor/list': typeof BlogAuthEditorEditorListRoute
+  '/blog/editor/stats': typeof BlogAuthEditorEditorStatsRoute
   '/blog/editor': typeof BlogAuthEditorEditorIndexRoute
   '/blog/editor/edit/$id': typeof BlogAuthEditorEditorEditIdRoute
 }
@@ -291,6 +308,7 @@ export interface FileRoutesByTo {
   '/blog/editor/create': typeof BlogAuthEditorEditorCreateRoute
   '/blog/editor/featured': typeof BlogAuthEditorEditorFeaturedRoute
   '/blog/editor/list': typeof BlogAuthEditorEditorListRoute
+  '/blog/editor/stats': typeof BlogAuthEditorEditorStatsRoute
   '/blog/editor': typeof BlogAuthEditorEditorIndexRoute
   '/blog/editor/edit/$id': typeof BlogAuthEditorEditorEditIdRoute
 }
@@ -308,6 +326,7 @@ export interface FileRoutesById {
   '/blog/_auth/_editor/editor/create': typeof BlogAuthEditorEditorCreateRoute
   '/blog/_auth/_editor/editor/featured': typeof BlogAuthEditorEditorFeaturedRoute
   '/blog/_auth/_editor/editor/list': typeof BlogAuthEditorEditorListRoute
+  '/blog/_auth/_editor/editor/stats': typeof BlogAuthEditorEditorStatsRoute
   '/blog/_auth/_editor/editor/': typeof BlogAuthEditorEditorIndexRoute
   '/blog/_auth/_editor/editor/edit/$id': typeof BlogAuthEditorEditorEditIdRoute
 }
@@ -323,6 +342,7 @@ export interface FileRouteTypes {
     | '/blog/editor/create'
     | '/blog/editor/featured'
     | '/blog/editor/list'
+    | '/blog/editor/stats'
     | '/blog/editor'
     | '/blog/editor/edit/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -334,6 +354,7 @@ export interface FileRouteTypes {
     | '/blog/editor/create'
     | '/blog/editor/featured'
     | '/blog/editor/list'
+    | '/blog/editor/stats'
     | '/blog/editor'
     | '/blog/editor/edit/$id'
   id:
@@ -349,6 +370,7 @@ export interface FileRouteTypes {
     | '/blog/_auth/_editor/editor/create'
     | '/blog/_auth/_editor/editor/featured'
     | '/blog/_auth/_editor/editor/list'
+    | '/blog/_auth/_editor/editor/stats'
     | '/blog/_auth/_editor/editor/'
     | '/blog/_auth/_editor/editor/edit/$id'
   fileRoutesById: FileRoutesById
@@ -410,6 +432,7 @@ export const routeTree = rootRoute
         "/blog/_auth/_editor/editor/create",
         "/blog/_auth/_editor/editor/featured",
         "/blog/_auth/_editor/editor/list",
+        "/blog/_auth/_editor/editor/stats",
         "/blog/_auth/_editor/editor/",
         "/blog/_auth/_editor/editor/edit/$id"
       ]
@@ -436,6 +459,10 @@ export const routeTree = rootRoute
     },
     "/blog/_auth/_editor/editor/list": {
       "filePath": "blog/_auth/_editor/editor.list.tsx",
+      "parent": "/blog/_auth/_editor"
+    },
+    "/blog/_auth/_editor/editor/stats": {
+      "filePath": "blog/_auth/_editor/editor.stats.tsx",
       "parent": "/blog/_auth/_editor"
     },
     "/blog/_auth/_editor/editor/": {

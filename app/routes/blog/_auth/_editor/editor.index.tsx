@@ -11,6 +11,7 @@ import {
   AlertCircle,
   RefreshCw,
   Star,
+  BarChart3,
 } from "lucide-react";
 import { useAuth } from "@/providers/auth";
 
@@ -134,6 +135,13 @@ const Sidebar = () => (
             <Star className="mr-3 h-5 w-5" />
             <span>Öne Çıkanlar</span>
           </Link>
+          <Link
+            to="/editor/stats"
+            className="group flex items-center rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900"
+          >
+            <BarChart3 className="mr-3 h-5 w-5" />
+            <span>İstatistikler</span>
+          </Link>
         </nav>
       </div>
     </div>
@@ -205,61 +213,24 @@ const QuickAccessCards = () => (
       </div>
       <div className="absolute -right-14 -bottom-14 h-32 w-32 rounded-full bg-yellow-50 opacity-50 transition-transform group-hover:scale-110"></div>
     </Link>
-  </div>
-);
 
-// 5. Yükleniyor (Loading) Bileşeni
-const LoadingState = () => (
-  <div className="flex flex-col items-center justify-center space-y-4 py-16">
-    <Loader2 className="text-primary-500 h-12 w-12 animate-spin" />
-    <p className="text-lg font-medium text-zinc-600">İçerik yükleniyor...</p>
-  </div>
-);
-
-// 6. Boş Durum (Empty) Bileşeni
-const EmptyState = () => (
-  <div className="flex flex-col items-center justify-center space-y-4 py-16 text-center">
-    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-zinc-100">
-      <Folder className="h-10 w-10 text-zinc-400" />
-    </div>
-    <div className="max-w-md space-y-2">
-      <h3 className="text-lg font-medium text-zinc-800">Henüz blog yok</h3>
-      <p className="text-zinc-500">
-        Şu anda hiç blog bulunmuyor. İlk blogunuzu oluşturmak için aşağıdaki
-        butona tıklayabilirsiniz.
-      </p>
-    </div>
+    {/* İstatistikler */}
     <Link
-      to="/editor/create"
-      className="bg-primary-600 hover:bg-primary-700 inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium text-white"
+      to="/editor/stats"
+      className="group relative overflow-hidden rounded-xl border border-zinc-100 bg-white p-6 transition-all hover:border-zinc-200"
     >
-      <PlusCircle className="mr-2 h-4 w-4" />
-      Yeni Blog Oluştur
+      <div className="relative z-10 flex flex-col items-center text-center">
+        <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-blue-50 text-blue-600 transition-colors group-hover:bg-blue-100">
+          <BarChart3 className="h-7 w-7" />
+        </div>
+        <h3 className="mt-4 text-lg font-medium text-zinc-800">
+          İstatistikler
+        </h3>
+        <p className="mt-1.5 text-sm text-zinc-500">
+          Blog istatistiklerinizi görüntüleyin ve analiz edin
+        </p>
+      </div>
+      <div className="absolute -right-14 -bottom-14 h-32 w-32 rounded-full bg-blue-50 opacity-50 transition-transform group-hover:scale-110"></div>
     </Link>
-  </div>
-);
-
-// 7. Hata Durumu (Error) Bileşeni
-const ErrorState = ({ onRetry }) => (
-  <div className="flex flex-col items-center justify-center space-y-4 py-16 text-center">
-    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-red-100">
-      <AlertCircle className="h-10 w-10 text-red-500" />
-    </div>
-    <div className="max-w-md space-y-2">
-      <h3 className="text-lg font-medium text-zinc-800">
-        İçerik yüklenirken bir hata oluştu
-      </h3>
-      <p className="text-zinc-500">
-        Blog içerikleri yüklenirken bir sorun oluştu. Lütfen tekrar deneyin veya
-        daha sonra tekrar kontrol edin.
-      </p>
-    </div>
-    <button
-      onClick={onRetry}
-      className="inline-flex items-center rounded-lg bg-zinc-100 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-200"
-    >
-      <RefreshCw className="mr-2 h-4 w-4" />
-      Yeniden Dene
-    </button>
   </div>
 );

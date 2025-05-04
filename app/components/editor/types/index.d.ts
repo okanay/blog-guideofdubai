@@ -22,3 +22,27 @@ type StatusState = {
   loading: boolean;
   error: string | null;
 };
+
+interface BlogStats {
+  blogId: string;
+  title: string;
+  image: string;
+  language: string;
+  groupId: string;
+  slug: string;
+  views: number;
+  likes: number;
+  shares: number;
+  comments: number;
+  lastViewedAt: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface BlogStatsResponse {
+  limit: number;
+  offset: number;
+  stats: BlogStats[];
+  success: boolean;
+  total: number;
+}
