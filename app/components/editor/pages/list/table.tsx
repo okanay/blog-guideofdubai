@@ -81,12 +81,6 @@ export function BlogTable({
                       <p className="max-w-40 truncate text-sm font-medium text-zinc-900">
                         {blog.content.title}
                       </p>
-                      {blog.featured && (
-                        <Star
-                          size={14}
-                          className="flex-shrink-0 fill-amber-500 text-amber-500"
-                        />
-                      )}
                     </div>
                     <p className="truncate text-xs text-zinc-500">
                       {blog.content.readTime} dk okuma süresi

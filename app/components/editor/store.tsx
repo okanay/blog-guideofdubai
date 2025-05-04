@@ -93,8 +93,8 @@ interface DataState {
 
   blogStats: {
     data: BlogStats[];
-    originalData: BlogStats[]; // Ana veri (değişmez)
-    filteredData: BlogStats[]; // Filtrelenmiş veri (gösterilen)
+    originalData: BlogStats[];
+    filteredData: BlogStats[];
     loading: boolean;
     error: string | null;
     cached: boolean;
@@ -223,7 +223,7 @@ export function EditorProvider({ children }: PropsWithChildren) {
 
           try {
             const response = await fetch(
-              `${API_URL}/auth/blog/stats?limit=100&offset=0`,
+              `${API_URL}/auth/blog/stats?limit=100000&offset=0`,
               {
                 method: "GET",
                 credentials: "include",
@@ -739,7 +739,7 @@ export function EditorProvider({ children }: PropsWithChildren) {
             cached: boolean;
           }>({
             method: "GET",
-            endpoint: `/blog/featured?language=${language}&limit=50`,
+            endpoint: `/blog/featured?language=${language}&limit=100000&offset=0`,
             errorMessage: "Featured bloglar alınırken bir hata oluştu",
           });
 
