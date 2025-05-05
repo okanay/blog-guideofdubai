@@ -3,45 +3,35 @@ import { useEditorContext } from "@/components/editor/store";
 
 export function Pagination() {
   const {
-    totalBlogCount,
-    hasMoreBlogs,
-    lastFetchCount,
-    statusStates: { blogPosts },
-    blogPostsQuery,
+    blogList,
     setBlogPostsQuery,
     fetchBlogPosts,
+    statusStates: { blogPosts },
   } = useEditorContext();
 
   const isLoading = blogPosts.loading;
-  const limit = blogPostsQuery.limit || 10;
-  const offset = blogPostsQuery.offset || 0;
+  const limit = blogList.query.limit || 10;
+  const offset = blogList.query.offset || 0;
+  const totalCount = blogList.totalCount || 0;
+
+  // Toplam sayfa sayısı
+  const totalPages = Math.max(1, Math.ceil(totalCount / limit));
+  // Şu anki sayfa (1-indexed)
   const currentPage = Math.floor(offset / limit) + 1;
-  const totalPages = Math.ceil(totalBlogCount / limit) || 1;
-  const currentCount = lastFetchCount;
 
-  // Next butonu aktif/pasif durumu kontrolü
-  // 1. Son fetch işleminde limit'ten daha az veri geldiyse, başka veri kalmamıştır
-  // 2. Yükleme durumundaysa buton devre dışı bırakılır
-  const canGoNext = hasMoreBlogs && !isLoading;
-
-  // Previous butonu aktif/pasif durumu kontrolü
-  const canGoPrevious = offset > 0 && !isLoading;
+  // Sonraki sayfa var mı?
+  const canGoNext = currentPage < totalPages && !isLoading;
+  // Önceki sayfa var mı?
+  const canGoPrevious = currentPage > 1 && !isLoading;
 
   const handleNextPage = () => {
-    if (isLoading || !hasMoreBlogs) return;
-
-    // Sonraki sayfa için offset değerini hesapla
-    const newOffset = offset + limit;
-    setBlogPostsQuery({ offset: newOffset });
+    setBlogPostsQuery({ offset: offset + limit });
     fetchBlogPosts();
   };
 
   const handlePreviousPage = () => {
-    if (isLoading || offset <= 0) return;
-
-    // Önceki sayfa için offset değerini hesapla
-    const newOffset = Math.max(0, offset - limit);
-    setBlogPostsQuery({ offset: newOffset });
+    if (!canGoPrevious) return;
+    setBlogPostsQuery({ offset: Math.max(0, offset - limit) });
     fetchBlogPosts();
   };
 
@@ -57,10 +47,14 @@ export function Pagination() {
         <ChevronLeft size={18} />
       </button>
 
+      <div className="text-xs text-zinc-600">
+        Sayfa <b>{currentPage}</b> / <b>{totalPages}</b>
+        <span className="ml-2 text-zinc-400">({totalCount} kayıt)</span>
+      </div>
+
       {/* Sonraki sayfa butonu */}
       <button
         onClick={handleNextPage}
-        disabled={!canGoNext}
         className="flex items-center justify-center rounded-lg border border-zinc-200 p-2 text-zinc-500 transition-colors hover:bg-zinc-50 hover:text-zinc-900 disabled:cursor-not-allowed disabled:opacity-50"
         title="Sonraki sayfa"
       >

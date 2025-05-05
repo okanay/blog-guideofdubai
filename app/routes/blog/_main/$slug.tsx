@@ -48,7 +48,6 @@ export const Route = createFileRoute("/blog/_main/$slug")({
       if (blogSlug !== slug || blogLang !== lang) {
         const alt = (data.alternatives || []).find((a) => a.language === lang);
         if (alt) {
-          console.log("Redirecting to alternative:", alt);
           return redirect({
             to: `/blog/${alt.slug}?lang=${alt.language}`,
           });
@@ -65,8 +64,6 @@ export const Route = createFileRoute("/blog/_main/$slug")({
 
       return blogData;
     } catch (error) {
-      console.error("Blog fetch error:", error);
-
       // Fetch hatası olduğunda, eğer blog verisi bulunamadıysa 404'e yönlendir
       if (!blogData) {
         return redirect({

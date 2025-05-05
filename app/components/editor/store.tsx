@@ -4,19 +4,115 @@ import { createStore, StoreApi, useStore } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { API_URL, createStatusState } from "./helper";
 
-// HTTP İstek Yardımcıları
-// ------------------------------------
-type HttpMethod = "GET" | "POST" | "PATCH" | "DELETE";
+interface DataState {
+  // 1. Görünüm modları
+  view: {
+    mode: BlogViewMode;
+    setMode: (mode: BlogViewMode) => void;
+  };
+  cacheView: {
+    mode: boolean;
+    setMode: (mode: boolean) => void;
+  };
 
-interface FetchOptions {
-  method: HttpMethod;
-  endpoint: string;
-  body?: any;
-  credentials?: RequestCredentials;
-  successMessage?: string;
-  errorMessage?: string;
+  // 2. Status durumları
+  statusStates: {
+    create: StatusState;
+    update: StatusState;
+    delete: StatusState;
+    changeStatus: StatusState;
+    categories: StatusState;
+    tags: StatusState;
+    blogPosts: StatusState;
+    featured: StatusState;
+  };
+
+  // 3. Blog istatistikleri
+  blogStats: {
+    data: BlogStats[];
+    originalData: BlogStats[];
+    filteredData: BlogStats[];
+    loading: boolean;
+    error: string | null;
+    cached: boolean;
+    lastFetch: number | null;
+    filters: {
+      language: string | null;
+      sortBy: keyof BlogStats;
+      sortOrder: "asc" | "desc";
+      searchQuery: string;
+      dateRange: {
+        start: Date | null;
+        end: Date | null;
+      };
+    };
+  };
+  fetchBlogStats: (forceRefresh?: boolean) => Promise<void>;
+  applyStatsFilters: () => void;
+  setStatsFilter: (key: string, value: any) => void;
+  clearStatsFilters: () => void;
+  refreshStats: () => Promise<void>;
+
+  // 4. Blog işlemleri (CRUD)
+  createBlog: (blog: any) => Promise<boolean>;
+  updateBlog: (blog: any) => Promise<boolean>;
+  deleteBlog: (id: string) => Promise<boolean>;
+  changeBlogStatus: (id: string, status: string) => Promise<boolean>;
+
+  // 5. Kategori işlemleri
+  categories: Category[];
+  addCategory: (category: SelectOption) => Promise<Category | undefined>;
+  refreshCategories: () => Promise<Category[] | undefined>;
+
+  // 6. Etiket işlemleri
+  tags: Tag[];
+  addTag: (tag: SelectOption) => Promise<Tag | undefined>;
+  refreshTags: () => Promise<Tag[] | undefined>;
+
+  // 7. Blog Listesi (yeni yapı)
+  blogList: {
+    originalData: BlogPostCardView[];
+    filteredData: BlogPostCardView[];
+    loading: boolean;
+    error: string | null;
+    cached: boolean;
+    lastFetch: number | null;
+    totalCount: number;
+    query: BlogCardQueryOptions;
+    filters: {
+      searchQuery: string;
+      language: string | null;
+      category: string | null;
+      tag: string | null;
+      status: string | null;
+      featured: boolean | null;
+      sortBy: keyof BlogPostCardView;
+      sortOrder: "asc" | "desc";
+    };
+  };
+  fetchBlogPosts: (forceRefresh?: boolean) => Promise<void>;
+  setBlogPostsFilter: (
+    key: keyof DataState["blogList"]["filters"],
+    value: any,
+  ) => void;
+  clearBlogPostsFilters: () => void;
+  setBlogPostsQuery: (query: Partial<BlogCardQueryOptions>) => void;
+  applyBlogPostsFilters: () => void;
+  clearBlogPosts: () => void;
+
+  // 8. Featured işlemleri
+  featuredBlogs: { [language: string]: BlogPostCardView[] };
+  fetchFeaturedBlogs: (language: string) => Promise<void>;
+  addToFeatured: (blogId: string, language: string) => Promise<boolean>;
+  removeFromFeatured: (blogId: string) => Promise<boolean>;
+  updateFeaturedOrdering: (
+    language: string,
+    blogIds: string[],
+  ) => Promise<boolean>;
+  checkFeaturedStatus: (blogId: string, language: string) => Promise<boolean>;
 }
 
+// API fetch helper
 async function apiFetch<T = any>({
   method,
   endpoint,
@@ -70,103 +166,11 @@ async function apiFetch<T = any>({
   }
 }
 
-// Store Tipleri
-// ------------------------------------
-interface DataState {
-  // Blog Görünüm Modu
-  view: {
-    mode: BlogViewMode;
-    setMode: (mode: BlogViewMode) => void;
-  };
-
-  cacheView: {
-    mode: boolean;
-    setMode: (mode: boolean) => void;
-  };
-
-  // Status durumları
-  statusStates: {
-    create: StatusState;
-    update: StatusState;
-    delete: StatusState;
-    changeStatus: StatusState;
-    categories: StatusState;
-    tags: StatusState;
-    blogPosts: StatusState;
-    featured: StatusState;
-  };
-
-  blogStats: {
-    data: BlogStats[];
-    originalData: BlogStats[];
-    filteredData: BlogStats[];
-    loading: boolean;
-    error: string | null;
-    cached: boolean;
-    lastFetch: number | null;
-    filters: {
-      language: string | null;
-      sortBy: keyof BlogStats;
-      sortOrder: "asc" | "desc";
-      searchQuery: string;
-      dateRange: {
-        start: Date | null;
-        end: Date | null;
-      };
-    };
-  };
-
-  fetchBlogStats: (forceRefresh?: boolean) => Promise<void>;
-  applyStatsFilters: () => void;
-  setStatsFilter: (key: string, value: any) => void;
-  clearStatsFilters: () => void;
-  refreshStats: () => Promise<void>;
-
-  // Blog İşlemleri
-  createBlog: (blog: any) => Promise<boolean>;
-  updateBlog: (blog: any) => Promise<boolean>;
-  deleteBlog: (id: string) => Promise<boolean>;
-  changeBlogStatus: (id: string, status: BlogStatus) => Promise<boolean>;
-
-  // Kategori İşlemleri
-  categories: Category[];
-  addCategory: (category: SelectOption) => Promise<Category | undefined>;
-  refreshCategories: () => Promise<Category[] | undefined>;
-
-  // Etiket İşlemleri
-  tags: Tag[];
-  addTag: (tag: SelectOption) => Promise<Tag | undefined>;
-  refreshTags: () => Promise<Tag[] | undefined>;
-
-  // Blog Listesi
-  fetchedBlogs: { [key: string]: BlogPostCardView }; // Tüm fetch edilmiş bloglar (ID bazlı)
-  visibleBlogIds: string[]; // Görüntülenen blog ID'leri
-  totalBlogCount: number; // Toplam blog sayısı
-  lastFetchCount: number; // Son fetch işleminde kaç blog getirdiği
-  hasMoreBlogs: boolean; // Daha fazla blog var mı
-  blogPostsQuery: BlogCardQueryOptions;
-  setBlogPostsQuery: (query: Partial<BlogCardQueryOptions>) => void;
-  fetchBlogPosts: () => Promise<void>;
-  featuredBlogs: { [language: string]: BlogPostCardView[] };
-  clearBlogPosts: () => void;
-
-  fetchFeaturedBlogs: (language: string) => Promise<void>;
-  addToFeatured: (blogId: string, language: string) => Promise<boolean>;
-  removeFromFeatured: (blogId: string) => Promise<boolean>;
-  updateFeaturedOrdering: (
-    language: string,
-    blogIds: string[],
-  ) => Promise<boolean>;
-  checkFeaturedStatus: (blogId: string, language: string) => Promise<boolean>;
-}
-
-// Store İmplementasyonu
-// ------------------------------------
 export function EditorProvider({ children }: PropsWithChildren) {
   const [store] = useState(() =>
     createStore<DataState>()(
       immer((set, get) => ({
-        // Görünüm Modu
+        // Görünüm modları
         view: {
           mode: "form",
           setMode: (mode: BlogViewMode) =>
@@ -174,8 +178,6 @@ export function EditorProvider({ children }: PropsWithChildren) {
               state.view.mode = mode;
             }),
         },
-
-        // Cache Görünüm Modu
         cacheView: {
           mode: false,
           setMode: (mode: boolean) =>
@@ -195,7 +197,7 @@ export function EditorProvider({ children }: PropsWithChildren) {
           blogPosts: createStatusState(),
           featured: createStatusState(),
         },
-
+        // Blog istatistikleri
         blogStats: {
           data: [],
           originalData: [],
@@ -415,8 +417,9 @@ export function EditorProvider({ children }: PropsWithChildren) {
 
             // Başarılı ise cache'i temizle
             if (result.success) {
-              state.fetchedBlogs = {};
-              state.visibleBlogIds = [];
+              state.clearBlogPosts();
+              state.clearStatsFilters();
+              state.clearBlogPostsFilters();
             }
           });
 
@@ -444,11 +447,11 @@ export function EditorProvider({ children }: PropsWithChildren) {
             );
 
             // Eğer başarılı ise ve blog ID'si tanımlıysa, fetchedBlogs'da güncelle
-            if (result.success && blog.id && state.fetchedBlogs[blog.id]) {
-              state.fetchedBlogs[blog.id] = {
-                ...state.fetchedBlogs[blog.id],
-                ...blog,
-              };
+            if (result.success) {
+              state.fetchBlogPosts(true);
+              state.fetchBlogStats(true);
+              state.clearStatsFilters();
+              state.clearBlogPostsFilters();
             }
           });
 
@@ -476,43 +479,17 @@ export function EditorProvider({ children }: PropsWithChildren) {
             );
 
             // Başarılı ise blog durumunu güncelle
-            if (result.success && state.fetchedBlogs[id]) {
-              state.fetchedBlogs[id].status = status;
+            if (result.success) {
+              state.fetchBlogPosts(true);
+              state.fetchBlogStats(true);
+              state.clearStatsFilters();
+              state.clearBlogPostsFilters();
             }
           });
 
           return result.success;
         },
 
-        // Blog silme
-        deleteBlog: async (id: string) => {
-          set((state) => {
-            state.statusStates.delete = createStatusState("loading");
-          });
-
-          const result = await apiFetch({
-            method: "DELETE",
-            endpoint: `/auth/blog/${id}`,
-            successMessage: "Blog başarıyla silindi",
-            errorMessage: "Blog Silinemedi",
-          });
-
-          set((state) => {
-            state.statusStates.delete = createStatusState(
-              result.success ? "success" : "error",
-              result.error,
-            );
-          });
-
-          // Başarılı ise blog listesini yenile
-          if (result.success) {
-            await get().fetchBlogPosts();
-          }
-
-          return result.success;
-        },
-
-        // Kategori ekleme
         addCategory: async (category: SelectOption) => {
           set((state) => {
             state.statusStates.categories = createStatusState("loading");
@@ -565,7 +542,6 @@ export function EditorProvider({ children }: PropsWithChildren) {
           return result.success ? result.data?.categories : undefined;
         },
 
-        // Etiket ekleme
         addTag: async (tag: SelectOption) => {
           set((state) => {
             state.statusStates.tags = createStatusState("loading");
@@ -618,127 +594,233 @@ export function EditorProvider({ children }: PropsWithChildren) {
           return result.success ? result.data?.tags : undefined;
         },
 
-        // Blog sorgu parametrelerini ayarlama
-        setBlogPostsQuery: (query: Partial<BlogCardQueryOptions>) => {
-          const currentQuery = get().blogPostsQuery;
-          const newQuery = { ...currentQuery, ...query };
+        blogList: {
+          originalData: [],
+          filteredData: [],
+          loading: false,
+          error: null,
+          cached: false,
+          lastFetch: null,
+          totalCount: 0,
+          query: {
+            limit: 20,
+            offset: 0,
+            sortBy: "createdAt",
+            sortDirection: "desc",
+          },
+          filters: {
+            searchQuery: "",
+            language: null,
+            category: null,
+            tag: null,
+            status: null,
+            featured: null,
+            sortBy: "createdAt",
+            sortOrder: "desc",
+          },
+        },
 
-          // Offset dışında bir filtre değişimi olduysa, veri temizlenir
-          if (
-            Object.keys(query).some(
-              (key) =>
-                key !== "offset" &&
-                query[key as keyof BlogCardQueryOptions] !== undefined &&
-                query[key as keyof BlogCardQueryOptions] !==
-                  currentQuery[key as keyof BlogCardQueryOptions],
-            )
-          ) {
-            set((state) => {
-              state.fetchedBlogs = {}; // Önbelleği temizle
-              state.visibleBlogIds = []; // Görüntülenen blogları temizle
-              state.blogPostsQuery = { ...newQuery, offset: 0 }; // Offset'i sıfırla
+        fetchBlogPosts: async (forceRefresh = false) => {
+          const state = get();
+          if (state.blogList.cached && !forceRefresh) {
+            const now = Date.now();
+            if (
+              state.blogList.lastFetch &&
+              now - state.blogList.lastFetch < 5 * 60 * 1000
+            ) {
+              return;
+            }
+          }
+
+          set((state) => {
+            state.blogList.loading = true;
+            state.blogList.error = null;
+          });
+
+          try {
+            const { query, filters } = get().blogList;
+
+            const params = new URLSearchParams();
+            Object.entries(query).forEach(([key, value]) => {
+              if (value !== undefined && value !== null) {
+                params.append(key, String(value));
+              }
             });
-          } else {
+
+            if (filters.language) params.append("language", filters.language);
+            if (filters.category) params.append("category", filters.category);
+            if (filters.tag) params.append("tag", filters.tag);
+            if (filters.status) params.append("status", filters.status);
+            if (filters.featured) params.append("featured", "true");
+
+            const endpoint = `/blog/cards?${params.toString()}`;
+            const result = await apiFetch<{
+              blogs: BlogPostCardView[] | undefined | null;
+              count: number | undefined | null;
+            }>({
+              method: "GET",
+              endpoint,
+              errorMessage: "Blog listesi alınırken hata oluştu",
+            });
+
+            // Her durumda dizi olarak ata
+            const blogs = Array.isArray(result.data?.blogs)
+              ? result.data!.blogs
+              : [];
+
+            const count =
+              typeof result.data?.count === "number" && result.data.count >= 0
+                ? result.data.count
+                : 0;
+
+            // Eğer offset > 0 ve gelen veri boşsa, offset'i bir önceki sayfaya çekip tekrar fetch et
+            if (blogs.length === 0 && query.offset && query.offset > 0) {
+              // Sonsuz döngüye girmemek için offset zaten 0 ise tekrar fetch etme
+              const newOffset = Math.max(0, query.offset - (query.limit || 10));
+              if (newOffset !== query.offset) {
+                set((state) => {
+                  state.blogList.query.offset = newOffset;
+                });
+                // Tekrar fetch et (forceRefresh=true ile)
+                await get().fetchBlogPosts(true);
+                return;
+              }
+            }
+
             set((state) => {
-              state.blogPostsQuery = newQuery;
+              state.blogList.originalData = blogs;
+              state.blogList.totalCount = count;
+              state.blogList.cached = true;
+              state.blogList.lastFetch = Date.now();
+              state.blogList.loading = false;
+            });
+
+            get().applyBlogPostsFilters();
+          } catch (error) {
+            set((state) => {
+              state.blogList.loading = false;
+              state.blogList.error =
+                error instanceof Error ? error.message : "Bilinmeyen hata";
+            });
+            toast.error("Blog Listesi Yüklenemedi", {
+              description:
+                error instanceof Error ? error.message : "Bilinmeyen hata",
             });
           }
         },
 
-        // Blog gönderilerini getirme
-        fetchBlogPosts: async () => {
-          set((state) => {
-            state.statusStates.blogPosts = createStatusState("loading");
+        applyBlogPostsFilters: () => {
+          const { originalData, filters } = get().blogList;
+          let filtered = [...originalData];
+
+          if (filters.searchQuery) {
+            const q = filters.searchQuery.toLowerCase();
+            filtered = filtered.filter(
+              (item) =>
+                item.content.title.toLowerCase().includes(q) ||
+                item.slug.toLowerCase().includes(q),
+            );
+          }
+
+          filtered.sort((a, b) => {
+            const aValue = a[filters.sortBy];
+            const bValue = b[filters.sortBy];
+            if (typeof aValue === "string") {
+              return filters.sortOrder === "asc"
+                ? (aValue as string).localeCompare(bValue as string)
+                : (bValue as string).localeCompare(aValue as string);
+            } else {
+              return filters.sortOrder === "asc"
+                ? (aValue as number) - (bValue as number)
+                : (bValue as number) - (aValue as number);
+            }
           });
 
-          try {
-            const query = get().blogPostsQuery;
-            const queryParams = new URLSearchParams();
+          set((state) => {
+            state.blogList.filteredData = filtered;
+          });
+        },
 
-            // Query parametrelerini ekle
-            if (query.id) queryParams.append("id", query.id);
-            if (query.title) queryParams.append("title", query.title);
-            if (query.language) queryParams.append("language", query.language);
-            if (query.categoryValue)
-              queryParams.append("category", query.categoryValue);
-            if (query.tagValue) queryParams.append("tag", query.tagValue);
-            if (query.featured) queryParams.append("featured", "true");
-            if (query.status) queryParams.append("status", query.status);
-            if (query.limit)
-              queryParams.append("limit", query.limit.toString());
-            if (query.offset)
-              queryParams.append("offset", query.offset.toString());
-            if (query.sortBy) queryParams.append("sortBy", query.sortBy);
-            if (query.sortDirection)
-              queryParams.append("sortDirection", query.sortDirection);
+        setBlogPostsFilter: (key, value) => {
+          set((state) => {
+            (state.blogList.filters as any)[key] = value;
+            state.blogList.query.offset = 0;
+          });
+          get().fetchBlogPosts(true);
+        },
 
-            const queryString = queryParams.toString();
-            const endpoint = `/blog/cards${queryString ? `?${queryString}` : ""}`;
+        clearBlogPostsFilters: () => {
+          set((state) => {
+            state.blogList.filters = {
+              searchQuery: "",
+              language: null,
+              category: null,
+              tag: null,
+              status: null,
+              featured: null,
+              sortBy: "createdAt",
+              sortOrder: "desc",
+            };
+            state.blogList.query.offset = 0;
+          });
+          get().fetchBlogPosts(true);
+        },
 
-            const result = await apiFetch<{
-              success: boolean;
-              blogs: BlogPostCardView[];
-              count: number;
-            }>({
-              method: "GET",
-              endpoint,
-              errorMessage: "Blog listesi alınırken bir hata oluştu",
-            });
+        setBlogPostsQuery: (query) => {
+          set((state) => {
+            state.blogList.query = { ...state.blogList.query, ...query };
+          });
+          get().fetchBlogPosts(true);
+        },
 
-            if (!result.success || !result.data) {
-              throw new Error(
-                result.error || "Blog listesi alınırken bir hata oluştu",
-              );
-            }
+        deleteBlog: async (id: string) => {
+          set((state) => {
+            state.statusStates.delete = createStatusState("loading");
+          });
 
-            // Gelen blogları işle
-            const blogs = result.data.blogs || []; // Eğer blogs null ise boş dizi kullan
-            const fetchedCount = blogs?.length || 0; // Güvenli erişim
+          const result = await apiFetch({
+            method: "DELETE",
+            endpoint: `/auth/blog/${id}`,
+            successMessage: "Blog başarıyla silindi",
+            errorMessage: "Blog Silinemedi",
+          });
 
+          set((state) => {
+            state.statusStates.delete = createStatusState(
+              result.success ? "success" : "error",
+              result.error,
+            );
+          });
+
+          // Başarılıysa blogList cache'ini sıfırla ve yeni veri çek
+          if (result.success) {
             set((state) => {
-              // Yeni fetch edilen blogları, fetchedBlogs içine ekle
-              const updatedFetchedBlogs = { ...state.fetchedBlogs };
-
-              blogs.forEach((blog) => {
-                updatedFetchedBlogs[blog.id] = blog;
-              });
-
-              // Görünür blog ID'lerini güncelle (append yaparak)
-              const newBlogIds = blogs.map((blog) => blog.id);
-
-              // Eğer offset 0 ise (ilk sayfa), visible ID'leri sıfırla
-              const visibleIds =
-                query.offset === 0
-                  ? newBlogIds
-                  : [...state.visibleBlogIds, ...newBlogIds];
-
-              // Son fetch sayısını ve daha fazla blog olup olmadığını güncelle
-              const hasMore = fetchedCount === (query.limit || 10);
-
-              state.fetchedBlogs = updatedFetchedBlogs;
-              state.visibleBlogIds = visibleIds;
-              state.totalBlogCount = result.data.count;
-              state.lastFetchCount = fetchedCount;
-              state.hasMoreBlogs = hasMore;
-              state.statusStates.blogPosts = createStatusState("success");
+              state.blogList.cached = false;
+              state.blogList.originalData = [];
+              state.blogList.filteredData = [];
+              state.blogList.totalCount = 0;
+              state.blogList.lastFetch = null;
             });
-          } catch (error) {
-            const errorMessage =
-              error instanceof Error
-                ? error.message
-                : "Blog listesi alınırken bir hata oluştu";
-
-            set((state) => {
-              state.statusStates.blogPosts = createStatusState(
-                "error",
-                errorMessage,
-              );
-            });
-
-            toast.error("Blog Listesi Yüklenemedi", {
-              description: errorMessage,
-            });
+            await get().fetchBlogPosts(true);
           }
+
+          return result.success;
+        },
+
+        clearBlogPosts: () => {
+          set((state) => {
+            state.blogList.originalData = [];
+            state.blogList.filteredData = [];
+            state.blogList.cached = false;
+            state.blogList.lastFetch = null;
+            state.blogList.totalCount = 0;
+            state.blogList.query = {
+              limit: 20,
+              offset: 0,
+              sortBy: "createdAt",
+              sortDirection: "desc",
+            };
+          });
         },
 
         fetchFeaturedBlogs: async (language: string) => {
@@ -848,23 +930,6 @@ export function EditorProvider({ children }: PropsWithChildren) {
           });
 
           return result.data?.isFeatured || false;
-        },
-
-        // Blog listesini temizleme
-        clearBlogPosts: () => {
-          set((state) => {
-            state.fetchedBlogs = {};
-            state.visibleBlogIds = [];
-            state.totalBlogCount = 0;
-            state.lastFetchCount = 0;
-            state.hasMoreBlogs = true;
-            state.blogPostsQuery = {
-              limit: 10,
-              offset: 0,
-              sortBy: "createdAt",
-              sortDirection: "desc",
-            };
-          });
         },
       })),
     ),

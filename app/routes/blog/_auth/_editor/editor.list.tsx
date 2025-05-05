@@ -21,32 +21,20 @@ function BlogListPage() {
   const [selectedId, setSelectedId] = useState<string>("empty");
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
 
-  // Context'ten verileri alma
-  const {
-    fetchedBlogs,
-    fetchBlogPosts,
-    visibleBlogIds,
-    totalBlogCount,
-    statusStates: { blogPosts },
-    blogPostsQuery,
-    addToFeatured,
-    removeFromFeatured,
-  } = useEditorContext();
+  // Context'ten verileri alma (yeni blogList yapısı)
+  const { blogList, fetchBlogPosts, addToFeatured, removeFromFeatured } =
+    useEditorContext();
 
-  const limit = blogPostsQuery.limit || 10;
-  const startIndex = blogPostsQuery.offset || 0;
-  const endIndex = startIndex + limit;
-  const pageVisibleIds = visibleBlogIds.slice(0, endIndex - startIndex);
+  useEffect(() => {
+    fetchBlogPosts(true);
+  }, []);
 
-  // ID'lere göre blog nesnelerini al
-  const visibleBlogs = pageVisibleIds
-    .map((id) => fetchedBlogs[id])
-    .filter(Boolean);
+  const { filteredData, loading, totalCount } = blogList;
 
-  // Sayfa yükleme durumlarını belirleyen değişkenler
-  const isLoading = blogPosts.loading;
-  const isEmpty = !isLoading && totalBlogCount === 0;
-  const hasData = !isLoading && totalBlogCount > 0;
+  // Sayfa yükleme durumları
+  const isLoading = loading;
+  const isEmpty = !isLoading && totalCount === 0;
+  const hasData = !isLoading && totalCount > 0;
 
   const openDeleteModal = (id: string) => {
     setSelectedId(id);
@@ -57,14 +45,12 @@ function BlogListPage() {
     blogId: string,
     currentStatus: boolean,
   ) => {
+    const blog = blogList.originalData.find((b) => b.id === blogId);
+    if (!blog) return;
     if (currentStatus) {
       await removeFromFeatured(blogId);
     } else {
-      // Blog'un dilini almak için
-      const blog = fetchedBlogs[blogId];
-      if (blog) {
-        await addToFeatured(blogId, blog.language);
-      }
+      await addToFeatured(blogId, blog.language);
     }
     // Listeyi yenile
     fetchBlogPosts();
@@ -82,8 +68,8 @@ function BlogListPage() {
             {/* Blog sayısı ve yükleme durumu */}
             <div className="mb-2 flex items-center justify-between">
               <p className="text-sm text-zinc-500">
-                {totalBlogCount > 0
-                  ? `${totalBlogCount} blog bulundu (${visibleBlogs.length} gösteriliyor)`
+                {totalCount > 0
+                  ? `${totalCount} blog bulundu (${filteredData.length} gösteriliyor)`
                   : "Blog bulunamadı"}
               </p>
               <div className="text-sm text-zinc-500">
@@ -92,7 +78,7 @@ function BlogListPage() {
             </div>
 
             {/* Duruma göre render etme */}
-            {isLoading && visibleBlogs.length === 0 && <LoadingState />}
+            {isLoading && filteredData.length === 0 && <LoadingState />}
 
             {isEmpty && <EmptyState />}
 
@@ -100,7 +86,7 @@ function BlogListPage() {
               <>
                 {/* Blog Tablosu */}
                 <BlogTable
-                  blogs={visibleBlogs}
+                  blogs={filteredData}
                   onDeleteClick={openDeleteModal}
                   onFeaturedToggle={handleFeaturedToggle}
                 />

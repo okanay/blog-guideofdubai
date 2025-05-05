@@ -46,3 +46,14 @@ interface BlogStatsResponse {
   success: boolean;
   total: number;
 }
+
+type HttpMethod = "GET" | "POST" | "PATCH" | "DELETE";
+
+interface FetchOptions {
+  method: HttpMethod;
+  endpoint: string;
+  body?: any;
+  credentials?: RequestCredentials;
+  successMessage?: string;
+  errorMessage?: string;
+}
