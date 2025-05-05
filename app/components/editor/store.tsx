@@ -79,6 +79,11 @@ interface DataState {
     setMode: (mode: BlogViewMode) => void;
   };
 
+  cacheView: {
+    mode: boolean;
+    setMode: (mode: boolean) => void;
+  };
+
   // Status durumları
   statusStates: {
     create: StatusState;
@@ -167,6 +172,15 @@ export function EditorProvider({ children }: PropsWithChildren) {
           setMode: (mode: BlogViewMode) =>
             set((state) => {
               state.view.mode = mode;
+            }),
+        },
+
+        // Cache Görünüm Modu
+        cacheView: {
+          mode: false,
+          setMode: (mode: boolean) =>
+            set((state) => {
+              state.cacheView.mode = mode;
             }),
         },
 
