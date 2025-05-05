@@ -15,7 +15,7 @@ import { LANGUAGE_DICTONARY } from "@/i18n/config";
 import { getLanguageFromSearch } from "@/i18n/action";
 
 export const Route = createFileRoute("/blog/_main/$slug")({
-  loader: async ({ params, location: { search } }) => {
+  loader: async ({ params, location: { search }, ...others }) => {
     const slug = params.slug;
     const lang = getLanguageFromSearch(search);
 
@@ -162,8 +162,56 @@ function BlogPage() {
 
       {/* İlgili Bloglar Bölümü */}
       <RelatedBlogs blog={blog} lang={lang} />
+      <IncreaseViewTracker blogId={blog.id} />
     </div>
   );
+}
+
+interface IncreaseViewTrackerProps {
+  blogId: string;
+}
+
+function IncreaseViewTracker({ blogId }: IncreaseViewTrackerProps) {
+  const [tracked, setTracked] = useState(false);
+
+  useEffect(() => {
+    // Component mount olduğunda sadece bir kez çalışır
+    if (!tracked && blogId) {
+      const trackView = async () => {
+        try {
+          // Blog API'sine direkt client-side'dan istek gönder
+          // Bu durumda gerçek istemci IP adresi header'larda gönderilecektir
+          const response = await fetch(
+            `${import.meta.env.VITE_APP_BACKEND_URL}/blog/view?id=${blogId}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            },
+          );
+
+          if (response.ok) {
+            console.log("Blog görüntüleme sayısı başarıyla artırıldı");
+            setTracked(true);
+          } else {
+            console.error("Blog görüntüleme sayısı artırılamadı");
+          }
+        } catch (error) {
+          console.error("Görüntüleme izleme hatası:", error);
+        }
+      };
+
+      // Sayfa tam olarak yüklendikten sonra izleme işlemini gerçekleştir
+      // Bu, öncelikle kullanıcının içeriği görmesini sağlar
+      window.requestIdleCallback
+        ? window.requestIdleCallback(() => trackView())
+        : setTimeout(trackView, 1000);
+    }
+  }, [blogId, tracked]);
+
+  // Herhangi bir şey render etmez
+  return null;
 }
 
 // Related Blogs Component
