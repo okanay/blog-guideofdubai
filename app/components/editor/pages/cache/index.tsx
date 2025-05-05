@@ -276,7 +276,7 @@ export function CacheAdminPanel() {
               <tbody>
                 {cacheStats.details.map((item) => (
                   <tr key={item.key}>
-                    <td className="max-w-xs truncate px-2 py-1 font-mono text-[10px] text-zinc-700">
+                    <td className="max-w-xs truncate px-2 py-1 font-mono text-[10px] text-zinc-700 hover:text-wrap">
                       {item.key}
                     </td>
                     <td className="px-2 py-1">{item.ageHuman}</td>
