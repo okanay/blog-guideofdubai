@@ -14,6 +14,8 @@ import { EnhancedImage } from "./renderer/extensions/image";
 import { Underline } from "./renderer/extensions/underline";
 import { StrikeThrough } from "./renderer/extensions/strike-through";
 import { Highlight } from "./renderer/extensions/highlight";
+import { InstagramCard } from "./renderer/extensions/instagram-card";
+import { InstagramCarousel } from "./renderer/extensions/instagram-carousel";
 
 export const useEditor = (initialContent: string = "") => {
   const editor = useTiptapEditor({
@@ -59,6 +61,8 @@ export const useEditor = (initialContent: string = "") => {
       EnhancedImage,
       FontFamily,
       AlerBox,
+      InstagramCard,
+      InstagramCarousel,
     ],
   });
 

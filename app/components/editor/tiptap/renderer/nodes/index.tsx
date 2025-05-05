@@ -11,6 +11,8 @@ import { OrderedListNode } from "./ordered-list";
 import { ParagraphNode } from "./paragraph";
 import { AlertBoxRenderer } from "../extensions/alert-box";
 import { EnhancedImageRenderer } from "../extensions/image";
+import { InstagramCardRenderer } from "../extensions/instagram-card";
+import { InstagramCarouselRenderer } from "../extensions/instagram-carousel";
 
 export const RenderNode: React.FC<{ node: any; children: React.ReactNode }> = ({
   node,
@@ -41,6 +43,10 @@ export const RenderNode: React.FC<{ node: any; children: React.ReactNode }> = ({
       return <EnhancedImageRenderer node={node} />;
     case "alertBox":
       return <AlertBoxRenderer node={node}>{children}</AlertBoxRenderer>;
+    case "instagramCard":
+      return <InstagramCardRenderer node={node} />;
+    case "instagramCarousel":
+      return <InstagramCarouselRenderer node={node} />;
 
     default:
       return null;

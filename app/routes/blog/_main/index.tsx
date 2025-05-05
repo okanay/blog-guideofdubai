@@ -281,8 +281,6 @@ function PopularBlogSection() {
   );
 }
 
-export default PopularBlogSection;
-
 function BlogCard({ imageUrl, category, title, author, date, likes, index }) {
   return (
     <div className="group relative w-72 cursor-pointer overflow-hidden rounded-lg border border-zinc-300 sm:w-96 xl:w-[25vw]">
