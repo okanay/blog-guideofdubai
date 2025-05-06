@@ -13,6 +13,7 @@ import { Link } from "@/i18n/link";
 import { formatDate } from "@/components/editor/helper";
 import { LANGUAGE_DICTONARY } from "@/i18n/config";
 import { getLanguageFromSearch } from "@/i18n/action";
+import { ImageGalleryOverlay } from "@/components/editor/tiptap/renderer/img-gallery-overlay";
 
 export const Route = createFileRoute("/blog/_main/$slug")({
   loader: async ({ params, location: { search }, ...others }) => {
@@ -163,6 +164,7 @@ function BlogPage() {
       {/* İlgili Bloglar Bölümü */}
       <RelatedBlogs blog={blog} lang={lang} />
       <IncreaseViewTracker blogId={blog.id} />
+      <ImageGalleryOverlay />
     </div>
   );
 }

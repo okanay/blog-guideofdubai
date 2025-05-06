@@ -220,7 +220,7 @@ export const InstagramCardUI: React.FC<InstagramCardAttributes> = ({
             <img
               src={fixedProfileImage}
               alt={`${username} profil fotoğrafı`}
-              className="!absolute !inset-0 !mt-0 !h-full !w-full !object-cover"
+              className="overlay-ignore !absolute !inset-0 !mt-0 !h-full !w-full !object-cover"
             />
           </div>
           <span className="max-w-[90px] truncate text-sm font-semibold sm:max-w-[120px]">
