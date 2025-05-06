@@ -222,8 +222,8 @@ export function BlogFilters() {
                 >
                   <option value="">Tüm Kategoriler</option>
                   {categories.map((category) => (
-                    <option key={category.value} value={category.value}>
-                      {category.name}
+                    <option key={category.name} value={category.name}>
+                      {category.value}
                     </option>
                   ))}
                 </select>
@@ -241,8 +241,8 @@ export function BlogFilters() {
                 >
                   <option value="">Tüm Etiketler</option>
                   {tags.map((tag) => (
-                    <option key={tag.value} value={tag.value}>
-                      {tag.name}
+                    <option key={tag.name} value={tag.name}>
+                      {tag.value}
                     </option>
                   ))}
                 </select>

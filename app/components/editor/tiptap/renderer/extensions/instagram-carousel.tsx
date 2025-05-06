@@ -183,9 +183,9 @@ export const InstagramCarouselUI: React.FC<InstagramCarouselAttributes> = ({
         aria-disabled="true"
         aria-label="Sola Kaydır"
         onClick={() => handleButtonClick("Left")}
-        className="absolute top-1/2 left-0 z-100 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-zinc-300 bg-white shadow-sm transition-opacity duration-200 hover:bg-zinc-50 focus:outline-none aria-disabled:cursor-not-allowed aria-disabled:opacity-25"
+        className="absolute top-1/2 left-0 z-20 flex size-8 -translate-y-1/2 items-center justify-center rounded-full border border-zinc-300 bg-white shadow-sm transition-opacity duration-200 hover:bg-zinc-50 focus:outline-none aria-disabled:cursor-not-allowed aria-disabled:opacity-0 sm:size-10"
       >
-        <ChevronLeft size={16} />
+        <ChevronLeft className="size-5 sm:size-6" />
       </button>
 
       <button
@@ -193,9 +193,9 @@ export const InstagramCarouselUI: React.FC<InstagramCarouselAttributes> = ({
         aria-disabled="false"
         aria-label="Sağa Kaydır"
         onClick={() => handleButtonClick("Right")}
-        className="absolute top-1/2 right-0 z-100 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-zinc-300 bg-white shadow-sm transition-opacity duration-200 hover:bg-zinc-50 focus:outline-none aria-disabled:cursor-not-allowed aria-disabled:opacity-25"
+        className="absolute top-1/2 right-0 z-20 flex size-8 -translate-y-1/2 items-center justify-center rounded-full border border-zinc-300 bg-white shadow-sm transition-opacity duration-200 hover:bg-zinc-50 focus:outline-none aria-disabled:cursor-not-allowed aria-disabled:opacity-0 sm:size-10"
       >
-        <ChevronRight size={16} />
+        <ChevronRight className="size-5 sm:size-6" />
       </button>
 
       {/* Kartlar konteyneri */}

@@ -1,136 +1,99 @@
 import { useState, useEffect } from "react";
-import { Instagram, Plus, Trash2, ChevronRight } from "lucide-react";
+import {
+  Instagram,
+  Plus,
+  ChevronLeft,
+  ChevronRight,
+  Check,
+  X,
+} from "lucide-react";
 import RichButtonModal from "./ui/modal";
 import { useTiptapContext } from "../store";
 import MenuButton from "./ui/button";
 import { ImagePreview } from "@/components/editor/ui/image-preview";
-import ImageModal from "@/components/image";
 import { InstagramCardAttributes } from "../renderer/extensions/instagram-card";
+import { twMerge } from "tailwind-merge";
+
+const PRIMARY_GRADIENT =
+  "bg-gradient-to-tr from-zinc-600 via-gray-600 to-stone-600";
 
 const InstagramCarouselButton = () => {
   const { editor } = useTiptapContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
   const [validationError, setValidationError] = useState("");
   const [activeCardIndex, setActiveCardIndex] = useState(0);
 
-  // Instagram Cards değerleri
+  // Instagram Cards
   const [cards, setCards] = useState<InstagramCardAttributes[]>([
-    // Varsayılan olarak bir boş kart
     {
       imageUrl: "",
-      username: "Guide Of Dubai",
-      userProfileImage:
-        "https://assets.guideofdubai.com/uploads/guideofdubai-instagram.jpg-ylIblY.jpg",
+      username: "",
+      userProfileImage: "",
       postUrl: "",
-      caption: "Dubai'nin muhteşem manzarası",
+      caption: "",
       likesCount: 0,
       location: "",
-      timestamp: "5 May 2025",
+      timestamp: "",
     },
   ]);
-
-  // Aktif kartı düzenle
   const [cardValues, setCardValues] = useState<InstagramCardAttributes>(
     cards[0],
   );
 
-  // Modal açılınca eğer zaten bir Instagram Carousel içindeysek, mevcut bilgileri al
+  // Modal açılınca mevcut bilgileri al
   const handleOpenModal = () => {
     if (editor.isActive("instagramCarousel")) {
       const attrs = editor.getAttributes("instagramCarousel");
-
       if (attrs.cards && Array.isArray(attrs.cards) && attrs.cards.length > 0) {
         setCards(attrs.cards);
         setCardValues(attrs.cards[0]);
         setActiveCardIndex(0);
       } else {
-        // Varsayılan değerleri ayarla
         setDefaultValues();
       }
     } else {
-      // Varsayılan değerleri ayarla
       setDefaultValues();
     }
-
     setIsModalOpen(true);
   };
 
-  // Varsayılan değerleri ayarla
   const setDefaultValues = () => {
     const defaultCards = [
       {
         imageUrl: "",
-        username: "Guide Of Dubai",
-        userProfileImage:
-          "https://assets.guideofdubai.com/uploads/guideofdubai-instagram.jpg-ylIblY.jpg",
+        username: "",
+        userProfileImage: "",
         postUrl: "",
-        caption: "Dubai'nin muhteşem manzarası",
+        caption: "",
         likesCount: 0,
         location: "",
-        timestamp: "5 May 2025",
+        timestamp: "",
       },
     ];
-
     setCards(defaultCards);
     setCardValues(defaultCards[0]);
     setActiveCardIndex(0);
   };
 
-  // Kullanıcı bir kart seçtiğinde
+  // Kart seçimi
   const handleCardSelect = (index: number) => {
     setActiveCardIndex(index);
     setCardValues(cards[index]);
   };
 
-  // Görsel kütüphanesini aç
-  const handleOpenGalleryModal = () => {
-    setIsGalleryModalOpen(true);
-  };
-
-  // Görsel seçildiğinde
-  const handleImageSelect = (image: any) => {
-    if (image) {
-      setCardValues((prev) => ({
-        ...prev,
-        imageUrl: image.url,
-      }));
-
-      // Kart dizisini güncelle
-      const updatedCards = [...cards];
-      updatedCards[activeCardIndex] = {
-        ...updatedCards[activeCardIndex],
-        imageUrl: image.url,
-      };
-      setCards(updatedCards);
-
-      // Galeri modalını kapat ve Instagram kart modalını geri aç
-      setIsGalleryModalOpen(false);
-      setTimeout(() => {
-        setIsModalOpen(true);
-      }, 100);
-    }
-  };
-
-  // Input değişikliklerini yönet
+  // Input değişiklikleri
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value, type } = e.target as HTMLInputElement;
-
-    // Sayı alanları için sayısal değere çevir
     let newValue: string | number = value;
     if (type === "number") {
       newValue = parseInt(value) || 0;
     }
-
-    // Aktif kartı güncelle
     setCardValues((prev) => ({
       ...prev,
       [name]: newValue,
     }));
-
-    // Kart dizisini güncelle
     const updatedCards = [...cards];
     updatedCards[activeCardIndex] = {
       ...updatedCards[activeCardIndex],
@@ -143,15 +106,14 @@ const InstagramCarouselButton = () => {
   const handleAddCard = () => {
     const newCard: InstagramCardAttributes = {
       imageUrl: "",
-      username: "Guide Of Dubai",
+      username: "",
       userProfileImage: "",
       postUrl: "",
       caption: "",
       likesCount: 0,
       location: "",
-      timestamp: "5 May 2025",
+      timestamp: "",
     };
-
     setCards([...cards, newCard]);
     setActiveCardIndex(cards.length);
     setCardValues(newCard);
@@ -159,36 +121,25 @@ const InstagramCarouselButton = () => {
 
   // Kart sil
   const handleDeleteCard = (index: number) => {
-    if (cards.length <= 1) {
-      // En az bir kart olmalı
-      return;
-    }
-
+    if (cards.length <= 1) return;
     const updatedCards = cards.filter((_, i) => i !== index);
+    const newIndex =
+      activeCardIndex === index
+        ? Math.max(0, activeCardIndex - 1)
+        : activeCardIndex > index
+          ? activeCardIndex - 1
+          : activeCardIndex;
     setCards(updatedCards);
-
-    // Silinen kart aktifse, ilk kartı seç
-    if (activeCardIndex === index) {
-      setActiveCardIndex(0);
-      setCardValues(updatedCards[0]);
-    }
-    // Silinen kart aktif karttan önceyse, aktif kart indeksini güncelle
-    else if (activeCardIndex > index) {
-      setActiveCardIndex(activeCardIndex - 1);
-    }
+    setActiveCardIndex(newIndex);
+    setCardValues(updatedCards[newIndex]);
   };
 
-  // Instagram Kartlarını ekle
+  // Carousel ekle/güncelle
   const handleInsertCarousel = () => {
-    // Temel doğrulamalar
     if (cards.some((card) => !card.imageUrl || !card.username)) {
-      setValidationError(
-        "Tüm kartlarda görsel URL'i ve kullanıcı adı gereklidir",
-      );
+      setValidationError("Her kartta görsel ve kullanıcı adı zorunludur.");
       return;
     }
-
-    // Editöre Instagram Carousel ekle
     editor
       .chain()
       .focus()
@@ -199,8 +150,6 @@ const InstagramCarouselButton = () => {
         },
       })
       .run();
-
-    // Modalı kapat
     setIsModalOpen(false);
     setValidationError("");
   };
@@ -211,7 +160,6 @@ const InstagramCarouselButton = () => {
     const updateIsActive = () => {
       setIsActive(editor.isActive("instagramCarousel"));
     };
-
     editor.on("selectionUpdate", updateIsActive);
     editor.on("transaction", updateIsActive);
     return () => {
@@ -220,12 +168,25 @@ const InstagramCarouselButton = () => {
     };
   }, [editor]);
 
+  // Carousel okları
+  const handlePrev = () => {
+    if (activeCardIndex > 0) {
+      handleCardSelect(activeCardIndex - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (activeCardIndex < cards.length - 1) {
+      handleCardSelect(activeCardIndex + 1);
+    }
+  };
+
   return (
     <>
       <MenuButton
         onClick={handleOpenModal}
         isActive={isActive}
-        label="Instagram Galerisi"
+        label="Instagram Carousel"
       >
         <Instagram size={16} />
       </MenuButton>
@@ -233,242 +194,241 @@ const InstagramCarouselButton = () => {
       <RichButtonModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title="Instagram Galerisi Ekle"
-        maxWidth="max-w-4xl"
+        title={
+          (
+            <span className="flex items-center gap-2 text-lg font-bold">
+              <Instagram className="text-pink-500" size={22} />
+              Instagram Carousel
+            </span>
+          ) as any
+        }
+        maxWidth="max-w-2xl"
       >
-        <div className="flex flex-col gap-4 p-1">
-          {/* Kart Seçimi */}
-          <div className="border-b border-zinc-200 pb-3">
-            <h3 className="mb-2 text-sm font-medium text-zinc-700">
-              Instagram Kartları
-            </h3>
-            <div className="flex items-center space-x-2 overflow-x-auto pb-2">
-              {cards.map((card, index) => (
+        {/* Thumbnail bar */}
+        <div className="flex items-center gap-2 py-3">
+          {/* Sol ok */}
+          <button
+            onClick={handlePrev}
+            disabled={activeCardIndex === 0}
+            className="rounded-full p-2 text-zinc-400 hover:bg-zinc-100 disabled:opacity-40"
+            aria-label="Önceki Kart"
+          >
+            <ChevronLeft size={20} />
+          </button>
+          {/* Thumbnail'lar */}
+          <div className="flex gap-2">
+            {cards.map((card, index) => (
+              <div className="group relative" key={index}>
                 <button
-                  key={index}
                   onClick={() => handleCardSelect(index)}
-                  className={`relative flex min-w-[120px] flex-col items-center rounded border p-2 transition ${
+                  className={twMerge(
+                    `relative flex h-14 w-14 items-center justify-center overflow-hidden rounded border-2 transition-all duration-150`,
                     activeCardIndex === index
-                      ? "border-primary-500 bg-primary-50"
-                      : "border-zinc-200 bg-zinc-50 hover:border-zinc-300"
-                  }`}
+                      ? "border-primary"
+                      : "border-transparent",
+                  )}
+                  aria-label={`Kart ${index + 1}`}
                 >
-                  <div className="relative mb-1 h-16 w-16 overflow-hidden rounded">
-                    {card.imageUrl ? (
-                      <img
-                        src={card.imageUrl}
-                        alt={`Kart ${index + 1}`}
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-zinc-200 text-zinc-400">
-                        <Instagram size={24} />
-                      </div>
-                    )}
-                  </div>
-                  <span className="max-w-full truncate text-xs font-medium">
-                    {card.username || `Kart ${index + 1}`}
-                  </span>
-
-                  {/* Silme butonu */}
-                  {cards.length > 1 && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteCard(index);
-                      }}
-                      className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white shadow-sm hover:bg-red-600"
-                      aria-label={`Kart ${index + 1}'i sil`}
-                    >
-                      <Trash2 size={12} />
-                    </button>
+                  {card.imageUrl ? (
+                    <img
+                      src={card.imageUrl}
+                      alt={`Kart ${index + 1}`}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center">
+                      <Instagram size={22} />
+                    </div>
                   )}
                 </button>
-              ))}
-
-              {/* Yeni kart ekleme butonu */}
-              <button
-                onClick={handleAddCard}
-                className="flex min-w-[120px] flex-col items-center rounded border border-dashed border-zinc-300 p-2 text-zinc-500 transition hover:border-zinc-400 hover:text-zinc-600"
-              >
-                <div className="mb-1 flex h-16 w-16 items-center justify-center rounded border border-zinc-200 bg-zinc-100">
-                  <Plus size={24} />
-                </div>
-                <span className="text-xs font-medium">Yeni Kart Ekle</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Aktif Kart Düzenleme */}
-          <div className="border-t border-zinc-100 pt-3">
-            <h3 className="mb-3 text-sm font-medium text-zinc-700">
-              Kart {activeCardIndex + 1} Düzenleme
-            </h3>
-
-            {/* Ana Görsel */}
-            <div className="mb-4">
-              <ImagePreview
-                label="Gönderi Görseli"
-                value={cardValues.imageUrl}
-                onChange={(e) =>
-                  handleInputChange({
-                    ...e,
-                    target: {
-                      ...e.target,
-                      name: "imageUrl",
-                    },
-                  } as React.ChangeEvent<HTMLInputElement>)
-                }
-                placeholder="https://example.com/image.jpg"
-                errorMessage={validationError}
-                isRequired
-                autoFocus
-              />
-            </div>
-
-            {/* Kullanıcı Bilgileri */}
-            <div className="mb-4 grid grid-cols-2 gap-4">
-              <div>
-                <label
-                  htmlFor="username"
-                  className="mb-1.5 block text-sm font-medium text-zinc-700"
-                >
-                  Kullanıcı Adı <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="username"
-                  name="username"
-                  value={cardValues.username}
-                  onChange={handleInputChange}
-                  placeholder="kullanici_adi"
-                  className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-zinc-300 px-3 py-2 focus:ring-1 focus:outline-none"
-                  required
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="userProfileImage"
-                  className="mb-1.5 block text-sm font-medium text-zinc-700"
-                >
-                  Profil Görseli URL
-                </label>
-                <input
-                  type="text"
-                  id="userProfileImage"
-                  name="userProfileImage"
-                  value={cardValues.userProfileImage}
-                  onChange={handleInputChange}
-                  placeholder="https://example.com/profile.jpg"
-                  className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-zinc-300 px-3 py-2 focus:ring-1 focus:outline-none"
-                />
-                <p className="mt-1 text-xs text-zinc-500">
-                  Boş bırakırsanız varsayılan görsel kullanılır
-                </p>
-              </div>
-            </div>
-
-            {/* Açıklama Metni */}
-            <div className="mb-4">
-              <label
-                htmlFor="caption"
-                className="mb-1.5 block text-sm font-medium text-zinc-700"
-              >
-                Açıklama
-              </label>
-              <textarea
-                id="caption"
-                name="caption"
-                value={cardValues.caption}
-                onChange={handleInputChange}
-                placeholder="Gönderi açıklaması..."
-                rows={2}
-                className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-zinc-300 px-3 py-2 focus:ring-1 focus:outline-none"
-              />
-            </div>
-
-            {/* Zamanlama ve Link */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label
-                  htmlFor="timestamp"
-                  className="mb-1.5 block text-sm font-medium text-zinc-700"
-                >
-                  Zaman
-                </label>
-                <input
-                  type="text"
-                  id="timestamp"
-                  name="timestamp"
-                  value={cardValues.timestamp}
-                  onChange={handleInputChange}
-                  placeholder="5 May 2025"
-                  className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-zinc-300 px-3 py-2 focus:ring-1 focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="postUrl"
-                  className="mb-1.5 block text-sm font-medium text-zinc-700"
-                >
-                  Gönderi Linki
-                </label>
-                <input
-                  type="text"
-                  id="postUrl"
-                  name="postUrl"
-                  value={cardValues.postUrl}
-                  onChange={handleInputChange}
-                  placeholder="https://instagram.com/p/..."
-                  className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-md border border-zinc-300 px-3 py-2 focus:ring-1 focus:outline-none"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Alt butonlar */}
-          <div className="flex justify-between border-t border-zinc-100 pt-3">
-            <div className="flex items-center">
-              {validationError && (
-                <p className="text-sm text-red-500">{validationError}</p>
-              )}
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="focus:ring-primary-400 rounded-md border border-zinc-200 bg-zinc-50 px-4 py-1.5 text-sm font-medium text-zinc-800 transition-all hover:bg-zinc-100 focus:ring-1 focus:outline-none"
-              >
-                İptal
-              </button>
-              <button
-                onClick={handleInsertCarousel}
-                className="border-primary-500 bg-primary-500 hover:bg-primary-600 focus:ring-primary-400 rounded-md border px-4 py-1.5 text-sm font-medium text-white transition-all focus:ring-1 focus:outline-none"
-                disabled={cards.some(
-                  (card) => !card.imageUrl || !card.username,
+                {/* Thumbnail üzerinde silme ikonu */}
+                {cards.length > 1 && (
+                  <button
+                    onClick={() => handleDeleteCard(index)}
+                    className="absolute -top-2 -right-2 z-10 hidden items-center justify-center rounded-full border border-zinc-200 bg-white p-1 transition group-hover:flex hover:bg-red-500 hover:text-white"
+                    title="Kartı Sil"
+                  >
+                    <X size={14} />
+                  </button>
                 )}
+                {/* Kart numarası */}
+                <span
+                  className={`absolute bottom-1 left-1 rounded px-1.5 text-[10px] font-bold ${
+                    activeCardIndex === index
+                      ? "bg-primary text-color-font-invert"
+                      : "text-color-font bg-white/80"
+                  }`}
+                >
+                  {index + 1}
+                </span>
+              </div>
+            ))}
+            {/* Ekle butonu */}
+            <button
+              onClick={handleAddCard}
+              className={`ml-2 flex h-14 w-14 items-center justify-center rounded ${PRIMARY_GRADIENT} text-white transition hover:scale-105`}
+              title="Yeni Kart Ekle"
+            >
+              <Plus size={28} />
+            </button>
+          </div>
+          {/* Sağ ok */}
+          <button
+            onClick={handleNext}
+            disabled={activeCardIndex === cards.length - 1}
+            className="rounded-full p-2 text-zinc-400 hover:bg-zinc-100 disabled:opacity-40"
+            aria-label="Sonraki Kart"
+          >
+            <ChevronRight size={20} />
+          </button>
+        </div>
+
+        {/* Kart Düzenleme Alanı */}
+        <div className="mx-auto mt-2 w-full rounded-xl border border-zinc-200 bg-zinc-50 p-6">
+          <h3 className="mb-4 text-base font-semibold text-zinc-800">
+            Kart {activeCardIndex + 1} Detayları
+          </h3>
+          {/* Ana Görsel */}
+          <div className="mb-4">
+            <ImagePreview
+              label="Gönderi Görseli"
+              value={cardValues.imageUrl}
+              onChange={(e) =>
+                handleInputChange({
+                  ...e,
+                  target: {
+                    ...e.target,
+                    name: "imageUrl",
+                  },
+                } as React.ChangeEvent<HTMLInputElement>)
+              }
+              placeholder="https://example.com/image.jpg"
+              errorMessage={validationError}
+              isRequired
+              autoFocus
+            />
+          </div>
+          {/* Kullanıcı Bilgileri */}
+          <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+              <label
+                htmlFor="username"
+                className="mb-1 block text-xs font-medium text-zinc-700"
               >
-                {isActive ? "Güncelle" : "Ekle"}
-              </button>
+                Kullanıcı Adı <span className="text-pink-500">*</span>
+              </label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                value={cardValues.username}
+                onChange={handleInputChange}
+                placeholder="kullanici_adi"
+                className="w-full rounded border border-zinc-300 px-3 py-2 text-sm transition outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-200"
+                required
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="userProfileImage"
+                className="mb-1 block text-xs font-medium text-zinc-700"
+              >
+                Profil Görseli URL
+              </label>
+              <input
+                type="text"
+                id="userProfileImage"
+                name="userProfileImage"
+                value={cardValues.userProfileImage}
+                onChange={handleInputChange}
+                placeholder="https://example.com/profile.jpg"
+                className="w-full rounded border border-zinc-300 px-3 py-2 text-sm transition outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-200"
+              />
+              <p className="mt-1 text-[10px] text-zinc-500">
+                Boş bırakırsanız varsayılan görsel kullanılır
+              </p>
             </div>
           </div>
+          {/* Açıklama Metni */}
+          <div className="mb-4">
+            <label
+              htmlFor="caption"
+              className="mb-1 block text-xs font-medium text-zinc-700"
+            >
+              Açıklama
+            </label>
+            <textarea
+              id="caption"
+              name="caption"
+              value={cardValues.caption}
+              onChange={handleInputChange}
+              placeholder="Gönderi açıklaması..."
+              rows={2}
+              className="w-full rounded border border-zinc-300 px-3 py-2 text-sm transition outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-200"
+            />
+          </div>
+          {/* Zamanlama ve Link */}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+              <label
+                htmlFor="timestamp"
+                className="mb-1 block text-xs font-medium text-zinc-700"
+              >
+                Zaman
+              </label>
+              <input
+                type="text"
+                id="timestamp"
+                name="timestamp"
+                value={cardValues.timestamp}
+                onChange={handleInputChange}
+                placeholder="5 May 2025"
+                className="w-full rounded border border-zinc-300 px-3 py-2 text-sm transition outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-200"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="postUrl"
+                className="mb-1 block text-xs font-medium text-zinc-700"
+              >
+                Gönderi Linki
+              </label>
+              <input
+                type="text"
+                id="postUrl"
+                name="postUrl"
+                value={cardValues.postUrl}
+                onChange={handleInputChange}
+                placeholder="https://instagram.com/p/..."
+                className="w-full rounded border border-zinc-300 px-3 py-2 text-sm transition outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-200"
+              />
+            </div>
+          </div>
+          {/* Validation */}
+          {validationError && (
+            <p className="mt-3 text-xs font-semibold text-pink-600">
+              {validationError}
+            </p>
+          )}
+        </div>
+
+        {/* Sticky aksiyon bar */}
+        <div className="sticky right-0 bottom-0 left-0 z-10 mt-6 flex justify-end bg-white/80 py-3">
+          <button
+            onClick={handleInsertCarousel}
+            className={`flex items-center gap-2 rounded px-5 py-2 font-semibold transition ${
+              cards.some((card) => !card.imageUrl || !card.username)
+                ? "cursor-not-allowed bg-zinc-200 text-zinc-400"
+                : "from-primary-700 via-primary-600 to-primary-500 bg-gradient-to-tr text-white hover:scale-105"
+            }`}
+            disabled={cards.some((card) => !card.imageUrl || !card.username)}
+            title={isActive ? "Güncelle" : "Ekle"}
+          >
+            <Check size={18} />
+            {isActive ? "Güncelle" : "Ekle"}
+          </button>
         </div>
       </RichButtonModal>
-
-      {/* Resim Galerisi Modalı */}
-      <ImageModal
-        isOpen={isGalleryModalOpen}
-        onClose={() => {
-          setIsGalleryModalOpen(false);
-          // Galeri kapandığında tekrar tiptap modalını aç
-          setTimeout(() => {
-            setIsModalOpen(true);
-          }, 100);
-        }}
-        onSelect={handleImageSelect}
-        singleSelect={true}
-      />
     </>
   );
 };

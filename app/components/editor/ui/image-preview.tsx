@@ -253,17 +253,6 @@ export const ImagePreview = ({
         />
 
         <div className="absolute right-2 flex items-center gap-1.5">
-          {props.value && (
-            <button
-              type="button"
-              onClick={clearValue}
-              className="rounded border border-zinc-200 bg-zinc-100 p-1 text-zinc-600 hover:bg-zinc-200 hover:text-zinc-700"
-              title="URL'i temizle"
-            >
-              <X size={14} />
-            </button>
-          )}
-
           <button
             type="button"
             onClick={openImageManager}
@@ -279,14 +268,24 @@ export const ImagePreview = ({
             disabled={!props.value || !isValidUrl(props.value as string)}
             onClick={openPreview}
             className={twMerge(
-              "flex items-center gap-0.5 rounded border border-zinc-200 bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-200 hover:text-zinc-700",
+              "flex items-center gap-0.5 rounded border border-zinc-200 bg-zinc-100 p-1 text-xs font-medium text-zinc-600 hover:bg-zinc-200 hover:text-zinc-700",
               (!props.value || !isValidUrl(props.value as string)) &&
                 "cursor-not-allowed opacity-50",
             )}
             title="Görseli önizle"
           >
-            <Eye size={14} className="mr-1 inline-block" /> <span>Önizle</span>
+            <Eye size={14} className="inline-block" />
           </button>
+          {props.value && (
+            <button
+              type="button"
+              onClick={clearValue}
+              className="rounded border border-zinc-200 bg-zinc-100 p-1 text-zinc-600 hover:bg-zinc-200 hover:text-zinc-700"
+              title="URL'i temizle"
+            >
+              <X size={14} />
+            </button>
+          )}
         </div>
       </div>
 
