@@ -5,13 +5,11 @@ import { BulletListNode } from "./bullet-list";
 import { DocNode } from "./doc";
 import { HeadingNode } from "./heading";
 import { HorizontalRuleNode } from "./horizontal-rule";
-import { ImageNode } from "./image";
 import { ListItemNode } from "./list-item";
 import { OrderedListNode } from "./ordered-list";
 import { ParagraphNode } from "./paragraph";
 import { AlertBoxRenderer } from "../extensions/alert-box";
 import { EnhancedImageRenderer } from "../extensions/image";
-import { InstagramCardRenderer } from "../extensions/instagram-card";
 import { InstagramCarouselRenderer } from "../extensions/instagram-carousel";
 
 export const RenderNode: React.FC<{ node: any; children: React.ReactNode }> = ({
@@ -43,8 +41,6 @@ export const RenderNode: React.FC<{ node: any; children: React.ReactNode }> = ({
       return <EnhancedImageRenderer node={node} />;
     case "alertBox":
       return <AlertBoxRenderer node={node}>{children}</AlertBoxRenderer>;
-    case "instagramCard":
-      return <InstagramCardRenderer node={node} />;
     case "instagramCarousel":
       return <InstagramCarouselRenderer node={node} />;
 

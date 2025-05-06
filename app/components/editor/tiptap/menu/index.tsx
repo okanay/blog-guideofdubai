@@ -16,7 +16,6 @@ import { SuperscriptButton } from "./superscript";
 import { ItalicButton } from "./italic";
 import { TextAlignButtons } from "./text-aligns";
 import { HorizontalRuleButton } from "./horizontal-rule";
-import { InstagramCardButton } from "./instagram-card";
 import { InstagramCarouselButton } from "./instagram-carousel";
 
 export const EditorRichMenu = () => {

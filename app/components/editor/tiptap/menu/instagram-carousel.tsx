@@ -14,9 +14,6 @@ import { ImagePreview } from "@/components/editor/ui/image-preview";
 import { InstagramCardAttributes } from "../renderer/extensions/instagram-card";
 import { twMerge } from "tailwind-merge";
 
-const PRIMARY_GRADIENT =
-  "bg-gradient-to-tr from-zinc-600 via-gray-600 to-stone-600";
-
 const InstagramCarouselButton = () => {
   const { editor } = useTiptapContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,8 +24,9 @@ const InstagramCarouselButton = () => {
   const [cards, setCards] = useState<InstagramCardAttributes[]>([
     {
       imageUrl: "",
-      username: "",
-      userProfileImage: "",
+      username: "Guide Of Dubai",
+      userProfileImage:
+        "https://assets.guideofdubai.com/uploads/guideofdubai-instagram.jpg-ylIblY.jpg",
       postUrl: "",
       caption: "",
       likesCount: 0,
@@ -61,8 +59,9 @@ const InstagramCarouselButton = () => {
     const defaultCards = [
       {
         imageUrl: "",
-        username: "",
-        userProfileImage: "",
+        username: "Guide Of Dubai",
+        userProfileImage:
+          "https://assets.guideofdubai.com/uploads/guideofdubai-instagram.jpg-ylIblY.jpg",
         postUrl: "",
         caption: "",
         likesCount: 0,
@@ -106,8 +105,9 @@ const InstagramCarouselButton = () => {
   const handleAddCard = () => {
     const newCard: InstagramCardAttributes = {
       imageUrl: "",
-      username: "",
-      userProfileImage: "",
+      username: "Guide Of Dubai",
+      userProfileImage:
+        "https://assets.guideofdubai.com/uploads/guideofdubai-instagram.jpg-ylIblY.jpg",
       postUrl: "",
       caption: "",
       likesCount: 0,
