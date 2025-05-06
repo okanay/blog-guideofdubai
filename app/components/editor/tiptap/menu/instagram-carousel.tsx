@@ -197,7 +197,7 @@ const InstagramCarouselButton = () => {
         title={
           (
             <span className="flex items-center gap-2 text-lg font-bold">
-              <Instagram className="text-pink-500" size={22} />
+              <Instagram className="text-primary" size={22} />
               Instagram Carousel
             </span>
           ) as any
@@ -205,86 +205,66 @@ const InstagramCarouselButton = () => {
         maxWidth="max-w-2xl"
       >
         {/* Thumbnail bar */}
-        <div className="flex items-center gap-2 py-3">
-          {/* Sol ok */}
-          <button
-            onClick={handlePrev}
-            disabled={activeCardIndex === 0}
-            className="rounded-full p-2 text-zinc-400 hover:bg-zinc-100 disabled:opacity-40"
-            aria-label="Önceki Kart"
-          >
-            <ChevronLeft size={20} />
-          </button>
+        <div className="flex items-center gap-2 overflow-x-auto py-3">
           {/* Thumbnail'lar */}
-          <div className="flex gap-2">
-            {cards.map((card, index) => (
-              <div className="group relative" key={index}>
-                <button
-                  onClick={() => handleCardSelect(index)}
-                  className={twMerge(
-                    `relative flex h-14 w-14 items-center justify-center overflow-hidden rounded border-2 transition-all duration-150`,
-                    activeCardIndex === index
-                      ? "border-primary"
-                      : "border-transparent",
-                  )}
-                  aria-label={`Kart ${index + 1}`}
-                >
-                  {card.imageUrl ? (
-                    <img
-                      src={card.imageUrl}
-                      alt={`Kart ${index + 1}`}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center">
-                      <Instagram size={22} />
-                    </div>
-                  )}
-                </button>
-                {/* Thumbnail üzerinde silme ikonu */}
-                {cards.length > 1 && (
-                  <button
-                    onClick={() => handleDeleteCard(index)}
-                    className="absolute -top-2 -right-2 z-10 hidden items-center justify-center rounded-full border border-zinc-200 bg-white p-1 transition group-hover:flex hover:bg-red-500 hover:text-white"
-                    title="Kartı Sil"
-                  >
-                    <X size={14} />
-                  </button>
+          {cards.map((card, index) => (
+            <div className="group relative" key={index}>
+              <button
+                onClick={() => handleCardSelect(index)}
+                className={twMerge(
+                  `relative flex h-14 w-14 items-center justify-center overflow-hidden rounded border-2 transition-all duration-150`,
+                  activeCardIndex === index
+                    ? "border-primary"
+                    : "border-transparent",
                 )}
-                {/* Kart numarası */}
-                <span
-                  className={`absolute bottom-1 left-1 rounded px-1.5 text-[10px] font-bold ${
-                    activeCardIndex === index
-                      ? "bg-primary text-color-font-invert"
-                      : "text-color-font bg-white/80"
-                  }`}
+                aria-label={`Kart ${index + 1}`}
+              >
+                {card.imageUrl ? (
+                  <img
+                    src={card.imageUrl}
+                    alt={`Kart ${index + 1}`}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center">
+                    <Instagram size={22} />
+                  </div>
+                )}
+              </button>
+              {/* Thumbnail üzerinde silme ikonu */}
+              {cards.length > 1 && (
+                <button
+                  onClick={() => handleDeleteCard(index)}
+                  className="absolute -top-2 -right-2 z-10 hidden items-center justify-center rounded-full border border-zinc-200 bg-white p-1 transition group-hover:flex hover:bg-red-500 hover:text-white"
+                  title="Kartı Sil"
                 >
-                  {index + 1}
-                </span>
-              </div>
-            ))}
-            {/* Ekle butonu */}
-            <button
-              onClick={handleAddCard}
-              className={`ml-2 flex h-14 w-14 items-center justify-center rounded ${PRIMARY_GRADIENT} text-white transition hover:scale-105`}
-              title="Yeni Kart Ekle"
-            >
-              <Plus size={28} />
-            </button>
-          </div>
-          {/* Sağ ok */}
+                  <X size={14} />
+                </button>
+              )}
+              {/* Kart numarası */}
+              <span
+                className={`absolute bottom-1 left-1 rounded px-1.5 text-[10px] font-bold ${
+                  activeCardIndex === index
+                    ? "bg-primary text-color-font-invert"
+                    : "text-color-font bg-white/80"
+                }`}
+              >
+                {index + 1}
+              </span>
+            </div>
+          ))}
+          {/* Ekle butonu */}
           <button
-            onClick={handleNext}
-            disabled={activeCardIndex === cards.length - 1}
-            className="rounded-full p-2 text-zinc-400 hover:bg-zinc-100 disabled:opacity-40"
-            aria-label="Sonraki Kart"
+            onClick={handleAddCard}
+            className={`bg-color-font-dark ml-2 flex h-14 w-14 items-center justify-center rounded text-white transition hover:scale-105`}
+            title="Yeni Kart Ekle"
           >
-            <ChevronRight size={20} />
+            <Plus className="text-color-font-invert size-8" />
           </button>
         </div>
 
         {/* Kart Düzenleme Alanı */}
-        <div className="mx-auto mt-2 w-full rounded-xl border border-zinc-200 bg-zinc-50 p-6">
+        <div className="mx-auto mt-2 w-full rounded border border-zinc-200 bg-zinc-50 p-6">
           <h3 className="mb-4 text-base font-semibold text-zinc-800">
             Kart {activeCardIndex + 1} Detayları
           </h3>
@@ -413,7 +393,7 @@ const InstagramCarouselButton = () => {
         </div>
 
         {/* Sticky aksiyon bar */}
-        <div className="sticky right-0 bottom-0 left-0 z-10 mt-6 flex justify-end bg-white/80 py-3">
+        <div className="mt-4 flex items-center justify-end">
           <button
             onClick={handleInsertCarousel}
             className={`flex items-center gap-2 rounded px-5 py-2 font-semibold transition ${
