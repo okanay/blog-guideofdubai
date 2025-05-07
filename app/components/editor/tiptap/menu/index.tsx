@@ -17,6 +17,7 @@ import { ItalicButton } from "./italic";
 import { TextAlignButtons } from "./text-aligns";
 import { HorizontalRuleButton } from "./horizontal-rule";
 import { InstagramCarouselButton } from "./instagram-carousel";
+import { AITranslateHTML } from "./ai-translate";
 
 export const EditorRichMenu = () => {
   const [hidden, setHidden] = useState(false);
@@ -52,6 +53,7 @@ export const EditorRichMenu = () => {
                 <AlertBoxButton />
                 <HorizontalRuleButton />
                 <InstagramCarouselButton />
+                <AITranslateHTML />
               </div>
             </div>
           </div>

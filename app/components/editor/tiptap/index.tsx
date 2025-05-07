@@ -43,6 +43,7 @@ export const Editor = () => {
 
 const EditModeContent = () => {
   const { editor } = useTiptapContext();
+
   return (
     <div
       style={{ scrollbarWidth: "none" }}

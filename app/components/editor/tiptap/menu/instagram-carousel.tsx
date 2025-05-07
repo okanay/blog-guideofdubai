@@ -1,18 +1,11 @@
 import { useState, useEffect } from "react";
-import {
-  Instagram,
-  Plus,
-  ChevronLeft,
-  ChevronRight,
-  Check,
-  X,
-} from "lucide-react";
+import { Instagram, Plus, Check, X } from "lucide-react";
 import RichButtonModal from "./ui/modal";
 import { useTiptapContext } from "../store";
 import MenuButton from "./ui/button";
 import { ImagePreview } from "@/components/editor/ui/image-preview";
-import { InstagramCardAttributes } from "../renderer/extensions/instagram-card";
 import { twMerge } from "tailwind-merge";
+import { InstagramCardAttributes } from "../renderer/extensions/instagram-carousel";
 
 const InstagramCarouselButton = () => {
   const { editor } = useTiptapContext();
@@ -29,8 +22,6 @@ const InstagramCarouselButton = () => {
         "https://assets.guideofdubai.com/uploads/guideofdubai-instagram.jpg-ylIblY.jpg",
       postUrl: "",
       caption: "",
-      likesCount: 0,
-      location: "",
       timestamp: "",
     },
   ]);
@@ -110,8 +101,6 @@ const InstagramCarouselButton = () => {
         "https://assets.guideofdubai.com/uploads/guideofdubai-instagram.jpg-ylIblY.jpg",
       postUrl: "",
       caption: "",
-      likesCount: 0,
-      location: "",
       timestamp: "",
     };
     setCards([...cards, newCard]);

@@ -32,7 +32,7 @@ const RichButtonModal = ({
         )}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between border-b border-zinc-200 p-4">
+        <div className="flex items-start justify-between border-b border-zinc-200 p-4">
           <h3 className="text-lg font-medium text-zinc-900">{title}</h3>
           <button
             onClick={onClose}
