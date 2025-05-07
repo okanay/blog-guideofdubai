@@ -6,10 +6,14 @@ import { LoadingBlocker } from "../../ui/loading-blocker";
 import MenuButton from "./ui/button";
 
 export const LANGUAGES = [
-  { code: "English", label: "İngilizce" },
   { code: "Turkish", label: "Türkçe" },
-  { code: "German", label: "Almanca" },
+  { code: "English", label: "İngilizce" },
+  { code: "Arabic", label: "Arapça" },
+  { code: "Chinese", label: "Çince" },
+  { code: "Hindi", label: "Hintçe" },
   { code: "French", label: "Fransızca" },
+  { code: "German", label: "Almanca" },
+  { code: "Spanish", label: "İspanyolca" },
 ];
 
 const AITranslateHTML = () => {
