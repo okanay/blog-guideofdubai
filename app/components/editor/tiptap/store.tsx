@@ -45,7 +45,9 @@ export function TiptapProvider({ children, initialContent = "" }: Props) {
             toast.error("Editör bulunamadı.");
             return;
           }
+
           const html = editor.getHTML();
+
           try {
             const res = await fetch(`${API_URL}/auth/ai/translate`, {
               credentials: "include",
@@ -57,8 +59,25 @@ export function TiptapProvider({ children, initialContent = "" }: Props) {
                 targetLanguage,
               }),
             });
-            if (!res.ok) throw new Error("Çeviri başarısız.");
+
             const data = await res.json();
+
+            if (!res.ok) {
+              // Rate limit hatası kontrolü
+              if (data.error === "rate_limit_exceeded") {
+                // Rate limit hata mesajını göster
+                toast.error(
+                  data.message ||
+                    "İstek limiti aşıldı. Lütfen daha sonra tekrar deneyin.",
+                );
+                console.log("Rate limit details:", data.data);
+                return;
+              }
+
+              // Diğer hata durumları
+              throw new Error(data.message || "Çeviri başarısız.");
+            }
+
             console.log("Translation Response Data:", data);
             editor.commands.setContent(data.data.translatedHTML);
             toast.success("Çeviri tamamlandı.");
