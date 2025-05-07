@@ -267,17 +267,24 @@ export const ImageGalleryOverlay: React.FC = () => {
     isTransitioning,
   ]);
 
+  const handleOriginalImageClickRef = useRef<(index: number) => void>(() => {});
+
+  handleOriginalImageClickRef.current = (index: number) => {
+    if (!imageInfos[index]) return;
+    const clickedImg = imageInfos[index].element;
+    const currentRect = clickedImg.getBoundingClientRect();
+    zoomImage(index, currentRect);
+  };
+
   // Blog içerisindeki resimleri bul ve tıklanabilir yap
   useEffect(() => {
     const container = document.querySelector(".prose");
     if (!container) return;
 
-    // .overlay-ignore class'ı olmayan tüm resimleri seç
     const imgElements = Array.from(
       container.querySelectorAll("img:not(.overlay-ignore)"),
     ) as HTMLImageElement[];
 
-    // Resim bilgilerini topla
     const collectedImageInfos: GalleryImageInfo[] = imgElements.map((img) => ({
       src: img.src,
       rect: img.getBoundingClientRect(),
@@ -286,28 +293,24 @@ export const ImageGalleryOverlay: React.FC = () => {
 
     setImageInfos(collectedImageInfos);
 
-    // Resimlere tıklama event listener'ları ekle
     const cleanupListeners: Array<() => void> = [];
 
     imgElements.forEach((img, index) => {
       img.style.cursor = "zoom-in";
-
-      const clickHandler = () => handleOriginalImageClick(index);
+      const clickHandler = () => handleOriginalImageClickRef.current(index);
       img.addEventListener("click", clickHandler);
-
-      cleanupListeners.push(() => {
-        img.removeEventListener("click", clickHandler);
-      });
+      cleanupListeners.push(() =>
+        img.removeEventListener("click", clickHandler),
+      );
     });
 
-    // Cleanup
     return () => {
       cleanupListeners.forEach((cleanup) => cleanup());
       imgElements.forEach((img) => {
         img.style.cursor = "";
       });
     };
-  }, [handleOriginalImageClick]);
+  }, []);
 
   // Overlay yoksa hiçbir şey render etme
   if (!isOverlayVisible || currentIndex === null || !imageInfos[currentIndex]) {

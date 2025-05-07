@@ -169,20 +169,18 @@ function BlogPage() {
   );
 }
 
-interface IncreaseViewTrackerProps {
+type IncreaseViewTrackerProps = {
   blogId: string;
-}
+};
 
-function IncreaseViewTracker({ blogId }: IncreaseViewTrackerProps) {
+export function IncreaseViewTracker({ blogId }: IncreaseViewTrackerProps) {
   const [tracked, setTracked] = useState(false);
+  const attemptCountRef = useRef(0);
 
   useEffect(() => {
-    // Component mount olduğunda sadece bir kez çalışır
     if (!tracked && blogId) {
       const trackView = async () => {
         try {
-          // Blog API'sine direkt client-side'dan istek gönder
-          // Bu durumda gerçek istemci IP adresi header'larda gönderilecektir
           const response = await fetch(
             `${import.meta.env.VITE_APP_BACKEND_URL}/blog/view?id=${blogId}`,
             {
@@ -194,25 +192,32 @@ function IncreaseViewTracker({ blogId }: IncreaseViewTrackerProps) {
           );
 
           if (response.ok) {
-            console.log("Blog görüntüleme sayısı başarıyla artırıldı");
             setTracked(true);
           } else {
-            console.error("Blog görüntüleme sayısı artırılamadı");
+            // Başarısızsa tekrar dene
+            attemptRetry();
           }
         } catch (error) {
-          console.error("Görüntüleme izleme hatası:", error);
+          attemptRetry();
         }
       };
 
-      // Sayfa tam olarak yüklendikten sonra izleme işlemini gerçekleştir
-      // Bu, öncelikle kullanıcının içeriği görmesini sağlar
+      const attemptRetry = () => {
+        attemptCountRef.current += 1;
+        if (attemptCountRef.current < 3) {
+          // 1 saniye sonra tekrar dene
+          setTimeout(trackView, 1000);
+        } else {
+        }
+      };
+
+      // İlk deneme
       window.requestIdleCallback
         ? window.requestIdleCallback(() => trackView())
         : setTimeout(trackView, 1000);
     }
   }, [blogId, tracked]);
 
-  // Herhangi bir şey render etmez
   return null;
 }
 
