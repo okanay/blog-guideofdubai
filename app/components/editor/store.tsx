@@ -389,7 +389,7 @@ export function EditorProvider({ children }: PropsWithChildren) {
 
         // Varsayılan blog sorgusu
         blogPostsQuery: {
-          limit: 20,
+          limit: 50,
           offset: 0,
           sortBy: "createdAt",
           sortDirection: "desc",
@@ -603,7 +603,7 @@ export function EditorProvider({ children }: PropsWithChildren) {
           lastFetch: null,
           totalCount: 0,
           query: {
-            limit: 20,
+            limit: 50,
             offset: 0,
             sortBy: "createdAt",
             sortDirection: "desc",
@@ -647,6 +647,8 @@ export function EditorProvider({ children }: PropsWithChildren) {
               }
             });
 
+            if (filters.searchQuery)
+              params.append("title", filters.searchQuery);
             if (filters.language) params.append("language", filters.language);
             if (filters.category) params.append("category", filters.category);
             if (filters.tag) params.append("tag", filters.tag);
@@ -815,7 +817,7 @@ export function EditorProvider({ children }: PropsWithChildren) {
             state.blogList.lastFetch = null;
             state.blogList.totalCount = 0;
             state.blogList.query = {
-              limit: 20,
+              limit: 50,
               offset: 0,
               sortBy: "createdAt",
               sortDirection: "desc",
