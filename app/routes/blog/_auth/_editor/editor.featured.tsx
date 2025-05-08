@@ -221,7 +221,7 @@ function FeaturedBlogsPage() {
           </Link>
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-4">
           {/* Başlık */}
           <div className="flex items-center justify-between border-b border-zinc-200 pb-4">
             <div>

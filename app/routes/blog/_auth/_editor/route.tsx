@@ -182,7 +182,7 @@ const Sidebar = () => {
               active="bg-primary-50 text-primary-600 hover:bg-primary-100 hover:text-primary-700 focus:bg-primary-100 focus:text-primary-700"
             >
               <Home className="mr-3 h-5 w-5" />
-              <span>Anasayfa</span>
+              <span>Editör Paneli</span>
             </Link>
 
             <Link
