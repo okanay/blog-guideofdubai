@@ -1,0 +1,61 @@
+import { BookOpenText } from "lucide-react";
+import { useEffect } from "react";
+import { SearchBarWithProvider, useSearch } from "./search";
+import { Link } from "@/i18n/link";
+
+function BackgroudGradient() {
+  return (
+    <div className="to-primary-50/70 fixed top-0 left-0 -z-10 h-[125vh] w-full bg-gradient-to-t from-sky-50 via-zinc-50" />
+  );
+}
+
+export function HeroSection() {
+  return (
+    <>
+      <BackgroudGradient />
+      <section id="#hero">
+        <div className="relative z-21 mx-auto max-w-7xl px-4">
+          <div className="mx-auto flex w-full max-w-xl flex-col gap-6 md:items-center md:justify-center md:text-center">
+            <LatestBlogButton />
+            <h1 className="text-5xl sm:text-6xl">
+              Find Your Perfect Dubai Experience
+            </h1>
+            <p className="text-base sm:text-lg">
+              Get honest reviews, real photos, and community insights about
+              Dubai attractions. Search by location or activity to start
+              exploring.
+            </p>
+            <SearchBarWithProvider />
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+export function LatestBlogButton() {
+  const { latestBlog, fetchLatestBlog, statusStates } = useSearch();
+
+  const isLoading = statusStates.latestBlog.status === "loading";
+  const slug = latestBlog?.slug || "";
+
+  useEffect(() => {
+    fetchLatestBlog().catch((error) => {
+      console.error("En son blog yüklenirken hata:", error);
+    });
+  }, [fetchLatestBlog]);
+
+  return (
+    <div className="relative">
+      <Link
+        to={`/${slug}`}
+        className="flex w-fit items-center gap-1.5 rounded-full border border-zinc-200 bg-zinc-50 px-4 py-1 text-xs font-medium tracking-wide shadow-inner ring shadow-zinc-200/5 ring-zinc-200 ring-offset-2 transition-all duration-300 hover:bg-zinc-100 hover:shadow-md active:scale-95 disabled:cursor-wait disabled:opacity-70"
+        aria-disabled={isLoading}
+        onClick={isLoading ? (e) => e.preventDefault() : undefined}
+      >
+        Read Latest Blog
+        <BookOpenText className="text-primary-dark size-3 translate-y-[0.5px]" />
+      </Link>
+    </div>
+  );
+}

@@ -219,9 +219,7 @@ export function SearchResultsDropdown() {
                       <th className="px-4 py-2.5 text-left text-xs font-medium tracking-wider whitespace-nowrap text-zinc-500 uppercase">
                         Language
                       </th>
-                      <th className="px-4 py-2.5 text-left text-xs font-medium tracking-wider whitespace-nowrap text-zinc-500 uppercase">
-                        Date
-                      </th>
+
                       <th className="px-4 py-2.5 text-left text-xs font-medium tracking-wider whitespace-nowrap text-zinc-500 uppercase">
                         Read Time
                       </th>
@@ -257,7 +255,7 @@ export function SearchResultsDropdown() {
                             </div>
 
                             {/* Title */}
-                            <p className="group-hover:text-primary-600 ml-3 max-w-xs truncate text-sm font-medium text-zinc-900 transition-colors duration-200">
+                            <p className="group-hover:text-primary-600 ml-3 max-w-64 truncate text-sm font-medium text-zinc-900 transition-colors duration-200">
                               {blog.content.title}
                             </p>
                           </Link>
@@ -267,10 +265,6 @@ export function SearchResultsDropdown() {
                           {LANGUAGE_DICTONARY.find(
                             (lang) => lang.value === blog.language,
                           )?.label || blog.language}
-                        </td>
-
-                        <td className="px-4 py-3 text-sm whitespace-nowrap text-zinc-600">
-                          {formatDate(blog.createdAt || "")}
                         </td>
 
                         <td className="px-4 py-3 text-sm whitespace-nowrap text-zinc-600">

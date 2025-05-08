@@ -1,13 +1,13 @@
-import { getHeaders, setCookie, getCookie } from "@tanstack/react-start/server";
 import { DEFAULT_LANGUAGE, LANGUAGE_DICTONARY, SUPPORTED_LANGUAGES } from "@/i18n/config"; // prettier-ignore
-import { HeadContent, Outlet, Scripts, createRootRoute, redirect } from "@tanstack/react-router"; // prettier-ignore
 import { RootProviders } from "@/providers";
+import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router"; // prettier-ignore
+import { getHeaders } from "@tanstack/react-start/server";
 
 import globals from "@/globals.css?url";
-import LanguageProvider from "@/i18n/provider";
-import { createServerFn } from "@tanstack/react-start";
 import { getLanguageFromCookie, getLanguageFromHeader } from "@/i18n/action";
 import LanguageSynchronizer from "@/i18n/language-synchronizer";
+import LanguageProvider from "@/i18n/provider";
+import { createServerFn } from "@tanstack/react-start";
 
 export const getRequestHeaders = createServerFn({
   method: "GET",
