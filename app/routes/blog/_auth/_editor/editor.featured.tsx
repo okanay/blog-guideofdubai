@@ -121,9 +121,9 @@ function FeaturedBlogsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50">
+    <div className="min-h-screen w-full bg-zinc-50">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-zinc-200 bg-white shadow-sm">
+      <header className="sticky top-0 z-20 border-b border-zinc-200 bg-white shadow-sm">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">

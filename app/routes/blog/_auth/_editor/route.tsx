@@ -237,7 +237,7 @@ const CacheModalSideLink = () => {
   return (
     <button
       onClick={() => setMode(!mode)}
-      className="group flex items-center rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900"
+      className="group flex w-full items-center rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-50 hover:text-zinc-900 focus:bg-zinc-100 focus:text-zinc-900"
     >
       <RefreshCw className="mr-3 h-5 w-5" />
       <span>Cache Kontrol</span>

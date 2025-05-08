@@ -57,54 +57,46 @@ function BlogListPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header Komponenti */}
+    <main className="relative mx-auto overflow-hidden px-4 sm:px-6 lg:px-8">
       <BlogListHeader />
-
-      <main className="bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
-          <BlogFilters />
-          <div>
-            {/* Blog sayısı ve yükleme durumu */}
-            <div className="mb-2 flex items-center justify-between">
-              <p className="text-sm text-zinc-500">
-                {totalCount > 0
-                  ? `${totalCount} blog bulundu (${filteredData.length} gösteriliyor)`
-                  : "Blog bulunamadı"}
-              </p>
-              <div className="text-sm text-zinc-500">
-                {isLoading ? "Yükleniyor..." : ""}
-              </div>
-            </div>
-
-            {/* Duruma göre render etme */}
-            {isLoading && filteredData.length === 0 && <LoadingState />}
-
-            {isEmpty && <EmptyState />}
-
-            {hasData && (
-              <>
-                {/* Blog Tablosu */}
-                <BlogTable
-                  blogs={filteredData}
-                  onDeleteClick={openDeleteModal}
-                  onFeaturedToggle={handleFeaturedToggle}
-                />
-
-                {/* Sayfalama */}
-                <Pagination />
-              </>
-            )}
-
-            {/* Silme Modalı */}
-            <DeleteModal
-              isOpen={deleteModalOpen}
-              onClose={() => setDeleteModalOpen(false)}
-              blogId={selectedId}
-            />
-          </div>
+      <BlogFilters />
+      {/* Blog sayısı ve yükleme durumu */}
+      <div className="mb-2 flex items-center justify-between">
+        <p className="text-sm text-zinc-500">
+          {totalCount > 0
+            ? `${totalCount} blog bulundu (${filteredData.length} gösteriliyor)`
+            : "Blog bulunamadı"}
+        </p>
+        <div className="text-sm text-zinc-500">
+          {isLoading ? "Yükleniyor..." : ""}
         </div>
-      </main>
-    </div>
+      </div>
+
+      {/* Duruma göre render etme */}
+      {isLoading && filteredData.length === 0 && <LoadingState />}
+
+      {isEmpty && <EmptyState />}
+
+      {hasData && (
+        <>
+          {/* Blog Tablosu */}
+          <BlogTable
+            blogs={filteredData}
+            onDeleteClick={openDeleteModal}
+            onFeaturedToggle={handleFeaturedToggle}
+          />
+
+          {/* Sayfalama */}
+          <Pagination />
+        </>
+      )}
+
+      {/* Silme Modalı */}
+      <DeleteModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        blogId={selectedId}
+      />
+    </main>
   );
 }

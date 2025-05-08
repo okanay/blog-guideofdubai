@@ -169,31 +169,40 @@ export function StatsQuickView() {
   ];
 
   return (
-    <div className="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {mainCards.map((card, index) => (
-        <div
-          key={index}
-          className="group relative overflow-hidden rounded-xl border border-zinc-200 bg-white transition-all duration-300 hover:shadow-md"
-        >
-          {/* Arkaplan gradient efekti */}
+    <div className="mx-auto my-6">
+      <div
+        className="scrollbar-hide -mx-4 flex snap-x snap-mandatory overflow-x-auto px-4 pb-4 sm:grid sm:gap-4"
+        style={{
+          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+        }}
+      >
+        {mainCards.map((card, index) => (
           <div
-            className={`absolute inset-0 bg-gradient-to-br ${card.bgColor} opacity-30 transition-opacity duration-300 group-hover:opacity-50`}
-          />
+            key={index}
+            className="w-[85vw] flex-shrink-0 snap-center pr-4 first:pl-0 sm:w-auto"
+          >
+            <div className="group relative h-full overflow-hidden rounded-xl border border-zinc-200 bg-white transition-all duration-300 hover:shadow-md">
+              {/* Arkaplan gradient efekti */}
+              <div
+                className={`absolute inset-0 bg-gradient-to-br ${card.bgColor} opacity-30 transition-opacity duration-300 group-hover:opacity-50`}
+              />
 
-          {/* Başlık ve ikon */}
-          <div className="relative flex items-center justify-between border-b border-zinc-100 bg-white/80 px-6 py-4 backdrop-blur-sm">
-            <h3 className="text-sm font-semibold text-zinc-900">
-              {card.title}
-            </h3>
-            <div className={`rounded-lg ${card.iconBg} p-2`}>
-              <card.icon className={`h-5 w-5 ${card.textColor}`} />
+              {/* Başlık ve ikon */}
+              <div className="relative flex items-center justify-between border-b border-zinc-100 bg-white/80 px-4 py-4 backdrop-blur-sm sm:px-6">
+                <h3 className="text-sm font-semibold text-zinc-900">
+                  {card.title}
+                </h3>
+                <div className={`rounded-lg ${card.iconBg} p-2`}>
+                  <card.icon className={`h-5 w-5 ${card.textColor}`} />
+                </div>
+              </div>
+
+              {/* İçerik */}
+              <div className="relative p-4 sm:p-6">{card.component}</div>
             </div>
           </div>
-
-          {/* İçerik */}
-          <div className="relative p-6">{card.component}</div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }

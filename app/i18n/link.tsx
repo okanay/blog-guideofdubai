@@ -67,6 +67,7 @@ export const Link: React.FC<Props> = ({
   return (
     <RouterLink
       {...rest}
+      preload={false}
       to={localizedTo}
       className={twMerge(className, isActive && active)}
       onClick={() => {

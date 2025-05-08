@@ -20,8 +20,8 @@ export function BlogTable({
   const { changeBlogStatus } = useEditorContext();
 
   return (
-    <div className="overflow-x-auto border border-zinc-200">
-      <table className="min-w-full divide-y divide-zinc-200">
+    <div className="relative overflow-x-auto">
+      <table className="divide-y divide-zinc-200">
         <thead className="bg-zinc-50">
           <tr>
             <th
