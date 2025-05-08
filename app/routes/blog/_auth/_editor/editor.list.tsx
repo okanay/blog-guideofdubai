@@ -57,7 +57,7 @@ function BlogListPage() {
   };
 
   return (
-    <main className="relative mx-auto overflow-hidden px-4 sm:px-6 lg:px-8">
+    <main className="relative mx-auto w-full space-y-4 overflow-hidden px-4 sm:px-6 lg:px-8">
       <BlogListHeader />
       <BlogFilters />
       {/* Blog sayısı ve yükleme durumu */}

@@ -23,7 +23,7 @@ export function StatsPage() {
   }
 
   return (
-    <main className="relative container mx-auto overflow-hidden px-4 sm:px-6 lg:px-8">
+    <main className="relative container mx-auto space-y-4 overflow-hidden px-4 sm:px-6 lg:px-8">
       <StatsHeader />
       <StatsQuickView />
       <StatsFilters />

@@ -169,7 +169,7 @@ export function StatsQuickView() {
   ];
 
   return (
-    <div className="mx-auto my-6">
+    <div className="mx-auto">
       <div
         className="scrollbar-hide -mx-4 flex snap-x snap-mandatory overflow-x-auto px-4 pb-4 sm:grid sm:gap-4"
         style={{

@@ -121,10 +121,9 @@ function FeaturedBlogsPage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-zinc-50">
-      {/* Header */}
-      <header className="sticky top-0 z-20 border-b border-zinc-200 bg-white shadow-sm">
-        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+    <main className="relative mx-auto w-full space-y-4 overflow-hidden px-4 sm:px-6 lg:px-8">
+      <header className="border-b border-zinc-100 bg-white">
+        <div className="mx-auto max-w-7xl py-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
               <Link
@@ -194,142 +193,140 @@ function FeaturedBlogsPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {featured.loading && items.length === 0 ? (
-          <div className="flex items-center justify-center py-16">
-            <Loader2 className="text-primary-500 h-8 w-8 animate-spin" />
-            <span className="ml-3 text-zinc-600">
-              Öne çıkan bloglar yükleniyor...
-            </span>
+      {featured.loading && items.length === 0 ? (
+        <div className="flex items-center justify-center">
+          <Loader2 className="text-primary-500 h-8 w-8 animate-spin" />
+          <span className="ml-3 text-zinc-600">
+            Öne çıkan bloglar yükleniyor...
+          </span>
+        </div>
+      ) : items.length === 0 ? (
+        <div className="text-center">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-amber-100">
+            <Star className="h-10 w-10 text-amber-600" />
           </div>
-        ) : items.length === 0 ? (
-          <div className="py-16 text-center">
-            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-amber-100">
-              <Star className="h-10 w-10 text-amber-600" />
+          <h3 className="mt-4 text-lg font-medium text-zinc-900">
+            Öne çıkan blog yok
+          </h3>
+          <p className="mt-2 text-sm text-zinc-500">
+            {selectedLanguage.toUpperCase()} dili için henüz öne çıkan blog
+            eklenmemiş.
+          </p>
+          <Link
+            to="/editor/list"
+            className="bg-primary hover:bg-primary-600 mt-6 inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white"
+          >
+            <Star size={16} />
+            Blog Listesine Git
+          </Link>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {/* Başlık */}
+          <div className="flex items-center justify-between border-b border-zinc-200 pb-4">
+            <div>
+              <h2 className="text-lg font-semibold text-zinc-900">
+                Sıralama ({items.length} blog)
+              </h2>
+              <p className="mt-1 text-sm text-zinc-500">
+                Blogları sürükleyerek sırasını değiştirebilirsiniz
+              </p>
             </div>
-            <h3 className="mt-4 text-lg font-medium text-zinc-900">
-              Öne çıkan blog yok
-            </h3>
-            <p className="mt-2 text-sm text-zinc-500">
-              {selectedLanguage.toUpperCase()} dili için henüz öne çıkan blog
-              eklenmemiş.
-            </p>
-            <Link
-              to="/editor/list"
-              className="bg-primary hover:bg-primary-600 mt-6 inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white"
+            {hasChanges && (
+              <div className="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-1.5 text-sm text-amber-800">
+                <Star size={14} className="text-amber-600" />
+                Kaydetmeyi unutmayın
+              </div>
+            )}
+          </div>
+
+          {/* Blog Listesi */}
+          {items.map((blog, index) => (
+            <div
+              key={blog.id}
+              draggable
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragEnter={() => handleDragEnter(index)}
+              onDragLeave={handleDragLeave}
+              onDragOver={handleDragOver}
+              onDrop={(e) => handleDrop(e, index)}
+              onDragEnd={handleDragEnd}
+              className={`group relative flex items-center gap-4 rounded-lg border bg-white p-4 transition-all duration-150 ${
+                draggedItem === index
+                  ? "scale-[0.95]"
+                  : dragOverIndex === index
+                    ? "border-primary scale-[1.05]"
+                    : "border-zinc-200 hover:border-zinc-500"
+              }`}
             >
-              <Star size={16} />
-              Blog Listesine Git
-            </Link>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {/* Başlık */}
-            <div className="mb-6 flex items-center justify-between border-b border-zinc-200 pb-4">
-              <div>
-                <h2 className="text-lg font-semibold text-zinc-900">
-                  Sıralama ({items.length} blog)
-                </h2>
-                <p className="mt-1 text-sm text-zinc-500">
-                  Blogları sürükleyerek sırasını değiştirebilirsiniz
-                </p>
-              </div>
-              {hasChanges && (
-                <div className="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-1.5 text-sm text-amber-800">
-                  <Star size={14} className="text-amber-600" />
-                  Kaydetmeyi unutmayın
-                </div>
-              )}
-            </div>
-
-            {/* Blog Listesi */}
-            {items.map((blog, index) => (
+              {/* Drag Handle */}
               <div
-                key={blog.id}
-                draggable
-                onDragStart={(e) => handleDragStart(e, index)}
-                onDragEnter={() => handleDragEnter(index)}
-                onDragLeave={handleDragLeave}
-                onDragOver={handleDragOver}
-                onDrop={(e) => handleDrop(e, index)}
-                onDragEnd={handleDragEnd}
-                className={`group relative flex items-center gap-4 rounded-lg border bg-white p-4 transition-all duration-150 ${
+                className={`flex items-center justify-center rounded p-1 transition-colors ${
                   draggedItem === index
-                    ? "scale-[0.95]"
-                    : dragOverIndex === index
-                      ? "border-primary scale-[1.05]"
-                      : "border-zinc-200 hover:border-zinc-500"
+                    ? "bg-primary-100 text-primary-600"
+                    : "text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600"
                 }`}
+                style={{ cursor: "grab" }}
               >
-                {/* Drag Handle */}
-                <div
-                  className={`flex items-center justify-center rounded p-1 transition-colors ${
-                    draggedItem === index
-                      ? "bg-primary-100 text-primary-600"
-                      : "text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600"
-                  }`}
-                  style={{ cursor: "grab" }}
-                >
-                  <GripVertical size={20} className="pointer-events-none" />
-                </div>
+                <GripVertical size={20} className="pointer-events-none" />
+              </div>
 
-                {/* Sıra Numarası */}
-                <div className="bg-primary-50 text-primary-700 flex h-10 w-10 items-center justify-center rounded-full text-lg font-semibold">
-                  {index + 1}
-                </div>
+              {/* Sıra Numarası */}
+              <div className="bg-primary-50 text-primary-700 flex h-10 w-10 items-center justify-center rounded-full text-lg font-semibold">
+                {index + 1}
+              </div>
 
-                {/* Blog Görseli */}
-                <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg">
-                  {blog.content.image ? (
-                    <img
-                      src={blog.content.image}
-                      alt={blog.content.title}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-zinc-100">
-                      <Star className="h-6 w-6 text-zinc-400" />
-                    </div>
-                  )}
-                </div>
-
-                {/* Blog Bilgileri */}
-                <div className="min-w-0 flex-1">
-                  <h3 className="line-clamp-1 font-medium text-zinc-900">
-                    {blog.content.title}
-                  </h3>
-                  <p className="mt-1 line-clamp-1 text-sm text-zinc-500">
-                    {blog.content.description}
-                  </p>
-                  <div className="mt-1 flex items-center gap-3 text-xs text-zinc-400">
-                    <span>{blog.content.readTime} dk okuma</span>
-                    <span>•</span>
-                    <span>
-                      {
-                        LANGUAGE_DICTONARY.find(
-                          (lang) => lang.value === blog.language,
-                        )?.label
-                      }
-                    </span>
+              {/* Blog Görseli */}
+              <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg">
+                {blog.content.image ? (
+                  <img
+                    src={blog.content.image}
+                    alt={blog.content.title}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-zinc-100">
+                    <Star className="h-6 w-6 text-zinc-400" />
                   </div>
-                </div>
+                )}
+              </div>
 
-                {/* İşlemler */}
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => handleRemoveFromFeatured(blog.id)}
-                    className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-medium text-amber-700 transition-colors hover:bg-amber-100"
-                    title="Öne çıkanlardan kaldır"
-                  >
-                    <StarOff size={16} />
-                    <span className="hidden sm:inline">Kaldır</span>
-                  </button>
+              {/* Blog Bilgileri */}
+              <div className="min-w-0 flex-1">
+                <h3 className="line-clamp-1 font-medium text-zinc-900">
+                  {blog.content.title}
+                </h3>
+                <p className="mt-1 line-clamp-1 text-sm text-zinc-500">
+                  {blog.content.description}
+                </p>
+                <div className="mt-1 flex items-center gap-3 text-xs text-zinc-400">
+                  <span>{blog.content.readTime} dk okuma</span>
+                  <span>•</span>
+                  <span>
+                    {
+                      LANGUAGE_DICTONARY.find(
+                        (lang) => lang.value === blog.language,
+                      )?.label
+                    }
+                  </span>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
-      </main>
-    </div>
+
+              {/* İşlemler */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handleRemoveFromFeatured(blog.id)}
+                  className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-medium text-amber-700 transition-colors hover:bg-amber-100"
+                  title="Öne çıkanlardan kaldır"
+                >
+                  <StarOff size={16} />
+                  <span className="hidden sm:inline">Kaldır</span>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </main>
   );
 }
