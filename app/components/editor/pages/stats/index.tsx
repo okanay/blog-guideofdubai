@@ -4,7 +4,7 @@ import { StatsHeader } from "./header";
 import { StatsFilters } from "./filters";
 import { StatsTable } from "./table";
 import { StatsQuickView } from "./quick-view";
-import { LoadingState, EmptyState, ErrorState } from "../list";
+import { LoadingState, ErrorState } from "../list";
 
 export function StatsPage() {
   const { blogStats, fetchBlogStats, clearStatsFilters } = useEditorContext();

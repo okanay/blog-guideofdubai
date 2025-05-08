@@ -63,8 +63,10 @@ function RouteComponent() {
 
   return (
     <TiptapProvider initialContent={blog?.content?.html || ""}>
-      <EditBlogHeader />
-      <EditBlogPage initialData={blog} />
+      <div className="flex w-full flex-col">
+        <EditBlogHeader />
+        <EditBlogPage initialData={blog} />
+      </div>
     </TiptapProvider>
   );
 }

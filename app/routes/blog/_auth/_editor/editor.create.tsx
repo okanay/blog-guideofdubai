@@ -33,8 +33,10 @@ export const Route = createFileRoute("/blog/_auth/_editor/editor/create")({
 function RouteComponent() {
   return (
     <TiptapProvider initialContent={DummyText}>
-      <CreateBlogHeader />
-      <CreateBlogPage />
+      <div className="flex w-full flex-col">
+        <CreateBlogHeader />
+        <CreateBlogPage />
+      </div>
     </TiptapProvider>
   );
 }
