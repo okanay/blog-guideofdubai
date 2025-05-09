@@ -109,13 +109,8 @@ export function TiptapProvider({ children, initialContent = "" }: Props) {
               throw new Error("Çevrilen içerik bulunamadı.");
             }
 
-            // Maliyet ve token bilgilerini loglayalım
-            if (data.data.cost) {
-              console.log("Translation cost:", data.data.cost);
-            }
-
             toast.success(
-              `Çeviri tamamlandı. (${data.data.tokensUsed} token kullanıldı)`,
+              `Çeviri tamamlandı. (${data.data.cost.totalCost} tahmini harcama yapıldı)`,
             );
           } catch (e: any) {
             toast.error(e.message || "Çeviri sırasında hata oluştu.");
