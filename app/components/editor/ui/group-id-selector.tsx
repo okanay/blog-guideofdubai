@@ -56,7 +56,7 @@ export const GroupIDSelector = ({
   const [selectedBlogId, setSelectedBlogId] = useState<string | null>(null);
 
   // Throttle search query
-  const throttledSearchQuery = useThrottle(searchQuery, 2000);
+  const throttledSearchQuery = useThrottle(searchQuery, 500);
 
   // Editor context'inden gerekli değerleri al
   const {
