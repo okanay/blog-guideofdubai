@@ -46,18 +46,26 @@ export function TiptapProvider({ children, initialContent = "" }: Props) {
             return;
           }
 
-          const html = editor.getHTML();
-
           try {
+            // Editörden hem HTML hem de JSON içeriğini al
+            const html = editor.getHTML();
+            const json = JSON.stringify(editor.getJSON());
+            const useJSON = true; // JSON kullanmak istiyorsanız true, HTML tercih ediyorsanız false yapın
+
+            // İstek verisini hazırla
+            const requestBody = {
+              sourceLanguage,
+              targetLanguage,
+              html,
+              tiptapJSON: json,
+            };
+
+            // API isteğini yap
             const res = await fetch(`${API_URL}/auth/ai/translate`, {
               credentials: "include",
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                html,
-                sourceLanguage,
-                targetLanguage,
-              }),
+              body: JSON.stringify(requestBody),
             });
 
             const data = await res.json();
@@ -73,16 +81,45 @@ export function TiptapProvider({ children, initialContent = "" }: Props) {
                 console.log("Rate limit details:", data.data);
                 return;
               }
-
               // Diğer hata durumları
               throw new Error(data.message || "Çeviri başarısız.");
             }
 
             console.log("Translation Response Data:", data);
-            editor.commands.setContent(data.data.translatedHTML);
-            toast.success("Çeviri tamamlandı.");
+
+            // Çevrilen içeriği editöre yükle - JSON veya HTML formatına göre
+            if (useJSON && data.data.translatedJSON) {
+              // JSON içeriği editöre yükle - daha güvenilir
+              try {
+                const parsedJSON = JSON.parse(data.data.translatedJSON);
+                editor.commands.setContent(parsedJSON);
+
+                // Eğer Instagram carousel gibi özel bileşenler varsa, editörü güncelle
+                editor.view.updateState(editor.state);
+              } catch (parseError) {
+                console.error("JSON parse hatası:", parseError);
+                throw new Error(
+                  "Çevrilen JSON içeriği yüklenirken hata oluştu.",
+                );
+              }
+            } else if (data.data.translatedHTML) {
+              // HTML içeriği editöre yükle - alternatif çözüm
+              editor.commands.setContent(data.data.translatedHTML);
+            } else {
+              throw new Error("Çevrilen içerik bulunamadı.");
+            }
+
+            // Maliyet ve token bilgilerini loglayalım
+            if (data.data.cost) {
+              console.log("Translation cost:", data.data.cost);
+            }
+
+            toast.success(
+              `Çeviri tamamlandı. (${data.data.tokensUsed} token kullanıldı)`,
+            );
           } catch (e: any) {
             toast.error(e.message || "Çeviri sırasında hata oluştu.");
+            console.error("Translation error:", e);
           }
         },
       })),
