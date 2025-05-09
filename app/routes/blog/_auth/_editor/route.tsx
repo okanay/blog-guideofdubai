@@ -6,12 +6,7 @@ import { seoTranslations } from "@/i18n/languages";
 import { Link } from "@/i18n/link";
 import { useAuth } from "@/providers/auth";
 import ProtectedRoute from "@/providers/auth/protected-route";
-import {
-  createFileRoute,
-  Outlet,
-  useMatchRoute,
-  useRouterState,
-} from "@tanstack/react-router";
+import { createFileRoute, Outlet, useMatchRoute } from "@tanstack/react-router";
 import {
   BarChart3,
   CircleUser,

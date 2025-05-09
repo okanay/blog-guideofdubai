@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { X as LucideX, ChevronLeft, ChevronRight } from "lucide-react";
+import { useRouterState } from "@tanstack/react-router";
 
 type GalleryImageInfo = {
   src: string;
@@ -18,6 +19,14 @@ export const ImageGalleryOverlay: React.FC = () => {
 
   const overlayImageRef = useRef<HTMLImageElement>(null);
   const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const thumbnailContainerRef = useRef<HTMLDivElement>(null);
+  const thumbnailRefs = useRef<(HTMLImageElement | null)[]>([]);
+  const routerState = useRouterState();
+
+  // Thumbnail ref'leri hazırla
+  useEffect(() => {
+    thumbnailRefs.current = Array(imageInfos.length).fill(null);
+  }, [imageInfos.length]);
 
   // Tüm timeout'ları temizle
   const clearAllTimeouts = () => {
@@ -32,6 +41,35 @@ export const ImageGalleryOverlay: React.FC = () => {
     return () => clearAllTimeouts();
   }, []);
 
+  // Seçilen thumbnail'a kaydırma fonksiyonu
+  const scrollToActiveThumbnail = useCallback((index: number) => {
+    if (
+      !thumbnailContainerRef.current ||
+      thumbnailRefs.current.length <= index ||
+      !thumbnailRefs.current[index]
+    ) {
+      return;
+    }
+
+    const container = thumbnailContainerRef.current;
+    const thumbnail = thumbnailRefs.current[index];
+    if (!thumbnail) return;
+
+    // Thumbnail'ın container içindeki pozisyonunu hesapla
+    const thumbnailRect = thumbnail.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+
+    // Thumbnail'ı merkeze getirmek için gerekli kaydırma miktarı
+    const targetScrollLeft =
+      thumbnail.offsetLeft - containerRect.width / 2 + thumbnailRect.width / 2;
+
+    // Kaydırma animasyonu - smooth scrolling
+    container.scrollTo({
+      left: targetScrollLeft,
+      behavior: "smooth",
+    });
+  }, []);
+
   // Resmi değiştirme işlemi (core)
   const changeImage = useCallback(
     (newIndex: number, newRect?: DOMRect) => {
@@ -43,8 +81,13 @@ export const ImageGalleryOverlay: React.FC = () => {
 
       setCurrentIndex(newIndex);
       setActiveImageInitialRect(targetRect);
+
+      // Thumbnail'a kaydır (küçük bir gecikme ile)
+      setTimeout(() => {
+        scrollToActiveThumbnail(newIndex);
+      }, 50);
     },
-    [imageInfos],
+    [imageInfos, scrollToActiveThumbnail],
   );
 
   // Zoom animasyonu ile geçiş (ilk tıklanma için)
@@ -276,6 +319,18 @@ export const ImageGalleryOverlay: React.FC = () => {
     zoomImage(index, currentRect);
   };
 
+  // Modal açıldığında scroll'u aktif thumbnail'a getir
+  useEffect(() => {
+    if (isOverlayVisible && currentIndex !== null && isAnimatingZoom) {
+      scrollToActiveThumbnail(currentIndex);
+    }
+  }, [
+    isOverlayVisible,
+    currentIndex,
+    isAnimatingZoom,
+    scrollToActiveThumbnail,
+  ]);
+
   // Blog içerisindeki resimleri bul ve tıklanabilir yap
   useEffect(() => {
     const container = document.querySelector(".prose");
@@ -310,7 +365,7 @@ export const ImageGalleryOverlay: React.FC = () => {
         img.style.cursor = "";
       });
     };
-  }, []);
+  }, [routerState]);
 
   // Overlay yoksa hiçbir şey render etme
   if (!isOverlayVisible || currentIndex === null || !imageInfos[currentIndex]) {
@@ -401,10 +456,17 @@ export const ImageGalleryOverlay: React.FC = () => {
 
       {/* Thumbnail nav bar */}
       <div className="absolute right-0 bottom-0 left-0 z-51 w-full overflow-x-auto bg-black/50 p-3 backdrop-blur-sm sm:p-4">
-        <div className="relative z-51 mx-auto flex w-40 justify-center gap-2 sm:gap-3">
+        <div
+          ref={thumbnailContainerRef}
+          style={{ scrollbarWidth: "none", scrollBehavior: "smooth" }}
+          className="scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent relative z-51 mx-auto flex w-full max-w-screen-lg justify-start gap-2 overflow-x-auto pb-1 sm:gap-3"
+        >
           {imageInfos.map(({ src }, i) => (
             <img
               key={`thumbnail-${i}-${src}`}
+              ref={(el) => {
+                thumbnailRefs.current[i] = el;
+              }}
               src={src}
               alt={`Thumbnail ${i + 1}`}
               onClick={(event) => {
@@ -412,13 +474,12 @@ export const ImageGalleryOverlay: React.FC = () => {
                   handleThumbnailClick(i, event);
                 }
               }}
-              className={`h-20 w-24 rounded-md border-2 object-cover shadow-md transition-all duration-200 ease-in-out ${
+              className={`h-16 w-20 flex-shrink-0 rounded-md border-2 object-cover shadow-md transition-all duration-200 ease-in-out sm:h-20 sm:w-24 ${
                 i === currentIndex
                   ? "border-primary-cover scale-105 opacity-100"
                   : "border-transparent opacity-70 hover:border-gray-400 hover:opacity-100"
               }`}
               style={{
-                flexShrink: 0,
                 cursor: isTransitioning ? "default" : "pointer",
               }}
             />

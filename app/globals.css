@@ -66,8 +66,8 @@
 
   .custom-scrollbar {
     &::-webkit-scrollbar {
-      width: 12px;
-      height: 11px;
+      width: 4px;
+      height: 4px;
     }
 
     &::-webkit-scrollbar-track {
@@ -186,7 +186,7 @@
 
       /* Images & Figures */
       & img {
-        @apply mt-4 mb-8 aspect-video rounded-xl object-cover;
+        @apply mb-8 aspect-video rounded-xl object-cover;
       }
       & figure {
         @apply my-8;

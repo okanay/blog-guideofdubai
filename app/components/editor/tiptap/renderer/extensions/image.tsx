@@ -11,22 +11,21 @@ type ImageFit = "cover" | "contain" | "fill" | "none";
 // Style configurations
 const styles = {
   size: {
-    small: "w-1/2",
-    medium: "w-2/3",
-    large: "w-5/6",
-    fullscreen:
-      "w-full max-w-[100vw] !mx-[-1rem] md:!mx-[-2rem] lg:!mx-[-4rem]",
+    small: "w-[75%] w-full sm:w-[50%]",
+    medium: "w-[75%] sm:w-[75%]",
+    large: "w-full sm:w-[90%]",
+    fullscreen: "w-full max-w-[100%] !mx-[-1rem] md:!mx-[-2rem] lg:!mx-[-4rem]",
   },
   alignment: {
-    left: "md:float-left md:mr-4",
+    left: "md:mr-auto", // mr-auto yerine md:mr-auto
     center: "mx-auto",
-    right: "md:float-right md:ml-4",
+    right: "md:ml-auto", // Burayı değiştirdik: ml-auto ekledik
   },
   objectFit: {
     cover: "object-cover",
-    contain: "object-contain",
-    fill: "object-fill",
-    none: "object-none",
+    contain: "object-cover sm:object-contain",
+    fill: "object-cover sm:object-fill",
+    none: "object-cover sm:object-none",
   },
 } as const;
 
