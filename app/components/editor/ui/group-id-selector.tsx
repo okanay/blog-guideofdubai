@@ -61,8 +61,7 @@ export const GroupIDSelector = ({
   // Editor context'inden gerekli değerleri al
   const {
     fetchBlogPosts,
-    fetchedBlogs,
-    totalBlogCount,
+    blogList,
     statusStates: { blogPosts },
     setBlogPostsQuery,
   } = useEditorContext();
@@ -179,8 +178,8 @@ export const GroupIDSelector = ({
 
   // UI durumları
   const isLoading = blogPosts.loading;
-  const isEmpty = !isLoading && totalBlogCount === 0;
-  const hasData = !isLoading && totalBlogCount > 0;
+  const isEmpty = !isLoading && blogList.totalCount === 0;
+  const hasData = !isLoading && blogList.totalCount > 0;
 
   return (
     <div className={twMerge("flex flex-col gap-1.5", containerClassName)}>
@@ -358,8 +357,8 @@ export const GroupIDSelector = ({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-200 bg-white">
-                  {Object.keys(fetchedBlogs).map((key) => {
-                    const blog = fetchedBlogs[key];
+                  {Object.keys(blogList.originalData).map((key) => {
+                    const blog = blogList.originalData[key];
                     return (
                       <tr
                         key={blog.id}

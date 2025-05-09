@@ -19,8 +19,8 @@ function EditorDashboard() {
   return (
     <div className="mx-auto min-h-screen max-w-5xl bg-white">
       {/* Ana İçerik */}
-      <main className="flex-1 py-8">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <main className="flex-1 py-4">
+        <div className="container mx-auto space-y-4 px-4 sm:px-6 lg:px-8">
           {/* Başlık her durumda görünür */}
           <DashboardTitle />
           <QuickAccessCards />
@@ -32,7 +32,7 @@ function EditorDashboard() {
 
 // Dashboard Başlık Bileşeni
 const DashboardTitle = () => (
-  <div className="mb-6">
+  <div>
     <h1 className="text-2xl font-bold text-zinc-900">Hoş Geldiniz</h1>
     <p className="mt-1 text-zinc-600">
       Blog içeriklerinizi yönetin ve yeni bloglar oluşturun
