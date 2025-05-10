@@ -9,9 +9,15 @@ export const Route = createFileRoute("/blog/_main/")({
     try {
       const recentPostsURL = API_URL + "/blog/recent?limit=4";
       const featuredPostsURL = API_URL + "/blog/featured";
+      const mostViewedPostsURL =
+        API_URL + "/blog/most-viewed?limit=5&language=en&period=month"; // all, day, week, month, year
 
-      // İki isteği paralel olarak gerçekleştir
-      const [recentPostsResponse, featuredPostsResponse] = await Promise.all([
+      // Üç isteği paralel olarak gerçekleştir
+      const [
+        recentPostsResponse,
+        featuredPostsResponse,
+        mostViewedPostsResponse,
+      ] = await Promise.all([
         fetch(recentPostsURL, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -22,28 +28,41 @@ export const Route = createFileRoute("/blog/_main/")({
           headers: { "Content-Type": "application/json" },
           credentials: "include",
         }),
+        fetch(mostViewedPostsURL, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+        }),
       ]);
 
       // Eğer herhangi bir istek başarısız olursa hata fırlatır
-      if (!recentPostsResponse.ok || !featuredPostsResponse.ok) {
+      if (
+        !recentPostsResponse.ok ||
+        !featuredPostsResponse.ok ||
+        !mostViewedPostsResponse.ok
+      ) {
         throw new Error("Fetch işlemi başarısız oldu");
       }
 
       // JSON yanıtlarını paralel olarak işle
-      const [recentPostsData, featuredPostsData] = await Promise.all([
-        recentPostsResponse.json(),
-        featuredPostsResponse.json(),
-      ]);
+      const [recentPostsData, featuredPostsData, mostViewedPostsData] =
+        await Promise.all([
+          recentPostsResponse.json(),
+          featuredPostsResponse.json(),
+          mostViewedPostsResponse.json(),
+        ]);
 
       return {
         recentPosts: recentPostsData.blogs as BlogPostCardView[],
         featuredPosts: featuredPostsData.blogs as BlogPostCardView[],
+        mostViewedPosts: mostViewedPostsData.blogs as BlogPostCardView[],
       };
     } catch (error) {
       console.error("Blog verilerini yüklerken hata:", error);
       return {
         recentPosts: [],
         featuredPosts: [],
+        mostViewedPosts: [],
       };
     }
   },

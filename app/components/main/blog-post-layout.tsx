@@ -1,21 +1,24 @@
 import { Link } from "@/i18n/link";
-import {} from "@/routes/blog/_main";
 import { useLoaderData } from "@tanstack/react-router";
+import { Eye, Heart } from "lucide-react"; // Lucide ikonları import edildi
 
 export function BlogPostLayout() {
+  // Loader datası kullanımı
+  const { mostViewedPosts } = useLoaderData({ from: "/blog/_main/" });
+
   return (
     <div className="mx-auto max-w-7xl px-4">
       <div className="flex flex-col gap-6">
         {/* Top Row: Featured Posts */}
         <div className="flex flex-col gap-8 md:flex-row">
-          {/* Selected Feature Post (Left side) */}
+          {/* Selected Feature Post (Left side) - En çok görüntülenen post */}
           <div className="flex-1">
-            <SelectedFeaturePost />
+            <SelectedFeaturePost mostViewedPosts={mostViewedPosts} />
           </div>
 
-          {/* Other Featured Posts (Right side) */}
+          {/* Other Featured Posts (Right side) - 2-5. en çok görüntülenen postlar */}
           <div className="md:w-80 lg:w-96">
-            <OtherFeaturedPosts />
+            <MostViewedPosts mostViewedPosts={mostViewedPosts} />
           </div>
         </div>
 
@@ -28,81 +31,285 @@ export function BlogPostLayout() {
   );
 }
 
-function SelectedFeaturePost() {
+function SelectedFeaturePost({
+  mostViewedPosts,
+}: {
+  mostViewedPosts?: BlogPostCardView[];
+}) {
+  // Dummy veri, olası hata durumları için
+  const dummyMostViewedPost = {
+    id: "550e8400-e29b-41d4-a716-446655440010",
+    groupId: "revolutionizing-industries-saas",
+    slug: "revolutionizing-industries-saas",
+    language: "en",
+    featured: false,
+    status: "published",
+    content: {
+      title: "Revolutionizing industries through SaaS implementation",
+      description:
+        "Discover how SaaS implementations are transforming traditional industries and creating new opportunities for growth.",
+      image: "https://images.project-test.info/2.webp",
+      readTime: 4,
+    },
+    categories: [
+      {
+        name: "SaaS",
+        value: "saas",
+      },
+    ],
+    tags: [],
+    createdAt: "2025-04-25T12:00:00.000Z",
+    updatedAt: "2025-04-25T12:00:00.000Z",
+    stats: {
+      views: 1250,
+      likes: 87,
+      shares: 46,
+      comments: 23,
+    },
+  };
+
+  // En çok görüntülenen yazıyı bul (1. sıradaki)
+  const topViewedPost =
+    mostViewedPosts &&
+    Array.isArray(mostViewedPosts) &&
+    mostViewedPosts.length > 0
+      ? [...mostViewedPosts].sort((a, b) => {
+          const aViews = a.stats?.views || 0;
+          const bViews = b.stats?.views || 0;
+          return bViews - aViews; // Büyükten küçüğe sırala
+        })[0]
+      : dummyMostViewedPost;
+
   return (
     <div className="group relative h-72 w-full overflow-hidden rounded-lg sm:h-[23.1rem]">
-      <Link to={""}>
+      <Link to={topViewedPost.slug || ""}>
         <img
-          src="https://images.project-test.info/1.webp"
-          alt="Office workspace with computers"
+          src={topViewedPost.content.image}
+          alt={topViewedPost.content.title}
           className="h-full w-full rounded-lg object-cover transition-opacity duration-500 ease-in-out group-hover:opacity-75"
         />
 
+        {/* View Count Badge */}
+        {topViewedPost.stats && (
+          <div className="absolute top-4 right-4 flex items-center gap-1 rounded-full bg-black/75 px-3 py-1.5 backdrop-blur-sm">
+            <Eye className="h-4 w-4 text-white" />
+            <span className="text-xs font-semibold text-white">
+              {topViewedPost.stats.views.toLocaleString()} görüntülenme
+            </span>
+          </div>
+        )}
+
         {/* Content Overlay */}
         <div className="absolute right-0 bottom-0 left-0 flex flex-col gap-2 border-t border-zinc-100 bg-gradient-to-t from-zinc-950/40 to-zinc-100/40 px-4 py-4 backdrop-blur-xs">
-          <span
-            className={`w-fit rounded-full border border-zinc-900 bg-zinc-950 px-2 py-1 text-[0.6rem] font-medium text-zinc-100`}
-          >
-            Business
-          </span>
+          {topViewedPost.categories && topViewedPost.categories.length > 0 && (
+            <span
+              className={`w-fit rounded-full border border-zinc-900 bg-zinc-950 px-2 py-1 text-[0.6rem] font-medium text-zinc-100`}
+            >
+              {topViewedPost.categories[0].value}
+            </span>
+          )}
           <h1 className="line-clamp-2 text-xl font-bold text-balance text-white md:text-3xl">
-            Unlocking Business Efficiency with SaaS Solutions
+            {topViewedPost.content.title}
           </h1>
+          <div className="flex items-center gap-3 text-white">
+            <span className="text-xs">
+              {topViewedPost.content.readTime} min read
+            </span>
+            {topViewedPost.stats && (
+              <>
+                <span className="text-xs">•</span>
+                <div className="flex items-center gap-1">
+                  <Heart className="h-3 w-3" />
+                  <span className="text-xs">{topViewedPost.stats.likes}</span>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </Link>
     </div>
   );
 }
 
-function OtherFeaturedPosts() {
-  const featuredPosts = [
+function MostViewedPosts({
+  mostViewedPosts,
+}: {
+  mostViewedPosts?: BlogPostCardView[];
+}) {
+  // Dummy veri, BlogPostCardView tipine göre oluşturuldu
+  const DummyMostViewedPosts: BlogPostCardView[] = [
     {
-      id: 1,
-      imageUrl: "https://images.project-test.info/2.webp",
-      title: "Revolutionizing industries through SaaS implementation",
+      id: "550e8400-e29b-41d4-a716-446655440010",
+      groupId: "revolutionizing-industries-saas",
+      slug: "revolutionizing-industries-saas",
+      language: "en",
+      featured: false,
+      status: "published",
+      content: {
+        title: "Revolutionizing industries through SaaS implementation",
+        description:
+          "Discover how SaaS implementations are transforming traditional industries and creating new opportunities for growth.",
+        image: "https://images.project-test.info/2.webp",
+        readTime: 4,
+      },
+      categories: [
+        {
+          name: "SaaS",
+          value: "saas",
+        },
+      ],
+      tags: [],
+      createdAt: "2025-04-25T12:00:00.000Z",
+      updatedAt: "2025-04-25T12:00:00.000Z",
+      stats: {
+        views: 1250,
+        likes: 87,
+        shares: 46,
+        comments: 23,
+      },
     },
     {
-      id: 2,
-      imageUrl: "https://images.project-test.info/3.webp",
-      title: "Synergizing saas and UX design for elevating digital experiences",
+      id: "550e8400-e29b-41d4-a716-446655440011",
+      groupId: "synergizing-saas-ux-design",
+      slug: "synergizing-saas-ux-design",
+      language: "en",
+      featured: false,
+      status: "published",
+      content: {
+        title:
+          "Synergizing saas and UX design for elevating digital experiences",
+        description:
+          "Learn how the integration of SaaS solutions with thoughtful UX design can transform user experiences and drive engagement.",
+        image: "https://images.project-test.info/3.webp",
+        readTime: 5,
+      },
+      categories: [
+        {
+          name: "UX Design",
+          value: "ux-design",
+        },
+      ],
+      tags: [],
+      createdAt: "2025-04-27T12:00:00.000Z",
+      updatedAt: "2025-04-27T12:00:00.000Z",
+      stats: {
+        views: 980,
+        likes: 62,
+        shares: 38,
+        comments: 15,
+      },
     },
     {
-      id: 3,
-      imageUrl: "https://images.project-test.info/4.webp",
-      title: "Navigating saas waters with intuitive UI and UX",
+      id: "550e8400-e29b-41d4-a716-446655440012",
+      groupId: "navigating-saas-waters",
+      slug: "navigating-saas-waters",
+      language: "en",
+      featured: false,
+      status: "published",
+      content: {
+        title: "Navigating saas waters with intuitive UI and UX",
+        description:
+          "A comprehensive guide to creating intuitive UI/UX designs that enhance SaaS product adoption and user satisfaction.",
+        image: "https://images.project-test.info/4.webp",
+        readTime: 3,
+      },
+      categories: [
+        {
+          name: "UI Design",
+          value: "ui-design",
+        },
+      ],
+      tags: [],
+      createdAt: "2025-04-30T12:00:00.000Z",
+      updatedAt: "2025-04-30T12:00:00.000Z",
+      stats: {
+        views: 875,
+        likes: 54,
+        shares: 29,
+        comments: 12,
+      },
     },
     {
-      id: 4,
-      imageUrl: "https://images.project-test.info/1.webp",
-      title: "Sculpting saas success - the art of UI and UX design",
+      id: "550e8400-e29b-41d4-a716-446655440013",
+      groupId: "sculpting-saas-success",
+      slug: "sculpting-saas-success",
+      language: "en",
+      featured: false,
+      status: "published",
+      content: {
+        title: "Sculpting saas success - the art of UI and UX design",
+        description:
+          "Explore the artistic approach to designing UI/UX for SaaS products that captivate users and deliver exceptional value.",
+        image: "https://images.project-test.info/1.webp",
+        readTime: 6,
+      },
+      categories: [
+        {
+          name: "Design",
+          value: "design",
+        },
+      ],
+      tags: [],
+      createdAt: "2025-05-01T12:00:00.000Z",
+      updatedAt: "2025-05-01T12:00:00.000Z",
+      stats: {
+        views: 762,
+        likes: 48,
+        shares: 25,
+        comments: 9,
+      },
     },
   ];
+
+  // 2., 3., 4. ve 5. en çok görüntülenen postları al
+  const topViewedPosts: BlogPostCardView[] =
+    mostViewedPosts &&
+    Array.isArray(mostViewedPosts) &&
+    mostViewedPosts.length > 0
+      ? [...mostViewedPosts]
+          .sort((a, b) => {
+            const aViews = a.stats?.views || 0;
+            const bViews = b.stats?.views || 0;
+            return bViews - aViews;
+          })
+          .slice(1, 5) // İlk yazı (en popüleri) solda gösterildiği için 2-5. postları gösteriyoruz
+      : DummyMostViewedPosts;
 
   return (
     <div>
       <h2 className="border-l-primary-cover mb-4 rounded border border-l-2 border-zinc-100 bg-zinc-100 py-1 pl-2 text-2xl font-semibold">
-        Other featured posts
+        Most Viewed Posts
       </h2>
 
       <div className="flex flex-col gap-4">
-        {featuredPosts.map((post) => (
+        {topViewedPosts.map((post) => (
           <Link
-            to={""}
+            to={`${post.slug}`}
             key={post.id}
             className="flex gap-4 rounded border border-transparent bg-zinc-50 ring ring-zinc-50 transition-all duration-300 ease-in-out hover:bg-zinc-100 hover:ring-zinc-300 hover:ring-offset-2 focus:bg-zinc-100 focus:ring-zinc-300 focus:ring-offset-2 focus:outline-none"
           >
             {/* Thumbnail */}
-            <div className="h-16 w-16 shrink-0 overflow-hidden rounded-md">
+            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md">
               <img
-                src={post.imageUrl}
-                alt={post.title}
+                src={post.content.image}
+                alt={post.content.title}
                 className="h-full w-full object-cover"
               />
+              {post.stats && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                  <Eye className="mr-1 h-3 w-3 text-white" />
+                  <span className="text-[0.6rem] font-semibold text-white">
+                    {post.stats.views.toLocaleString()}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Content */}
             <div className="flex flex-1 flex-col justify-center">
-              <h3 className="text-sm font-medium">{post.title}</h3>
+              <h3 className="line-clamp-2 text-sm font-medium">
+                {post.content.title}
+              </h3>
             </div>
           </Link>
         ))}
