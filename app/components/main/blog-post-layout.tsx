@@ -193,8 +193,6 @@ function RecentPosts() {
       ? loadedPosts
       : DummyRecentPosts;
 
-  console.log(loadedPosts);
-
   return (
     <div>
       <div className="border-l-primary-cover mb-6 flex items-center justify-between rounded border border-l-2 border-zinc-100 bg-zinc-100 px-2 py-1">
@@ -234,16 +232,18 @@ function RecentPosts() {
 
               {/* Author */}
               <div className="flex items-center">
-                <div className="mr-3 h-8 w-8 overflow-hidden rounded-full">
+                <div className="mr-3 size-9 overflow-hidden rounded-full">
                   <img
                     src={
-                      "https://i.pravatar.cc/64?u=" + post.id.substring(0, 8)
+                      "https://assets.guideofdubai.com/uploads/guideofdubai.png-VIfbeQ.png"
                     }
                     alt="Author"
                     className="h-full w-full object-cover"
                   />
                 </div>
-                <span className="mr-3 text-sm font-medium">Guide of Dubai</span>
+                <span className="mr-3 text-sm font-medium">
+                  {post.categories[0].value}
+                </span>
                 <span className="text-xs text-zinc-500">•</span>
                 <span className="ml-3 text-xs text-zinc-500">
                   {post.content.readTime} min read

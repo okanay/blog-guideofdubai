@@ -459,7 +459,7 @@ export const ImageGalleryOverlay: React.FC = () => {
         <div
           ref={thumbnailContainerRef}
           style={{ scrollbarWidth: "none", scrollBehavior: "smooth" }}
-          className="scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent relative z-51 mx-auto flex w-full max-w-screen-lg justify-start gap-2 overflow-x-auto pb-1 sm:gap-3"
+          className="scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent relative z-51 mx-auto flex w-full max-w-screen-lg justify-start gap-2 pb-1 sm:gap-3"
         >
           {imageInfos.map(({ src }, i) => (
             <img

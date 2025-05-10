@@ -78,6 +78,26 @@ export const BlogPostCardViewSchema = z.object({
       .max(60, "Okuma dakikası en fazla 60 dakika olabilir."),
   }),
 
+  categories: z
+    .array(
+      z.object({
+        name: z.string().min(1, "Kategori adı boş bırakılamaz."),
+        value: z.string().min(1, "Kategori değeri boş bırakılamaz."),
+      }),
+    )
+    .min(1, {
+      message: "En az 1 kategori seçilmelidir.",
+    }),
+  tags: z
+    .array(
+      z.object({
+        name: z.string().min(1, "Etiket adı boş bırakılamaz."),
+        value: z.string().min(1, "Etiket değeri boş bırakılamaz."),
+      }),
+    )
+    .default([])
+    .nullable(),
+
   createdAt: z.string().datetime().optional(),
   updatedAt: z.string().datetime().optional(),
 });
