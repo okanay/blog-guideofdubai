@@ -231,7 +231,7 @@ const EnhancedImageButton = () => {
         title="Gelişmiş Görsel"
         maxWidth="max-w-xl"
       >
-        <div className="flex flex-col gap-4 p-1">
+        <div className="flex flex-col gap-4">
           {/* Görsel URL'i - ImagePreview bileşeni ile değiştirildi */}
           <div>
             <ImagePreview
@@ -247,7 +247,7 @@ const EnhancedImageButton = () => {
           </div>
 
           {/* Alt Text ve Başlık */}
-          <div className="flex flex-col gap-4 p-1">
+          <div className="flex flex-col gap-4">
             <div>
               <h3 className="mb-1.5 text-sm font-medium text-zinc-700">
                 Alt Metin (SEO için gerekli)
