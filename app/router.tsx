@@ -10,7 +10,6 @@ export function createRouter() {
     defaultNotFoundComponent: () => <DefaultNotFound />,
     scrollRestoration: true,
     scrollBehavior: "instant",
-    scrollToTopSelectors: ["body"],
   });
 
   return router;

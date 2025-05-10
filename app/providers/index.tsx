@@ -1,6 +1,7 @@
 import { Toaster } from "sonner";
 import { PropsWithChildren } from "react";
 import { TanStackQueryProvider } from "./query";
+import { ScrollToTop } from "./scroll-to-top";
 
 export const RootProviders = (props: PropsWithChildren) => {
   return (
@@ -12,6 +13,7 @@ export const RootProviders = (props: PropsWithChildren) => {
         richColors={true}
       />
       {props.children}
+      <ScrollToTop />
     </TanStackQueryProvider>
   );
 };
