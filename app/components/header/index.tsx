@@ -63,8 +63,8 @@ export const RootHeader = () => {
       role="banner"
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-1.5">
-        <a
-          href="https://guideofdubai.com/"
+        <Link
+          to=""
           aria-label="Guide of Dubai - Return to homepage"
           className="transition-opacity duration-300 focus:opacity-75 focus:outline-none"
         >
@@ -76,7 +76,7 @@ export const RootHeader = () => {
             width="120"
             height="40"
           />
-        </a>
+        </Link>
 
         {/* Main Menu Navigation */}
         <nav aria-label="Main menu navigation" className="hidden md:block">

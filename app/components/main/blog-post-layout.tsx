@@ -1,4 +1,6 @@
 import { Link } from "@/i18n/link";
+import {} from "@/routes/blog/_main";
+import { useLoaderData } from "@tanstack/react-router";
 
 export function BlogPostLayout() {
   return (
@@ -110,55 +112,95 @@ function OtherFeaturedPosts() {
 }
 
 function RecentPosts() {
-  const recentPosts = [
+  // Dummy veri, BlogPostCardView tipine göre oluşturuldu
+  const DummyRecentPosts: BlogPostCardView[] = [
     {
-      id: 1,
-      imageUrl: "https://images.project-test.info/3.webp",
-      title: "Mastering UI Elements: A Practical Guide for Designers",
-      excerpt:
-        "Dive into the world of user interfaces with our expert guides, latest trends, and practical tips.",
-      author: "Jennifer Taylor",
-      readTime: "3 min read",
-      authorImg: "https://i.pravatar.cc/64?u=1",
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      groupId: "mastering-ui-elements-guide",
+      slug: "mastering-ui-elements-guide",
+      language: "en",
+      featured: false,
+      status: "published",
+      content: {
+        title: "Mastering UI Elements: A Practical Guide for Designers",
+        description:
+          "Dive into the world of user interfaces with our expert guides, latest trends, and practical tips.",
+        image: "https://images.project-test.info/3.webp",
+        readTime: 3,
+      },
+      createdAt: "2025-05-01T12:00:00.000Z",
+      updatedAt: "2025-05-01T12:00:00.000Z",
     },
     {
-      id: 2,
-      imageUrl: "https://images.project-test.info/4.webp",
-      title: "Crafting Seamless Experiences: The Art of Intuitive UI Design",
-      excerpt:
-        "Explore the principles and techniques that drive user-centric UI design, ensuring a seamless and intuitive experience.",
-      author: "Jennifer Taylor",
-      readTime: "5 min read",
-      authorImg: "https://i.pravatar.cc/64?u=1",
+      id: "550e8400-e29b-41d4-a716-446655440001",
+      groupId: "crafting-seamless-experiences",
+      slug: "crafting-seamless-experiences",
+      language: "en",
+      featured: false,
+      status: "published",
+      content: {
+        title: "Crafting Seamless Experiences: The Art of Intuitive UI Design",
+        description:
+          "Explore the principles and techniques that drive user-centric UI design, ensuring a seamless and intuitive experience.",
+        image: "https://images.project-test.info/4.webp",
+        readTime: 5,
+      },
+      createdAt: "2025-05-02T12:00:00.000Z",
+      updatedAt: "2025-05-02T12:00:00.000Z",
     },
     {
-      id: 3,
-      imageUrl: "https://images.project-test.info/1.webp",
-      title: "Beyond Aesthetics: The Power of Emotional UX Design",
-      excerpt:
-        "Delve into the realm of emotional design and discover how incorporating empathy and psychology elevates user experiences.",
-      author: "Ryan A.",
-      readTime: "2 min read",
-      authorImg: "https://i.pravatar.cc/64?u=3",
+      id: "550e8400-e29b-41d4-a716-446655440002",
+      groupId: "beyond-aesthetics-emotional-design",
+      slug: "beyond-aesthetics-emotional-design",
+      language: "en",
+      featured: false,
+      status: "published",
+      content: {
+        title: "Beyond Aesthetics: The Power of Emotional UX Design",
+        description:
+          "Delve into the realm of emotional design and discover how incorporating empathy and psychology elevates user experiences.",
+        image: "https://images.project-test.info/1.webp",
+        readTime: 2,
+      },
+      createdAt: "2025-05-03T12:00:00.000Z",
+      updatedAt: "2025-05-03T12:00:00.000Z",
     },
     {
-      id: 4,
-      imageUrl: "https://images.project-test.info/2.webp",
-      title: "The Future of UX: Trends to Watch in 2025",
-      excerpt:
-        "Explore the upcoming trends in UX design that are set to shape the future of digital experiences.",
-      author: "Emily B.",
-      readTime: "4 min read",
-      authorImg: "https://i.pravatar.cc/64?u=4",
+      id: "550e8400-e29b-41d4-a716-446655440003",
+      groupId: "future-of-ux-trends-2025",
+      slug: "future-of-ux-trends-2025",
+      language: "en",
+      featured: false,
+      status: "published",
+      content: {
+        title: "The Future of UX: Trends to Watch in 2025",
+        description:
+          "Explore the upcoming trends in UX design that are set to shape the future of digital experiences.",
+        image: "https://images.project-test.info/2.webp",
+        readTime: 4,
+      },
+      createdAt: "2025-05-04T12:00:00.000Z",
+      updatedAt: "2025-05-04T12:00:00.000Z",
     },
   ];
+
+  // Loader datası kullanımı
+  const { recentPosts: loadedPosts } = useLoaderData({ from: "/blog/_main/" });
+
+  // recentPosts varsa ve dizi ise kullan, yoksa dummy datayı kullan
+  const recentPosts: BlogPostCardView[] =
+    loadedPosts && Array.isArray(loadedPosts) && loadedPosts.length > 0
+      ? loadedPosts
+      : DummyRecentPosts;
+
+  console.log(loadedPosts);
 
   return (
     <div>
       <div className="border-l-primary-cover mb-6 flex items-center justify-between rounded border border-l-2 border-zinc-100 bg-zinc-100 px-2 py-1">
         <h2 className="text-2xl font-semibold">Recent Posts</h2>
         <Link
-          to=""
+          to="/blog"
           className="text-color-primary border-primary-cover bg-primary flex h-11 items-center justify-center rounded-xs border px-6 text-center text-sm font-bold tracking-wide transition-[opacity] duration-500 ease-in-out hover:opacity-75 focus:opacity-75 focus:outline-none"
         >
           All Posts
@@ -168,15 +210,15 @@ function RecentPosts() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {recentPosts.map((post) => (
           <Link
-            to={""}
+            to={`${post.slug}`}
             key={post.id}
             className="group flex flex-col overflow-hidden rounded-lg border border-zinc-200 bg-zinc-50 ring ring-zinc-50 transition-all hover:ring-zinc-300 hover:ring-offset-2 focus:ring-zinc-300 focus:ring-offset-2 focus:outline-none"
           >
             {/* Image */}
             <div className="relative h-48 w-full overflow-hidden">
               <img
-                src={post.imageUrl}
-                alt={post.title}
+                src={post.content.image}
+                alt={post.content.title}
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
             </div>
@@ -184,25 +226,27 @@ function RecentPosts() {
             {/* Content */}
             <div className="flex flex-1 flex-col p-5">
               <h3 className="mb-3 line-clamp-2 text-xl font-semibold">
-                {post.title}
+                {post.content.title}
               </h3>
-              <p className="mb-5 flex-1 text-sm text-zinc-600">
-                {post.excerpt}
+              <p className="mb-5 line-clamp-3 flex-1 text-sm text-zinc-600">
+                {post.content.description}
               </p>
 
               {/* Author */}
               <div className="flex items-center">
                 <div className="mr-3 h-8 w-8 overflow-hidden rounded-full">
                   <img
-                    src={post.authorImg}
-                    alt={post.author}
+                    src={
+                      "https://i.pravatar.cc/64?u=" + post.id.substring(0, 8)
+                    }
+                    alt="Author"
                     className="h-full w-full object-cover"
                   />
                 </div>
-                <span className="mr-3 text-sm font-medium">{post.author}</span>
+                <span className="mr-3 text-sm font-medium">Guide of Dubai</span>
                 <span className="text-xs text-zinc-500">•</span>
                 <span className="ml-3 text-xs text-zinc-500">
-                  {post.readTime}
+                  {post.content.readTime} min read
                 </span>
               </div>
             </div>
