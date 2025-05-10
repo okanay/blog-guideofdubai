@@ -6,53 +6,53 @@ export const RootHeader = () => {
     main: [
       {
         name: "Hotels",
-        to: "/blog/hotels",
+        to: "https://guideofdubai.com/hotels",
       },
       {
         name: "Desert Safari",
-        to: "/blog/desert-safari",
+        to: "https://guideofdubai.com/tour/dubai-safari-tour",
       },
       {
         name: "City Tours",
-        to: "/blog/city-tours",
+        to: "https://guideofdubai.com/toursandtickets?c=1",
       },
       {
         name: "Activities",
-        to: "/blog/activities",
+        to: "https://guideofdubai.com/toursandtickets",
       },
       {
         name: "Rent a Car",
-        to: "/blog/rent-a-car",
+        to: "https://guideofdubai.com/rental-cars",
       },
       {
         name: "Dubai Visa",
-        to: "/blog/dubai-visa",
+        to: "https://guideofdubai.com/visa",
       },
     ],
     sub: [
       {
         name: "MUSEUM OF THE FUTURE",
-        to: "/blog/museum-of-the-future",
+        to: "https://guideofdubai.com/ticket/museum-of-the-future",
       },
       {
         name: "BURJ KHALIFA",
-        to: "/blog/burj-khalifa",
+        to: "https://guideofdubai.com/ticket/burj-khalifa-at-the-top-level-125-124",
       },
       {
         name: "DUBAI FRAME",
-        to: "/blog/dubai-frame",
+        to: "https://guideofdubai.com/ticket/dubai-frame",
       },
       {
         name: "DUBAI CITY TOUR",
-        to: "/blog/dubai-city-tour",
+        to: "https://guideofdubai.com/tour/dubai-iconic-places-tour",
       },
       {
         name: "RENT A YACHT",
-        to: "/blog/rent-a-yacht",
+        to: "https://guideofdubai.com/rent-a-yacht",
       },
       {
         name: "RESTAURANTS",
-        to: "/blog/restaurants",
+        to: "https://guideofdubai.com/restaurants",
       },
     ],
   };
@@ -63,8 +63,8 @@ export const RootHeader = () => {
       role="banner"
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-1.5">
-        <Link
-          to=""
+        <a
+          href="https://guideofdubai.com/"
           aria-label="Guide of Dubai - Return to homepage"
           className="transition-opacity duration-300 focus:opacity-75 focus:outline-none"
         >
@@ -76,7 +76,7 @@ export const RootHeader = () => {
             width="120"
             height="40"
           />
-        </Link>
+        </a>
 
         {/* Main Menu Navigation */}
         <nav aria-label="Main menu navigation" className="hidden md:block">
@@ -92,14 +92,14 @@ export const RootHeader = () => {
                 role="none"
                 className="text-primary before:bg-primary relative font-medium tracking-wide"
               >
-                <Link
-                  to={item.to}
+                <a
+                  href={item.to}
                   className="text-xs transition-opacity duration-300 ease-in-out hover:opacity-90 focus:opacity-75 focus:outline-none"
                   role="menuitem"
                   aria-current={location?.pathname === item.to ? "page" : false}
                 >
                   {item.name}
-                </Link>
+                </a>
               </li>
             ))}
           </ul>
@@ -111,8 +111,6 @@ export const RootHeader = () => {
             href="https://guideofdubai.com/"
             className="text-color-primary border-primary-cover bg-primary flex h-11 items-center justify-center rounded-xs border px-6 text-center text-sm font-bold tracking-wide transition-opacity duration-300 ease-in-out hover:opacity-75 focus:opacity-75 focus:outline-none"
             aria-label="Visit Guide of Dubai main website"
-            rel="noopener noreferrer"
-            target="_blank"
           >
             Visit Now
           </a>
@@ -134,13 +132,13 @@ export const RootHeader = () => {
                 role="none"
                 className="text-color-primary before:bg-color-font relative font-medium tracking-wide"
               >
-                <Link
-                  to={item.to}
+                <a
+                  href={item.to}
                   className="text-[0.6rem] uppercase transition-opacity duration-300 ease-in-out hover:opacity-90 focus:opacity-75 focus:outline-none"
                   role="menuitem"
                 >
                   {item.name}
-                </Link>
+                </a>
               </li>
             ))}
           </ul>
