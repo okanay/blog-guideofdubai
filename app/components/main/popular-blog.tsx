@@ -147,8 +147,9 @@ function FeaturedBlogCard({
 }) {
   // Varsayılan bir author bilgisi tanımla (API'den gelmiyor ise)
   const authorInfo = {
-    name: "GOD Admin",
-    avatar: `https://i.pravatar.cc/64?u=${index}`,
+    name: "Guide Of Dubai",
+    avatar:
+      "https://assets.guideofdubai.com/uploads/guideofdubai.png-VIfbeQ.png",
   };
 
   return (
@@ -187,7 +188,7 @@ function FeaturedBlogCard({
           {/* Author and Metadata */}
           <div className="absolute bottom-4 left-0 flex w-full flex-col gap-x-2 gap-y-1 px-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="order-1 flex items-center gap-2 sm:order-1">
-              <div className="size-8 overflow-hidden rounded-full bg-zinc-300">
+              {/* <div className="size-8 shrink-0 overflow-hidden rounded-full bg-zinc-300">
                 <img
                   src={authorInfo.avatar}
                   alt={authorInfo.name}
@@ -195,11 +196,27 @@ function FeaturedBlogCard({
                   fetchPriority="low"
                   className="h-full w-full object-cover"
                 />
-              </div>
-              <span className="max-w-40 truncate text-sm text-white sm:max-w-24">
-                {authorInfo.name}
-              </span>
+              </div> */}
+
+              {/* Etiketler - En fazla bir etiket göster, zarif bir şekilde */}
+              {blog.tags && blog.tags.length > 0 ? (
+                <div className="flex items-center">
+                  <span className="max-w-48 truncate pr-1 text-sm text-white">
+                    {blog.tags[0].value}
+                  </span>
+                  {blog.tags.length > 1 && (
+                    <span className="rounded bg-zinc-800/60 px-1 text-xs text-zinc-300">
+                      +{blog.tags.length - 1}
+                    </span>
+                  )}
+                </div>
+              ) : (
+                <span className="max-w-48 truncate text-sm text-white/60">
+                  {blog.categories?.[0]?.value || "Blog"}
+                </span>
+              )}
             </div>
+
             <div className="order-2 flex items-center gap-4 sm:order-2">
               <div className="flex items-center gap-1">
                 <span className="line-clamp-1 text-sm text-white">
@@ -208,7 +225,9 @@ function FeaturedBlogCard({
                 <CalendarDays className="text-color-font-invert size-3 flex-shrink-0" />
               </div>
               <div className="flex items-center gap-1">
-                <span className="line-clamp-1 text-sm text-white"></span>
+                <span className="line-clamp-1 text-sm text-white">
+                  {blog.stats?.likes || blog.stats?.views || 0}
+                </span>
                 <Heart className="text-color-font-invert size-3 flex-shrink-0" />
               </div>
             </div>
