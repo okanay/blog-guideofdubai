@@ -70,9 +70,7 @@ export const Link: React.FC<Props> = ({
       preload={false}
       to={localizedTo}
       className={twMerge(className, isActive && active)}
-      onClick={() => {
-        window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-      }}
+      resetScroll
     >
       {children}
     </RouterLink>
