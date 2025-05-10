@@ -9,6 +9,8 @@ export function createRouter() {
     defaultPreload: "false",
     defaultNotFoundComponent: () => <DefaultNotFound />,
     scrollRestoration: true,
+    scrollBehavior: "instant",
+    scrollToTopSelectors: ["body"],
   });
 
   return router;

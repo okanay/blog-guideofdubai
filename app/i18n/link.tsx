@@ -70,7 +70,7 @@ export const Link: React.FC<Props> = ({
       preload={false}
       to={localizedTo}
       className={twMerge(className, isActive && active)}
-      resetScroll
+      resetScroll={true}
     >
       {children}
     </RouterLink>
