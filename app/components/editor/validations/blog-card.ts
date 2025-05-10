@@ -98,6 +98,15 @@ export const BlogPostCardViewSchema = z.object({
     .default([])
     .nullable(),
 
+  stats: z
+    .object({
+      views: z.number().int().min(0).default(0),
+      likes: z.number().int().min(0).default(0),
+      shares: z.number().int().min(0).default(0),
+      comments: z.number().int().min(0).default(0),
+    })
+    .optional(),
+
   createdAt: z.string().datetime().optional(),
   updatedAt: z.string().datetime().optional(),
 });
