@@ -1,3 +1,4 @@
+// app/components/main/search/store.tsx
 import { DEFAULT_LANGUAGE } from "@/i18n/config";
 import { createContext, useContext, useState } from "react";
 import { createStore, StoreApi, useStore } from "zustand";
@@ -27,6 +28,20 @@ function createStatusState(
   error: string | null = null,
 ): StatusState {
   return { status, error, loading: status === "loading", message: error || "" };
+}
+
+// Yeni blog listeleme tipleri
+interface BlogListState {
+  blogs: BlogPostCardView[];
+  loading: boolean;
+  initialLoading: boolean;
+  hasMore: boolean;
+  totalCount: number;
+  error: string | null;
+  pagination: {
+    limit: number;
+    offset: number;
+  };
 }
 
 interface SearchState {
@@ -59,6 +74,7 @@ interface SearchState {
     tags: StatusState;
     search: StatusState;
     latestBlog: StatusState;
+    blogList: StatusState;
   };
 
   // En son blog gönderisi
@@ -72,6 +88,21 @@ interface SearchState {
   // Arama işlemleri
   search: (query?: string) => Promise<void>;
   loadMoreResults: () => Promise<void>;
+
+  // YENİ: Blog listeleme işlemleri
+  blogList: BlogListState;
+  fetchBlogs: (options?: {
+    isInitial?: boolean;
+    language?: string;
+    limit?: number;
+    category?: string;
+    tag?: string;
+    filter?: string;
+    sortBy?: string;
+    sortDirection?: "asc" | "desc";
+  }) => Promise<void>;
+  loadMoreBlogs: () => Promise<void>;
+  resetBlogList: () => Promise<void>;
 }
 
 // HTTP İstek Yardımcısı
@@ -127,8 +158,22 @@ const DEFAULT_SEARCH_QUERY: SearchQueryOptions = {
   category: "",
   status: "published",
   tag: "",
-  limit: 10,
+  limit: 4,
   offset: 0,
+};
+
+// Varsayılan blog listesi durumu
+const DEFAULT_BLOG_LIST_STATE: BlogListState = {
+  blogs: [],
+  loading: false,
+  initialLoading: true,
+  hasMore: true,
+  totalCount: 0,
+  error: null,
+  pagination: {
+    limit: 8,
+    offset: 0,
+  },
 };
 
 type Props = {
@@ -169,12 +214,16 @@ export function SearchProvider({
         // En son blog
         latestBlog: null,
 
+        // YENİ: Blog listeleme durumu
+        blogList: { ...DEFAULT_BLOG_LIST_STATE },
+
         // Status durumları
         statusStates: {
           categories: createStatusState(),
           tags: createStatusState(),
           search: createStatusState(),
           latestBlog: createStatusState(),
+          blogList: createStatusState(),
         },
 
         // Modal and dropdown controls
@@ -246,6 +295,123 @@ export function SearchProvider({
 
             return null;
           }
+        },
+
+        // YENİ: Blog listeleme fonksiyonları
+        // Blog listesi yükleme fonksiyonu
+        fetchBlogs: async (options = {}) => {
+          const { isInitial = false } = options;
+          const { blogList } = get();
+          const currentLanguage = options.language || language;
+
+          if (isInitial) {
+            set((state) => {
+              state.blogList.initialLoading = true;
+              state.blogList.pagination = {
+                limit: options.limit || 8,
+                offset: 0,
+              };
+              state.statusStates.blogList = createStatusState("loading");
+            });
+          } else {
+            set((state) => {
+              state.blogList.loading = true;
+              state.statusStates.blogList = createStatusState("loading");
+            });
+          }
+
+          try {
+            const params = new URLSearchParams({
+              language: currentLanguage,
+              limit: (options.limit || blogList.pagination.limit).toString(),
+              offset: isInitial ? "0" : blogList.pagination.offset.toString(),
+              sortBy: options.sortBy || "createdAt",
+              sortDirection: options.sortDirection || "desc",
+              status: "published",
+            });
+
+            // Ek filtreler
+            if (options.category) params.append("category", options.category);
+            if (options.tag) params.append("tag", options.tag);
+            if (options.filter) params.append("title", options.filter);
+
+            const result = await apiFetch<{
+              success: boolean;
+              blogs: BlogPostCardView[];
+              count: number;
+            }>("/blog/cards", Object.fromEntries(params));
+
+            if (!result.success || !result.data) {
+              throw new Error(result.error || "Failed to load blog posts");
+            }
+
+            const blogs = result.data.blogs || [];
+            const count = result.data.count || 0;
+            const currentLimit = options.limit || blogList.pagination.limit;
+
+            set((state) => {
+              // İlk yükleme mi yoksa daha fazla blog mu?
+              if (isInitial) {
+                state.blogList.blogs = blogs;
+              } else {
+                state.blogList.blogs = [...state.blogList.blogs, ...blogs];
+              }
+
+              // Daha fazla blog yüklenebilir mi?
+              state.blogList.hasMore = blogs.length >= currentLimit;
+              state.blogList.totalCount = count;
+
+              // Offset güncelleme
+              if (!isInitial) {
+                state.blogList.pagination.offset +=
+                  state.blogList.pagination.limit;
+              } else {
+                state.blogList.pagination.offset = currentLimit;
+              }
+
+              // Durum güncelleme
+              state.blogList.loading = false;
+              state.blogList.initialLoading = false;
+              state.blogList.error = null;
+              state.statusStates.blogList = createStatusState("success");
+            });
+          } catch (error) {
+            const errorMessage =
+              error instanceof Error
+                ? error.message
+                : "An error occurred while loading blog posts";
+
+            set((state) => {
+              state.blogList.loading = false;
+              state.blogList.initialLoading = false;
+              state.blogList.error = errorMessage;
+              state.blogList.hasMore = false;
+              state.statusStates.blogList = createStatusState(
+                "error",
+                errorMessage,
+              );
+            });
+
+            console.error("Blog yüklenirken hata oluştu:", error);
+          }
+        },
+
+        // Daha fazla blog yükleme
+        loadMoreBlogs: async () => {
+          const { blogList } = get();
+          if (!blogList.loading && blogList.hasMore) {
+            await get().fetchBlogs();
+          }
+        },
+
+        // Blog listesini sıfırlama
+        resetBlogList: async () => {
+          set((state) => {
+            state.blogList = { ...DEFAULT_BLOG_LIST_STATE };
+          });
+
+          // Varsayılan değerlerle yeni bir fetch yap
+          await get().fetchBlogs({ isInitial: true });
         },
 
         // Load categories

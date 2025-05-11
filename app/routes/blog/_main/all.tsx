@@ -1,11 +1,10 @@
 // app/routes/blog/_main/all.tsx
 import { createFileRoute } from "@tanstack/react-router";
-import { SearchBarWithProvider } from "@/components/main/search";
-import { useEffect, useState } from "react";
-import { API_URL } from "@/components/editor/helper";
-import { useLanguage } from "@/i18n/use-language";
+import { SearchBarWithProvider, useSearch } from "@/components/main/search";
+import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { BlogCard } from "@/components/main/blog-card";
+import { useLanguage } from "@/i18n/use-language";
 
 export const Route = createFileRoute("/blog/_main/all")({
   component: AllBlogsPage,
@@ -13,85 +12,20 @@ export const Route = createFileRoute("/blog/_main/all")({
 
 function AllBlogsPage() {
   const { language } = useLanguage();
-  const [blogs, setBlogs] = useState<BlogPostCardView[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [initialLoading, setInitialLoading] = useState(true);
-  const [hasMore, setHasMore] = useState(true);
-  const [pagination, setPagination] = useState({
-    limit: 8,
-    offset: 0,
-  });
+  const { blogList, fetchBlogs, loadMoreBlogs } = useSearch();
 
+  const { blogs, loading, initialLoading, hasMore } = blogList;
+
+  // İlk yüklemede veya dil değiştiğinde blogları yükle
   useEffect(() => {
-    fetchBlogs(true);
+    fetchBlogs({
+      isInitial: true,
+      language,
+      limit: 8,
+      sortBy: "createdAt",
+      sortDirection: "desc",
+    });
   }, [language]);
-
-  const fetchBlogs = async (isInitial = false) => {
-    if (isInitial) {
-      setInitialLoading(true);
-      setPagination({ limit: 8, offset: 0 });
-    } else {
-      setLoading(true);
-    }
-
-    try {
-      const params = new URLSearchParams({
-        language,
-        limit: pagination.limit.toString(),
-        offset: isInitial ? "0" : pagination.offset.toString(),
-        sortBy: "createdAt",
-        sortDirection: "desc",
-      });
-
-      const response = await fetch(`${API_URL}/blog/cards?${params}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const data = await response.json();
-
-      if (data.success && Array.isArray(data.blogs)) {
-        if (isInitial) {
-          setBlogs(data.blogs);
-        } else {
-          setBlogs((prevBlogs) => [...prevBlogs, ...data.blogs]);
-        }
-
-        // Daha fazla blog yüklenebilir mi?
-        setHasMore(data.blogs.length >= pagination.limit);
-
-        // Eğer başlangıç yüklemesi değilse offset'i güncelle
-        if (!isInitial) {
-          setPagination((prev) => ({
-            ...prev,
-            offset: prev.offset + prev.limit,
-          }));
-        } else {
-          // İlk yükleme sonrası offset'i ayarla
-          setPagination((prev) => ({
-            ...prev,
-            offset: prev.limit,
-          }));
-        }
-      } else {
-        setHasMore(false);
-      }
-    } catch (error) {
-      console.error("Blog yüklenirken hata oluştu:", error);
-      setHasMore(false);
-    } finally {
-      setLoading(false);
-      setInitialLoading(false);
-    }
-  };
-
-  const loadMoreBlogs = () => {
-    if (!loading && hasMore) {
-      fetchBlogs(false);
-    }
-  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
@@ -147,17 +81,17 @@ function AllBlogsPage() {
                   {loading ? (
                     <>
                       <Loader2 className="h-5 w-5 animate-spin" />
-                      <span>Yükleniyor...</span>
+                      <span>Loading...</span>
                     </>
                   ) : (
-                    <span>Daha Fazla Göster</span>
+                    <span>Show More</span>
                   )}
                 </button>
               )}
 
               {!hasMore && blogs.length > 0 && (
                 <p className="text-center text-zinc-500">
-                  Tüm blog yazıları yüklendi
+                  All blog posts loaded
                 </p>
               )}
             </div>
