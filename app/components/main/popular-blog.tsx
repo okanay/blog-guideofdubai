@@ -1,7 +1,8 @@
 import { Link } from "@/i18n/link";
 import { CalendarDays, ChevronLeft, ChevronRight, Heart } from "lucide-react";
-import { useRef, useEffect } from "react";
+import { useEffect } from "react";
 import { useLoaderData } from "@tanstack/react-router";
+import { useSnapScroll } from "@/hooks/use-snap-scroll";
 
 export function FeaturedBlogSection() {
   // TanStack Router'dan verileri al
@@ -18,81 +19,18 @@ export function FeaturedBlogSection() {
       ? loadedFeaturedPosts
       : DummyPosts.filter((post) => post.featured);
 
-  const btnLeftRef = useRef<HTMLButtonElement>(null);
-  const btnRightRef = useRef<HTMLButtonElement>(null);
-  const container = useRef<HTMLUListElement>(null);
-  const cardRefs = useRef<HTMLLIElement[]>([]);
-
-  const handleButtonClick = (direction: "Left" | "Right") => {
-    if (!container.current || cardRefs.current.length === 0) return;
-
-    // İlk kartın genişliğini ve margin değerini al
-    const firstCard = cardRefs.current[0];
-    if (!firstCard) return;
-
-    const cardWidth = firstCard.getBoundingClientRect().width;
-    const cardMargin = 12; // gap-3 className'inden gelen değer
-    const scrollAmount = cardWidth + cardMargin;
-
-    const scrollOffset = direction === "Left" ? -scrollAmount : scrollAmount;
-    const currentScroll = container.current.scrollLeft;
-
-    // Scroll sınırlarını kontrol et
-    const maxScroll =
-      container.current.scrollWidth - container.current.clientWidth;
-    const targetScroll = currentScroll + scrollOffset;
-
-    // Scroll değerini sınırlar içinde tut
-    const boundedScroll = Math.max(0, Math.min(targetScroll, maxScroll));
-
-    container.current.scrollTo({
-      left: boundedScroll,
-      behavior: "smooth",
-    });
-
-    updateButtonState();
-  };
-
-  const updateButtonState = () => {
-    if (!container.current || !btnLeftRef.current || !btnRightRef.current)
-      return;
-
-    const { scrollLeft, scrollWidth, clientWidth } = container.current;
-    const isAtStart = scrollLeft <= 0;
-    const isAtEnd = Math.ceil(scrollLeft + clientWidth) >= scrollWidth;
-
-    btnLeftRef.current.ariaDisabled = isAtStart.toString();
-    btnRightRef.current.ariaDisabled = isAtEnd.toString();
-  };
-
-  useEffect(() => {
-    const currentContainer = container.current;
-    if (!currentContainer) return;
-
-    const handleScroll = () => {
-      updateButtonState();
-    };
-
-    // Scroll event listener
-    currentContainer.addEventListener("scroll", handleScroll);
-    // Resize event listener için debounce fonksiyonu
-    let resizeTimer: NodeJS.Timeout;
-    const handleResize = () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
-        updateButtonState();
-      }, 100);
-    };
-
-    window.addEventListener("resize", handleResize);
-    updateButtonState();
-
-    return () => {
-      currentContainer.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleResize);
-      clearTimeout(resizeTimer);
-    };
-  }, []);
+  // useSnapScroll hook'unu kullan
+  const {
+    containerRef,
+    cardRefs,
+    btnLeftRef,
+    btnRightRef,
+    handleScrollLeft,
+    handleScrollRight,
+  } = useSnapScroll({
+    gap: 12, // gap-3 className'inden gelen değer
+    dependencies: [featuredPosts], // featuredPosts değiştiğinde güncelle
+  });
 
   return (
     <section id="featured-blog" className="relative mt-8 px-4">
@@ -100,24 +38,27 @@ export function FeaturedBlogSection() {
         ref={btnLeftRef}
         aria-disabled="true"
         aria-label="Left Scroll"
-        onClick={() => handleButtonClick("Left")}
-        className="border-primary-cover bg-primary absolute -top-9 left-5 z-20 size-10 translate-y-[-50%] rounded-xs border p-1 shadow-md transition-opacity duration-300 focus:opacity-75 focus:outline-none aria-disabled:cursor-not-allowed aria-disabled:opacity-25 sm:top-[50%] sm:left-2 sm:rounded-full"
+        onClick={handleScrollLeft}
+        className="border-primary-cover bg-primary absolute -top-9 left-5 z-20 size-10 translate-y-[-50%] rounded-xs border p-1 shadow-md transition-opacity duration-300 focus:outline-none aria-disabled:cursor-not-allowed aria-disabled:opacity-0 sm:top-[50%] sm:left-2 sm:rounded-full"
       >
         <ChevronLeft className="text-color-primary size-full" />
       </button>
       <button
         ref={btnRightRef}
-        aria-disabled={false}
+        aria-disabled="false"
         aria-label="Right Scroll"
-        onClick={() => handleButtonClick("Right")}
-        className="border-primary-cover bg-primary absolute -top-9 right-5 z-20 size-10 translate-y-[-50%] rounded-xs border p-1 shadow-md transition-opacity duration-300 focus:opacity-75 focus:outline-none aria-disabled:cursor-not-allowed aria-disabled:opacity-25 sm:top-[50%] sm:right-2 sm:rounded-full"
+        onClick={handleScrollRight}
+        className="border-primary-cover bg-primary absolute -top-9 right-5 z-20 size-10 translate-y-[-50%] rounded-xs border p-1 shadow-md transition-opacity duration-300 focus:outline-none aria-disabled:cursor-not-allowed aria-disabled:opacity-0 sm:top-[50%] sm:right-2 sm:rounded-full"
       >
         <ChevronRight className="text-color-primary size-full" />
       </button>
 
       <ul
-        ref={container}
-        style={{ scrollbarWidth: "none" }}
+        ref={containerRef as any}
+        style={{
+          scrollbarWidth: "none",
+          scrollBehavior: "smooth",
+        }}
         className="flex snap-x snap-mandatory flex-nowrap items-center justify-start gap-3 overflow-x-auto overscroll-x-contain pb-4"
       >
         {featuredPosts.map((blog, index) => (

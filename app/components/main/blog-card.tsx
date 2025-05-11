@@ -92,3 +92,29 @@ export function BlogCard({ blog }: BlogCardProps) {
     </Link>
   );
 }
+
+// Skeleton loading component
+export function BlogSkeleton() {
+  return (
+    <div className="flex animate-pulse flex-col rounded-lg border border-zinc-200 bg-white">
+      {/* Image skeleton */}
+      <div className="h-48 w-full bg-zinc-200"></div>
+
+      {/* Content skeleton */}
+      <div className="flex flex-1 flex-col p-5">
+        <div className="mb-3 h-6 w-3/4 rounded bg-zinc-200"></div>
+        <div className="mb-2 h-4 w-full rounded bg-zinc-200"></div>
+        <div className="mb-5 h-4 w-2/3 rounded bg-zinc-200"></div>
+
+        {/* Footer info skeleton */}
+        <div className="mt-auto flex items-center justify-between">
+          <div className="h-4 w-16 rounded bg-zinc-200"></div>
+          <div className="flex gap-2">
+            <div className="h-4 w-12 rounded bg-zinc-200"></div>
+            <div className="h-4 w-14 rounded bg-zinc-200"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
