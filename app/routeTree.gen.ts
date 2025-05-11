@@ -16,6 +16,7 @@ import { Route as BlogNotFoundImport } from './routes/blog/not-found'
 import { Route as BlogMainRouteImport } from './routes/blog/_main/route'
 import { Route as BlogAuthRouteImport } from './routes/blog/_auth/route'
 import { Route as BlogMainIndexImport } from './routes/blog/_main/index'
+import { Route as BlogMainAllImport } from './routes/blog/_main/all'
 import { Route as BlogMainSlugImport } from './routes/blog/_main/$slug'
 import { Route as BlogAuthLoginImport } from './routes/blog/_auth/login'
 import { Route as BlogAuthEditorRouteImport } from './routes/blog/_auth/_editor/route'
@@ -53,6 +54,12 @@ const BlogAuthRouteRoute = BlogAuthRouteImport.update({
 const BlogMainIndexRoute = BlogMainIndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => BlogMainRouteRoute,
+} as any)
+
+const BlogMainAllRoute = BlogMainAllImport.update({
+  id: '/all',
+  path: '/all',
   getParentRoute: () => BlogMainRouteRoute,
 } as any)
 
@@ -167,6 +174,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogMainSlugImport
       parentRoute: typeof BlogMainRouteImport
     }
+    '/blog/_main/all': {
+      id: '/blog/_main/all'
+      path: '/all'
+      fullPath: '/blog/all'
+      preLoaderRoute: typeof BlogMainAllImport
+      parentRoute: typeof BlogMainRouteImport
+    }
     '/blog/_main/': {
       id: '/blog/_main/'
       path: '/'
@@ -258,11 +272,13 @@ const BlogAuthRouteRouteWithChildren = BlogAuthRouteRoute._addFileChildren(
 
 interface BlogMainRouteRouteChildren {
   BlogMainSlugRoute: typeof BlogMainSlugRoute
+  BlogMainAllRoute: typeof BlogMainAllRoute
   BlogMainIndexRoute: typeof BlogMainIndexRoute
 }
 
 const BlogMainRouteRouteChildren: BlogMainRouteRouteChildren = {
   BlogMainSlugRoute: BlogMainSlugRoute,
+  BlogMainAllRoute: BlogMainAllRoute,
   BlogMainIndexRoute: BlogMainIndexRoute,
 }
 
@@ -291,6 +307,7 @@ export interface FileRoutesByFullPath {
   '/blog/not-found': typeof BlogNotFoundRoute
   '/blog/login': typeof BlogAuthLoginRoute
   '/blog/$slug': typeof BlogMainSlugRoute
+  '/blog/all': typeof BlogMainAllRoute
   '/blog/': typeof BlogMainIndexRoute
   '/blog/editor/create': typeof BlogAuthEditorEditorCreateRoute
   '/blog/editor/featured': typeof BlogAuthEditorEditorFeaturedRoute
@@ -305,6 +322,7 @@ export interface FileRoutesByTo {
   '/blog/not-found': typeof BlogNotFoundRoute
   '/blog/login': typeof BlogAuthLoginRoute
   '/blog/$slug': typeof BlogMainSlugRoute
+  '/blog/all': typeof BlogMainAllRoute
   '/blog/editor/create': typeof BlogAuthEditorEditorCreateRoute
   '/blog/editor/featured': typeof BlogAuthEditorEditorFeaturedRoute
   '/blog/editor/list': typeof BlogAuthEditorEditorListRoute
@@ -322,6 +340,7 @@ export interface FileRoutesById {
   '/blog/_auth/_editor': typeof BlogAuthEditorRouteRouteWithChildren
   '/blog/_auth/login': typeof BlogAuthLoginRoute
   '/blog/_main/$slug': typeof BlogMainSlugRoute
+  '/blog/_main/all': typeof BlogMainAllRoute
   '/blog/_main/': typeof BlogMainIndexRoute
   '/blog/_auth/_editor/editor/create': typeof BlogAuthEditorEditorCreateRoute
   '/blog/_auth/_editor/editor/featured': typeof BlogAuthEditorEditorFeaturedRoute
@@ -338,6 +357,7 @@ export interface FileRouteTypes {
     | '/blog/not-found'
     | '/blog/login'
     | '/blog/$slug'
+    | '/blog/all'
     | '/blog/'
     | '/blog/editor/create'
     | '/blog/editor/featured'
@@ -351,6 +371,7 @@ export interface FileRouteTypes {
     | '/blog/not-found'
     | '/blog/login'
     | '/blog/$slug'
+    | '/blog/all'
     | '/blog/editor/create'
     | '/blog/editor/featured'
     | '/blog/editor/list'
@@ -366,6 +387,7 @@ export interface FileRouteTypes {
     | '/blog/_auth/_editor'
     | '/blog/_auth/login'
     | '/blog/_main/$slug'
+    | '/blog/_main/all'
     | '/blog/_main/'
     | '/blog/_auth/_editor/editor/create'
     | '/blog/_auth/_editor/editor/featured'
@@ -418,6 +440,7 @@ export const routeTree = rootRoute
       "parent": "/blog",
       "children": [
         "/blog/_main/$slug",
+        "/blog/_main/all",
         "/blog/_main/"
       ]
     },
@@ -443,6 +466,10 @@ export const routeTree = rootRoute
     },
     "/blog/_main/$slug": {
       "filePath": "blog/_main/$slug.tsx",
+      "parent": "/blog/_main"
+    },
+    "/blog/_main/all": {
+      "filePath": "blog/_main/all.tsx",
       "parent": "/blog/_main"
     },
     "/blog/_main/": {

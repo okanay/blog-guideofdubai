@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { formatDate } from "../editor/helper";
+import { BlogCard } from "../main/blog-card";
 
 // Related Blogs Component
 export function RelatedBlogs({ blog, lang }) {
@@ -34,7 +35,7 @@ export function RelatedBlogs({ blog, lang }) {
         const categories = blog.categories?.map((c) => c.name).join(",") || "";
         const tags = blog.tags?.map((t) => t.name).join(",") || "";
 
-        const url = `${import.meta.env.VITE_APP_BACKEND_URL}/blog/related?blogId=${blog.id}&categories=${categories}&tags=${tags}&language=${lang}&limit=8`;
+        const url = `${import.meta.env.VITE_APP_BACKEND_URL}/blog/related?blogId=${blog.id}&categories=${categories}&tags=${tags}&language=${lang}&limit=4`;
 
         const response = await fetch(url);
         const data = await response.json();
@@ -199,7 +200,7 @@ export function RelatedBlogs({ blog, lang }) {
                   }}
                   className="w-[320px] max-w-[320px] flex-shrink-0"
                 >
-                  <RelatedBlogCard blog={blog} index={index} />
+                  <BlogCard blog={blog} />
                 </li>
               ))}
             </ul>

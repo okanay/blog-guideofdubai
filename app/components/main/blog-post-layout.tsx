@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/link";
 import { useLoaderData } from "@tanstack/react-router";
 import { Eye, Heart } from "lucide-react"; // Lucide ikonları import edildi
+import { BlogCard } from "./blog-card";
 
 export function BlogPostLayout() {
   // Loader datası kullanımı
@@ -405,7 +406,7 @@ function RecentPosts() {
       <div className="border-l-primary-cover mb-6 flex items-center justify-between rounded border border-l-2 border-zinc-100 bg-zinc-100 px-2 py-1">
         <h2 className="text-2xl font-semibold">Recent Posts</h2>
         <Link
-          to="/blog"
+          to="/all"
           className="text-color-primary border-primary-cover bg-primary flex h-11 items-center justify-center rounded-xs border px-6 text-center text-sm font-bold tracking-wide transition-[opacity] duration-500 ease-in-out hover:opacity-75 focus:opacity-75 focus:outline-none"
         >
           All Posts
@@ -414,50 +415,7 @@ function RecentPosts() {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {recentPosts.map((post) => (
-          <Link
-            to={`${post.slug}`}
-            key={post.id}
-            className="group flex flex-col overflow-hidden rounded-lg border border-zinc-200 bg-zinc-50 ring ring-zinc-50 transition-all hover:ring-zinc-300 hover:ring-offset-2 focus:ring-zinc-300 focus:ring-offset-2 focus:outline-none"
-          >
-            {/* Image */}
-            <div className="relative h-48 w-full overflow-hidden">
-              <img
-                src={post.content.image}
-                alt={post.content.title}
-                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-            </div>
-
-            {/* Content */}
-            <div className="flex flex-1 flex-col p-5">
-              <h3 className="mb-3 line-clamp-2 text-xl font-semibold">
-                {post.content.title}
-              </h3>
-              <p className="mb-5 line-clamp-3 flex-1 text-sm text-zinc-600">
-                {post.content.description}
-              </p>
-
-              {/* Author */}
-              <div className="flex items-center">
-                <div className="mr-3 size-9 overflow-hidden rounded-full">
-                  <img
-                    src={
-                      "https://assets.guideofdubai.com/uploads/guideofdubai.png-VIfbeQ.png"
-                    }
-                    alt="Author"
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-                <span className="mr-3 text-sm font-medium">
-                  {post.categories[0].value}
-                </span>
-                <span className="text-xs text-zinc-500">•</span>
-                <span className="ml-3 text-xs text-zinc-500">
-                  {post.content.readTime} min read
-                </span>
-              </div>
-            </div>
-          </Link>
+          <BlogCard blog={post} />
         ))}
       </div>
     </div>
