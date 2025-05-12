@@ -1,15 +1,34 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { persistQueryClient } from "@tanstack/react-query-persist-client";
+import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // 5 dakika
+      staleTime: 1000 * 60 * 2,
       retry: 1,
       refetchOnWindowFocus: import.meta.env.PROD,
     },
   },
 });
+
+let persister: ReturnType<typeof createSyncStoragePersister> | undefined =
+  undefined;
+
+if (typeof window !== "undefined") {
+  persister = createSyncStoragePersister({
+    storage: window.localStorage,
+  });
+
+  persistQueryClient({
+    queryClient,
+    persister,
+    maxAge: 1000 * 60 * 5,
+  });
+}
+
+export { persister };
 
 export function TanStackQueryProvider({
   children,

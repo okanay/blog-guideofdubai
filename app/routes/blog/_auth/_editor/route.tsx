@@ -5,6 +5,7 @@ import { getLanguageFromSearch } from "@/i18n/action";
 import { seoTranslations } from "@/i18n/languages";
 import { Link } from "@/i18n/link";
 import { useAuth } from "@/providers/auth";
+import { ProtectedRoute } from "@/providers/auth/session-control";
 import { createFileRoute, Outlet, useMatchRoute } from "@tanstack/react-router";
 import {
   BarChart3,
@@ -51,17 +52,19 @@ export const Route = createFileRoute("/blog/_auth/_editor")({
 
 function RouteComponent() {
   return (
-    <EditorProvider>
-      {/* Header her zaman görünür */}
-      <Header />
-      <CacheModal />
+    <ProtectedRoute>
+      <EditorProvider>
+        {/* Header her zaman görünür */}
+        <Header />
+        <CacheModal />
 
-      <div className="flex">
-        {/* Sidebar her zaman görünür */}
-        <Sidebar />
-        <Outlet />
-      </div>
-    </EditorProvider>
+        <div className="flex">
+          {/* Sidebar her zaman görünür */}
+          <Sidebar />
+          <Outlet />
+        </div>
+      </EditorProvider>
+    </ProtectedRoute>
   );
 }
 

@@ -3,6 +3,7 @@ import { ImageProvider } from "@/components/image/store";
 import { getLanguageFromSearch } from "@/i18n/action";
 import { seoTranslations } from "@/i18n/languages";
 import { AuthProvider } from "@/providers/auth";
+import { AuthSessionController } from "@/providers/auth/session-control";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/blog/_auth")({
@@ -39,9 +40,11 @@ export const Route = createFileRoute("/blog/_auth")({
 function RouteComponent() {
   return (
     <AuthProvider>
-      <ImageProvider>
-        <Outlet />
-      </ImageProvider>
+      <AuthSessionController>
+        <ImageProvider>
+          <Outlet />
+        </ImageProvider>
+      </AuthSessionController>
     </AuthProvider>
   );
 }

@@ -1,7 +1,8 @@
 import { BookOpenText } from "lucide-react";
 import { useEffect } from "react";
-import { SearchBarWithProvider, useSearch } from "./search";
+import { BlogSearchBar, useSearch } from "./search";
 import { Link } from "@/i18n/link";
+import { useLatestBlog } from "./search/store";
 
 function BackgroudGradient() {
   return (
@@ -25,7 +26,7 @@ export function HeroSection() {
               Dubai attractions. Search by location or activity to start
               exploring.
             </p>
-            <SearchBarWithProvider />
+            <BlogSearchBar />
           </div>
         </div>
       </section>
@@ -34,24 +35,17 @@ export function HeroSection() {
 }
 
 export function LatestBlogButton() {
-  const { latestBlog, fetchLatestBlog, statusStates } = useSearch();
+  const { latestBlog, loading } = useLatestBlog();
 
-  const isLoading = statusStates.latestBlog.status === "loading";
   const slug = latestBlog?.slug || "";
-
-  useEffect(() => {
-    fetchLatestBlog().catch((error) => {
-      console.error("En son blog yüklenirken hata:", error);
-    });
-  }, [fetchLatestBlog]);
 
   return (
     <div className="relative">
       <Link
         to={`/${slug}`}
         className="flex w-fit items-center gap-1.5 rounded-full border border-zinc-200 bg-zinc-50 px-4 py-1 text-xs font-medium tracking-wide shadow-inner ring shadow-zinc-200/5 ring-zinc-200 ring-offset-2 transition-all duration-300 hover:bg-zinc-100 hover:shadow-md active:scale-95 disabled:cursor-wait disabled:opacity-70"
-        aria-disabled={isLoading}
-        onClick={isLoading ? (e) => e.preventDefault() : undefined}
+        aria-disabled={loading}
+        onClick={loading ? (e) => e.preventDefault() : undefined}
       >
         Read Latest Blog
         <BookOpenText className="text-primary-dark size-3 translate-y-[0.5px]" />

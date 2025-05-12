@@ -1,6 +1,6 @@
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import { useEffect, useRef, useState, FormEvent } from "react";
-import { SearchProvider, useSearch } from "./store";
+import { useSearch } from "./store";
 import { SearchResultsDropdown } from "./dropdown";
 import { SearchFilterModal } from "./modal";
 
@@ -152,7 +152,7 @@ function SearchBar({
 }
 
 // Tam arama komponenti (Provider ile birlikte)
-export function SearchBarWithProvider(props: SearchBarProps) {
+export function BlogSearchBar(props: SearchBarProps) {
   return (
     <>
       <SearchBar {...props} />
@@ -162,10 +162,4 @@ export function SearchBarWithProvider(props: SearchBarProps) {
 }
 
 // Temel bileşenleri dışa aktar
-export {
-  SearchProvider,
-  useSearch,
-  SearchBar,
-  SearchResultsDropdown,
-  SearchFilterModal,
-};
+export { useSearch, SearchBar, SearchResultsDropdown, SearchFilterModal };

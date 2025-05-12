@@ -1,7 +1,7 @@
 // app/routes/(languages)/route.tsx
 import { RootFooter } from "@/components/footer";
 import { RootHeader } from "@/components/header";
-import { SearchProvider } from "@/components/main/search";
+import { SearchProvider } from "@/components/main/search/store";
 import { getLanguageFromSearch } from "@/i18n/action";
 import { seoTranslations } from "@/i18n/languages";
 import { useLanguage } from "@/i18n/use-language";

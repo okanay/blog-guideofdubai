@@ -1,10 +1,11 @@
 // app/routes/blog/_main/all.tsx
 import { createFileRoute } from "@tanstack/react-router";
-import { SearchBarWithProvider, useSearch } from "@/components/main/search";
+import { BlogSearchBar, useSearch } from "@/components/main/search";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { BlogCard } from "@/components/main/blog-card";
 import { useLanguage } from "@/i18n/use-language";
+import { useBlogList } from "@/components/main/search/store";
 
 export const Route = createFileRoute("/blog/_main/all")({
   component: AllBlogsPage,
@@ -12,9 +13,8 @@ export const Route = createFileRoute("/blog/_main/all")({
 
 function AllBlogsPage() {
   const { language } = useLanguage();
-  const { blogList, fetchBlogs, loadMoreBlogs } = useSearch();
-
-  const { blogs, loading, initialLoading, hasMore } = blogList;
+  const { blogs, loading, initialLoading, hasMore, fetchBlogs, loadMoreBlogs } =
+    useBlogList();
 
   // İlk yüklemede veya dil değiştiğinde blogları yükle
   useEffect(() => {
@@ -40,7 +40,7 @@ function AllBlogsPage() {
 
         {/* Search Bar */}
         <div className="mx-auto max-w-2xl">
-          <SearchBarWithProvider placeholder="Search blog posts..." />
+          <BlogSearchBar placeholder="Search blog posts..." />
         </div>
       </div>
 

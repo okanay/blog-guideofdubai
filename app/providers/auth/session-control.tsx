@@ -32,7 +32,7 @@ export function AlreadyLoginCheck(props: { children: React.ReactNode }) {
 export function ProtectedRoute(props: { children: React.ReactNode }) {
   const { status } = useAuth();
   const navigate = useNavigate();
-
+  console.log(status);
   useEffect(() => {
     if (status === "unauthorize") {
       navigate({ to: "/login" });
