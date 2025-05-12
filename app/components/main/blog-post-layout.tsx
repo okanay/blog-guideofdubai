@@ -284,7 +284,7 @@ function MostViewedPosts({
         {topViewedPosts.map((post) => (
           <Link
             to={`${post.slug}`}
-            key={post.id}
+            key={"most_viewed_posts" + post.id}
             className="flex gap-4 rounded border border-transparent bg-zinc-50 ring ring-zinc-50 transition-all duration-300 ease-in-out hover:bg-zinc-100 hover:ring-zinc-300 hover:ring-offset-2 focus:bg-zinc-100 focus:ring-zinc-300 focus:ring-offset-2 focus:outline-none"
           >
             {/* Thumbnail */}
@@ -413,7 +413,7 @@ function RecentPosts() {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {recentPosts.map((post) => (
-          <BlogCard blog={post} />
+          <BlogCard key={"recent_posts" + post.id} blog={post} />
         ))}
       </div>
     </div>

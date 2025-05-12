@@ -8,7 +8,6 @@ export const formatDate = (date: string | Date, language: Language) => {
     ALL_LANGUAGE_DICTONARY.find((l) => l.value === language)?.seo?.locale ||
     "en-US";
 
-  console.log(locale);
   // Use toLocaleString to get the month name in the correct language
   const month = d.toLocaleString(locale, { month: "long" });
   const day = d.getDate();

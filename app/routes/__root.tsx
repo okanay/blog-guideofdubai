@@ -1,14 +1,12 @@
-import { DEFAULT_LANGUAGE, ACTIVE_LANGUAGE_DICTONARY, SUPPORTED_LANGUAGES } from "@/i18n/config"; // prettier-ignore
-import { RootProviders } from "@/providers";
-import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router"; // prettier-ignore
-import { getHeaders } from "@tanstack/react-start/server";
-import { QueryClient } from "@tanstack/react-query";
-
 import globals from "@/globals.css?url";
 import { getLanguageFromCookie, getLanguageFromHeader } from "@/i18n/action";
-import LanguageSynchronizer from "@/i18n/language-synchronizer";
+import { ACTIVE_LANGUAGE_DICTONARY, DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES } from "@/i18n/config"; // prettier-ignore
 import LanguageProvider from "@/i18n/provider";
+import { RootProviders } from "@/providers";
+import { QueryClient } from "@tanstack/react-query";
+import { HeadContent, Outlet, Scripts, createRootRouteWithContext, redirect } from "@tanstack/react-router"; // prettier-ignore
 import { createServerFn } from "@tanstack/react-start";
+import { getHeaders } from "@tanstack/react-start/server";
 
 export const getRequestHeaders = createServerFn({
   method: "GET",
@@ -25,39 +23,74 @@ export const Route = createRootRouteWithContext<Context>()({
   loader: async (ctx) => {
     try {
       const searchParams = new URLSearchParams(ctx.location.search);
-      const langParam = searchParams.get("lang");
+      const langParam = searchParams.get("lang") as Language | null;
 
-      // 1. Search Param doğru ise onu döndür.
+      // Dil parametresi kontrolü
+      let selectedLang: Language | string;
+      let shouldRedirect = false;
+
+      // 1. URL'de lang parametresi kontrolü
       if (langParam && SUPPORTED_LANGUAGES.includes(langParam as Language)) {
-        return {
-          lang: langParam,
-        };
+        // Lang parametresi var ve desteklenen diller içinde
+        selectedLang = langParam;
+
+        // Aktif diller içinde olup olmadığını kontrol et
+        if (
+          !ACTIVE_LANGUAGE_DICTONARY.some(
+            (entry) => entry.value === selectedLang,
+          )
+        ) {
+          // Aktif diller içinde değilse, varsayılan aktif dile yönlendir
+          selectedLang =
+            ACTIVE_LANGUAGE_DICTONARY[0]?.value || DEFAULT_LANGUAGE;
+          shouldRedirect = true;
+        }
+      } else {
+        // Lang parametresi yok veya desteklenmeyen bir dil
+        shouldRedirect = true;
+
+        // Diğer kaynaklardan dil belirle
+        const { headers } = await getRequestHeaders();
+        const cookieLang = getLanguageFromCookie(headers["cookie"] || "");
+        const headerLang = getLanguageFromHeader(headers["accept-language"]);
+
+        // Cookie'den veya header'dan dil tespiti
+        if (
+          cookieLang &&
+          ACTIVE_LANGUAGE_DICTONARY.some((entry) => entry.value === cookieLang)
+        ) {
+          selectedLang = cookieLang;
+        } else if (
+          headerLang &&
+          ACTIVE_LANGUAGE_DICTONARY.some((entry) => entry.value === headerLang)
+        ) {
+          selectedLang = headerLang;
+        } else {
+          // Hiçbir şekilde aktif dil bulunamadıysa, varsayılan aktif dili kullan
+          selectedLang =
+            ACTIVE_LANGUAGE_DICTONARY[0]?.value || DEFAULT_LANGUAGE;
+        }
       }
 
-      const { headers } = await getRequestHeaders();
-      const cookieLang = getLanguageFromCookie(headers["cookie"] || "");
-      const headerLang = getLanguageFromHeader(headers["accept-language"]);
-
-      // 2. Cookie'de varsa, redirect ile lang paramı ekle
-      if (cookieLang) {
-        return {
-          lang: cookieLang,
-        };
+      // Yönlendirme gerekiyorsa
+      if (shouldRedirect) {
+        // Type-safe bir şekilde redirect kullanımı
+        return redirect({
+          to: ctx.location.pathname,
+          search: {
+            lang: selectedLang,
+          } as any,
+        });
       }
 
-      // 3. Header'dan tespit et, redirect ile lang paramı ekle ve cookie'yi set et
-      if (headerLang) {
-        return {
-          lang: headerLang,
-        };
-      }
-
+      // Yönlendirme gerekmiyorsa normal akışa devam et
       return {
-        lang: DEFAULT_LANGUAGE,
+        lang: selectedLang,
       };
-    } catch {
+    } catch (error) {
+      console.error("Language detection error:", error);
       return {
-        lang: DEFAULT_LANGUAGE,
+        lang: ACTIVE_LANGUAGE_DICTONARY[0]?.value || DEFAULT_LANGUAGE,
       };
     }
   },
@@ -181,7 +214,6 @@ function RootComponent() {
   return (
     <RootDocument>
       <LanguageProvider serverLanguage={lang}>
-        <LanguageSynchronizer />
         <RootProviders>
           <Outlet />
         </RootProviders>
