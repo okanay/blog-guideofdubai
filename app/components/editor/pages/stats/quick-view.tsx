@@ -1,7 +1,7 @@
 import { Eye, TrendingUp, Languages } from "lucide-react";
 import { useEditorContext } from "@/components/editor/store";
 import { useState } from "react";
-import { LANGUAGE_DICTONARY } from "@/i18n/config";
+import { ALL_LANGUAGE_DICTONARY } from "@/i18n/config";
 
 export function StatsQuickView() {
   const { blogStats } = useEditorContext();
@@ -231,7 +231,7 @@ function getLanguageDistribution(data: any[]) {
     .map(([language, views]: [string, any]) => ({
       language,
       label:
-        LANGUAGE_DICTONARY.find((l) => l.value === language)?.label ||
+        ALL_LANGUAGE_DICTONARY.find((l) => l.value === language)?.label ||
         language.toUpperCase(),
       views,
       percentage:

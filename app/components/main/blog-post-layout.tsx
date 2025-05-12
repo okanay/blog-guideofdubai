@@ -103,9 +103,7 @@ function SelectedFeaturePost({
         {/* Content Overlay */}
         <div className="absolute right-0 bottom-0 left-0 flex flex-col gap-2 border-t border-zinc-100 bg-gradient-to-t from-zinc-950/40 to-zinc-100/40 px-4 py-4 backdrop-blur-xs">
           {topViewedPost.categories && topViewedPost.categories.length > 0 && (
-            <span
-              className={`w-fit rounded-full border border-zinc-900 bg-zinc-950 px-2 py-1 text-[0.6rem] font-medium text-zinc-100`}
-            >
+            <span className="w-fit rounded-full border border-zinc-900 bg-zinc-900/80 px-2 py-1 text-[0.6rem] font-medium text-zinc-100 backdrop-blur-sm">
               {topViewedPost.categories[0].value}
             </span>
           )}

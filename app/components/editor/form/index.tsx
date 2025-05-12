@@ -1,5 +1,5 @@
 import { GroupIDSelector, ImagePreview, Input, MultiSelect, ReadTime, Select, SeoPreview, SlugCreator, Textarea, Toggle } from "@/components/editor/ui"; // prettier-ignore
-import { LANGUAGE_DICTONARY } from "@/i18n/config";
+import { ALL_LANGUAGE_DICTONARY } from "@/i18n/config";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -350,7 +350,7 @@ export function CreateBlogForm({
               <Select
                 label="İçerik Dili"
                 id="language"
-                options={LANGUAGE_DICTONARY.map(({ label, value }) => ({
+                options={ALL_LANGUAGE_DICTONARY.map(({ label, value }) => ({
                   name: value,
                   value: label,
                 }))}

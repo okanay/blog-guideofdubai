@@ -111,7 +111,7 @@ function FeaturedBlogCard({
 
           {/* Category Badge - Eğer kategori varsa ilk kategoriyi göster */}
           {blog.categories && blog.categories.length > 0 && (
-            <span className="absolute top-4 left-4 rounded-full border border-zinc-900 bg-zinc-950 px-2 py-1 text-[0.6rem] font-medium text-zinc-100">
+            <span className="absolute top-3 left-3 rounded-full border border-zinc-900 bg-zinc-900/80 px-2 py-1 text-[0.6rem] font-medium text-zinc-100 backdrop-blur-sm">
               {blog.categories[0].value}
             </span>
           )}

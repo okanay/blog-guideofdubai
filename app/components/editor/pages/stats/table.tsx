@@ -1,7 +1,7 @@
 import { useEditorContext } from "@/components/editor/store";
 import { Eye, ThumbsUp, Share2, MessageSquare } from "lucide-react";
 import { formatDate } from "@/components/editor/helper";
-import { LANGUAGE_DICTONARY } from "@/i18n/config";
+import { ACTIVE_LANGUAGE_DICTONARY } from "@/i18n/config";
 
 export function StatsTable() {
   const { blogStats } = useEditorContext();
@@ -73,7 +73,7 @@ export function StatsTable() {
                               : "bg-blue-100 text-blue-700"
                           }`}
                         >
-                          {LANGUAGE_DICTONARY.find(
+                          {ACTIVE_LANGUAGE_DICTONARY.find(
                             (l) => l.value === stat.language,
                           )?.label || stat.language}
                         </span>

@@ -1,7 +1,7 @@
 import { RenderJSON } from "@/components/editor/tiptap/renderer";
 import { BlogTOC } from "@/components/blog/toc";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { LANGUAGE_DICTONARY } from "@/i18n/config";
+import { ACTIVE_LANGUAGE_DICTONARY } from "@/i18n/config";
 import { getLanguageFromSearch } from "@/i18n/action";
 import { ImageGalleryOverlay } from "@/components/blog/img-gallery-overlay";
 import { AlternateLanguageDetect } from "@/components/blog/alternate-language-pop-up";
@@ -76,8 +76,8 @@ export const Route = createFileRoute("/blog/_main/$slug")({
       `https://images.project-test.info/1.webp`;
 
     const locale =
-      LANGUAGE_DICTONARY.find((l) => l.value === blogLanguage)?.seo.locale ||
-      "en_US";
+      ACTIVE_LANGUAGE_DICTONARY.find((l) => l.value === blogLanguage)?.seo
+        .locale || "en_US";
 
     const tags = (blog.tags || []).map((c) => c.value || "Activities");
 

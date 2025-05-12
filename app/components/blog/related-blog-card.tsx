@@ -1,4 +1,4 @@
-import { LANGUAGE_DICTONARY } from "@/i18n/config";
+import { ACTIVE_LANGUAGE_DICTONARY } from "@/i18n/config";
 import { Link } from "@/i18n/link";
 import {
   AlertTriangle,

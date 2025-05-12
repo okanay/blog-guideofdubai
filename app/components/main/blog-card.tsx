@@ -1,36 +1,14 @@
 // app/components/blog/blog-card.tsx
 import { Link } from "@/i18n/link";
 import { CalendarDays, Clock, Heart } from "lucide-react";
-import { LANGUAGE_DICTONARY } from "@/i18n/config";
+import { ALL_LANGUAGE_DICTONARY } from "@/i18n/config";
+import { formatDate } from "@/utils/format-date";
 
 interface BlogCardProps {
   blog: BlogPostCardView;
 }
 
 export function BlogCard({ blog }: BlogCardProps) {
-  const formatDate = (date: string | Date) => {
-    if (!date) return "";
-    const d = new Date(date);
-
-    // Ay isimleri
-    const months = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-
-    return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
-  };
-
   return (
     <Link
       to={`/blog/${blog.slug}`}
@@ -68,8 +46,8 @@ export function BlogCard({ blog }: BlogCardProps) {
         {/* Footer info */}
         <div className="mt-auto flex items-center justify-between">
           <span className="mr-3 text-sm font-medium">
-            {LANGUAGE_DICTONARY.find((l) => l.value === blog.language)?.label ||
-              blog.language}
+            {ALL_LANGUAGE_DICTONARY.find((l) => l.value === blog.language)
+              ?.label || blog.language}
           </span>
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1 text-xs text-zinc-500">
@@ -78,7 +56,7 @@ export function BlogCard({ blog }: BlogCardProps) {
             </span>
             <span className="flex items-center gap-1 text-xs text-zinc-500">
               <CalendarDays size={12} />
-              {formatDate(blog.createdAt)}
+              {formatDate(blog.createdAt, blog.language as Language)}
             </span>
             {blog.stats && (
               <span className="flex items-center gap-1 text-xs text-zinc-500">

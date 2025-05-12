@@ -1,4 +1,4 @@
-import { DEFAULT_LANGUAGE, LANGUAGE_DICTONARY, SUPPORTED_LANGUAGES } from "@/i18n/config"; // prettier-ignore
+import { DEFAULT_LANGUAGE, ACTIVE_LANGUAGE_DICTONARY, SUPPORTED_LANGUAGES } from "@/i18n/config"; // prettier-ignore
 import { RootProviders } from "@/providers";
 import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router"; // prettier-ignore
 import { getHeaders } from "@tanstack/react-start/server";
@@ -157,7 +157,9 @@ export const Route = createRootRouteWithContext<Context>()({
 
 function RootDocument({ children }: Readonly<{ children: React.ReactNode }>) {
   const { lang } = Route.useLoaderData();
-  const language = LANGUAGE_DICTONARY.find((entry) => entry.value === lang);
+  const language = ACTIVE_LANGUAGE_DICTONARY.find(
+    (entry) => entry.value === lang,
+  );
 
   return (
     <html lang={language.seo.locale} dir={language.seo.direction}>

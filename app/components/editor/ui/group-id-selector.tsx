@@ -14,7 +14,7 @@ import RichButtonModal from "../tiptap/menu/ui/modal";
 import { useEditorContext } from "../store";
 import { slugify } from "../helper";
 import useThrottle from "@/hooks/use-throttle";
-import { LANGUAGE_DICTONARY } from "@/i18n/config";
+import { ALL_LANGUAGE_DICTONARY } from "@/i18n/config";
 
 interface GroupIDSelectorProps extends React.ComponentProps<"input"> {
   label?: string;
@@ -390,7 +390,7 @@ export const GroupIDSelector = ({
 
                         <td className="px-4 py-3 text-center whitespace-nowrap">
                           <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                            {LANGUAGE_DICTONARY.find(
+                            {ALL_LANGUAGE_DICTONARY.find(
                               (lang) => lang.value === blog.language,
                             )?.label || "Bilinmeyen Dil"}
                           </span>

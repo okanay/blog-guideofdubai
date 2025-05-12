@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { Dialog } from "@headlessui/react";
-import { LANGUAGE_DICTONARY } from "@/i18n/config";
+import { ALL_LANGUAGE_DICTONARY } from "@/i18n/config";
 import { useEditorContext } from "@/components/editor/store";
 
 export function StatsFilters() {
@@ -155,7 +155,7 @@ export function StatsFilters() {
                   className="focus:border-primary-300 focus:ring-primary-100 w-full rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:ring-2"
                 >
                   <option value="">Tüm Diller</option>
-                  {LANGUAGE_DICTONARY.map((lang) => (
+                  {ALL_LANGUAGE_DICTONARY.map((lang) => (
                     <option key={lang.value} value={lang.value}>
                       {lang.label}
                     </option>

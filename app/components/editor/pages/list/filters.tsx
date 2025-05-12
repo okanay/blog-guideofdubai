@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Dialog } from "@headlessui/react";
-import { LANGUAGE_DICTONARY } from "@/i18n/config";
+import { ALL_LANGUAGE_DICTONARY } from "@/i18n/config";
 import { BLOG_OPTIONS } from "@/components/editor/constants";
 import { useEditorContext } from "@/components/editor/store";
 
@@ -200,7 +200,7 @@ export function BlogFilters() {
                   className="focus:border-primary-300 focus:ring-primary-100 w-full rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:ring-2"
                 >
                   <option value="">Tüm Diller</option>
-                  {LANGUAGE_DICTONARY.map((lang) => (
+                  {ALL_LANGUAGE_DICTONARY.map((lang) => (
                     <option key={lang.value} value={lang.value}>
                       {lang.label}
                     </option>

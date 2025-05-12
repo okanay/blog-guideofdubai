@@ -11,7 +11,7 @@ import {
   Save,
   ArrowLeft,
 } from "lucide-react";
-import { LANGUAGE_DICTONARY } from "@/i18n/config";
+import { ALL_LANGUAGE_DICTONARY } from "@/i18n/config";
 import { Link } from "@/i18n/link";
 import { toast } from "sonner";
 
@@ -28,7 +28,7 @@ function FeaturedBlogsPage() {
     statusStates: { featured },
   } = useEditorContext();
 
-  const [selectedLanguage, setSelectedLanguage] = useState<Language>("tr");
+  const [selectedLanguage, setSelectedLanguage] = useState<Language>("en");
   const [items, setItems] = useState<BlogPostCardView[]>([]);
   const [draggedItem, setDraggedItem] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
@@ -154,7 +154,7 @@ function FeaturedBlogsPage() {
                   }
                   className="focus:border-primary-500 focus:ring-primary-500 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm shadow-sm focus:ring-1"
                 >
-                  {LANGUAGE_DICTONARY.map((lang) => (
+                  {ALL_LANGUAGE_DICTONARY.map((lang) => (
                     <option key={lang.value} value={lang.value}>
                       {lang.label}
                     </option>
@@ -304,7 +304,7 @@ function FeaturedBlogsPage() {
                   <span>•</span>
                   <span>
                     {
-                      LANGUAGE_DICTONARY.find(
+                      ALL_LANGUAGE_DICTONARY.find(
                         (lang) => lang.value === blog.language,
                       )?.label
                     }

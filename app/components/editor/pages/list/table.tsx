@@ -1,5 +1,5 @@
 import { useEditorContext } from "@/components/editor/store";
-import { LANGUAGE_DICTONARY } from "@/i18n/config";
+import { ACTIVE_LANGUAGE_DICTONARY } from "@/i18n/config";
 import { Link } from "@/i18n/link";
 
 import { Archive, ArrowUpFromLine, CheckCircle2, Edit, Eye, EyeIcon, EyeOff, MoreHorizontal, Star, StarOff, Trash2 } from "lucide-react"; // prettier-ignore
@@ -89,8 +89,9 @@ export function BlogTable({
                 </div>
               </td>
               <td className="hidden px-4 py-3 text-sm whitespace-nowrap text-zinc-600 md:table-cell">
-                {LANGUAGE_DICTONARY.find((lang) => lang.value === blog.language)
-                  ?.label || blog.language}
+                {ACTIVE_LANGUAGE_DICTONARY.find(
+                  (lang) => lang.value === blog.language,
+                )?.label || blog.language}
               </td>
               <td className="hidden px-4 py-3 whitespace-nowrap md:table-cell">
                 <span

@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { useSearch } from "./store";
 import useClickOutside from "@/hooks/use-click-outside";
-import { LANGUAGE_DICTONARY } from "@/i18n/config";
+import { ACTIVE_LANGUAGE_DICTONARY } from "@/i18n/config";
 
 export function SearchFilterModal() {
   const {
@@ -107,7 +107,7 @@ export function SearchFilterModal() {
                 }
               >
                 <option value="">All Languages</option>
-                {LANGUAGE_DICTONARY.map((lang) => (
+                {ACTIVE_LANGUAGE_DICTONARY.map((lang) => (
                   <option key={lang.value} value={lang.value}>
                     {lang.label}
                   </option>

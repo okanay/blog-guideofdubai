@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { LANGUAGE_DICTONARY } from "@/i18n/config";
+import { ACTIVE_LANGUAGE_DICTONARY } from "@/i18n/config";
 import { useLanguage } from "@/i18n/use-language";
 import { Globe, X, Check } from "lucide-react";
 
@@ -114,7 +114,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = () => {
 
             {/* Dil Seçenekleri */}
             <div className="p-4">
-              {LANGUAGE_DICTONARY.map((lang) => (
+              {ACTIVE_LANGUAGE_DICTONARY.map((lang) => (
                 <div
                   key={lang.value}
                   className={`group hover:border-primary-100 hover:bg-primary-50 mb-2 flex cursor-pointer items-center rounded-lg border border-transparent px-4 py-3.5 transition-all duration-200 active:scale-[0.98] ${
