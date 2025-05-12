@@ -152,7 +152,7 @@ function FeaturedBlogsPage() {
                   onChange={(e) =>
                     setSelectedLanguage(e.target.value as Language)
                   }
-                  className="focus:border-primary-500 focus:ring-primary-500 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm shadow-sm focus:ring-1"
+                  className="focus:border-primary-500 focus:ring-primary-500 appearance-none rounded-lg border border-zinc-200 bg-white px-3 py-2 text-center text-sm shadow-sm focus:ring-1"
                 >
                   {ALL_LANGUAGE_DICTONARY.map((lang) => (
                     <option key={lang.value} value={lang.value}>

@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { useSearch } from "./store";
 import { Link } from "@/i18n/link";
 import { Clock, Search, X, ArrowRight } from "lucide-react";
-import { ACTIVE_LANGUAGE_DICTONARY } from "@/i18n/config";
+import { ALL_LANGUAGE_DICTONARY } from "@/i18n/config";
 import { formatDate } from "@/components/editor/helper";
 
 export function SearchResultsDropdown() {
@@ -190,7 +190,7 @@ export function SearchResultsDropdown() {
                             {blog.content.readTime} min
                           </span>
                           <span>
-                            {ACTIVE_LANGUAGE_DICTONARY.find(
+                            {ALL_LANGUAGE_DICTONARY.find(
                               (lang) => lang.value === blog.language,
                             )?.label || blog.language}
                           </span>
@@ -262,7 +262,7 @@ export function SearchResultsDropdown() {
                         </td>
 
                         <td className="px-4 py-3 text-sm whitespace-nowrap text-zinc-600">
-                          {ACTIVE_LANGUAGE_DICTONARY.find(
+                          {ALL_LANGUAGE_DICTONARY.find(
                             (lang) => lang.value === blog.language,
                           )?.label || blog.language}
                         </td>
