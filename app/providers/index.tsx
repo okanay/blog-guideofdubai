@@ -1,7 +1,7 @@
 import { Toaster } from "sonner";
 import { PropsWithChildren } from "react";
-import { TanStackQueryProvider } from "./query";
 import { ScrollToTop } from "./scroll-to-top";
+import { TanStackQueryProvider } from "./query";
 
 export const RootProviders = (props: PropsWithChildren) => {
   return (

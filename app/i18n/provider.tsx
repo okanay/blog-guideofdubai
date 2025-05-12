@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 import { I18nextProvider } from "react-i18next";
 import { DEFAULT_LANGUAGE, I18N_COOKIE_NAME, I18N_COOKIE_OPTIONS, I18N_STORAGE_KEY, SUPPORTED_LANGUAGES } from "./config"; // prettier-ignore
 import React, { createContext, useCallback, useEffect, useState } from "react"; // prettier-ignore
-import { redirect, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { buildSearchParams } from "./action";
 
 interface LanguageContextType {

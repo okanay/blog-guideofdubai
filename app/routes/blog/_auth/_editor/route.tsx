@@ -5,6 +5,7 @@ import { getLanguageFromSearch } from "@/i18n/action";
 import { seoTranslations } from "@/i18n/languages";
 import { Link } from "@/i18n/link";
 import { useAuth } from "@/providers/auth";
+import { AuthSessionController } from "@/providers/auth/auth-session-controll";
 import ProtectedRoute from "@/providers/auth/protected-route";
 import { createFileRoute, Outlet, useMatchRoute } from "@tanstack/react-router";
 import {
@@ -52,19 +53,17 @@ export const Route = createFileRoute("/blog/_auth/_editor")({
 
 function RouteComponent() {
   return (
-    <ProtectedRoute control="unauthorize" navigateTo="/login">
-      <EditorProvider>
-        {/* Header her zaman görünür */}
-        <Header />
-        <CacheModal />
+    <EditorProvider>
+      {/* Header her zaman görünür */}
+      <Header />
+      <CacheModal />
 
-        <div className="flex">
-          {/* Sidebar her zaman görünür */}
-          <Sidebar />
-          <Outlet />
-        </div>
-      </EditorProvider>
-    </ProtectedRoute>
+      <div className="flex">
+        {/* Sidebar her zaman görünür */}
+        <Sidebar />
+        <Outlet />
+      </div>
+    </EditorProvider>
   );
 }
 

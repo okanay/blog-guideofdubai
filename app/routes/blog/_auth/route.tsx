@@ -1,10 +1,9 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { seoTranslations } from "@/i18n/languages";
 import dragModuleStyles from "@/components/editor/tiptap/drag-styles.css?url";
-import { AuthProvider } from "@/providers/auth";
-import { InitialSessionControl } from "@/providers/auth/initial-session-control";
 import { ImageProvider } from "@/components/image/store";
 import { getLanguageFromSearch } from "@/i18n/action";
+import { seoTranslations } from "@/i18n/languages";
+import { AuthProvider } from "@/providers/auth";
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/blog/_auth")({
   loader: async ({ location: { search } }) => {
@@ -40,7 +39,6 @@ export const Route = createFileRoute("/blog/_auth")({
 function RouteComponent() {
   return (
     <AuthProvider>
-      <InitialSessionControl />
       <ImageProvider>
         <Outlet />
       </ImageProvider>

@@ -1,7 +1,8 @@
 import { DEFAULT_LANGUAGE, LANGUAGE_DICTONARY, SUPPORTED_LANGUAGES } from "@/i18n/config"; // prettier-ignore
 import { RootProviders } from "@/providers";
-import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router"; // prettier-ignore
+import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router"; // prettier-ignore
 import { getHeaders } from "@tanstack/react-start/server";
+import { QueryClient } from "@tanstack/react-query";
 
 import globals from "@/globals.css?url";
 import { getLanguageFromCookie, getLanguageFromHeader } from "@/i18n/action";
@@ -16,7 +17,11 @@ export const getRequestHeaders = createServerFn({
   return { headers };
 });
 
-export const Route = createRootRoute<{}>({
+interface Context {
+  queryClient: QueryClient;
+}
+
+export const Route = createRootRouteWithContext<Context>()({
   loader: async (ctx) => {
     try {
       const searchParams = new URLSearchParams(ctx.location.search);
@@ -167,9 +172,10 @@ function RootDocument({ children }: Readonly<{ children: React.ReactNode }>) {
   );
 }
 
+export const queryClient = new QueryClient();
+
 function RootComponent() {
   const { lang } = Route.useLoaderData();
-
   return (
     <RootDocument>
       <LanguageProvider serverLanguage={lang}>

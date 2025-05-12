@@ -58,7 +58,6 @@ export const Route = createFileRoute("/blog/_main/")({
         mostViewedPosts: mostViewedPostsData.blogs as BlogPostCardView[],
       };
     } catch (error) {
-      console.error("Blog verilerini yüklerken hata:", error);
       return {
         recentPosts: [],
         featuredPosts: [],
@@ -66,6 +65,7 @@ export const Route = createFileRoute("/blog/_main/")({
       };
     }
   },
+
   component: RouteComponent,
 });
 

@@ -1,8 +1,9 @@
 import { getLanguageFromSearch } from "@/i18n/action";
 import { seoTranslations } from "@/i18n/languages";
 import { Link } from "@/i18n/link";
-import { useAuth } from "@/providers/auth";
-import ProtectedRoute from "@/providers/auth/protected-route";
+import { authQueryKeys, useAuth } from "@/providers/auth";
+import { AlreadyLoginCheck } from "@/providers/auth/session-control";
+import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { AlertCircle, Eye, EyeOff, Lock, LogIn, Mail } from "lucide-react";
 import { useState } from "react";
@@ -12,6 +13,7 @@ export const Route = createFileRoute("/blog/_auth/login")({
     const lang = getLanguageFromSearch(search);
     return { lang };
   },
+
   head: ({ loaderData: { lang } }) => {
     const seoData = seoTranslations[lang];
     return {
@@ -21,6 +23,7 @@ export const Route = createFileRoute("/blog/_auth/login")({
       ],
     };
   },
+
   component: LoginPage,
 });
 
@@ -55,7 +58,8 @@ function LoginPage() {
       const response = await login(formData);
 
       if (response.success) {
-        window.location.reload();
+        // Artık manuel olarak sayfayı yeniden yüklemek yerine yönlendirme yapabilirsiniz
+        window.location.href = "/blog/editor";
       } else {
         setErrorMessage(
           "Giriş başarısız. Lütfen kullanıcı adı ve şifrenizi kontrol edin.",
@@ -71,7 +75,7 @@ function LoginPage() {
   };
 
   return (
-    <ProtectedRoute control="authorize" navigateTo="/editor">
+    <AlreadyLoginCheck>
       <main className="flex min-h-screen flex-col bg-gradient-to-br from-sky-50 to-zinc-50">
         {/* Üst Şerit - Modernize edildi */}
         <div className="from-primary-600 via-primary-500 absolute top-0 right-0 left-0 h-1.5 bg-gradient-to-r to-teal-400"></div>
@@ -120,7 +124,7 @@ function LoginPage() {
 
               <div className="p-8">
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Kullanıcı Adı Alanı - Modernize edildi */}
+                  {/* Kullanıcı Adı Alanı */}
                   <div className="space-y-2">
                     <label
                       htmlFor="username"
@@ -146,7 +150,7 @@ function LoginPage() {
                     </div>
                   </div>
 
-                  {/* Şifre Alanı - Modernize edildi */}
+                  {/* Şifre Alanı */}
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <label
@@ -188,7 +192,7 @@ function LoginPage() {
                     </div>
                   </div>
 
-                  {/* Giriş Butonu - Modernize edildi */}
+                  {/* Giriş Butonu */}
                   <button
                     type="submit"
                     disabled={isLoading}
@@ -225,7 +229,7 @@ function LoginPage() {
                   </button>
                 </form>
 
-                {/* Alt bilgi - Dubai teması için eklendi */}
+                {/* Alt bilgi */}
                 <div className="mt-8 text-center text-xs text-zinc-500">
                   Guide of Dubai © {new Date().getFullYear()} | Admin Panel
                 </div>
@@ -234,6 +238,6 @@ function LoginPage() {
           </div>
         </div>
       </main>
-    </ProtectedRoute>
+    </AlreadyLoginCheck>
   );
 }
