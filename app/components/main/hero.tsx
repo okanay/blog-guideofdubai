@@ -1,6 +1,5 @@
 import { BookOpenText } from "lucide-react";
-import { useEffect } from "react";
-import { BlogSearchBar, useSearch } from "./search";
+import { BlogSearchBar } from "./search";
 import { Link } from "@/i18n/link";
 import { useLatestBlog } from "./search/store";
 

@@ -1,6 +1,5 @@
 import { Link } from "@/i18n/link";
-import { CalendarDays, ChevronLeft, ChevronRight, Heart } from "lucide-react";
-import { useEffect } from "react";
+import { CalendarDays, ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { useLoaderData } from "@tanstack/react-router";
 import { useSnapScroll } from "@/hooks/use-snap-scroll";
 
@@ -167,9 +166,9 @@ function FeaturedBlogCard({
               </div>
               <div className="flex items-center gap-1">
                 <span className="line-clamp-1 text-sm text-white">
-                  {blog.stats?.likes || blog.stats?.views || 0}
+                  {blog.content.readTime}
                 </span>
-                <Heart className="text-color-font-invert size-3 flex-shrink-0" />
+                <Clock className="text-color-font-invert size-3.5 flex-shrink-0" />
               </div>
             </div>
           </div>
