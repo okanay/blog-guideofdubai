@@ -603,7 +603,7 @@ export function EditorProvider({ children }: PropsWithChildren) {
           lastFetch: null,
           totalCount: 0,
           query: {
-            limit: 50,
+            limit: 8,
             offset: 0,
             sortBy: "createdAt",
             sortDirection: "desc",

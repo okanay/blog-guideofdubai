@@ -13,16 +13,20 @@ export const ACTIVE_LANGUAGE_DICTONARY = [
 ];
 
 export const ALL_LANGUAGE_DICTONARY = [
-  { value: "en", label: "English", seo: { locale: "en-US", direction: "ltr" } },
+  {
+    value: "en",
+    label: "İngilizce",
+    seo: { locale: "en-US", direction: "ltr" },
+  },
   { value: "tr", label: "Türkçe", seo: { locale: "tr-TR", direction: "ltr" } },
-  { value: "ar", label: "العربية", seo: { locale: "ar-SA", direction: "rtl" } },
-  { value: "de", label: "Deutsch", seo: { locale: "de-DE", direction: "ltr" } },
+  { value: "ar", label: "Arapça", seo: { locale: "ar-SA", direction: "rtl" } },
+  { value: "de", label: "Almanca", seo: { locale: "de-DE", direction: "ltr" } },
   {
     value: "fr",
-    label: "Français",
+    label: "Fransızca",
     seo: { locale: "fr-FR", direction: "ltr" },
   },
-  { value: "ru", label: "Русский", seo: { locale: "ru-RU", direction: "ltr" } },
+  { value: "ru", label: "Rusça", seo: { locale: "ru-RU", direction: "ltr" } },
 ];
 
 export const SUPPORTED_LANGUAGES: Language[] = Object.values(LANGUAGES);

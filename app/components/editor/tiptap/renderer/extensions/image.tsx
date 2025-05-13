@@ -11,7 +11,7 @@ type ImageFit = "cover" | "contain" | "fill" | "none";
 // Style configurations
 const styles = {
   size: {
-    small: "w-[75%] w-full sm:w-[50%]",
+    small: "w-[75%] sm:w-[50%]",
     medium: "w-[75%] sm:w-[75%]",
     large: "w-full sm:w-[90%]",
     fullscreen: "w-full max-w-[100%] !mx-[-1rem] md:!mx-[-2rem] lg:!mx-[-4rem]",

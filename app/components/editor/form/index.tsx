@@ -9,6 +9,7 @@ import { useEditorContext } from "../store";
 import { useTiptapContext } from "../tiptap/store";
 import { BlogFormSchema } from "../validations/blog-create";
 import { BLOG_OPTIONS } from "../constants";
+import SEOAnalyzer from "../ui/seo-analyzer";
 
 type Props = {
   initialData: BlogFormSchema;
@@ -86,9 +87,15 @@ export function CreateBlogForm({
 
       {/* SEO Ayarları */}
       <div>
-        <h2 className="mb-4 border-b border-zinc-200 pb-2 text-lg font-medium text-zinc-800">
-          SEO Optimizasyonu
-        </h2>
+        <div className="flex flex-wrap items-center justify-between pb-2">
+          <h2 className="text-lg font-medium text-zinc-800">
+            SEO Optimizasyonu
+          </h2>
+          <SEOAnalyzer
+            getValues={getValues}
+            language={watch("language") as Language}
+          />
+        </div>
 
         <div className="space-y-4">
           <Controller
