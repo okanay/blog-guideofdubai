@@ -103,33 +103,53 @@
       @apply text-color-font-dark max-w-none;
       /* Headings */
       & h1 {
-        @apply text-color-font mt-0 mb-8 scroll-m-20 text-center text-3xl font-bold tracking-tight text-balance md:text-4xl lg:text-5xl;
+        @apply text-color-font mt-0 mb-8 scroll-m-20 text-center font-bold tracking-tight text-balance;
+        /* 4xl */
+        font-size: clamp(2.25rem, 1.875rem + 1.875vw, 3rem);
+        line-height: clamp(2.75rem, 2.25rem + 2vw, 3.5rem);
       }
       & h2 {
-        @apply text-color-font my-6 scroll-m-20 border-b border-zinc-200 pb-2 text-2xl font-semibold tracking-tight text-pretty md:text-3xl;
+        @apply text-color-font my-6 scroll-m-20 border-b border-zinc-200 pb-2 font-semibold tracking-tight text-pretty;
+        /* 3xl */
+        font-size: clamp(1.75rem, 1.5rem + 1.25vw, 2.25rem);
+        line-height: clamp(2.25rem, 1.875rem + 1.25vw, 2.75rem);
       }
       & h3 {
-        @apply text-color-font my-6 scroll-m-20 text-xl font-semibold tracking-tight text-pretty md:text-2xl;
+        @apply text-color-font my-6 scroll-m-20 font-semibold tracking-tight text-pretty;
+        /* 2xl */
+        font-size: clamp(1.5rem, 1.25rem + 0.9375vw, 1.875rem);
+        line-height: clamp(2rem, 1.75rem + 0.625vw, 2.25rem);
       }
       & h4 {
-        @apply text-color-font my-3 scroll-m-20 text-lg font-semibold tracking-tight text-pretty md:text-xl;
+        @apply text-color-font my-3 scroll-m-20 font-semibold tracking-tight text-pretty;
+        /* xl */
+        font-size: clamp(1.25rem, 1.125rem + 0.625vw, 1.5rem);
+        line-height: clamp(1.75rem, 1.625rem + 0.625vw, 2rem);
       }
       & h5 {
-        @apply text-color-font my-2 scroll-m-20 text-base font-semibold tracking-tight text-pretty md:text-lg;
+        @apply text-color-font my-2 scroll-m-20 font-semibold tracking-tight text-pretty;
+        /* lg */
+        font-size: clamp(1.125rem, 1rem + 0.625vw, 1.25rem);
+        line-height: clamp(1.5rem, 1.375rem + 0.625vw, 1.75rem);
       }
       & h6 {
-        @apply text-color-font my-2 scroll-m-20 text-sm font-semibold tracking-tight text-pretty md:text-base;
+        @apply text-color-font my-2 scroll-m-20 font-semibold tracking-tight text-pretty;
+        /* sm */
+        font-size: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+        line-height: clamp(1.25rem, 1.125rem + 0.5vw, 1.5rem);
       }
-
       /* Paragraphs */
       & p {
-        @apply text-color-font-light mt-4 text-base leading-relaxed md:text-lg;
+        @apply text-color-font-light mt-4 leading-relaxed;
+        /* base */
+        font-size: clamp(1rem, 0.9375rem + 0.3125vw, 1.125rem);
+        line-height: clamp(1.625rem, 1.5625rem + 0.3125vw, 1.75rem);
       }
-
       /* Lists */
       & ul,
       & ol {
         @apply mt-6 ml-6;
+        font-size: clamp(1rem, 0.9375rem + 0.3125vw, 1.125rem);
       }
       & ul {
         @apply list-disc;
@@ -143,34 +163,35 @@
           @apply my-0;
         }
       }
-
       /* Blockquotes */
       & blockquote {
         @apply text-color-font-dark mt-6 border-l-4 border-zinc-200 bg-zinc-50 py-2 pl-6 italic;
+        font-size: clamp(1rem, 0.9375rem + 0.3125vw, 1.125rem);
       }
-
       /* Horizontal rule */
       & hr {
         @apply my-6 border-t border-zinc-200;
       }
-
       /* Inline code & code blocks */
       & code {
-        @apply text-color-font-dark rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-sm;
+        @apply text-color-font-dark rounded bg-zinc-100 px-1.5 py-0.5 font-mono;
+        /* text-sm responsive */
+        font-size: clamp(0.8125rem, 0.75rem + 0.3125vw, 0.9375rem);
       }
       & pre {
-        @apply my-6 overflow-x-auto rounded-lg bg-zinc-900 p-4 text-sm text-zinc-100;
+        @apply my-6 overflow-x-auto rounded-lg bg-zinc-900 p-4 text-zinc-100;
+        /* text-sm responsive */
+        font-size: clamp(0.8125rem, 0.75rem + 0.3125vw, 0.9375rem);
       }
-
       /* Marked text */
       & mark {
         @apply text-color-font-dark rounded bg-yellow-200 px-1;
       }
-
       /* Subscript & Superscript */
       & sub,
       & sup {
-        @apply text-xs;
+        /* text-xs responsive */
+        font-size: clamp(0.625rem, 0.5625rem + 0.3125vw, 0.75rem);
       }
       & sub {
         @apply align-sub;
@@ -178,12 +199,10 @@
       & sup {
         @apply align-super;
       }
-
       /* Links */
       & a {
         @apply text-primary-600 hover:text-primary-700 font-medium transition-colors;
       }
-
       /* Images & Figures */
       & img {
         @apply mb-8 aspect-video rounded-xl object-cover;
@@ -192,12 +211,14 @@
         @apply my-8;
       }
       & figcaption {
-        @apply text-color-font-light mt-2 text-center text-sm;
+        @apply text-color-font-light mt-2 text-center;
+        /* text-sm responsive */
+        font-size: clamp(0.75rem, 0.6875rem + 0.3125vw, 0.875rem);
       }
-
       /* Tables */
       & table {
         @apply my-8 w-full border-collapse;
+        font-size: clamp(0.9375rem, 0.875rem + 0.3125vw, 1.0625rem);
       }
       & th,
       & td {

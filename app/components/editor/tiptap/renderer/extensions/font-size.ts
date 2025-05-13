@@ -2,18 +2,54 @@ import { Extension } from "@tiptap/core";
 
 // Font boyutu seçenekleri: kullanıcı dostu isimler ve teknik değerler
 export const FONT_SIZE_OPTIONS = [
-  { value: "default", label: "Varsayılan", size: "default", leading: "1.5rem" },
-  { value: "xs", label: "Çok Küçük", size: "0.75rem", leading: "1rem" },
-  { value: "sm", label: "Küçük", size: "0.875rem", leading: "1.25rem" },
-  { value: "base", label: "Normal", size: "1rem", leading: "1.5rem" },
-  { value: "lg", label: "Büyük", size: "1.125rem", leading: "1.75rem" },
-  { value: "xl", label: "Daha Büyük", size: "1.25rem", leading: "1.75rem" },
-  { value: "2xl", label: "Çok Büyük", size: "1.5rem", leading: "2rem" },
-  { value: "3xl", label: "En Büyük", size: "1.875rem", leading: "2.25rem" },
-  { value: "4xl", label: "Devasa", size: "2.25rem", leading: "2.5rem" },
-  { value: "5xl", label: "Muazzam", size: "3rem", leading: "1" },
-  { value: "6xl", label: "İnanılmaz Büyük", size: "3.75rem", leading: "1" },
-  { value: "7xl", label: "Aşırı Büyük", size: "4.5rem", leading: "1" },
+  {
+    value: "xs",
+    label: "Çok Küçük (Dipnot)",
+    size: "clamp(0.7rem, 0.65rem + 0.25vw, 0.75rem)",
+    leading: "clamp(0.875rem, 0.8125rem + 0.3125vw, 1rem)",
+  },
+  {
+    value: "sm",
+    label: "Küçük (H6)",
+    size: "clamp(1rem, 0.9rem + 0.5vw, 1.125rem)",
+    leading: "clamp(1.25rem, 1.125rem + 0.5vw, 1.5rem)",
+  },
+  {
+    value: "base",
+    label: "Normal (Paragraf)",
+    size: "clamp(1rem, 0.9375rem + 0.3125vw, 1.125rem)",
+    leading: "clamp(1.625rem, 1.5625rem + 0.3125vw, 1.75rem)",
+  },
+  {
+    value: "lg",
+    label: "Büyük (H5)",
+    size: "clamp(1.125rem, 1rem + 0.625vw, 1.25rem)",
+    leading: "clamp(1.5rem, 1.375rem + 0.625vw, 1.75rem)",
+  },
+  {
+    value: "xl",
+    label: "Daha Büyük (H4)",
+    size: "clamp(1.25rem, 1.125rem + 0.625vw, 1.5rem)",
+    leading: "clamp(1.75rem, 1.625rem + 0.625vw, 2rem)",
+  },
+  {
+    value: "2xl",
+    label: "Çok Büyük (H3)",
+    size: "clamp(1.5rem, 1.25rem + 0.9375vw, 1.875rem)",
+    leading: "clamp(2rem, 1.75rem + 0.625vw, 2.25rem)",
+  },
+  {
+    value: "3xl",
+    label: "Daha Büyük (H2)",
+    size: "clamp(1.75rem, 1.5rem + 1.25vw, 2.25rem)",
+    leading: "clamp(2.25rem, 1.875rem + 1.25vw, 2.75rem)",
+  },
+  {
+    value: "4xl",
+    label: "Devasa (H1)",
+    size: "clamp(2.25rem, 1.875rem + 1.875vw, 3rem)",
+    leading: "clamp(2.75rem, 2.25rem + 2vw, 3.5rem)",
+  },
 ];
 
 // Type tanımlamaları
