@@ -86,13 +86,13 @@
   },
   "main": {
     "hero": {
-      "button": "Son Blogu Oku",
+      "button": "Son Yazıya Git",
       "title": "Sana Uygun Dubai Deneyimlerini Keşfet",
       "description": "Dubai cazibe merkezleri hakkında dürüst yorumlar, gerçek fotoğraflar ve topluluk içgörüleri edinin. Keşfetmeye ve öğrenmeye başlayın."
     },
     "search": {
-      "filter_btn": "Filtrele",
-      "placeholder": "En İyi Dubai Restoranı..",
+      "filter_btn": "Filtre",
+      "placeholder": "En İyi eniz Ürünleri Restoranları..",
       "search_btn": "Ara",
       "dropdown": {
         "result_zero": "sonuç yok",
