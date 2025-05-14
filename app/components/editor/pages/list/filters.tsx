@@ -50,6 +50,7 @@ export function BlogFilters() {
     },
     { value: "title", label: "Başlık", icon: <Type size={14} /> },
   ];
+
   const directionOptions = [
     {
       value: "desc",
