@@ -1,19 +1,12 @@
-import { ACTIVE_LANGUAGE_DICTONARY } from "@/i18n/config";
-import { Link } from "@/i18n/link";
-import {
-  AlertTriangle,
-  ChevronLeft,
-  ChevronRight,
-  Clock,
-  CalendarDays,
-} from "lucide-react";
-import { useState, useRef, useEffect } from "react";
-import { formatDate } from "../editor/helper";
-import { BlogCard, BlogSkeleton } from "../main/blog-card";
 import { useSnapScroll } from "@/hooks/use-snap-scroll";
+import { AlertTriangle, ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { BlogCard, BlogSkeleton } from "../main/blog-card";
+import { useTranslation } from "react-i18next";
 
 // Related Blogs Component
 export function RelatedBlogs({ blog, lang }) {
+  const { t } = useTranslation();
   const [relatedBlogs, setRelatedBlogs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -43,7 +36,7 @@ export function RelatedBlogs({ blog, lang }) {
         }
       } catch (err) {
         console.error("Error while loading related blogs:", err);
-        setError("An issue occurred while loading related blogs");
+        setError(t("blog.related.error"));
         setRelatedBlogs([]);
       } finally {
         setIsLoading(false);
@@ -51,7 +44,7 @@ export function RelatedBlogs({ blog, lang }) {
     };
 
     fetchRelatedBlogs();
-  }, [blog?.id, lang]);
+  }, [blog?.id, lang, t]);
 
   const {
     containerRef,
@@ -74,7 +67,7 @@ export function RelatedBlogs({ blog, lang }) {
     <section className="border-t border-zinc-100 bg-zinc-50 px-4 py-8">
       <div className="mx-auto max-w-7xl">
         <div className="border-l-primary-cover mb-6 flex items-center justify-between rounded border border-l-2 border-zinc-100 bg-zinc-100 px-4 py-2">
-          <h2 className="text-2xl font-semibold">Related Posts</h2>
+          <h2 className="text-2xl font-semibold">{t("blog.related.title")}</h2>
         </div>
 
         {/* Error state */}
@@ -102,7 +95,7 @@ export function RelatedBlogs({ blog, lang }) {
             <button
               ref={btnLeftRef}
               aria-disabled="true"
-              aria-label="Scroll Left"
+              aria-label={t("blog.related.scroll_left")}
               onClick={() => handleScrollLeft()}
               className="border-primary-cover bg-primary absolute top-[50%] left-1 z-20 size-10 translate-y-[-50%] rounded-full border p-1 shadow-md transition-opacity duration-300 focus:outline-none aria-disabled:cursor-not-allowed aria-disabled:opacity-0"
             >
@@ -112,7 +105,7 @@ export function RelatedBlogs({ blog, lang }) {
             <button
               ref={btnRightRef}
               aria-disabled="false"
-              aria-label="Scroll Right"
+              aria-label={t("blog.related.scroll_right")}
               onClick={() => handleScrollRight()}
               className="border-primary-cover bg-primary absolute top-[50%] right-1 z-20 size-10 translate-y-[-50%] rounded-full border p-1 shadow-md transition-opacity duration-300 focus:outline-none aria-disabled:cursor-not-allowed aria-disabled:opacity-0"
             >

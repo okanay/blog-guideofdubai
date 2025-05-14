@@ -3,13 +3,7 @@ import { DEFAULT_LANGUAGE } from "@/i18n/config";
 import { createContext, useContext, useState, useEffect } from "react";
 import { createStore, StoreApi, useStore } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  useInfiniteQuery,
-  QueryClient,
-} from "@tanstack/react-query";
+import { useQueryClient, QueryClient } from "@tanstack/react-query";
 
 const API_URL = import.meta.env.VITE_APP_BACKEND_URL || "http://localhost:3000";
 

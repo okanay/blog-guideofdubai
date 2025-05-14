@@ -1,9 +1,11 @@
 import { Link } from "@/i18n/link";
 import { useLoaderData } from "@tanstack/react-router";
 import { Eye, Heart } from "lucide-react"; // Lucide ikonları import edildi
-import { BlogCard } from "./blog-card";
+import { BlogCard, CategoryBadge } from "./blog-card";
+import { useTranslation } from "react-i18next";
 
 export function BlogPostLayout() {
+  const { t } = useTranslation();
   // Loader datası kullanımı
   const { mostViewedPosts } = useLoaderData({ from: "/blog/_main/" });
 
@@ -37,6 +39,8 @@ function SelectedFeaturePost({
 }: {
   mostViewedPosts?: BlogPostCardView[];
 }) {
+  const { t } = useTranslation();
+
   // Dummy veri, olası hata durumları için
   const dummyMostViewedPost = {
     id: "550e8400-e29b-41d4-a716-446655440010",
@@ -95,7 +99,8 @@ function SelectedFeaturePost({
           <div className="absolute top-4 right-4 flex items-center gap-1 rounded-full bg-black/75 px-3 py-1.5 backdrop-blur-sm">
             <Eye className="h-4 w-4 text-white" />
             <span className="text-xs font-semibold text-white">
-              {topViewedPost.stats.views.toLocaleString()} görüntülenme
+              {topViewedPost.stats.views.toLocaleString()}{" "}
+              {t("main.sections.most_viewed.views")}
             </span>
           </div>
         )}
@@ -104,7 +109,10 @@ function SelectedFeaturePost({
         <div className="absolute right-0 bottom-0 left-0 flex flex-col gap-2 border-t border-zinc-100 bg-gradient-to-t from-zinc-950/40 to-zinc-100/40 px-4 py-4 backdrop-blur-xs">
           {topViewedPost.categories && topViewedPost.categories.length > 0 && (
             <span className="w-fit rounded-full border border-zinc-900 bg-zinc-900/80 px-2 py-1 text-[0.6rem] font-medium text-zinc-100 backdrop-blur-sm">
-              {topViewedPost.categories[0].value}
+              <CategoryBadge
+                name={topViewedPost.categories[0].name}
+                value={topViewedPost.categories[0].value}
+              />
             </span>
           )}
           <h1 className="line-clamp-2 text-xl font-bold text-balance text-white md:text-3xl">
@@ -112,7 +120,8 @@ function SelectedFeaturePost({
           </h1>
           <div className="flex items-center gap-3 text-white">
             <span className="text-xs">
-              {topViewedPost.content.readTime} min read
+              {topViewedPost.content.readTime}{" "}
+              {t("main.sections.common.min_read")}
             </span>
             {topViewedPost.stats && (
               <>
@@ -135,6 +144,8 @@ function MostViewedPosts({
 }: {
   mostViewedPosts?: BlogPostCardView[];
 }) {
+  const { t } = useTranslation();
+
   // Dummy veri, BlogPostCardView tipine göre oluşturuldu
   const DummyMostViewedPosts: BlogPostCardView[] = [
     {
@@ -277,7 +288,7 @@ function MostViewedPosts({
   return (
     <div>
       <h2 className="border-l-primary-cover mb-4 rounded border border-l-2 border-zinc-100 bg-zinc-100 py-1 pl-2 text-2xl font-semibold">
-        Most Viewed Posts
+        {t("main.sections.most_viewed.title")}
       </h2>
 
       <div className="flex flex-col gap-4">
@@ -318,6 +329,7 @@ function MostViewedPosts({
 }
 
 function RecentPosts() {
+  const { t } = useTranslation();
   // Dummy veri, BlogPostCardView tipine göre oluşturuldu
   const DummyRecentPosts: BlogPostCardView[] = [
     {
@@ -402,12 +414,14 @@ function RecentPosts() {
   return (
     <div>
       <div className="border-l-primary-cover mb-6 flex items-center justify-between rounded border border-l-2 border-zinc-100 bg-zinc-100 px-2 py-1">
-        <h2 className="text-2xl font-semibold">Recent Posts</h2>
+        <h2 className="text-2xl font-semibold">
+          {t("main.sections.recent.title")}
+        </h2>
         <Link
           to="/all"
           className="text-color-primary border-primary-cover bg-primary flex h-11 items-center justify-center rounded-xs border px-6 text-center text-sm font-bold tracking-wide transition-[opacity] duration-500 ease-in-out hover:opacity-75 focus:opacity-75 focus:outline-none"
         >
-          All Posts
+          {t("main.sections.recent.all_posts")}
         </Link>
       </div>
 

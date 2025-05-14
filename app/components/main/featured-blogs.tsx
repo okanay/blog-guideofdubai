@@ -2,8 +2,13 @@ import { Link } from "@/i18n/link";
 import { CalendarDays, ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { useLoaderData } from "@tanstack/react-router";
 import { useSnapScroll } from "@/hooks/use-snap-scroll";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/i18n/use-language";
+import { formatDate } from "@/utils/format-date";
+import { CategoryBadge, TagBadge } from "./blog-card";
 
 export function FeaturedBlogSection() {
+  const { t } = useTranslation();
   // TanStack Router'dan verileri al
   const { featuredPosts: loadedFeaturedPosts } = useLoaderData({
     from: "/blog/_main/",
@@ -36,7 +41,7 @@ export function FeaturedBlogSection() {
       <button
         ref={btnLeftRef}
         aria-disabled="true"
-        aria-label="Left Scroll"
+        aria-label={t("main.sections.featured.left_scroll")}
         onClick={handleScrollLeft}
         className="border-primary-cover bg-primary absolute -top-9 left-5 z-20 size-10 translate-y-[-50%] rounded-xs border p-1 shadow-md transition-opacity duration-300 focus:outline-none aria-disabled:cursor-not-allowed aria-disabled:opacity-0 sm:top-[50%] sm:left-2 sm:rounded-full"
       >
@@ -45,7 +50,7 @@ export function FeaturedBlogSection() {
       <button
         ref={btnRightRef}
         aria-disabled="false"
-        aria-label="Right Scroll"
+        aria-label={t("main.sections.featured.right_scroll")}
         onClick={handleScrollRight}
         className="border-primary-cover bg-primary absolute -top-9 right-5 z-20 size-10 translate-y-[-50%] rounded-xs border p-1 shadow-md transition-opacity duration-300 focus:outline-none aria-disabled:cursor-not-allowed aria-disabled:opacity-0 sm:top-[50%] sm:right-2 sm:rounded-full"
       >
@@ -85,6 +90,9 @@ function FeaturedBlogCard({
   blog: BlogPostCardView;
   index: number;
 }) {
+  // i18n
+  const { language } = useLanguage();
+  const { t } = useTranslation();
   // Varsayılan bir author bilgisi tanımla (API'den gelmiyor ise)
   const authorInfo = {
     name: "Guide Of Dubai",
@@ -111,7 +119,10 @@ function FeaturedBlogCard({
           {/* Category Badge - Eğer kategori varsa ilk kategoriyi göster */}
           {blog.categories && blog.categories.length > 0 && (
             <span className="absolute top-3 left-3 rounded-full border border-zinc-900 bg-zinc-900/80 px-2 py-1 text-[0.6rem] font-medium text-zinc-100 backdrop-blur-sm">
-              {blog.categories[0].value}
+              <CategoryBadge
+                name={blog.categories[0].name}
+                value={blog.categories[0].value}
+              />
             </span>
           )}
 
@@ -128,21 +139,14 @@ function FeaturedBlogCard({
           {/* Author and Metadata */}
           <div className="absolute bottom-4 left-0 flex w-full flex-col gap-x-2 gap-y-1 px-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="order-1 flex items-center gap-2 sm:order-1">
-              {/* <div className="size-8 shrink-0 overflow-hidden rounded-full bg-zinc-300">
-                <img
-                  src={authorInfo.avatar}
-                  alt={authorInfo.name}
-                  loading="lazy"
-                  fetchPriority="low"
-                  className="h-full w-full object-cover"
-                />
-              </div> */}
-
               {/* Etiketler - En fazla bir etiket göster, zarif bir şekilde */}
               {blog.tags && blog.tags.length > 0 ? (
                 <div className="flex items-center">
                   <span className="max-w-48 truncate pr-1 text-sm text-white">
-                    {blog.tags[0].value}
+                    <TagBadge
+                      name={blog.tags[0].name}
+                      value={blog.tags[0].value}
+                    />
                   </span>
                   {blog.tags.length > 1 && (
                     <span className="rounded bg-zinc-800/60 px-1 text-xs text-zinc-300">
@@ -160,7 +164,7 @@ function FeaturedBlogCard({
             <div className="order-2 flex items-center gap-4 sm:order-2">
               <div className="flex items-center gap-1">
                 <span className="line-clamp-1 text-sm text-white">
-                  {formatDate(blog.createdAt)}
+                  {formatDate(blog.createdAt, language)}
                 </span>
                 <CalendarDays className="text-color-font-invert size-3 flex-shrink-0" />
               </div>
@@ -275,27 +279,3 @@ const DummyPosts: BlogPostCardView[] = [
     stats: { likes: 389, views: 1050, shares: 78, comments: 29 },
   },
 ];
-
-// Tarih formatlama fonksiyonu (lib/utils.ts içinde tanımlanmalı)
-const formatDate = (date: Date | string) => {
-  if (!date) return "";
-  const d = new Date(date);
-
-  // Ay isimleri
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
-  return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
-};

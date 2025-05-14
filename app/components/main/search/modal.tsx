@@ -12,8 +12,12 @@ import {
 import { useSearch } from "./store";
 import useClickOutside from "@/hooks/use-click-outside";
 import { ACTIVE_LANGUAGE_DICTONARY } from "@/i18n/config";
+import { useTranslation } from "react-i18next";
+import { CategoryBadge, TagBadge } from "../blog-card";
 
 export function SearchFilterModal() {
+  const { t } = useTranslation();
+
   const {
     isFilterModalOpen,
     closeFilterModal,
@@ -81,10 +85,13 @@ export function SearchFilterModal() {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4 backdrop-blur-sm">
       <div ref={ref} className="w-full max-w-md rounded-xl bg-white shadow-xl">
         <div className="flex items-center justify-between px-5 py-4">
-          <h3 className="text-base font-medium text-zinc-900">Filtering</h3>
+          <h3 className="text-base font-medium text-zinc-900">
+            {t("main.search.filter_modal.title")}
+          </h3>
           <button
             onClick={closeFilterModal}
             className="text-zinc-400 hover:text-zinc-600"
+            aria-label={t("main.search.filter_modal.close")}
           >
             <X size={18} />
           </button>
@@ -95,7 +102,7 @@ export function SearchFilterModal() {
             <div className="mb-1.5 flex items-center gap-2">
               <GlobeIcon size={16} className="text-zinc-500" />
               <label className="text-sm font-medium text-zinc-700">
-                Language
+                {t("main.search.filter_modal.language")}
               </label>
             </div>
             <div className="relative">
@@ -106,10 +113,12 @@ export function SearchFilterModal() {
                   setFilters({ ...filters, language: e.target.value })
                 }
               >
-                <option value="">All Languages</option>
+                <option value="">
+                  {t("main.search.filter_modal.all_languages")}
+                </option>
                 {ACTIVE_LANGUAGE_DICTONARY.map((lang) => (
                   <option key={lang.value} value={lang.value}>
-                    {lang.label}
+                    {t(`common.languages.${lang.value}`)}
                   </option>
                 ))}
               </select>
@@ -124,7 +133,7 @@ export function SearchFilterModal() {
             <div className="mb-1.5 flex items-center gap-2">
               <FolderIcon size={16} className="text-zinc-500" />
               <label className="text-sm font-medium text-zinc-700">
-                Category
+                {t("main.search.filter_modal.category")}
               </label>
               {isCategoriesLoading && (
                 <Loader2 size={14} className="animate-spin text-zinc-400" />
@@ -139,10 +148,15 @@ export function SearchFilterModal() {
                 }
                 disabled={isCategoriesLoading}
               >
-                <option value="">All Categories</option>
+                <option value="">
+                  {t("main.search.filter_modal.all_categories")}
+                </option>
                 {categories.map((category) => (
                   <option key={category.name} value={category.name}>
-                    {category.value}
+                    <CategoryBadge
+                      name={category.name}
+                      value={category.value}
+                    />
                   </option>
                 ))}
               </select>
@@ -156,7 +170,9 @@ export function SearchFilterModal() {
           <div>
             <div className="mb-1.5 flex items-center gap-2">
               <TagIcon size={16} className="text-zinc-500" />
-              <label className="text-sm font-medium text-zinc-700">Tag</label>
+              <label className="text-sm font-medium text-zinc-700">
+                {t("main.search.filter_modal.tag")}
+              </label>
               {isTagsLoading && (
                 <Loader2 size={14} className="animate-spin text-zinc-400" />
               )}
@@ -170,10 +186,12 @@ export function SearchFilterModal() {
                 }
                 disabled={isTagsLoading}
               >
-                <option value="">All Tags</option>
+                <option value="">
+                  {t("main.search.filter_modal.all_tags")}
+                </option>
                 {tags.map((tag) => (
                   <option key={tag.name} value={tag.name}>
-                    {tag.value}
+                    <TagBadge name={tag.name} value={tag.value} />
                   </option>
                 ))}
               </select>
@@ -191,7 +209,7 @@ export function SearchFilterModal() {
             className="flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-700"
           >
             <RefreshCcw size={14} />
-            <span>Reset</span>
+            <span>{t("main.search.filter_modal.reset")}</span>
           </button>
 
           <button
@@ -199,7 +217,7 @@ export function SearchFilterModal() {
             className="bg-primary-600 flex items-center gap-1.5 rounded-md px-4 py-1.5 text-sm font-medium text-white"
           >
             <FilterIcon size={14} />
-            <span>Apply</span>
+            <span>{t("main.search.filter_modal.apply")}</span>
           </button>
         </div>
       </div>

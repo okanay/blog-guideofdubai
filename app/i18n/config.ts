@@ -6,10 +6,12 @@ declare global {
 
 export const LANGUAGES: Record<string, Language> = {
   ENGLISH: "en",
+  TURKISH: "tr",
 } as const;
 
 export const ACTIVE_LANGUAGE_DICTONARY = [
   { value: "en", label: "English", seo: { locale: "en-US", direction: "ltr" } },
+  { value: "tr", label: "Türkçe", seo: { locale: "tr-TR", direction: "ltr" } },
 ];
 
 export const ALL_LANGUAGE_DICTONARY = [

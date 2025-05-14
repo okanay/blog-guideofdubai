@@ -1,7 +1,246 @@
 {
-  "common": {},
-  "index": {
-    "title": "Dubai'nin en iyi bloglarını öğrenin ve web'deki en iyi içeriği keşfedin."
+  "common": {
+    "languages": {
+      "en": "İngilizce",
+      "tr": "Türkçe",
+      "ar": "Arapça",
+      "de": "Almanca",
+      "fr": "Fransızca",
+      "ru": "Rusça"
+    },
+    "views": "görüntüleme",
+    "language_switcher": {
+      "title": "Dil",
+      "aria_label": "Dili değiştir",
+      "close": "Dil seçimini kapat"
+    },
+    "card": {
+      "categories": {
+        "rent-a-car": "Araç Kiralama",
+        "hotels": "Oteller",
+        "activities": "Aktiviteler",
+        "burj-khalifa": "Burj Khalifa",
+        "dubai-visa": "Dubai Vizesi",
+        "desert-safari": "Çöl Safari",
+        "restaurant-and-cafes": "Restoran ve Kafeler",
+        "museum-of-the-future": "Museum of The Future"
+      },
+      "tags": {
+        "yoga": "Yoga",
+        "gold-plated-mercedes-g-wagon-in-dubai": "Dubai'de Altın Kaplama Mercedes G Wagon",
+        "luxury-cars-in-dubai": "Dubai'de Lüks Arabalar",
+        "palm-jumeirah-hotels": "Palm Jumeirah Otelleri",
+        "dubai-hotels": "Dubai Otelleri",
+        "dubai-activities": "Dubai Aktiviteleri",
+        "dubai-family-activities": "Dubai Aile Aktiviteleri",
+        "burj-khalifa": "Burj Khalifa",
+        "miracle-garden-in-dubai": "Dubai'de Miracle Garden",
+        "dubai-visa": "Dubai Vizesi",
+        "dubai-theme-parks": "Dubai Tema Parkları",
+        "wild-wadi-waterpark": "Wild Wadi Su Parkı",
+        "safari-in-dubai": "Dubai'de Safari",
+        "motiongate-dubai": "Motiongate Dubai",
+        "legoland-dubai": "Legoland Dubai",
+        "riverland-dubai": "Riverland Dubai",
+        "cafe-in-dubai": "Dubai'de Kafeler",
+        "dubai-restaurants": "Dubai Restoranları",
+        "bollywood-parks-dubai": "Bollywood Parks Dubai",
+        "vegan-restaurant-in-dubai": "Dubai'de Vegan Restoranlar",
+        "helicopter-tour-in-dubai": "Dubai'de Helikopter Turu",
+        "museum-of-the-future-in-dubai": "Dubai'de Museum of The Future",
+        "restaurants-in-dubai": "Dubai'de Restoranlar",
+        "five-exhibits-at-the-museum-of-the-future": "Museum of The Future'daki Beş Sergi"
+      }
+    }
+  },
+  "header": {
+    "brand_logo_alt": "Guide of Dubai Marka Logosu",
+    "return_homepage": "Guide of Dubai - Ana sayfaya dön",
+    "main_menu": "Ana menü navigasyonu",
+    "sub_menu": "Alt menü navigasyonu",
+    "dubai_travel_points": "Dubai seyahat noktaları",
+    "visit_now": "Ziyaret Et",
+    "visit_main_website": "Guide of Dubai ana web sitesini ziyaret et",
+    "nav": {
+      "main": {
+        "hotels": "Oteller",
+        "desert_safari": "Çöl Safari",
+        "city_tours": "Şehir Turları",
+        "activities": "Aktiviteler",
+        "rent_car": "Araç Kirala",
+        "dubai_visa": "Dubai Vizesi",
+        "corporate": "Kurumsal"
+      },
+      "sub": {
+        "marketing": "Pazarlama",
+        "blog": "Blog",
+        "museum": "Museum of the Future",
+        "burj_khalifa": "Burj Khalifa",
+        "dubai_frame": "Dubai Frame",
+        "dubai_city_tour": "Dubai Şehir Turu",
+        "rent_yacht": "Yat Kirala",
+        "packages": "Paketler",
+        "restaurants": "Restoranlar"
+      }
+    }
+  },
+  "main": {
+    "hero": {
+      "button": "Son Blogu Oku",
+      "title": "Sana Uygun Dubai Deneyimlerini Keşfet",
+      "description": "Dubai cazibe merkezleri hakkında dürüst yorumlar, gerçek fotoğraflar ve topluluk içgörüleri edinin. Keşfetmeye ve öğrenmeye başlayın."
+    },
+    "search": {
+      "filter_btn": "Filtrele",
+      "placeholder": "En İyi Dubai Restoranı..",
+      "search_btn": "Ara",
+      "dropdown": {
+        "result_zero": "sonuç yok",
+        "result_one": "için <0>{{count}}</0> sonuç bulundu.",
+        "result_other": "için <0>{{count}}</0> sonuç bulundu.",
+        "blog": "Blog",
+        "language": "Dil",
+        "readtime": "Süre",
+        "show_more_results": "Daha fazla sonuç göster",
+        "edit_filters": "Filtreleri Düzenle",
+        "use_search_box": "Aramak için yukarıdaki arama kutusunu kullanın",
+        "searching": "Aranıyor...",
+        "no_results_title": "\"{{query}}\" için sonuç bulunamadı",
+        "no_results_description": "Farklı anahtar kelimelerle tekrar deneyin",
+        "error_title": "Arama sırasında bir hata oluştu",
+        "min": "dk",
+        "loading": "Yükleniyor...",
+        "close": "Arama sonuçlarını kapat",
+        "image": "Görsel"
+      },
+      "filter_modal": {
+        "title": "Filtreleme",
+        "close": "Filtre modülünü kapat",
+        "language": "Dil",
+        "all_languages": "Tüm Diller",
+        "category": "Kategori",
+        "all_categories": "Tüm Kategoriler",
+        "tag": "Etiket",
+        "all_tags": "Tüm Etiketler",
+        "reset": "Sıfırla",
+        "apply": "Uygula"
+      }
+    },
+    "sections": {
+      "featured": {
+        "title": "Öne Çıkan Yazılar",
+        "left_scroll": "Sola Kaydır",
+        "right_scroll": "Sağa Kaydır"
+      },
+      "most_viewed": {
+        "title": "En Çok Görüntülenen Yazılar",
+        "views": "görüntüleme"
+      },
+      "recent": {
+        "title": "Son Yazılar",
+        "all_posts": "Tüm Yazılar"
+      },
+      "common": {
+        "min_read": "dk okuma",
+        "results": "sonuç",
+        "no_results": "Sonuç bulunamadı"
+      }
+    }
+  },
+  "blog": {
+    "toc": {
+      "title": "Sayfadaki Başlıklar"
+    },
+    "related": {
+      "title": "İlgili Yazılar",
+      "error": "İlgili bloglar yüklenirken bir sorun oluştu",
+      "scroll_left": "Sola Kaydır",
+      "scroll_right": "Sağa Kaydır"
+    }
+  },
+  "footer": {
+    "experience_title": "Dubai'nin En İyi Deneyimlerini Keşfedin!",
+    "experience_description": "Dubai tatilinizi unutulmaz bir maceraya dönüştürün! Özel aktiviteler, lüks yat turları, çöl safarileri ve daha fazlasını keşfedin. Hemen rezervasyon yapın ve hayalinizdeki tatili yaşayın.",
+    "view_activities": "Tüm Aktiviteleri Gör",
+    "exclusive_tours": "Özel VIP Turlar",
+    "need_assistance": "Yardıma ihtiyacınız var mı?",
+    "call_now": "Hemen Ara",
+    "whatsapp": "WhatsApp",
+    "whatsapp_text": "Bize WhatsApp'tan ulaşın",
+    "whatsapp_number": "+971 56 800 0304",
+    "support_text": "7/24 Müşteri Hizmetleri – Nerede olursanız olun, her zaman yanınızdayız!",
+    "other_services": "Diğer Hizmetler",
+    "popular_activities": "Popüler Aktiviteler",
+    "contracts_policies": "Sözleşmeler & Politikalar",
+    "guide_of_dubai": "Guide of Dubai",
+    "mobile_app": "Mobil Uygulama",
+    "download_app": "Mobil uygulamamızı indirin",
+    "app_description": "Daha hızlı rezervasyon ve özel teklifler için uygulamamızı kullanın.",
+    "download": "İndir",
+    "app_store": "App Store",
+    "google_play": "Google Play",
+    "copyright": "HOI Holding, Hair of Istanbul Tourism LLC DED License No:1142311. Her hakkı saklıdır © 2025 - Güvenilir seyahat deneyimi için yanınızdayız",
+    "services": {
+      "hotel": {
+        "title": "Otel Konaklama",
+        "description": "Dubai'deki en iyi otelleri keşfedin ve lüks bir konaklamanın keyfini çıkarın."
+      },
+      "car": {
+        "title": "Araç Kiralama",
+        "description": "Araç kiralayarak Dubai'yi kendi hızınızda keşfedin."
+      },
+      "visa": {
+        "title": "Dubai Vizesi",
+        "description": "Dubai vizesine kolayca başvurun ve sorunsuz bir seyahat deneyimi yaşayın."
+      },
+      "yacht": {
+        "title": "Yat Kiralama",
+        "description": "Dubai’nin eşsiz sularında lüks bir yat deneyimi yaşayın."
+      }
+    },
+    "activities": {
+      "safari": {
+        "title": "Dubai Safari Turu",
+        "description": "Çöl kumlarında unutulmaz bir macera yaşayın."
+      },
+      "museum": {
+        "title": "Museum of the Future",
+        "description": "Geleceğin dünyasını keşfetmek için benzersiz bir deneyim."
+      },
+      "dubai_tour": {
+        "title": "Dubai Şehir Turu",
+        "description": "Dubai'nin büyüleyici noktalarını keşfedin."
+      },
+      "burj": {
+        "title": "Burj Khalifa",
+        "description": "Dünyanın en yüksek binasından eşsiz manzaranın keyfini çıkarın."
+      },
+      "abu_dhabi": {
+        "title": "Abu Dhabi Şehir Turu",
+        "description": "BAE'nin başkentindeki tarihi ve modern noktaları keşfedin."
+      },
+      "miracle": {
+        "title": "Miracle Garden",
+        "description": "Dünyanın en büyük çiçek bahçesinde muhteşem güzellikleri keşfedin."
+      },
+      "helicopter": {
+        "title": "Dubai Helikopter Turu",
+        "description": "Dubai’nin büyüleyici manzaralarını gökyüzünden keşfedin."
+      },
+      "jetski": {
+        "title": "Dubai Jetski Turu",
+        "description": "Dubai'nin berrak sularında hız ve adrenalin dolu bir jetski deneyimi."
+      }
+    },
+    "links": {
+      "terms": "Kullanım Sözleşmesi",
+      "gdpr": "KVKK Sözleşmesi",
+      "privacy": "Gizlilik Politikası",
+      "sales": "Satış Sözleşmesi",
+      "about": "Hakkımızda",
+      "contact": "İletişim",
+      "faq": "S.S.S"
+    }
   },
   "not-found": {
     "title": "Sayfa Bulunamadı",

@@ -1,57 +1,60 @@
 import { Link } from "@/i18n/link";
 import LanguageSwitcher from "./language-switcher";
+import { useTranslation } from "react-i18next";
 
 export const RootHeader = () => {
+  const { t } = useTranslation();
+
   const items = {
     main: [
       {
-        name: "Hotels",
+        name: t("header.nav.main.hotels"),
         to: "https://guideofdubai.com/hotels",
       },
       {
-        name: "Desert Safari",
+        name: t("header.nav.main.desert_safari"),
         to: "https://guideofdubai.com/tour/dubai-safari-tour",
       },
       {
-        name: "City Tours",
+        name: t("header.nav.main.city_tours"),
         to: "https://guideofdubai.com/toursandtickets?c=1",
       },
       {
-        name: "Activities",
+        name: t("header.nav.main.activities"),
         to: "https://guideofdubai.com/toursandtickets",
       },
       {
-        name: "Rent a Car",
+        name: t("header.nav.main.rent_car"),
         to: "https://guideofdubai.com/rental-cars",
       },
       {
-        name: "Dubai Visa",
+        name: t("header.nav.main.dubai_visa"),
         to: "https://guideofdubai.com/visa",
       },
     ],
     sub: [
       {
-        name: "MUSEUM OF THE FUTURE",
+        name: t("header.nav.sub.museum"),
         to: "https://guideofdubai.com/ticket/museum-of-the-future",
       },
       {
-        name: "BURJ KHALIFA",
+        name: t("header.nav.sub.burj_khalifa"),
         to: "https://guideofdubai.com/ticket/burj-khalifa-at-the-top-level-125-124",
       },
       {
-        name: "DUBAI FRAME",
+        name: t("header.nav.sub.dubai_frame"),
         to: "https://guideofdubai.com/ticket/dubai-frame",
       },
       {
-        name: "DUBAI CITY TOUR",
+        name: t("header.nav.sub.dubai_city_tour"),
         to: "https://guideofdubai.com/tour/dubai-iconic-places-tour",
       },
       {
-        name: "RENT A YACHT",
+        name: t("header.nav.sub.rent_yacht"),
         to: "https://guideofdubai.com/rent-a-yacht",
       },
       {
-        name: "RESTAURANTS",
+        name: t("header.nav.sub.restaurants"),
         to: "https://guideofdubai.com/restaurants",
       },
     ],
@@ -59,18 +62,19 @@ export const RootHeader = () => {
 
   return (
     <header
-      className="relative w-full border-b border-zinc-200 bg-white py-1 md:border-b-0 md:pb-0"
+      className="relative z-50 w-full border-b border-zinc-200 bg-white md:border-b-0 md:pb-0"
       role="banner"
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-1.5">
+      <div className="relative mx-auto flex items-start justify-between px-4 py-2 md:px-0 md:py-0">
+        {/* Logo - Left Section */}
         <Link
           to=""
-          aria-label="Guide of Dubai - Return to homepage"
-          className="transition-opacity duration-300 focus:opacity-75 focus:outline-none"
+          aria-label={t("header.return_homepage")}
+          className="top-1.5 left-4 z-20 shrink-0 transition-opacity duration-300 focus:opacity-75 focus:outline-none md:absolute"
         >
           <img
             src="/images/brand.svg"
-            alt="Guide of Dubai Brand Logo"
+            alt={t("header.brand_logo_alt")}
             loading="eager"
             className="h-10 w-fit"
             width="120"
@@ -78,19 +82,22 @@ export const RootHeader = () => {
           />
         </Link>
 
-        {/* Main Menu Navigation */}
-        <nav aria-label="Main menu navigation" className="hidden md:block">
+        {/* Main Menu Navigation - Center Section */}
+        <nav
+          aria-label={t("header.main_menu")}
+          className="hidden w-full flex-col items-center md:flex"
+        >
           <ul
             id="main-navigation-menu"
-            className="flex items-center gap-6"
+            className="flex items-center justify-center gap-6 overflow-x-auto py-3.5"
             role="menubar"
-            aria-label="Main menu"
+            aria-label={t("header.main_menu")}
           >
             {items.main.map((item) => (
               <li
                 key={"main-nav-group-" + item.name}
                 role="none"
-                className="text-primary before:bg-primary relative font-medium tracking-wide"
+                className="text-primary before:bg-primary relative font-medium tracking-wide text-nowrap"
               >
                 <a
                   href={item.to}
@@ -103,34 +110,18 @@ export const RootHeader = () => {
               </li>
             ))}
           </ul>
-        </nav>
 
-        <div className="flex items-center gap-4">
-          <LanguageSwitcher />
-          <a
-            href="https://guideofdubai.com/"
-            className="text-color-primary border-primary-cover bg-primary flex h-11 items-center justify-center rounded-xs border px-6 text-center text-sm font-bold tracking-wide transition-opacity duration-300 ease-in-out hover:opacity-75 focus:opacity-75 focus:outline-none"
-            aria-label="Visit Guide of Dubai main website"
-          >
-            Visit Now
-          </a>
-        </div>
-      </div>
-
-      {/* Sub Menu Navigation */}
-      <div className="border-primary-cover bg-primary hidden border-y pt-1 pb-1.5 backdrop-blur-sm md:block">
-        <nav aria-label="Sub menu navigation">
           <ul
             id="sub-navigation-menu"
-            className="mx-auto flex max-w-7xl items-center justify-center gap-6 px-4"
+            className="bg-primary mx-auto flex w-full items-center justify-center gap-6 overflow-x-auto px-4 py-1"
             role="menubar"
-            aria-label="Dubai travel points"
+            aria-label={t("header.dubai_travel_points")}
           >
             {items.sub.map((item) => (
               <li
                 key={"sub-nav-group-" + item.name}
                 role="none"
-                className="text-color-primary before:bg-color-font relative font-medium tracking-wide"
+                className="text-color-primary before:bg-color-font relative font-medium tracking-wide text-nowrap"
               >
                 <a
                   href={item.to}
@@ -143,6 +134,18 @@ export const RootHeader = () => {
             ))}
           </ul>
         </nav>
+
+        {/* Right Section - Language & CTA */}
+        <div className="top-1 right-4 z-20 flex shrink-0 items-center gap-4 md:absolute">
+          <LanguageSwitcher />
+          <a
+            href="https://guideofdubai.com/"
+            className="text-color-primary border-primary-cover bg-primary flex h-11 items-center justify-center rounded-xs border px-6 text-center text-sm font-bold tracking-wide transition-opacity duration-300 ease-in-out hover:opacity-75 focus:opacity-75 focus:outline-none"
+            aria-label={t("header.visit_main_website")}
+          >
+            {t("header.visit_now")}
+          </a>
+        </div>
       </div>
     </header>
   );

@@ -2,6 +2,7 @@ import { BookOpenText } from "lucide-react";
 import { BlogSearchBar } from "./search";
 import { Link } from "@/i18n/link";
 import { useLatestBlog } from "./search/store";
+import { useTranslation } from "react-i18next";
 
 function BackgroudGradient() {
   return (
@@ -10,6 +11,8 @@ function BackgroudGradient() {
 }
 
 export function HeroSection() {
+  const { t } = useTranslation();
+
   return (
     <>
       <BackgroudGradient />
@@ -17,14 +20,8 @@ export function HeroSection() {
         <div className="relative z-21 mx-auto max-w-7xl px-4">
           <div className="mx-auto flex w-full max-w-xl flex-col gap-6 md:items-center md:justify-center md:text-center">
             <LatestBlogButton />
-            <h1 className="text-5xl sm:text-6xl">
-              Find Your Perfect Dubai Experience
-            </h1>
-            <p className="text-base sm:text-lg">
-              Get honest reviews, real photos, and community insights about
-              Dubai attractions. Search by location or activity to start
-              exploring.
-            </p>
+            <h1 className="text-5xl sm:text-6xl">{t("main.hero.title")}</h1>
+            <p className="text-base sm:text-lg">{t("main.hero.description")}</p>
             <BlogSearchBar />
           </div>
         </div>
@@ -34,6 +31,7 @@ export function HeroSection() {
 }
 
 export function LatestBlogButton() {
+  const { t } = useTranslation();
   const { latestBlog, loading } = useLatestBlog();
 
   const slug = latestBlog?.slug || "";
@@ -46,7 +44,7 @@ export function LatestBlogButton() {
         aria-disabled={loading}
         onClick={loading ? (e) => e.preventDefault() : undefined}
       >
-        Read Latest Blog
+        {t("main.hero.button")}
         <BookOpenText className="text-primary-dark size-3 translate-y-[0.5px]" />
       </Link>
     </div>

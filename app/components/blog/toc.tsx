@@ -1,5 +1,6 @@
 import { twMerge } from "tailwind-merge";
 import React, { useEffect, useMemo, useState, useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 type Heading = {
   text: string;
@@ -108,6 +109,7 @@ interface BlogTOCProps {
 }
 
 export const BlogTOC: React.FC<BlogTOCProps> = ({ htmlContainerSelector }) => {
+  const { t } = useTranslation();
   const [headings, setHeadings] = useState<Heading[]>([]);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [locked, setLocked] = useState(false);
@@ -207,7 +209,7 @@ export const BlogTOC: React.FC<BlogTOCProps> = ({ htmlContainerSelector }) => {
       aria-label="Sayfada Olanlar"
     >
       <h2 className="text-color-font mb-2 text-xs font-bold tracking-wide uppercase">
-        On This Page
+        {t("blog.toc.title")}
       </h2>
       <TOCList
         items={tocTree}

@@ -1,7 +1,7 @@
 import { API_URL } from "@/components/editor/helper";
 import { BlogPostLayout } from "@/components/main/blog-post-layout";
 import { HeroSection } from "@/components/main/hero";
-import { FeaturedBlogSection } from "@/components/main/popular-blog";
+import { FeaturedBlogSection } from "@/components/main/featured-blogs";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/blog/_main/")({

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ACTIVE_LANGUAGE_DICTONARY } from "@/i18n/config";
 import { useLanguage } from "@/i18n/use-language";
 import { Globe, X, Check } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface LanguageSwitcherProps {
   className?: string;
@@ -47,6 +48,7 @@ const LanguageFlags = {
 };
 
 export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = () => {
+  const { t } = useTranslation();
   const { language, changeLanguage } = useLanguage();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -83,7 +85,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = () => {
       <button
         onClick={() => setIsModalOpen(true)}
         className={`group hover:border-primary-200 hover:text-primary-600 flex h-11 items-center space-x-2 rounded border border-zinc-200 bg-zinc-50 px-3 text-zinc-700 transition-all`}
-        aria-label="Dil değiştir"
+        aria-label={t("common.language_switcher.aria_label")}
       >
         <Globe size={18} className="text-primary-500" />
       </button>
@@ -102,11 +104,14 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = () => {
             <div className="from-primary-600 to-primary-500 flex items-center justify-between rounded-t-lg bg-gradient-to-r p-4 text-white shadow-md">
               <div className="flex items-center">
                 <Globe size={20} className="mr-2" />
-                <span className="text-lg font-medium">Language </span>
+                <span className="text-lg font-medium">
+                  {t("common.language_switcher.title")}
+                </span>
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
                 className="rounded-full p-1.5 text-white transition-all duration-200 hover:bg-white/20 focus:ring-2 focus:ring-white/50 focus:outline-none active:scale-95"
+                aria-label={t("common.language_switcher.close")}
               >
                 <X size={18} />
               </button>
@@ -141,7 +146,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = () => {
 
                   <div className="flex flex-col">
                     <span className="font-medium text-gray-950">
-                      {lang.label}
+                      {t(`common.languages.${lang.value}`)}
                     </span>
                   </div>
 

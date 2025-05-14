@@ -3,19 +3,16 @@ import { useEffect, useRef, useState, FormEvent } from "react";
 import { useSearch } from "./store";
 import { SearchResultsDropdown } from "./dropdown";
 import { SearchFilterModal } from "./modal";
+import { useTranslation } from "react-i18next";
 
 // Ana arama çubuğu bileşeni
 interface SearchBarProps {
   className?: string;
-  placeholder?: string;
 }
 
-// app/components/search/index.tsx dosyasındaki SearchBar bileşeni güncellenmiş hali
+function SearchBar({ className = "" }: SearchBarProps) {
+  const { t } = useTranslation();
 
-function SearchBar({
-  className = "",
-  placeholder = "Best Dubai Restaurant..",
-}: SearchBarProps) {
   const {
     searchQuery,
     search,
@@ -103,7 +100,7 @@ function SearchBar({
           onClick={openFilterModal}
           className="relative flex flex-shrink-0 items-center justify-center gap-2 rounded-l-full border border-zinc-200 bg-zinc-100 px-4 transition-[opacity_colors] duration-300 hover:cursor-pointer hover:border-zinc-300 hover:bg-zinc-200 focus:opacity-75 focus:outline-none sm:w-24 sm:px-2"
         >
-          <span className="hidden sm:block">Filter</span>
+          <span className="hidden sm:block">{t("main.search.filter_btn")}</span>
           <SlidersHorizontal className="size-4" />
         </button>
 
@@ -113,7 +110,7 @@ function SearchBar({
             type="text"
             id="search-input"
             name="search-param"
-            placeholder={placeholder}
+            placeholder={t("main.search.placeholder")}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onFocus={() => {
@@ -140,7 +137,7 @@ function SearchBar({
           type="submit"
           className="bg-primary flex items-center gap-1.5 rounded-r-full px-4 py-2 font-medium tracking-wide text-white transition-[opacity] duration-500 ease-in-out hover:opacity-75 focus:outline-none"
         >
-          <span className="hidden sm:block">Search</span>
+          <span className="hidden sm:block">{t("main.search.search_btn")}</span>
           <Search className="size-4 translate-x-[-10%] sm:translate-x-0" />
         </button>
       </form>

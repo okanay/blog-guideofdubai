@@ -1,33 +1,34 @@
 /* prettier-ignore */
-import { Compass, Phone, Bed, Car, ShipWheel, Heart, BookOpen, Building2, TabletSmartphone, Instagram, Palmtree } from "lucide-react";
+import { Compass, Phone, Bed, Car, ShipWheel, BookOpen, Building2, TabletSmartphone, Instagram, Palmtree } from "lucide-react";
 /* prettier-ignore */
 import { VisaSVG, SafariSVG, DubaiCityTourSVG, JetskiSVG, BurjSVG, AbuDhabiCityTourSVG, MuseumSVG, MiracleGardenSVG, HelicipterSVG, AppleSVG, AndroidSVG, WhatsAppSVG } from "./icons/";
+import { useTranslation } from "react-i18next";
 
 export const RootFooter = () => {
+  const { t } = useTranslation();
+
   const otherServices = [
     {
-      title: "Hotel Accommodation",
-      description:
-        "Discover the best hotels in Dubai and enjoy a luxurious stay.",
+      title: t("footer.services.hotel.title"),
+      description: t("footer.services.hotel.description"),
       icon: <Bed className="size-6" />,
       link: "https://guideofdubai.com/hotels",
     },
     {
-      title: "Car Rental",
-      description: "Rent a car and explore Dubai at your own pace.",
+      title: t("footer.services.car.title"),
+      description: t("footer.services.car.description"),
       icon: <Car className="size-6" />,
       link: "https://guideofdubai.com/rental-cars",
     },
     {
-      title: "Dubai Visa",
-      description: "Easily apply for your Dubai visa and travel hassle-free.",
+      title: t("footer.services.visa.title"),
+      description: t("footer.services.visa.description"),
       icon: <VisaSVG />,
       link: "https://guideofdubai.com/visa",
     },
     {
-      title: "Yacht Rental",
-      description:
-        "Enjoy a luxury yacht experience in Dubai's stunning waters.",
+      title: t("footer.services.yacht.title"),
+      description: t("footer.services.yacht.description"),
       icon: <ShipWheel className="size-6" />,
       link: "https://guideofdubai.com/rent-a-yacht",
     },
@@ -35,70 +36,84 @@ export const RootFooter = () => {
 
   const popularActivities = [
     {
-      title: "Dubai Safari Tour",
-      description: "Experience an unforgettable adventure in the desert sands.",
+      title: t("footer.activities.safari.title"),
+      description: t("footer.activities.safari.description"),
       icon: <SafariSVG />,
       link: "https://guideofdubai.com/tour/dubai-safari-tour",
     },
     {
-      title: "Museum of the Future",
-      description: "A unique experience to explore the world of the future.",
+      title: t("footer.activities.museum.title"),
+      description: t("footer.activities.museum.description"),
       icon: <MuseumSVG />,
       link: "https://guideofdubai.com/ticket/museum-of-the-future",
     },
     {
-      title: "Dubai City Tour",
-      description: "Discover the fascinating highlights of Dubai.",
+      title: t("footer.activities.dubai_tour.title"),
+      description: t("footer.activities.dubai_tour.description"),
       icon: <DubaiCityTourSVG />,
       link: "https://guideofdubai.com/tour/dubai-iconic-places-tour",
     },
     {
-      title: "Burj Khalifa",
-      description:
-        "Enjoy the breathtaking view from the world's tallest building.",
+      title: t("footer.activities.burj.title"),
+      description: t("footer.activities.burj.description"),
       icon: <BurjSVG />,
       link: "https://guideofdubai.com/ticket/burj-khalifa-at-the-top-level-125-124",
     },
     {
-      title: "Abu Dhabi City Tour",
-      description:
-        "Explore the historical and modern sights of the UAE capital.",
+      title: t("footer.activities.abu_dhabi.title"),
+      description: t("footer.activities.abu_dhabi.description"),
       icon: <AbuDhabiCityTourSVG />,
       link: "https://guideofdubai.com/tour/abu-dhabi-iconic-places-tour",
     },
     {
-      title: "Miracle Garden",
-      description:
-        "Step into the world's largest flower garden with breathtaking displays.",
+      title: t("footer.activities.miracle.title"),
+      description: t("footer.activities.miracle.description"),
       icon: <MiracleGardenSVG />,
       link: "https://guideofdubai.com/ticket/dubai-miracle-garden",
     },
     {
-      title: "Dubai Helicopter Tour",
-      description: "Soar over Dubai's stunning skyline and landmarks.",
+      title: t("footer.activities.helicopter.title"),
+      description: t("footer.activities.helicopter.description"),
       icon: <HelicipterSVG />,
       link: "https://guideofdubai.com/tour/helicopter-ride-in-dubai",
     },
     {
-      title: "Dubai Jetski Tour",
-      description:
-        "Experience speed and adrenaline on Dubai's crystal-clear waters.",
+      title: t("footer.activities.jetski.title"),
+      description: t("footer.activities.jetski.description"),
       icon: <JetskiSVG />,
       link: "https://guideofdubai.com/tour/jetski-tour",
     },
   ];
 
   const contractsLinks = [
-    { title: "Terms of Use", link: "https://guideofdubai.com/terms" },
-    { title: "GDPR Policy", link: "https://guideofdubai.com/gdpr" },
-    { title: "Privacy Policy", link: "https://guideofdubai.com/privacy" },
-    { title: "Sales Agreement", link: "https://guideofdubai.com/sales" },
+    {
+      title: t("footer.links.terms"),
+      link: "https://guideofdubai.com/terms",
+    },
+    {
+      title: t("footer.links.gdpr"),
+      link: "https://guideofdubai.com/gdpr",
+    },
+    {
+      title: t("footer.links.privacy"),
+      link: "https://guideofdubai.com/privacy",
+    },
+    {
+      title: t("footer.links.sales"),
+      link: "https://guideofdubai.com/sales",
+    },
   ];
 
   const companyLinks = [
-    { title: "About Us", link: "https://guideofdubai.com/aboutus" },
-    { title: "Contact", link: "https://guideofdubai.com/contact" },
-    { title: "FAQ", link: "https://guideofdubai.com/faq" },
+    {
+      title: t("footer.links.about"),
+      link: "https://guideofdubai.com/aboutus",
+    },
+    {
+      title: t("footer.links.contact"),
+      link: "https://guideofdubai.com/contact",
+    },
+    { title: t("footer.links.faq"), link: "https://guideofdubai.com/faq" },
   ];
 
   const ServiceCard = ({ title, description, icon, link }) => (
@@ -143,33 +158,33 @@ export const RootFooter = () => {
           <div className="mx-auto grid max-w-7xl grid-cols-1 items-center justify-between gap-x-12 sm:grid-cols-2 sm:px-4 lg:grid-cols-3">
             {/* Left Column - Content */}
             <div className="py-8 text-center md:max-w-lg md:text-left lg:col-span-2">
-              <h2 className="mb-4 text-3xl font-bold">
-                Experience the Best of Dubai!
+              <h2 className="mb-4 text-3xl font-bold sm:line-clamp-1">
+                {t("footer.experience_title")}
               </h2>
-              <p className="mx-auto mb-6 px-4 text-base text-zinc-800 sm:px-0 sm:text-lg">
-                Turn your Dubai trip into an unforgettable adventure! Explore
-                exclusive activities, luxury yacht tours, desert safaris, and
-                more. Book now and make your dream vacation a reality.
+              <p className="mx-auto mb-6 px-4 text-base text-zinc-800 sm:line-clamp-3 sm:px-0 sm:text-lg">
+                {t("footer.experience_description")}
               </p>
               <div className="flex flex-wrap justify-center gap-4 md:justify-start">
                 <a
                   href="https://guideofdubai.com/toursandtickets"
                   className="text-primary-500 rounded-lg border border-zinc-200/60 bg-white px-6 py-3 font-medium transition-[opacity,transform] duration-300 hover:opacity-75 active:scale-95"
                 >
-                  View All Activities
+                  {t("footer.view_activities")}
                 </a>
                 <a
                   href="https://guideofdubai.com/toursandtickets?c=1"
                   className="bg-primary rounded-lg border border-white px-6 py-3 font-medium text-white transition-[opacity,transform] duration-300 hover:opacity-75 active:scale-95"
                 >
-                  Exclusive Private Tours
+                  {t("footer.exclusive_tours")}
                 </a>
               </div>
             </div>
 
             {/* Right Column - Contact */}
             <div className="border-primary-800 bg-primary relative flex h-full w-full flex-col justify-center border-x px-6 py-8 text-center text-white lg:h-[300px] lg:w-full">
-              <h3 className="mb-4 text-xl font-semibold">Need Assistance?</h3>
+              <h3 className="mb-4 text-xl font-semibold">
+                {t("footer.need_assistance")}
+              </h3>
               <div className="mb-6 flex justify-center gap-6">
                 <a
                   href="tel:+971568000304"
@@ -178,7 +193,9 @@ export const RootFooter = () => {
                   <div className="text-primary-600 group-hover:bg-primary-50 mb-2 flex size-14 items-center justify-center rounded-full border border-zinc-200/60 bg-white transition-all">
                     <Phone className="size-6" />
                   </div>
-                  <span className="text-sm font-medium">Call Now</span>
+                  <span className="text-sm font-medium">
+                    {t("footer.call_now")}
+                  </span>
                 </a>
                 <a
                   href="https://wa.me/+971568000304"
@@ -187,7 +204,9 @@ export const RootFooter = () => {
                   <div className="group-hover:bg-primary-50 mb-2 flex size-14 items-center justify-center rounded-full border border-zinc-200/60 bg-white text-green-600 transition-all">
                     <WhatsAppSVG />
                   </div>
-                  <span className="text-sm font-medium">WhatsApp</span>
+                  <span className="text-sm font-medium">
+                    {t("footer.whatsapp")}
+                  </span>
                 </a>
               </div>
               <a
@@ -197,7 +216,7 @@ export const RootFooter = () => {
                 +971 56 800 0304
               </a>
               <p className="text-primary-200 mt-1 text-center text-xs">
-                24/7 Customer Support – We're here for you anytime, anywhere!
+                {t("footer.support_text")}
               </p>
             </div>
           </div>
@@ -210,7 +229,7 @@ export const RootFooter = () => {
             <div className="col-span-1 sm:col-span-2 lg:col-span-1">
               <SectionHeader
                 icon={<Compass className="size-5" />}
-                title="Other Services"
+                title={t("footer.other_services")}
               />
 
               <div className="col-span-1 -mt-2 grid grid-cols-1 gap-x-8 gap-y-4 sm:mt-0 sm:grid-cols-2 lg:grid-cols-1">
@@ -230,7 +249,7 @@ export const RootFooter = () => {
             <div className="col-span-1 sm:col-span-2">
               <SectionHeader
                 icon={<Palmtree className="size-5" />}
-                title="Popular Activities"
+                title={t("footer.popular_activities")}
               />
               <div className="-mt-2 grid grid-cols-1 gap-x-8 gap-y-4 sm:mt-0 sm:grid-cols-2">
                 {popularActivities.map((activity, index) => (
@@ -249,7 +268,7 @@ export const RootFooter = () => {
             <div className="col-span-1">
               <SectionHeader
                 icon={<BookOpen className="size-5" />}
-                title="Contracts & Policies"
+                title={t("footer.contracts_policies")}
               />
               <div className="-mt-2 space-y-3 sm:mt-0">
                 {contractsLinks.map((link, index) => (
@@ -262,7 +281,7 @@ export const RootFooter = () => {
             <div className="col-span-1">
               <SectionHeader
                 icon={<Building2 className="size-5" />}
-                title="Guide of Dubai"
+                title={t("footer.guide_of_dubai")}
               />
               <div className="-mt-3 space-y-3 sm:mt-0">
                 {companyLinks.map((link, index) => (
@@ -276,13 +295,13 @@ export const RootFooter = () => {
               <div className="flex w-full flex-col gap-2">
                 <SectionHeader
                   icon={<TabletSmartphone className="size-5" />}
-                  title="Mobile App"
+                  title={t("footer.mobile_app")}
                 />
                 <p className="-mt-3 text-base font-medium sm:-mt-2">
-                  Download our mobile app
+                  {t("footer.download_app")}
                 </p>
                 <p className="-mt-1 mb-1 text-sm text-zinc-400">
-                  Use our app for faster booking and special offers.
+                  {t("footer.app_description")}
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <a
@@ -292,9 +311,11 @@ export const RootFooter = () => {
                     <AppleSVG />
                     <span className="ml-4 flex flex-col items-start leading-none">
                       <span className="mb-1 text-[0.6rem] text-zinc-600 uppercase">
-                        Download
+                        {t("footer.download")}
                       </span>
-                      <span className="title-font font-medium">App Store</span>
+                      <span className="title-font font-medium">
+                        {t("footer.app_store")}
+                      </span>
                     </span>
                   </a>
                   <a
@@ -304,10 +325,10 @@ export const RootFooter = () => {
                     <AndroidSVG />
                     <span className="ml-4 flex flex-col items-start leading-none">
                       <span className="mb-1 text-[0.6rem] text-zinc-600 uppercase">
-                        Download
+                        {t("footer.download")}
                       </span>
                       <span className="title-font font-medium">
-                        Google Play
+                        {t("footer.google_play")}
                       </span>
                     </span>
                   </a>
@@ -330,10 +351,7 @@ export const RootFooter = () => {
                 className="text-sm text-pretty text-white"
                 style={{ maxWidth: "360px" }}
               >
-                <p>
-                  HOI HOLDING. All rights reserved © 2025 - We are here for a
-                  reliable travel experience
-                </p>
+                <p>{t("footer.copyright")}</p>
               </div>
             </div>
 

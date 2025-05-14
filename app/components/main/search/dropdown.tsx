@@ -4,8 +4,11 @@ import { Link } from "@/i18n/link";
 import { Clock, Search, X, ArrowRight } from "lucide-react";
 import { ALL_LANGUAGE_DICTONARY } from "@/i18n/config";
 import { formatDate } from "@/components/editor/helper";
+import { Trans, useTranslation } from "react-i18next";
 
 export function SearchResultsDropdown() {
+  const { t } = useTranslation();
+
   const {
     isDropdownOpen,
     closeDropdown,
@@ -74,22 +77,27 @@ export function SearchResultsDropdown() {
               <div className="text-sm font-medium text-zinc-800">
                 <span className="text-primary-600">"{searchQuery.title}"</span>
                 <span className="ml-1.5 text-zinc-500">
-                  for{" "}
-                  <span className="font-semibold text-zinc-700">
-                    {totalResults}
-                  </span>{" "}
-                  results
+                  <Trans
+                    i18nKey="main.search.dropdown.result"
+                    count={totalResults}
+                    components={[
+                      <span className="font-semibold text-zinc-700">
+                        {totalResults}
+                      </span>,
+                    ]}
+                  />
                 </span>
               </div>
             ) : (
               <div className="text-sm text-zinc-500">
-                Use the search box above to search
+                {t("main.search.dropdown.use_search_box")}
               </div>
             )}
           </div>
           <button
             onClick={closeDropdown}
             className="rounded-full p-1.5 text-zinc-400 transition-colors duration-200 hover:bg-zinc-100 hover:text-zinc-600 active:bg-zinc-200"
+            aria-label={t("main.search.dropdown.close")}
           >
             <X size={18} />
           </button>
@@ -106,7 +114,7 @@ export function SearchResultsDropdown() {
                 <div className="border-primary-500 absolute inset-0 h-full w-full animate-spin rounded-full border-t-2"></div>
               </div>
               <span className="text-sm font-medium text-zinc-600">
-                Searching...
+                {t("main.search.dropdown.searching")}
               </span>
             </div>
           </div>
@@ -120,10 +128,12 @@ export function SearchResultsDropdown() {
             </div>
             <div>
               <p className="font-medium text-zinc-700">
-                No results found for "{searchQuery.title}"
+                {t("main.search.dropdown.no_results_title", {
+                  query: searchQuery.title,
+                })}
               </p>
               <p className="mt-1 text-sm text-zinc-500">
-                Try again with different keywords
+                {t("main.search.dropdown.no_results_description")}
               </p>
             </div>
           </div>
@@ -137,7 +147,7 @@ export function SearchResultsDropdown() {
             </div>
             <div>
               <p className="font-medium text-zinc-700">
-                An error occurred while searching
+                {t("main.search.dropdown.error_title")}
               </p>
               <p className="mt-1 text-sm text-red-500">{searchStatus.error}</p>
             </div>
@@ -171,7 +181,7 @@ export function SearchResultsDropdown() {
                         ) : (
                           <div className="flex h-full w-full items-center justify-center bg-zinc-100">
                             <span className="text-[10px] text-zinc-400">
-                              Image
+                              {t("main.search.dropdown.image")}
                             </span>
                           </div>
                         )}
@@ -187,7 +197,8 @@ export function SearchResultsDropdown() {
                         <div className="flex items-center gap-3 text-xs text-zinc-500">
                           <span className="flex items-center gap-1">
                             <Clock size={10} />
-                            {blog.content.readTime} min
+                            {blog.content.readTime}{" "}
+                            {t("main.search.dropdown.min")}
                           </span>
                           <span>
                             {ALL_LANGUAGE_DICTONARY.find(
@@ -214,14 +225,13 @@ export function SearchResultsDropdown() {
                   <thead className="sticky top-0 bg-zinc-50/80 backdrop-blur-sm">
                     <tr>
                       <th className="px-4 py-2.5 text-left text-xs font-medium tracking-wider whitespace-nowrap text-zinc-500 uppercase">
-                        Blog
+                        {t("main.search.dropdown.blog")}
                       </th>
                       <th className="px-4 py-2.5 text-left text-xs font-medium tracking-wider whitespace-nowrap text-zinc-500 uppercase">
-                        Language
+                        {t("main.search.dropdown.language")}
                       </th>
-
                       <th className="px-4 py-2.5 text-left text-xs font-medium tracking-wider whitespace-nowrap text-zinc-500 uppercase">
-                        Read Time
+                        {t("main.search.dropdown.readtime")}
                       </th>
                     </tr>
                   </thead>
@@ -248,7 +258,7 @@ export function SearchResultsDropdown() {
                               ) : (
                                 <div className="flex h-full w-full items-center justify-center bg-zinc-100">
                                   <span className="text-[8px] text-zinc-400">
-                                    Image
+                                    {t("main.search.dropdown.image")}
                                   </span>
                                 </div>
                               )}
@@ -270,7 +280,8 @@ export function SearchResultsDropdown() {
                         <td className="px-4 py-3 text-sm whitespace-nowrap text-zinc-600">
                           <span className="flex items-center gap-1">
                             <Clock size={12} />
-                            {blog.content.readTime} min
+                            {blog.content.readTime}{" "}
+                            {t("main.search.dropdown.min")}
                           </span>
                         </td>
                       </tr>
@@ -289,7 +300,7 @@ export function SearchResultsDropdown() {
               <div className="flex items-center justify-center gap-2 py-1">
                 <div className="border-t-primary-500 h-4 w-4 animate-spin rounded-full border-2 border-zinc-200"></div>
                 <span className="text-xs font-medium text-zinc-600">
-                  Loading...
+                  {t("main.search.dropdown.loading")}
                 </span>
               </div>
             ) : (
@@ -297,7 +308,7 @@ export function SearchResultsDropdown() {
                 onClick={loadMoreResults}
                 className="w-full rounded-md bg-zinc-50 py-2 text-xs font-medium text-zinc-700 transition-colors duration-200 hover:bg-zinc-100 active:bg-zinc-200"
               >
-                Show more results
+                {t("main.search.dropdown.show_more_results")}
               </button>
             )}
           </div>
@@ -310,7 +321,7 @@ export function SearchResultsDropdown() {
           onClick={openFilterModal}
           className="bg-primary-50 text-primary-600 hover:bg-primary-100 active:bg-primary-200 w-full rounded-md py-2 text-xs font-medium transition-colors duration-200"
         >
-          Edit Filters
+          {t("main.search.dropdown.edit_filters")}
         </button>
       </div>
     </div>

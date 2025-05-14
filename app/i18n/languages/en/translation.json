@@ -1,7 +1,240 @@
 {
-  "common": {},
-  "index": {
-    "title": "Learn about Dubai's top blogs and discover the best content on the web."
+  "common": {
+    "languages": {
+      "en": "English",
+      "tr": "Turkish",
+      "ar": "Arabic",
+      "de": "German",
+      "fr": "French",
+      "ru": "Russian"
+    },
+    "views": "views",
+    "language_switcher": {
+      "title": "Language",
+      "aria_label": "Change language",
+      "close": "Close language selection"
+    },
+    "card": {
+      "categories": {
+        "rent-a-car": "Rent A Car",
+        "hotels": "Hotels",
+        "activities": "Activities",
+        "burj-khalifa": "Burj Khalifa",
+        "dubai-visa": "Dubai Visa",
+        "desert-safari": "Desert Safari",
+        "restaurant-and-cafes": "Restaurant and Cafes",
+        "museum-of-the-future": "Museum of The Future"
+      },
+      "tags": {
+        "yoga": "Yoga",
+        "gold-plated-mercedes-g-wagon-in-dubai": "Gold-Plated Mercedes G Wagon in Dubai",
+        "luxury-cars-in-dubai": "Luxury Cars in Dubai",
+        "palm-jumeirah-hotels": "Palm Jumeirah Hotels",
+        "dubai-hotels": "Dubai Hotels",
+        "dubai-activities": "Dubai Activities",
+        "dubai-family-activities": "Dubai Family Activities",
+        "burj-khalifa": "Burj Khalifa",
+        "miracle-garden-in-dubai": "Miracle Garden in Dubai",
+        "dubai-visa": "Dubai Visa",
+        "dubai-theme-parks": "Dubai Theme Parks",
+        "wild-wadi-waterpark": "Wild Wadi Waterpark",
+        "safari-in-dubai": "Safari in Dubai",
+        "motiongate-dubai": "Motiongate Dubai",
+        "legoland-dubai": "Legoland Dubai",
+        "riverland-dubai": "Riverland Dubai",
+        "cafe-in-dubai": "Cafe in Dubai",
+        "dubai-restaurants": "Dubai Restaurants",
+        "bollywood-parks-dubai": "Bollywood Parks Dubai",
+        "vegan-restaurant-in-dubai": "Vegan Restaurant in Dubai",
+        "helicopter-tour-in-dubai": "Helicopter Tour in Dubai",
+        "museum-of-the-future-in-dubai": "Museum of The Future in Dubai",
+        "restaurants-in-dubai": "Restaurants in Dubai",
+        "five-exhibits-at-the-museum-of-the-future": "Five Exhibits at the Museum of the Future"
+      }
+    }
+  },
+  "header": {
+    "brand_logo_alt": "Guide of Dubai Brand Logo",
+    "return_homepage": "Guide of Dubai - Return to homepage",
+    "main_menu": "Main menu navigation",
+    "sub_menu": "Sub menu navigation",
+    "dubai_travel_points": "Dubai travel points",
+    "visit_now": "Visit Now",
+    "visit_main_website": "Visit Guide of Dubai main website",
+    "nav": {
+      "main": {
+        "hotels": "Hotels",
+        "desert_safari": "Desert Safari",
+        "city_tours": "City Tours",
+        "activities": "Activities",
+        "rent_car": "Rent a Car",
+        "dubai_visa": "Dubai Visa"
+      },
+      "sub": {
+        "museum": "MUSEUM OF THE FUTURE",
+        "burj_khalifa": "BURJ KHALIFA",
+        "dubai_frame": "DUBAI FRAME",
+        "dubai_city_tour": "DUBAI CITY TOUR",
+        "rent_yacht": "RENT A YACHT",
+        "restaurants": "RESTAURANTS"
+      }
+    }
+  },
+  "main": {
+    "hero": {
+      "button": "Read Latest Blog",
+      "title": "Find Your Perfect Dubai Experience",
+      "description": "Get honest reviews, real photos, and community insights about Dubai attractions. Search by location or activity to start exploring."
+    },
+    "search": {
+      "filter_btn": "Filter",
+      "placeholder": "Best Dubai Restaurant..",
+      "search_btn": "Search",
+      "dropdown": {
+        "result_zero": "for no results",
+        "result_one": "for <0>{{count}}</0> result",
+        "result_other": "for <0>{{count}}</0> results",
+        "blog": "Blog",
+        "language": "Language",
+        "readtime": "Read Time",
+        "show_more_results": "Show more results",
+        "edit_filters": "Edit Filters",
+        "use_search_box": "Use the search box above to search",
+        "searching": "Searching...",
+        "no_results_title": "No results found for \"{{query}}\"",
+        "no_results_description": "Try again with different keywords",
+        "error_title": "An error occurred while searching",
+        "min": "min",
+        "loading": "Loading...",
+        "close": "Close search results",
+        "image": "Image"
+      },
+      "filter_modal": {
+        "title": "Filtering",
+        "close": "Close filter modal",
+        "language": "Language",
+        "all_languages": "All Languages",
+        "category": "Category",
+        "all_categories": "All Categories",
+        "tag": "Tag",
+        "all_tags": "All Tags",
+        "reset": "Reset",
+        "apply": "Apply"
+      }
+    },
+    "sections": {
+      "featured": {
+        "title": "Featured Posts",
+        "left_scroll": "Left Scroll",
+        "right_scroll": "Right Scroll"
+      },
+      "most_viewed": {
+        "title": "Most Viewed Posts",
+        "views": "views"
+      },
+      "recent": {
+        "title": "Recent Posts",
+        "all_posts": "All Posts"
+      },
+      "common": {
+        "min_read": "min read",
+        "results": "results",
+        "no_results": "No results found"
+      }
+    }
+  },
+  "blog": {
+    "toc": {
+      "title": "On This Page"
+    },
+    "related": {
+      "title": "Related Posts",
+      "error": "An issue occurred while loading related blogs",
+      "scroll_left": "Scroll Left",
+      "scroll_right": "Scroll Right"
+    }
+  },
+  "footer": {
+    "experience_title": "Experience the Best of Dubai!",
+    "experience_description": "Turn your Dubai trip into an unforgettable adventure! Explore exclusive activities, luxury yacht tours, desert safaris, and more. Book now and make your dream vacation a reality.",
+    "view_activities": "View All Activities",
+    "exclusive_tours": "Exclusive Private Tours",
+    "need_assistance": "Need Assistance?",
+    "call_now": "Call Now",
+    "whatsapp": "WhatsApp",
+    "support_text": "24/7 Customer Support – We're here for you anytime, anywhere!",
+    "other_services": "Other Services",
+    "popular_activities": "Popular Activities",
+    "contracts_policies": "Contracts & Policies",
+    "guide_of_dubai": "Guide of Dubai",
+    "mobile_app": "Mobile App",
+    "download_app": "Download our mobile app",
+    "app_description": "Use our app for faster booking and special offers.",
+    "download": "Download",
+    "app_store": "App Store",
+    "google_play": "Google Play",
+    "copyright": "HOI HOLDING. All rights reserved © 2025 - We are here for a reliable travel experience",
+    "services": {
+      "hotel": {
+        "title": "Hotel Accommodation",
+        "description": "Discover the best hotels in Dubai and enjoy a luxurious stay."
+      },
+      "car": {
+        "title": "Car Rental",
+        "description": "Rent a car and explore Dubai at your own pace."
+      },
+      "visa": {
+        "title": "Dubai Visa",
+        "description": "Easily apply for your Dubai visa and travel hassle-free."
+      },
+      "yacht": {
+        "title": "Yacht Rental",
+        "description": "Enjoy a luxury yacht experience in Dubai's stunning waters."
+      }
+    },
+    "activities": {
+      "safari": {
+        "title": "Dubai Safari Tour",
+        "description": "Experience an unforgettable adventure in the desert sands."
+      },
+      "museum": {
+        "title": "Museum of the Future",
+        "description": "A unique experience to explore the world of the future."
+      },
+      "dubai_tour": {
+        "title": "Dubai City Tour",
+        "description": "Discover the fascinating highlights of Dubai."
+      },
+      "burj": {
+        "title": "Burj Khalifa",
+        "description": "Enjoy the breathtaking view from the world's tallest building."
+      },
+      "abu_dhabi": {
+        "title": "Abu Dhabi City Tour",
+        "description": "Explore the historical and modern sights of the UAE capital."
+      },
+      "miracle": {
+        "title": "Miracle Garden",
+        "description": "Step into the world's largest flower garden with breathtaking displays."
+      },
+      "helicopter": {
+        "title": "Dubai Helicopter Tour",
+        "description": "Soar over Dubai's stunning skyline and landmarks."
+      },
+      "jetski": {
+        "title": "Dubai Jetski Tour",
+        "description": "Experience speed and adrenaline on Dubai's crystal-clear waters."
+      }
+    },
+    "links": {
+      "terms": "Terms of Use",
+      "gdpr": "GDPR Policy",
+      "privacy": "Privacy Policy",
+      "sales": "Sales Agreement",
+      "about": "About Us",
+      "contact": "Contact",
+      "faq": "FAQ"
+    }
   },
   "not-found": {
     "title": "Page Not Found",
