@@ -296,7 +296,7 @@ export const GroupIDSelector = ({
             {/* Yenileme butonu */}
             <button
               type="button"
-              onClick={() => fetchBlogPosts()}
+              onClick={() => fetchBlogPosts(true)}
               disabled={isLoading}
               className="flex h-10 items-center gap-2 rounded-md bg-zinc-100 px-4 text-sm font-medium text-zinc-700 hover:bg-zinc-200 disabled:opacity-50"
             >
