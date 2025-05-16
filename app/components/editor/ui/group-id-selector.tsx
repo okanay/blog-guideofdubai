@@ -123,7 +123,7 @@ export const GroupIDSelector = ({
         limit: 5,
         offset: 0,
       });
-      fetchBlogPosts();
+      fetchBlogPosts(true);
     }
   }, [
     throttledSearchQuery,
